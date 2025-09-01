@@ -10,7 +10,7 @@ function Nav() {
   return (
     <nav className="nav">
       <div className="container nav-inner">
-        {/* Logo seul, plus grand et glow (voir CSS .brand-logo) */}
+        {/* Logo seul dans la navbar */}
         <a href="#top" className="brand" aria-label="Accueil">
           <img
             className="brand-logo"
@@ -38,7 +38,7 @@ function Nav() {
           <a className="navlink" href="#captures">
             <i className="fa-solid fa-images"></i> Captures
           </a>
-          {/* pas de lien “Téléchargement” ; le CTA scroll vers la section */}
+          {/* pas de lien “Téléchargement” ; le CTA scrolle vers la section */}
           <span className="nav-cta">
             <a className="btn btn-primary" href="#download">
               <i className="fa-solid fa-cloud-arrow-down"></i> Télécharger
@@ -68,7 +68,7 @@ export default function App() {
           "--bg-dim": backgrounds.dim,
         }}
       >
-        {/* lecteur audio discret */}
+        {/* Lecteur audio discret */}
         {content.audio?.enabled && (
           <YouTubeAudio
             videoId={content.audio.youtubeId}
@@ -79,7 +79,7 @@ export default function App() {
         )}
 
         <div className="container">
-          {/* HERO vidéo : logo plus grand via .hero-logo */}
+          {/* HERO vidéo : on retire le H1 et on agrandit le logo */}
           <section className="section" style={{ padding: 0 }}>
             <HeroVideo videoId={heroVideo.youtubeId}>
               <div>
@@ -88,9 +88,7 @@ export default function App() {
                   src="/logo.png"
                   alt="Logo Pokémon New World"
                 />
-                <h1>
-                  Pokémon <em>New World</em>
-                </h1>
+                {/* Titre texte retiré */}
                 <div className="cta">
                   <a className="btn btn-primary" href="#download">
                     <i className="fa-solid fa-cloud-arrow-down"></i> Télécharger
@@ -319,7 +317,7 @@ export default function App() {
           </div>
         </footer>
 
-        {/* (optionnel) modal vidéo patch si utilisé ailleurs */}
+        {/* (optionnel) modal vidéo patch si utilisé */}
         {downloads.patchVideo && (
           <Modal
             open={openVideo}

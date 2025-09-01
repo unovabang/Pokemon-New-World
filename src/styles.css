@@ -20,8 +20,9 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .nav-inner{display:flex; align-items:center; justify-content:space-between; height:80px}
 .brand{position:relative; display:flex; align-items:center; isolation:isolate; text-decoration:none}
 .brand::after{content:""; position:absolute; inset:-6px; background:radial-gradient(60% 60% at 30% 30%,var(--primary-2),transparent 60%); filter:blur(14px); opacity:.6; z-index:-1}
-.brand-logo{height:56px; width:auto; filter:drop-shadow(0 10px 28px rgba(126,205,242,.55)) saturate(1.1) contrast(1.05); animation:logoPulse 6s ease-in-out infinite}
-@keyframes logoPulse{0%,100%{transform:translateY(0) scale(1); filter:drop-shadow(0 10px 28px rgba(126,205,242,.45))}50%{transform:translateY(-1px) scale(1.02); filter:drop-shadow(0 12px 34px rgba(126,205,242,.65))}}
+.brand-logo{height:56px; width:auto; filter:drop-shadow(0 10px 28px rgba(126,205,242,.55)) saturate(1.1) contrast(1.05); transition:transform .2s ease, filter .25s ease; animation:logoPulse 6s ease-in-out infinite}
+.brand-logo:hover{transform:scale(1.06); filter:drop-shadow(0 14px 36px rgba(126,205,242,.75)) saturate(1.12)}
+@keyframes logoPulse{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-1px) scale(1.02)}}
 .links{display:flex; align-items:center; gap:.8rem}
 .nav a{color:var(--text); text-decoration:none; font-weight:600}
 .navlink{display:inline-flex; align-items:center; gap:.45rem; opacity:.82; padding:.55rem .9rem; border-radius:12px; border:1px solid transparent}
@@ -70,9 +71,25 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .hero-video iframe{position:absolute; top:50%; left:50%; min-width:100%; min-height:100%; width:177.77vh; height:56.25vw; transform:translate(-50%,-50%) scale(1.05); border:0}
 .hero-video .overlay{position:absolute; inset:0; background:radial-gradient(100% 100% at 50% 20%,rgba(0,0,0,.25),rgba(0,0,0,.55) 70%), linear-gradient(180deg,rgba(7,12,25,.25),rgba(7,12,25,.75))}
 .hero-video .copy{position:absolute; inset:0; display:grid; place-items:center; text-align:center; padding:24px}
-.hero-logo{height:clamp(84px, 14vw, 160px); width:auto; display:block; margin:0 auto 6px; filter:drop-shadow(0 14px 36px rgba(126,205,242,.6)) saturate(1.08)}
-.hero-video h1{margin:.2rem 0 .2rem; font-size:clamp(28px,4.8vw,58px); line-height:1.05}
-.hero-video .cta{margin-top:18px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
+
+/* >>> Logo du hero : centré + beaucoup plus grand + hover (scale + glow) */
+.hero-logo{
+	height:clamp(160px, 22vw, 320px);
+	width:auto; display:block; margin:0 auto 10px;
+	filter:drop-shadow(0 18px 44px rgba(126,205,242,.6)) saturate(1.06);
+	transform:translateZ(0);
+	transition:transform .25s ease, filter .25s ease;
+}
+@media (hover:hover){
+	.hero-logo:hover{
+		transform:scale(1.08);
+		filter:drop-shadow(0 26px 60px rgba(126,205,242,.85)) saturate(1.12);
+	}
+}
+.hero-video .cta{
+	margin-top:12px; /* rapprocher les boutons du logo */
+	display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+}
 
 /* ===== Sections / Carousel / Download ===== */
 .section{margin-top:56px; padding:28px}
@@ -84,12 +101,13 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .carousel .viewport{overflow:hidden; border-radius:18px; border:1px solid rgba(126,205,242,.18)}
 .carousel .track{display:flex; transition:transform .6s ease}
 .carousel .slide{min-width:100%; aspect-ratio:16/7; position:relative}
-.carousel img{width:100%; height:100%; object-fit:cover}
+.carousel img{width:100%; height:100%; object-fit:cover; display:block}
 .carousel .mask{position:absolute; inset:0; background:radial-gradient(100% 100% at 50% 50%,transparent 0%,rgba(10,18,34,.25) 70%,rgba(10,18,34,.5) 100%)}
 .carousel .controls{display:flex; justify-content:center; gap:8px; margin-top:10px}
 .carousel .dot{width:8px; height:8px; border-radius:999px; background:rgba(126,205,242,.35); border:1px solid rgba(126,205,242,.55); cursor:pointer}
 .carousel .dot.active{background:linear-gradient(135deg,var(--primary),var(--primary-2)); border-color:transparent}
 .carousel .arrow{position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.25); color:#fff; padding:.45rem .6rem; border-radius:12px; cursor:pointer}
+.carousel .arrow:hover{background:rgba(0,0,0,.38)}
 .carousel .prev{left:10px}.carousel .next{right:10px}
 
 .steps-chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
@@ -110,50 +128,28 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .discord-cta h3{margin:0} .discord-cta p{margin:4px 0 0; color:var(--muted)}
 .discord-icon{font-size:48px; background:linear-gradient(135deg,var(--primary-2),#bfe8ff); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 6px 18px rgba(126,205,242,.35))}
 
-/* ===== Audio widget (toujours visible + accessible) ===== */
+/* ===== Audio widget (visible + accessible) ===== */
 .audio{position:fixed; right:16px; bottom:16px; z-index:60}
-.audio .panel{display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:999px; position:relative}
+.audio .panel{display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:999px}
 .audio .panel .btn-icon{width:38px; height:38px; align-items:center; justify-content:center}
 .audio .panel i{opacity:.9}
+.audio .panel .vol{width:140px; opacity:1}
+.audio .panel input[type="range"]{accent-color:var(--primary-2)}
 
-/* Bouton burger pour le volume */
-.volume-burger{position:relative}
-
-/* Menu volume expandable */
-.volume-menu{
-  position:absolute; 
-  right:0; 
-  bottom:100%; 
-  margin-bottom:8px;
-  display:flex; 
-  align-items:center; 
-  gap:10px; 
-  padding:8px 12px; 
-  background:var(--glass); 
-  backdrop-filter:saturate(130%) blur(10px); 
-  border:1px solid rgba(126,205,242,.12); 
-  border-radius:999px; 
-  box-shadow:0 10px 30px rgba(0,0,0,.35);
-  animation:volumeSlideUp 0.2s ease-out;
-}
-
-@keyframes volumeSlideUp{
-  from{transform:translateY(10px); opacity:0}
-  to{transform:translateY(0); opacity:1}
-}
-
-.volume-menu .vol{width:140px; opacity:1}
-.volume-menu input[type="range"]{accent-color:var(--primary-2)}
-.volume-menu i{opacity:.9}
+/* ===== Modal (si utilisé) ===== */
+.modal{position:fixed; inset:0; display:none; z-index:80}
+.modal.open{display:block}
+.modal .backdrop{position:absolute; inset:0; background:rgba(3,6,14,.65); backdrop-filter:blur(4px)}
+.modal .dialog{position:relative; margin:5vh auto; width:min(900px,92%); border-radius:18px; overflow:hidden}
+.modal header{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid rgba(126,205,242,.12)}
+.modal header h3{margin:0; font-size:18px}
+.modal .body{padding:0; aspect-ratio:16/9}
+.modal .body iframe{width:100%; height:100%; display:block; border:0}
+.modal .close{background:transparent; border:1px solid rgba(255,255,255,.18); color:var(--text); border-radius:10px; padding:.35rem .55rem; cursor:pointer}
 
 /* ===== Footer ===== */
 .site-footer{margin-top:60px; padding:34px 0 0; border-top:1px solid rgba(126,205,242,.12); color:#b8c7eb; font-size:14px; background:linear-gradient(180deg,rgba(7,12,25,.55),rgba(7,12,25,.8))}
-.meta-grid{display:grid; gap:18px; grid-template-columns:1fr 1fr; margin-top:20px}
-@media (max-width:900px){.meta-grid{grid-template-columns:1fr}}
-.dl-card{padding:20px}
-.dl-title{margin:0 0 12px; font-size:18px; font-weight:600; display:flex; align-items:center; gap:8px}
-.dl-title i{opacity:.9}
-
+.footer-grid{display:grid; gap:18px; grid-template-columns:2fr 1fr 1fr}
 .footer-col h4{margin:0 0 10px; font-size:16px; color:#e3eeff}
 .footer-col ul{list-style:none; padding:0; margin:0; display:grid; gap:8px}
 .footer-col a{color:#cfe6ff; text-decoration:none}
