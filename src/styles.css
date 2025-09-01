@@ -80,6 +80,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 	transform:translateZ(0);
 	transition:transform .25s ease, filter .25s ease;
 }
+margin-left: 55px;
 @media (hover:hover){
 	.hero-logo:hover{
 		transform:scale(1.06);
