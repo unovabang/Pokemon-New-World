@@ -34,7 +34,19 @@
 			"Quêtes secondaires, explorakit, cycle jour/nuit",
 			"Pokédex étendu : officiels + Fakemon"
 		],
-		"story": "Dans la région de Bélamie, des failles relient des univers parallèles. L’Anarchie tente d’exploiter cette énergie : à vous d’empêcher l’effondrement du multivers."
+		"story": "Dans la région de Bélamie, des failles relient des univers parallèles. L'Anarchie tente d'exploiter cette énergie : à vous d'empêcher l'effondrement du multivers."
+	},
+	"news": {
+		"banners": [
+			{
+				"title": "LA MÉGA-ÉVOLUTION",
+				"subtitle": "ARRIVE",
+				"image": "https://media.discordapp.net/attachments/1412015491026784327/1412213250430603324/image.png",
+				"gradient": "linear-gradient(135deg, #ff1744, #000000)",
+				"textColor": "#ffffff"
+			}
+		],
+		"interval": 5000
 	},
 	"downloads": {
 		"windows": "#",
