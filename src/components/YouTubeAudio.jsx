@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 
 // Charge l'API IFrame de YouTube une seule fois
@@ -21,13 +22,12 @@ function loadYT() {
 /**
  * Lecteur audio discret pour bande-son YouTube
  * - play/pause
- * - volume (0–100) — corrige le slider qui ne réagissait pas
- * - clique sur le slider = geste utilisateur → démarre la lecture si bloquée
+ * - volume (0–100) avec menu burger expandable
  */
 export default function YouTubeAudio({
   videoId,
   autoplay = true,
-  startVolume = 1,
+  startVolume = 50,
   show = true,
 }) {
   const playerRef = useRef(null);
@@ -35,6 +35,7 @@ export default function YouTubeAudio({
   const [status, setStatus] = useState("paused"); // 'playing' | 'paused'
   const [volume, setVolume] = useState(startVolume);
   const [ready, setReady] = useState(false);
+  const [isVolumeOpen, setIsVolumeOpen] = useState(false);
 
   // Init du player
   useEffect(() => {
@@ -63,7 +64,6 @@ export default function YouTubeAudio({
             setReady(true);
             if (autoplay) {
               const p = e.target.playVideo?.();
-              // Si l’autoplay est bloqué, on restera "paused" jusqu’à interaction
               if (p?.catch) p.catch(() => setStatus("paused"));
             }
           },
@@ -97,7 +97,10 @@ export default function YouTubeAudio({
     }
   };
 
-  // FIX volume cassé: on applique le volume YT (0–100), on unMute, et on lance la lecture si bloquée (geste utilisateur)
+  const toggleVolumeMenu = () => {
+    setIsVolumeOpen(!isVolumeOpen);
+  };
+
   const onVol = (e) => {
     const v = Number(e.target.value);
     setVolume(v);
@@ -106,7 +109,6 @@ export default function YouTubeAudio({
     try {
       p.unMute?.();
       p.setVolume?.(v);
-      // Démarre si le navigateur avait bloqué l’autoplay et que l’utilisateur touche le slider
       if (p.getPlayerState?.() !== 1) p.playVideo?.();
       setStatus("playing");
     } catch {}
@@ -134,17 +136,34 @@ export default function YouTubeAudio({
             {status === "playing" ? "Pause" : "Lecture"}
           </span>
         </button>
-        <i className="fa-solid fa-volume-low" aria-hidden="true"></i>
-        <input
-          className="vol"
-          type="range"
-          min="0"
-          max="100"
-          step="1"
-          value={volume}
-          onChange={onVol}
-          aria-label="Volume"
-        />
+        
+        {/* Bouton burger pour le volume */}
+        <button
+          className="btn btn-ghost btn-icon volume-burger"
+          onClick={toggleVolumeMenu}
+          disabled={!ready}
+          title="Volume"
+        >
+          <i className="fa-solid fa-bars" aria-hidden="true" />
+          <span className="sr-only">Volume</span>
+        </button>
+
+        {/* Menu volume expandable */}
+        {isVolumeOpen && (
+          <div className="volume-menu">
+            <i className="fa-solid fa-volume-low" aria-hidden="true"></i>
+            <input
+              className="vol"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value={volume}
+              onChange={onVol}
+              aria-label="Volume"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
