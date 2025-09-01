@@ -6,9 +6,8 @@ import Modal from "./components/Modal";
 import YouTubeAudio from "./components/YouTubeAudio";
 import NewsBanner from "./components/NewsBanner";
 
-function Nav() {
+function Nav({ setOpenDownload }) {
   const [open, setOpen] = useState(false);
-  const [openDownload, setOpenDownload] = useState(false); // State for the new download modal
   return (
     <nav className="nav">
       <div className="container nav-inner">
@@ -51,48 +50,7 @@ function Nav() {
           </span>
         </div>
       </div>
-      {/* Download Modal */}
-      <Modal
-        open={openDownload}
-        onClose={() => setOpenDownload(false)}
-        title="Téléchargement"
-      >
-        <div className="download-modal-content">
-          <p>Les patchs ET le jeu se trouveront ici dans ce dossier : <a href="https://replit.com/@steven066996/Pokemon-New-World#src/T%C3%A9l%C3%A9chargement" target="_blank" rel="noreferrer">Lien du dossier</a></p>
-          <div className="modal-buttons">
-            <a 
-              className="btn btn-primary" 
-              href={content.downloads.windows} 
-              onClick={() => setOpenDownload(false)}
-            >
-              <i className="fa-solid fa-download"></i> Télécharger le jeu
-            </a>
-            <a 
-              className="btn btn-primary" 
-              href={content.downloads.patch} 
-              onClick={() => setOpenDownload(false)}
-            >
-              <i className="fa-solid fa-file-arrow-up"></i> Télécharger le patch
-            </a>
-          </div>
-          <div className="patch-instructions">
-            <h3>Note sur les patchs :</h3>
-            <p>
-              Pour installer un patch, assurez-vous d'avoir la version précédente installée. Placez le fichier patch.zip à la racine de votre jeu, extrayez-le, et il mettra à jour les anciens dossiers. 
-            </p>
-            <p>Vous pouvez également consulter la vidéo tutoriel pour plus de détails.</p>
-            <button 
-              className="btn btn-ghost" 
-              onClick={() => {
-                setOpenExplanations(true);
-                setOpenDownload(false); 
-              }}
-            >
-              <i className="fa-solid fa-play"></i> Voir la vidéo explicative
-            </button>
-          </div>
-        </div>
-      </Modal>
+      
     </nav>
   );
 }
@@ -102,10 +60,11 @@ export default function App() {
     content;
   const [openVideo, setOpenVideo] = useState(false);
   const [openExplanations, setOpenExplanations] = useState(false);
+  const [openDownload, setOpenDownload] = useState(false);
 
   return (
     <>
-      <Nav />
+      <Nav setOpenDownload={setOpenDownload} />
 
       <main
         id="top"
@@ -138,9 +97,12 @@ export default function App() {
                 />
                 {/* Titre texte retiré */}
                 <div className="cta">
-                  <a className="btn btn-primary" href="#download">
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => setOpenDownload(true)}
+                  >
                     <i className="fa-solid fa-cloud-arrow-down"></i> Télécharger
-                  </a>
+                  </button>
                   <a
                     className="btn btn-ghost"
                     href={discord?.invite || "#"}
@@ -331,6 +293,48 @@ export default function App() {
                 <li>Déplacez ce zip à la racine de votre dossier de jeu</li>
                 <li>Enfin, extrayez le Patch.zip et il mettra à jour vos anciens dossiers</li>
               </ol>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Modal de téléchargement */}
+        <Modal
+          open={openDownload}
+          onClose={() => setOpenDownload(false)}
+          title="Téléchargement"
+        >
+          <div className="download-modal-content">
+            <div className="modal-buttons">
+              <a 
+                className="btn btn-primary" 
+                href={content.downloads.windows} 
+                onClick={() => setOpenDownload(false)}
+              >
+                <i className="fa-solid fa-download"></i> Télécharger le jeu
+              </a>
+              <a 
+                className="btn btn-primary" 
+                href={content.downloads.patch} 
+                onClick={() => setOpenDownload(false)}
+              >
+                <i className="fa-solid fa-file-arrow-up"></i> Télécharger le patch
+              </a>
+            </div>
+            <div className="patch-instructions">
+              <h3>Note sur les patchs :</h3>
+              <p>
+                Pour installer un patch, assurez-vous d'avoir la version précédente installée. Placez le fichier patch.zip à la racine de votre jeu, extrayez-le, et il mettra à jour les anciens dossiers. 
+              </p>
+              <p>Vous pouvez également consulter la vidéo tutoriel pour plus de détails.</p>
+              <button 
+                className="btn btn-ghost" 
+                onClick={() => {
+                  setOpenExplanations(true);
+                  setOpenDownload(false); 
+                }}
+              >
+                <i className="fa-solid fa-play"></i> Voir la vidéo explicative
+              </button>
             </div>
           </div>
         </Modal>
