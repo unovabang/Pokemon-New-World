@@ -11,13 +11,19 @@ function loadYT() {
       tag.id = "yt-iframe-api";
       document.body.appendChild(tag);
     }
-    window.onYouTubeIframeAPIReady = () => resolve(window.YT);
-    if (window.YT && window.YT.Player) resolve(window.YT);
+    const ready = () => resolve(window.YT);
+    if (window.YT && window.YT.Player) ready();
+    else window.onYouTubeIframeAPIReady = ready;
   });
   return ytPromise;
 }
 
-/** Lecteur audio discret (bouton play/pause + volume au survol) */
+/**
+ * Lecteur audio discret pour bande-son YouTube
+ * - play/pause
+ * - volume (0–100) — corrige le slider qui ne réagissait pas
+ * - clique sur le slider = geste utilisateur → démarre la lecture si bloquée
+ */
 export default function YouTubeAudio({
   videoId,
   autoplay = true,
@@ -30,6 +36,7 @@ export default function YouTubeAudio({
   const [volume, setVolume] = useState(startVolume);
   const [ready, setReady] = useState(false);
 
+  // Init du player
   useEffect(() => {
     if (!show) return;
     let player;
@@ -44,6 +51,8 @@ export default function YouTubeAudio({
           controls: 0,
           loop: 1,
           playlist: videoId,
+          rel: 0,
+          modestbranding: 1,
         },
         events: {
           onReady: (e) => {
@@ -53,10 +62,9 @@ export default function YouTubeAudio({
             } catch {}
             setReady(true);
             if (autoplay) {
-              const p = e.target.playVideo();
-              if (p?.catch) {
-                p.catch(() => setStatus("paused"));
-              }
+              const p = e.target.playVideo?.();
+              // Si l’autoplay est bloqué, on restera "paused" jusqu’à interaction
+              if (p?.catch) p.catch(() => setStatus("paused"));
             }
           },
           onStateChange: (e) => {
@@ -74,35 +82,46 @@ export default function YouTubeAudio({
   }, [videoId, autoplay, startVolume, show]);
 
   const toggle = () => {
-    if (!playerRef.current) return;
-    const st = playerRef.current.getPlayerState?.();
+    const p = playerRef.current;
+    if (!p) return;
+    const st = p.getPlayerState?.();
     if (st === 1) {
-      playerRef.current.pauseVideo();
+      p.pauseVideo();
       setStatus("paused");
     } else {
-      playerRef.current.playVideo();
+      try {
+        p.unMute?.();
+      } catch {}
+      p.playVideo?.();
       setStatus("playing");
     }
   };
 
+  // FIX volume cassé: on applique le volume YT (0–100), on unMute, et on lance la lecture si bloquée (geste utilisateur)
   const onVol = (e) => {
     const v = Number(e.target.value);
     setVolume(v);
+    const p = playerRef.current;
+    if (!p) return;
     try {
-      playerRef.current?.setVolume(v);
+      p.unMute?.();
+      p.setVolume?.(v);
+      // Démarre si le navigateur avait bloqué l’autoplay et que l’utilisateur touche le slider
+      if (p.getPlayerState?.() !== 1) p.playVideo?.();
+      setStatus("playing");
     } catch {}
   };
 
   if (!show) return null;
 
   return (
-    <div className="audio">
-      {/* IFRAME caché */}
+    <div className="audio" role="group" aria-label="Lecteur audio">
+      {/* iframe caché */}
       <div ref={containerRef} aria-hidden="true" />
-      {/* Contrôles minimaux */}
+      {/* UI */}
       <div className="card panel">
         <button
-          className="icon"
+          className="btn btn-ghost btn-icon"
           onClick={toggle}
           disabled={!ready}
           title={status === "playing" ? "Pause" : "Lecture"}
@@ -110,7 +129,10 @@ export default function YouTubeAudio({
           <i
             className={`fa-solid ${status === "playing" ? "fa-pause" : "fa-play"}`}
             aria-hidden="true"
-          ></i>
+          />
+          <span className="sr-only">
+            {status === "playing" ? "Pause" : "Lecture"}
+          </span>
         </button>
         <i className="fa-solid fa-volume-low" aria-hidden="true"></i>
         <input
