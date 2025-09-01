@@ -36,9 +36,6 @@ function Nav({ setOpenDownload }) {
           <a className="navlink" href="#news">
             <i className="fa-solid fa-sparkles"></i> Nouveautés
           </a>
-          <a className="navlink" href="#captures">
-            <i className="fa-solid fa-images"></i> Captures
-          </a>
           {/* pas de lien "Téléchargement" ; le CTA ouvre le modal */}
           <span className="nav-cta">
             <button 
@@ -128,78 +125,11 @@ export default function App() {
             />
           </section>
 
-          {/* CAPTURES */}
-          <section id="captures" className="section card">
-            <h2>
-              <i className="fa-solid fa-images"></i> Captures
-            </h2>
-            <Carousel images={carousel} interval={4200} />
-          </section>
+          
 
-          {/* DISCORD CTA */}
-          <section id="discord" className="section card discord-cta">
-            <i
-              className="fa-brands fa-discord discord-icon"
-              aria-hidden="true"
-            ></i>
-            <div>
-              <h3>Rejoignez le Discord officiel</h3>
-              <p>Actus, entraide, échanges GTS et annonces de versions.</p>
-            </div>
-            <div style={{ marginLeft: "auto" }}>
-              <a
-                className="btn btn-primary"
-                href={discord?.invite || "#"}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <i className="fa-brands fa-discord"></i> Rejoindre
-              </a>
-            </div>
-          </section>
+          
 
-          {/* Meta */}
-          <div className="meta-grid">
-            <div className="card dl-card">
-              <h3 className="dl-title">
-                <i className="fa-solid fa-microchip"></i> Configuration
-                requise
-              </h3>
-              <ul className="list-check" style={{ marginTop: 8 }}>
-                <li>
-                  <i className="fa-solid fa-desktop"></i>{" "}
-                  <span>Windows 10/11 (x64)</span>
-                </li>
-                <li>
-                  <i className="fa-solid fa-microchip"></i>{" "}
-                  <span>CPU 2 cœurs · RAM 4 Go · Stockage 3 Go</span>
-                </li>
-                <li>
-                  <i className="fa-solid fa-microchip"></i>{" "}
-                  <span>GPU OpenGL 2.1+ (Intel/AMD/NVIDIA)</span>
-                </li>
-              </ul>
-            </div>
-            <div className="card dl-card">
-              <h3 className="dl-title">
-                <i className="fa-solid fa-circle-question"></i> Aide rapide
-              </h3>
-              <ul className="list-check" style={{ marginTop: 8 }}>
-                <li>
-                  <i className="fa-solid fa-shield-halved"></i>{" "}
-                  <span>Désactivez SmartScreen si nécessaire.</span>
-                </li>
-                <li>
-                  <i className="fa-solid fa-folder-open"></i>{" "}
-                  <span>Utilisez un chemin simple.</span>
-                </li>
-                <li>
-                  <i className="fa-brands fa-discord"></i>{" "}
-                  <span>Besoin d'aide ? Rejoignez le Discord.</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+          
         </div>
 
         {/* Footer */}
@@ -237,15 +167,13 @@ export default function App() {
                   </a>
                 </li>
                 <li>
-                  <a href="#captures">
-                    <i className="fa-solid fa-images"></i> Captures
-                  </a>
-                </li>
-                <li>
-                  <a href="#download">
+                  <button 
+                    onClick={() => setOpenDownload(true)}
+                    style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
+                  >
                     <i className="fa-solid fa-cloud-arrow-down"></i>{" "}
                     Téléchargement
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
