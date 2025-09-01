@@ -72,23 +72,24 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .hero-video .overlay{position:absolute; inset:0; background:radial-gradient(100% 100% at 50% 20%,rgba(0,0,0,.25),rgba(0,0,0,.55) 70%), linear-gradient(180deg,rgba(7,12,25,.25),rgba(7,12,25,.75))}
 .hero-video .copy{position:absolute; inset:0; display:grid; place-items:center; text-align:center; padding:24px}
 
-/* >>> Logo du hero : centré + beaucoup plus grand + hover (scale + glow) */
+/* >>> Logo du hero : taille réduite pour un meilleur cadrage */
 .hero-logo{
-	height:clamp(160px, 22vw, 320px);
-	width:auto; display:block; margin:0 auto 10px;
-	filter:drop-shadow(0 18px 44px rgba(126,205,242,.6)) saturate(1.06);
+	height:clamp(120px, 16vw, 240px);
+	width:auto; display:block; margin:0 auto 24px;
+	filter:drop-shadow(0 12px 32px rgba(126,205,242,.55)) saturate(1.06);
 	transform:translateZ(0);
 	transition:transform .25s ease, filter .25s ease;
 }
+margin-left: 55px;
 @media (hover:hover){
 	.hero-logo:hover{
-		transform:scale(1.08);
-		filter:drop-shadow(0 26px 60px rgba(126,205,242,.85)) saturate(1.12);
+		transform:scale(1.06);
+		filter:drop-shadow(0 18px 44px rgba(126,205,242,.75)) saturate(1.12);
 	}
 }
 .hero-video .cta{
-	margin-top:12px; /* rapprocher les boutons du logo */
-	display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+	margin-top:4px;
+	display:flex; gap:12px; flex-wrap:wrap; justify-content:center;
 }
 
 /* ===== Sections / Carousel / Download ===== */
