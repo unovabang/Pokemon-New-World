@@ -54,6 +54,7 @@ export default function App() {
   const { backgrounds, heroVideo, game, carousel, discord, downloads } =
     content;
   const [openVideo, setOpenVideo] = useState(false);
+  const [openExplanations, setOpenExplanations] = useState(false);
 
   return (
     <>
@@ -202,9 +203,12 @@ export default function App() {
                   <a className="btn btn-primary" href={downloads.patch}>
                     <i className="fa-solid fa-file-arrow-up"></i> Patch
                   </a>
-                  <a className="btn btn-ghost" href={downloads.notes}>
-                    <i className="fa-solid fa-clipboard-list"></i> Notes
-                  </a>
+                  <button 
+                    className="btn btn-ghost" 
+                    onClick={() => setOpenExplanations(true)}
+                  >
+                    <i className="fa-solid fa-clipboard-list"></i> Explications
+                  </button>
                 </div>
               </div>
             </div>
@@ -316,6 +320,39 @@ export default function App() {
             réservés.
           </div>
         </footer>
+
+        {/* Modal explications patch */}
+        <Modal
+          open={openExplanations}
+          onClose={() => setOpenExplanations(false)}
+          title="Installer un patch — Explications"
+        >
+          <div style={{ padding: '20px' }}>
+            <div style={{ marginBottom: '20px' }}>
+              <iframe
+                width="100%"
+                height="315"
+                src="https://www.youtube.com/embed/043CVnIdeZ0"
+                title="Tutoriel installation patch"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ borderRadius: '12px' }}
+              />
+            </div>
+            <div>
+              <h3 style={{ marginBottom: '16px', color: 'var(--text)' }}>Installation d'un patch</h3>
+              <p style={{ marginBottom: '12px', color: 'var(--muted)' }}>
+                Tout d'abord, pour pouvoir installer un patch, il faut déjà être sur la version qui précède le patch que vous voulez installer. Si cette condition est remplie, il suffit de suivre ces étapes :
+              </p>
+              <ol style={{ color: 'var(--muted)', paddingLeft: '20px' }}>
+                <li style={{ marginBottom: '8px' }}>Téléchargez le Patch.zip correspondant à la version que vous voulez installer</li>
+                <li style={{ marginBottom: '8px' }}>Déplacez ce zip à la racine de votre dossier de jeu</li>
+                <li>Enfin, extrayez le Patch.zip et il mettra à jour vos anciens dossiers</li>
+              </ol>
+            </div>
+          </div>
+        </Modal>
 
         {/* (optionnel) modal vidéo patch si utilisé */}
         {downloads.patchVideo && (

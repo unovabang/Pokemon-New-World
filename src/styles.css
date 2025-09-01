@@ -160,3 +160,9 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .social a{display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:10px; border:1px solid rgba(255,255,255,.18)}
 .footnote{margin-top:18px; padding:14px 0; border-top:1px solid rgba(126,205,242,.12); text-align:center}
 @media (max-width:900px){.footer-grid{grid-template-columns:1fr}}
+
+/* ===== Meta ===== */
+.meta-grid{display:grid; gap:14px; grid-template-columns:1fr 1fr; margin-top:16px}
+@media (max-width:900px){.meta-grid{grid-template-columns:1fr}}
+.dl-card{padding:24px 20px}
+.dl-title{margin:0 0 12px; font-size:16px}
