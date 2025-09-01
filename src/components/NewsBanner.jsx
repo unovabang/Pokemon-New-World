@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 
 export default function NewsBanner({ banners = [], interval = 5000 }) {
@@ -21,25 +20,13 @@ export default function NewsBanner({ banners = [], interval = 5000 }) {
 
   return (
     <div className="news-banner-container">
-      <div 
-        className="news-banner"
-        style={{
-          background: currentBanner.gradient,
-          color: currentBanner.textColor
-        }}
-      >
-        <div className="news-banner-content">
-          <div className="news-text">
-            <h3 className="news-title">{currentBanner.title}</h3>
-            <p className="news-subtitle">{currentBanner.subtitle}</p>
-          </div>
-          {currentBanner.image && (
-            <div className="news-image">
-              <img src={currentBanner.image} alt={currentBanner.title} />
-            </div>
-          )}
-        </div>
-        
+      <div className="news-banner">
+        <img 
+          src={currentBanner.image} 
+          alt={currentBanner.title || "Bannière actualité"} 
+          className="news-banner-image"
+        />
+
         {total > 1 && (
           <div className="news-indicators">
             {banners.map((_, idx) => (
