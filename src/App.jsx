@@ -111,7 +111,7 @@ export default function App() {
           {/* DERNIÈRES NOUVEAUTÉS */}
           <section id="news" className="section card">
             <h2>
-              <i className="fa-solid fa-sparkles"></i>{" "}
+              <i className="fa-solid fa-newspaper"></i>{" "}
               Dernières nouveautés
             </h2>
             <NewsBanner 
