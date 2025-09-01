@@ -327,8 +327,8 @@ export default function App() {
           onClose={() => setOpenExplanations(false)}
           title="Installer un patch — Explications"
         >
-          <div style={{ padding: '20px' }}>
-            <div style={{ marginBottom: '20px' }}>
+          <div className="explanations-content">
+            <div className="explanations-video">
               <iframe
                 width="100%"
                 height="315"
@@ -337,17 +337,16 @@ export default function App() {
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                style={{ borderRadius: '12px' }}
               />
             </div>
-            <div>
-              <h3 style={{ marginBottom: '16px', color: 'var(--text)' }}>Installation d'un patch</h3>
-              <p style={{ marginBottom: '12px', color: 'var(--muted)' }}>
+            <div className="explanations-text">
+              <h3>Installation d'un patch</h3>
+              <p>
                 Tout d'abord, pour pouvoir installer un patch, il faut déjà être sur la version qui précède le patch que vous voulez installer. Si cette condition est remplie, il suffit de suivre ces étapes :
               </p>
-              <ol style={{ color: 'var(--muted)', paddingLeft: '20px' }}>
-                <li style={{ marginBottom: '8px' }}>Téléchargez le Patch.zip correspondant à la version que vous voulez installer</li>
-                <li style={{ marginBottom: '8px' }}>Déplacez ce zip à la racine de votre dossier de jeu</li>
+              <ol>
+                <li>Téléchargez le Patch.zip correspondant à la version que vous voulez installer</li>
+                <li>Déplacez ce zip à la racine de votre dossier de jeu</li>
                 <li>Enfin, extrayez le Patch.zip et il mettra à jour vos anciens dossiers</li>
               </ol>
             </div>
