@@ -54,6 +54,7 @@ export default function App() {
   const { backgrounds, heroVideo, game, carousel, discord, downloads } =
     content;
   const [openVideo, setOpenVideo] = useState(false);
+  const [openExplanations, setOpenExplanations] = useState(false);
 
   return (
     <>
@@ -204,9 +205,12 @@ export default function App() {
                   <a className="btn btn-primary" href={downloads.patch}>
                     <i className="fa-solid fa-file-arrow-up"></i> Patch
                   </a>
-                  <a className="btn btn-ghost" href={downloads.notes}>
-                    <i className="fa-solid fa-clipboard-list"></i> Notes
-                  </a>
+                  <button 
+                    className="btn btn-ghost" 
+                    onClick={() => setOpenExplanations(true)}
+                  >
+                    <i className="fa-solid fa-clipboard-list"></i> Explications
+                  </button>
                 </div>
               </div>
             </div>
@@ -318,6 +322,52 @@ export default function App() {
             réservés.
           </div>
         </footer>
+
+        {/* Modal explications patch */}
+        <Modal
+          open={openExplanations}
+          onClose={() => setOpenExplanations(false)}
+          title="Comment installer un patch"
+        >
+          <div className="explanations-content">
+            <div className="video-container" style={{ marginBottom: "20px" }}>
+              <iframe
+                src="https://www.youtube.com/embed/043CVnIdeZ0"
+                title="Tutoriel installation patch"
+                style={{ 
+                  width: "100%", 
+                  height: "315px", 
+                  borderRadius: "12px",
+                  border: "1px solid rgba(126,205,242,.18)"
+                }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+            
+            <div className="instructions">
+              <h4 style={{ marginTop: 0, color: "var(--text)" }}>Installation d'un patch</h4>
+              <p style={{ color: "var(--muted)", marginBottom: "16px" }}>
+                Pour pouvoir installer un patch, il est nécessaire d'être déjà sur la version qui précède le patch que vous voulez installer.
+              </p>
+              
+              <div className="steps-list">
+                <div className="step-item">
+                  <span className="step-number">1</span>
+                  <span>Téléchargez le Patch.zip correspondant à la version que vous voulez installer</span>
+                </div>
+                <div className="step-item">
+                  <span className="step-number">2</span>
+                  <span>Déplacez ce zip à la racine de votre dossier de jeu</span>
+                </div>
+                <div className="step-item">
+                  <span className="step-number">3</span>
+                  <span>Extrayez le Patch.zip et il mettra à jour vos anciens dossiers</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal>
 
         {/* (optionnel) modal vidéo patch si utilisé ailleurs */}
         {downloads.patchVideo && (
