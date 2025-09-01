@@ -8,6 +8,7 @@ import NewsBanner from "./components/NewsBanner";
 
 function Nav() {
   const [open, setOpen] = useState(false);
+  const [openDownload, setOpenDownload] = useState(false); // State for the new download modal
   return (
     <nav className="nav">
       <div className="container nav-inner">
@@ -39,14 +40,59 @@ function Nav() {
           <a className="navlink" href="#captures">
             <i className="fa-solid fa-images"></i> Captures
           </a>
-          {/* pas de lien “Téléchargement” ; le CTA scrolle vers la section */}
+          {/* pas de lien "Téléchargement" ; le CTA ouvre le modal */}
           <span className="nav-cta">
-            <a className="btn btn-primary" href="#download">
+            <button 
+              className="btn btn-primary" 
+              onClick={() => setOpenDownload(true)}
+            >
               <i className="fa-solid fa-cloud-arrow-down"></i> Télécharger
-            </a>
+            </button>
           </span>
         </div>
       </div>
+      {/* Download Modal */}
+      <Modal
+        open={openDownload}
+        onClose={() => setOpenDownload(false)}
+        title="Téléchargement"
+      >
+        <div className="download-modal-content">
+          <p>Les patchs ET le jeu se trouveront ici dans ce dossier : <a href="https://replit.com/@steven066996/Pokemon-New-World#src/T%C3%A9l%C3%A9chargement" target="_blank" rel="noreferrer">Lien du dossier</a></p>
+          <div className="modal-buttons">
+            <a 
+              className="btn btn-primary" 
+              href={content.downloads.windows} 
+              onClick={() => setOpenDownload(false)}
+            >
+              <i className="fa-solid fa-download"></i> Télécharger le jeu
+            </a>
+            <a 
+              className="btn btn-primary" 
+              href={content.downloads.patch} 
+              onClick={() => setOpenDownload(false)}
+            >
+              <i className="fa-solid fa-file-arrow-up"></i> Télécharger le patch
+            </a>
+          </div>
+          <div className="patch-instructions">
+            <h3>Note sur les patchs :</h3>
+            <p>
+              Pour installer un patch, assurez-vous d'avoir la version précédente installée. Placez le fichier patch.zip à la racine de votre jeu, extrayez-le, et il mettra à jour les anciens dossiers. 
+            </p>
+            <p>Vous pouvez également consulter la vidéo tutoriel pour plus de détails.</p>
+            <button 
+              className="btn btn-ghost" 
+              onClick={() => {
+                setOpenExplanations(true);
+                setOpenDownload(false); 
+              }}
+            >
+              <i className="fa-solid fa-play"></i> Voir la vidéo explicative
+            </button>
+          </div>
+        </div>
+      </Modal>
     </nav>
   );
 }
@@ -150,109 +196,48 @@ export default function App() {
             </div>
           </section>
 
-          {/* TÉLÉCHARGEMENT */}
-          <section id="download" className="section card dl-section">
-            <h2>
-              <i className="fa-solid fa-cloud-arrow-down"></i> Téléchargement
-            </h2>
-            <div className="steps-chips">
-              <span className="step-chip">
-                <span className="num">1</span> Télécharger
-              </span>
-              <span className="step-chip">
-                <span className="num">2</span> Décompresser
-              </span>
-              <span className="step-chip">
-                <span className="num">3</span> Lancer
-              </span>
+          {/* Meta */}
+          <div className="meta-grid">
+            <div className="card dl-card">
+              <h3 className="dl-title">
+                <i className="fa-solid fa-microchip"></i> Configuration
+                requise
+              </h3>
+              <ul className="list-check" style={{ marginTop: 8 }}>
+                <li>
+                  <i className="fa-solid fa-desktop"></i>{" "}
+                  <span>Windows 10/11 (x64)</span>
+                </li>
+                <li>
+                  <i className="fa-solid fa-microchip"></i>{" "}
+                  <span>CPU 2 cœurs · RAM 4 Go · Stockage 3 Go</span>
+                </li>
+                <li>
+                  <i className="fa-solid fa-microchip"></i>{" "}
+                  <span>GPU OpenGL 2.1+ (Intel/AMD/NVIDIA)</span>
+                </li>
+              </ul>
             </div>
-
-            <div className="tiles">
-              <div className="tile">
-                <div className="icon-round">
-                  <i className="fa-brands fa-windows"></i>
-                </div>
-                <div>
-                  <div className="title">Version Windows</div>
-                  <div className="subtitle">PSDK · FR/EN</div>
-                </div>
-                <div className="actions">
-                  <a className="btn btn-primary" href={downloads.windows}>
-                    <i className="fa-solid fa-download"></i> Télécharger
-                  </a>
-                  <a className="btn btn-ghost" href={downloads.mirror}>
-                    <i className="fa-solid fa-link"></i> Miroir
-                  </a>
-                </div>
-              </div>
-
-              <div className="tile">
-                <div className="icon-round">
-                  <i className="fa-solid fa-screwdriver-wrench"></i>
-                </div>
-                <div>
-                  <div className="title">Patch / Mise à jour</div>
-                  <div className="subtitle">
-                    Mettez à jour une version existante.
-                  </div>
-                </div>
-                <div className="actions">
-                  <a className="btn btn-primary" href={downloads.patch}>
-                    <i className="fa-solid fa-file-arrow-up"></i> Patch
-                  </a>
-                  <button 
-                    className="btn btn-ghost" 
-                    onClick={() => setOpenExplanations(true)}
-                  >
-                    <i className="fa-solid fa-clipboard-list"></i> Explications
-                  </button>
-                </div>
-              </div>
+            <div className="card dl-card">
+              <h3 className="dl-title">
+                <i className="fa-solid fa-circle-question"></i> Aide rapide
+              </h3>
+              <ul className="list-check" style={{ marginTop: 8 }}>
+                <li>
+                  <i className="fa-solid fa-shield-halved"></i>{" "}
+                  <span>Désactivez SmartScreen si nécessaire.</span>
+                </li>
+                <li>
+                  <i className="fa-solid fa-folder-open"></i>{" "}
+                  <span>Utilisez un chemin simple.</span>
+                </li>
+                <li>
+                  <i className="fa-brands fa-discord"></i>{" "}
+                  <span>Besoin d'aide ? Rejoignez le Discord.</span>
+                </li>
+              </ul>
             </div>
-
-            {/* Meta */}
-            <div className="meta-grid">
-              <div className="card dl-card">
-                <h3 className="dl-title">
-                  <i className="fa-solid fa-microchip"></i> Configuration
-                  requise
-                </h3>
-                <ul className="list-check" style={{ marginTop: 8 }}>
-                  <li>
-                    <i className="fa-solid fa-desktop"></i>{" "}
-                    <span>Windows 10/11 (x64)</span>
-                  </li>
-                  <li>
-                    <i className="fa-solid fa-microchip"></i>{" "}
-                    <span>CPU 2 cœurs · RAM 4 Go · Stockage 3 Go</span>
-                  </li>
-                  <li>
-                    <i className="fa-solid fa-microchip"></i>{" "}
-                    <span>GPU OpenGL 2.1+ (Intel/AMD/NVIDIA)</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="card dl-card">
-                <h3 className="dl-title">
-                  <i className="fa-solid fa-circle-question"></i> Aide rapide
-                </h3>
-                <ul className="list-check" style={{ marginTop: 8 }}>
-                  <li>
-                    <i className="fa-solid fa-shield-halved"></i>{" "}
-                    <span>Désactivez SmartScreen si nécessaire.</span>
-                  </li>
-                  <li>
-                    <i className="fa-solid fa-folder-open"></i>{" "}
-                    <span>Utilisez un chemin simple.</span>
-                  </li>
-                  <li>
-                    <i className="fa-brands fa-discord"></i>{" "}
-                    <span>Besoin d’aide ? Rejoignez le Discord.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </section>
+          </div>
         </div>
 
         {/* Footer */}
