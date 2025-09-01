@@ -98,24 +98,15 @@ margin-left: 55px;
   position:relative; overflow:hidden; border-radius:18px; 
   border:1px solid rgba(126,205,242,.18); 
   box-shadow:0 12px 32px rgba(0,0,0,.25);
-  min-height:120px; display:flex; align-items:center;
 }
-.news-banner-content{
-  display:flex; align-items:center; justify-content:space-between; 
-  width:100%; padding:20px 24px; position:relative; z-index:2;
+.news-banner-image{
+  width:100%; height:auto; display:block;
+  border-radius:18px;
+  transition:transform .3s ease;
 }
-.news-text{flex:1}
-.news-title{
-  margin:0; font-size:clamp(18px,3vw,28px); font-weight:900; 
-  text-transform:uppercase; letter-spacing:0.5px;
-  text-shadow:2px 2px 4px rgba(0,0,0,.5);
+.news-banner:hover .news-banner-image{
+  transform:scale(1.02);
 }
-.news-subtitle{
-  margin:4px 0 0; font-size:clamp(14px,2vw,18px); font-weight:600;
-  text-shadow:1px 1px 2px rgba(0,0,0,.5);
-}
-.news-image{flex-shrink:0; margin-left:20px}
-.news-image img{height:60px; width:auto; object-fit:contain}
 .news-indicators{
   position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
   display:flex; gap:6px; z-index:3;
@@ -125,10 +116,6 @@ margin-left: 55px;
   background:rgba(255,255,255,.2); cursor:pointer; transition:all .3s ease;
 }
 .news-dot.active{background:rgba(255,255,255,.8); transform:scale(1.2)}
-@media (max-width:768px){
-  .news-banner-content{flex-direction:column; text-align:center; gap:16px}
-  .news-image{margin:0}
-}
 
 /* ===== Sections / Carousel / Download ===== */
 .section{margin-top:56px; padding:28px}
