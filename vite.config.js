@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     host: "0.0.0.0", // Bind to all interfaces
     allowedHosts: [
-      "a91a3d78-96f9-48f7-9a47-6a49c0b5ab55-00-1j6p6bhipkvaw.janeway.replit.dev",
+      "8d5f5349-152f-4f1e-9c31-45cb5ac38433-00-1s870j288ij76.picard.replit.dev",
     ],
   },
 });
