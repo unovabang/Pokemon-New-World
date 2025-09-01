@@ -4,6 +4,7 @@ import HeroVideo from "./components/HeroVideo";
 import Carousel from "./components/Carousel";
 import Modal from "./components/Modal";
 import YouTubeAudio from "./components/YouTubeAudio";
+import NewsBanner from "./components/NewsBanner";
 
 function Nav() {
   const [open, setOpen] = useState(false);
@@ -32,8 +33,8 @@ function Nav() {
           className={`links ${open ? "open" : ""}`}
           onClick={() => setOpen(false)}
         >
-          <a className="navlink" href="#features">
-            <i className="fa-solid fa-wand-magic-sparkles"></i> Fonctionnalités
+          <a className="navlink" href="#news">
+            <i className="fa-solid fa-sparkles"></i> Nouveautés
           </a>
           <a className="navlink" href="#captures">
             <i className="fa-solid fa-images"></i> Captures
@@ -107,20 +108,16 @@ export default function App() {
             </HeroVideo>
           </section>
 
-          {/* FONCTIONNALITÉS */}
-          <section id="features" className="section card">
+          {/* DERNIÈRES NOUVEAUTÉS */}
+          <section id="news" className="section card">
             <h2>
-              <i className="fa-solid fa-wand-magic-sparkles"></i>{" "}
-              Fonctionnalités
+              <i className="fa-solid fa-sparkles"></i>{" "}
+              Dernières nouveautés
             </h2>
-            <ul className="list-check" style={{ marginTop: 8 }}>
-              {game.features.map((f, i) => (
-                <li key={i}>
-                  <i className="fa-solid fa-check"></i>
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
+            <NewsBanner 
+              banners={content.news?.banners || []} 
+              interval={content.news?.interval || 5000}
+            />
           </section>
 
           {/* CAPTURES */}
@@ -287,9 +284,9 @@ export default function App() {
               <h4>Navigation</h4>
               <ul>
                 <li>
-                  <a href="#features">
-                    <i className="fa-solid fa-wand-magic-sparkles"></i>{" "}
-                    Fonctionnalités
+                  <a href="#news">
+                    <i className="fa-solid fa-sparkles"></i>{" "}
+                    Nouveautés
                   </a>
                 </li>
                 <li>
