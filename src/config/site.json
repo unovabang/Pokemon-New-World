@@ -1,14 +1,22 @@
-
 {
   "seo": {
     "title": "Pokémon New World • Site officiel",
     "description": "Site officiel du fangame Pokémon New World : explorez Bélamie, découvrez les nouveaux types Aspic & Malice, et téléchargez le jeu gratuitement.",
-    "keywords": ["pokemon", "fangame", "new world", "belamie", "aspic", "malice", "rpg", "jeu gratuit"]
+    "keywords": [
+      "pokemon",
+      "fangame",
+      "new world",
+      "belamie",
+      "aspic",
+      "malice",
+      "rpg",
+      "jeu gratuit"
+    ]
   },
   "backgrounds": {
     "home": "https://the4kwallpaperfactory.com/wp-content/uploads/2025/04/greninja-scaled.jpg",
-    "blur": 1,
-    "dim": 0.45
+    "blur": 0.5,
+    "dim": 0.01
   },
   "heroVideo": {
     "youtubeId": "uZTi9YUo0As"
