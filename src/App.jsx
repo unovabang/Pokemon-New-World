@@ -91,8 +91,8 @@ export default function App() {
           {/* DERNIÈRES NOUVEAUTÉS */}
           <section id="news" className="section card">
             <h2>
-              <img src="/news.png" alt="Icône nouveautés" className="section-icon" />{" "}
-              {content.sections?.news?.title || "Dernières nouveautés"}
+              <img src="/newsCLEAN3.png" alt="Icône nouveautés" className="section-icon" />{" "}
+              {content.sections?.news?.title || "DERNIÈRES NOUVEAUTÉS"}
             </h2>
             <NewsBanner 
               banners={content.news?.banners || []} 
