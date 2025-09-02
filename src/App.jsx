@@ -1,5 +1,5 @@
-import { useState } from "react";
-import content from "./content.json";
+import { useState, useEffect } from "react";
+import content from "./config/index.js";
 import HeroVideo from "./components/HeroVideo";
 import Carousel from "./components/Carousel";
 import Modal from "./components/Modal";
@@ -59,6 +59,27 @@ export default function App() {
   const [openExplanations, setOpenExplanations] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
 
+  // Mise à jour des métadonnées SEO
+  useEffect(() => {
+    if (content.seo) {
+      if (content.seo.title) {
+        document.title = content.seo.title;
+        const titleEl = document.getElementById('page-title');
+        if (titleEl) titleEl.textContent = content.seo.title;
+      }
+      
+      if (content.seo.description) {
+        const descEl = document.getElementById('page-description');
+        if (descEl) descEl.setAttribute('content', content.seo.description);
+      }
+      
+      if (content.seo.keywords) {
+        const keywordsEl = document.getElementById('page-keywords');
+        if (keywordsEl) keywordsEl.setAttribute('content', content.seo.keywords.join(','));
+      }
+    }
+  }, []);
+
   return (
     <>
       <Nav setOpenDownload={setOpenDownload} />
@@ -116,8 +137,8 @@ export default function App() {
           {/* DERNIÈRES NOUVEAUTÉS */}
           <section id="news" className="section card">
             <h2>
-              <i className="fa-solid fa-newspaper"></i>{" "}
-              Dernières nouveautés
+              <i className={content.sections?.news?.icon || "fa-solid fa-newspaper"}></i>{" "}
+              {content.sections?.news?.title || "Dernières nouveautés"}
             </h2>
             <NewsBanner 
               banners={content.news?.banners || []} 
@@ -137,63 +158,67 @@ export default function App() {
           <div className="container footer-grid">
             <div className="footer-col">
               <div className="footer-brand">
-                <img src="/logo.png" alt="Logo Pokémon New World" />
-                <strong>Pokémon New World</strong>
+                {content.footer?.brand?.showLogo && (
+                  <img src="/logo.png" alt="Logo Pokémon New World" />
+                )}
+                <strong>{content.footer?.brand?.name || "Pokémon New World"}</strong>
               </div>
               <p style={{ marginTop: 8, color: "var(--muted)" }}>
-                Site officiel du fangame.
+                {content.footer?.brand?.description || "Site officiel du fangame."}
               </p>
               <div className="social">
                 <a
-                  href={discord?.invite || "#"}
+                  href={content.footer?.social?.discord?.url || discord?.invite || "#"}
                   target="_blank"
                   rel="noreferrer"
-                  title="Discord"
+                  title={content.footer?.social?.discord?.title || "Discord"}
                 >
-                  <i className="fa-brands fa-discord"></i>
+                  <i className={content.footer?.social?.discord?.icon || "fa-brands fa-discord"}></i>
                 </a>
                 <button 
                   onClick={() => setOpenDownload(true)}
                   style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
-                  title="Télécharger"
+                  title={content.footer?.social?.download?.title || "Télécharger"}
                 >
-                  <i className="fa-solid fa-download"></i>
+                  <i className={content.footer?.social?.download?.icon || "fa-solid fa-download"}></i>
                 </button>
               </div>
             </div>
             <div className="footer-col">
-              <h4>Navigation</h4>
+              <h4>{content.footer?.navigation?.title || "Navigation"}</h4>
               <ul>
-                <li>
-                  <a href="#news">
-                    <i className="fa-solid fa-newspaper"></i>{" "}
-                    Nouveautés
-                  </a>
-                </li>
-                <li>
-                  <button 
-                    onClick={() => setOpenDownload(true)}
-                    style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
-                  >
-                    <i className="fa-solid fa-cloud-arrow-down"></i>{" "}
-                    Téléchargement
-                  </button>
-                </li>
+                {content.footer?.navigation?.links?.map((link, index) => (
+                  <li key={index}>
+                    {link.action === "download" ? (
+                      <button 
+                        onClick={() => setOpenDownload(true)}
+                        style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
+                      >
+                        <i className={link.icon}></i>{" "}
+                        {link.text}
+                      </button>
+                    ) : (
+                      <a href={link.href}>
+                        <i className={link.icon}></i>{" "}
+                        {link.text}
+                      </a>
+                    )}
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="footer-col">
-              <h4>Légal</h4>
+              <h4>{content.footer?.legal?.title || "Légal"}</h4>
               <ul>
-                <li>
-                  Fan-game non affilié à Nintendo / Creatures / GAME FREAK.
-                </li>
-                <li>Marques et assets appartiennent à leurs ayants droit.</li>
+                {content.footer?.legal?.text?.map((text, index) => (
+                  <li key={index}>{text}</li>
+                ))}
               </ul>
             </div>
           </div>
           <div className="container footnote">
-            © {new Date().getFullYear()} Pokémon New World — tous droits
-            réservés.
+            {content.footer?.copyright?.replace("{year}", new Date().getFullYear()) || 
+             `© ${new Date().getFullYear()} Pokémon New World — tous droits réservés.`}
           </div>
         </footer>
 
