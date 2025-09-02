@@ -95,12 +95,12 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 /* >>> Logo du hero : taille réduite pour un meilleur cadrage */
 .hero-logo{
 	height:clamp(120px, 16vw, 240px);
-	width:auto; display:block; margin:0 auto 24px;
+	width:auto; display:block; 
+	margin-left: 56px;
 	filter:drop-shadow(0 12px 32px rgba(126,205,242,.55)) saturate(1.06);
 	transform:translateZ(0);
 	transition:transform .25s ease, filter .25s ease;
 }
-margin-left: 55px;
 @media (hover:hover){
 	.hero-logo:hover{
 		transform:scale(1.06);
