@@ -5,6 +5,7 @@ import footer from './footer.json';
 import news from './news.json';
 import downloads from './downloads.json';
 import external from './external.json';
+import patreon from './patreon.json';
 
 export default {
   ...site,
@@ -12,5 +13,6 @@ export default {
   footer,
   news,
   downloads,
+  patreon,
   ...external
 };

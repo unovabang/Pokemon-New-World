@@ -103,27 +103,27 @@ export default function App() {
           {/* SECTION PATREON */}
           <section id="patreon" className="section card">
             <h2>
-              <img src="/patreonlogo.png" alt="Logo Patreon" className="section-icon" />{" "}
-              Obtiens les nouveautés en avance !
+              <img src={content.patreon?.icon || "/patreonlogo.png"} alt="Logo Patreon" className="section-icon" />{" "}
+              {content.patreon?.title || "Obtiens les nouveautés en avance !"}
             </h2>
             <div className="patreon-content">
               <div className="patreon-image-container">
                 <img 
-                  src="/patreon.png" 
+                  src={content.patreon?.image || "/patreon.png"} 
                   alt="Soutenez-nous sur Patreon" 
                   className="patreon-image"
                 />
                 <div className="patreon-overlay">
                   <div className="patreon-cta">
-                    <h3>Soutenez le projet</h3>
-                    <p>Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !</p>
+                    <h3>{content.patreon?.content?.heading || "Soutenez le projet"}</h3>
+                    <p>{content.patreon?.content?.description || "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !"}</p>
                     <a 
-                      href="https://www.patreon.com" 
+                      href={content.patreon?.content?.url || "https://www.patreon.com"} 
                       target="_blank" 
                       rel="noreferrer"
                       className="btn btn-primary patreon-btn"
                     >
-                      <i className="fa-brands fa-patreon"></i> Soutenir sur Patreon
+                      <i className={content.patreon?.content?.buttonIcon || "fa-brands fa-patreon"}></i> {content.patreon?.content?.buttonText || "Soutenir sur Patreon"}
                     </a>
                   </div>
                 </div>
