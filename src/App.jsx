@@ -100,6 +100,37 @@ export default function App() {
             />
           </section>
 
+          {/* SECTION PATREON */}
+          <section id="patreon" className="section card">
+            <h2>
+              <img src="/patreonlogo.png" alt="Logo Patreon" className="section-icon" />{" "}
+              Obtiens les nouveautés en avance !
+            </h2>
+            <div className="patreon-content">
+              <div className="patreon-image-container">
+                <img 
+                  src="/patreon.png" 
+                  alt="Soutenez-nous sur Patreon" 
+                  className="patreon-image"
+                />
+                <div className="patreon-overlay">
+                  <div className="patreon-cta">
+                    <h3>Soutenez le projet</h3>
+                    <p>Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !</p>
+                    <a 
+                      href="https://www.patreon.com" 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="btn btn-primary patreon-btn"
+                    >
+                      <i className="fa-brands fa-patreon"></i> Soutenir sur Patreon
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           
 
           

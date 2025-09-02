@@ -433,6 +433,92 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .footnote{margin-top:18px; padding:14px 0; border-top:1px solid rgba(126,205,242,.12); text-align:center}
 @media (max-width:900px){.footer-grid{grid-template-columns:1fr}}
 
+/* ===== Patreon Section ===== */
+.patreon-content{margin-top:16px}
+.patreon-image-container{
+  position:relative; 
+  border-radius:18px; 
+  overflow:hidden; 
+  border:1px solid rgba(126,205,242,.18); 
+  box-shadow:0 12px 32px rgba(0,0,0,.25);
+  transition:transform .3s ease;
+}
+.patreon-image-container:hover{
+  transform:scale(1.02);
+}
+.patreon-image{
+  width:100%; 
+  height:auto; 
+  display:block;
+  transition:transform .3s ease;
+}
+.patreon-overlay{
+  position:absolute; 
+  inset:0; 
+  background:linear-gradient(
+    135deg, 
+    rgba(0,0,0,.4) 0%, 
+    rgba(0,0,0,.6) 50%,
+    rgba(0,0,0,.8) 100%
+  );
+  display:flex; 
+  align-items:center; 
+  justify-content:center;
+  opacity:0;
+  transition:opacity .3s ease;
+}
+.patreon-image-container:hover .patreon-overlay{
+  opacity:1;
+}
+.patreon-cta{
+  text-align:center; 
+  padding:24px; 
+  color:var(--text);
+}
+.patreon-cta h3{
+  margin:0 0 12px; 
+  font-size:clamp(18px,2.2vw,24px); 
+  font-weight:700;
+  background:linear-gradient(135deg,var(--primary-2),#bfe8ff); 
+  -webkit-background-clip:text; 
+  background-clip:text; 
+  -webkit-text-fill-color:transparent;
+}
+.patreon-cta p{
+  margin:0 0 20px; 
+  color:rgba(255,255,255,.9); 
+  font-size:15px; 
+  line-height:1.5;
+}
+.patreon-btn{
+  background:linear-gradient(135deg,#ff424d,#ff8a00);
+  border:1px solid rgba(255,66,77,.4);
+  box-shadow:0 12px 32px rgba(255,66,77,.4), 
+             0 0 0 1px rgba(255,138,0,.2) inset;
+  color:#fff;
+  font-weight:700;
+  padding:14px 24px;
+  font-size:16px;
+  position:relative;
+  overflow:hidden;
+}
+.patreon-btn::before{
+  content:""; 
+  position:absolute; 
+  inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,.3), transparent 50%);
+  transform:translateX(-120%); 
+  transition:transform .5s ease;
+}
+.patreon-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 40px rgba(255,66,77,.5), 
+             0 0 0 1px rgba(255,138,0,.4) inset;
+}
+.patreon-btn:hover::before{
+  transform:translateX(120%);
+}
+
 /* ===== Meta ===== */
 .meta-grid{display:grid; gap:14px; grid-template-columns:1fr 1fr; margin-top:16px}
 @media (max-width:900px){.meta-grid{grid-template-columns:1fr}}
