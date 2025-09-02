@@ -137,7 +137,7 @@ export default function App() {
           {/* DERNIÈRES NOUVEAUTÉS */}
           <section id="news" className="section card">
             <h2>
-              <i className={content.sections?.news?.icon || "fa-solid fa-newspaper"}></i>{" "}
+              <img src="/news.png" alt="Icône nouveautés" className="section-icon" />{" "}
               {content.sections?.news?.title || "Dernières nouveautés"}
             </h2>
             <NewsBanner 
