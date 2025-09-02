@@ -34,7 +34,7 @@ function Nav({ setOpenDownload }) {
           onClick={() => setOpen(false)}
         >
           <a className="navlink" href="#news">
-            <i className="fa-solid fa-sparkles"></i> Nouveautés
+            <i className="fa-solid fa-newspaper"></i> Nouveautés
           </a>
           {/* pas de lien "Téléchargement" ; le CTA ouvre le modal */}
           <span className="nav-cta">
