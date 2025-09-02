@@ -6,51 +6,7 @@ import Modal from "./components/Modal";
 import YouTubeAudio from "./components/YouTubeAudio";
 import NewsBanner from "./components/NewsBanner";
 
-function Nav({ setOpenDownload }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <nav className="nav">
-      <div className="container nav-inner">
-        {/* Logo seul dans la navbar */}
-        <a href="#top" className="brand" aria-label="Accueil">
-          <img
-            className="brand-logo"
-            src="/logo.png"
-            alt="Logo Pokémon New World"
-          />
-        </a>
 
-        <button
-          className="burger"
-          aria-label="Ouvrir le menu"
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-        >
-          ☰
-        </button>
-
-        <div
-          className={`links ${open ? "open" : ""}`}
-          onClick={() => setOpen(false)}
-        >
-          <a className="navlink" href="#news">
-            <i className="fa-solid fa-newspaper"></i> Nouveautés
-          </a>
-          {/* pas de lien "Téléchargement" ; le CTA ouvre le modal */}
-          <span className="nav-cta">
-            <button 
-              className="btn btn-primary" 
-              onClick={() => setOpenDownload(true)}
-            >
-              <i className="fa-solid fa-cloud-arrow-down"></i> Télécharger
-            </button>
-          </span>
-        </div>
-      </div>
-      
-    </nav>
-  );
-}
 
 export default function App() {
   const { backgrounds, heroVideo, game, carousel, discord, downloads } =
@@ -82,8 +38,6 @@ export default function App() {
 
   return (
     <>
-      <Nav setOpenDownload={setOpenDownload} />
-
       <main
         id="top"
         className="page"
