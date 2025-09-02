@@ -152,9 +152,13 @@ export default function App() {
                 >
                   <i className="fa-brands fa-discord"></i>
                 </a>
-                <a href="#download" title="Télécharger">
+                <button 
+                  onClick={() => setOpenDownload(true)}
+                  style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
+                  title="Télécharger"
+                >
                   <i className="fa-solid fa-download"></i>
-                </a>
+                </button>
               </div>
             </div>
             <div className="footer-col">
@@ -162,7 +166,7 @@ export default function App() {
               <ul>
                 <li>
                   <a href="#news">
-                    <i className="fa-solid fa-sparkles"></i>{" "}
+                    <i className="fa-solid fa-newspaper"></i>{" "}
                     Nouveautés
                   </a>
                 </li>
