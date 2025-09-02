@@ -48,10 +48,10 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   -webkit-text-fill-color:transparent; filter:drop-shadow(0 0 2px rgba(126,205,242,.3));
 }
 .section-icon {
-  width: 2em;
-  height: 2em;
-  vertical-align: -0.4em;
-  margin-right: 0.8rem;
+  width: 1.3em;
+  height: 1.3em;
+  vertical-align: -0.25em;
+  margin-right: 0.5rem;
 }
 
 .nav-cta{margin-left:.4rem}.nav-cta .btn{padding:.7rem 1rem}
