@@ -1,0 +1,42 @@
+
+{
+  "brand": {
+    "name": "Pokémon New World",
+    "description": "Site officiel du fangame.",
+    "showLogo": true
+  },
+  "social": {
+    "discord": {
+      "url": "#",
+      "title": "Discord",
+      "icon": "fa-brands fa-discord"
+    },
+    "download": {
+      "title": "Télécharger",
+      "icon": "fa-solid fa-download"
+    }
+  },
+  "navigation": {
+    "title": "Navigation",
+    "links": [
+      {
+        "text": "Nouveautés",
+        "href": "#news",
+        "icon": "fa-solid fa-newspaper"
+      },
+      {
+        "text": "Téléchargement",
+        "action": "download",
+        "icon": "fa-solid fa-cloud-arrow-down"
+      }
+    ]
+  },
+  "legal": {
+    "title": "Légal",
+    "text": [
+      "Fan-game non affilié à Nintendo / Creatures / GAME FREAK.",
+      "Marques et assets appartiennent à leurs ayants droit."
+    ]
+  },
+  "copyright": "© {year} Pokémon New World — tous droits réservés."
+}

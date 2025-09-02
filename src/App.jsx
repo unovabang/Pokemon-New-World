@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import content from "./content.json";
+import content from "./config/index.js";
 import HeroVideo from "./components/HeroVideo";
 import Carousel from "./components/Carousel";
 import Modal from "./components/Modal";
