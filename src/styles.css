@@ -48,9 +48,9 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   -webkit-text-fill-color:transparent; filter:drop-shadow(0 0 2px rgba(126,205,242,.3));
 }
 .section-icon {
-  width: 1.2em;
-  height: 1.2em;
-  vertical-align: -0.2em;
+  width: 1.3em;
+  height: 1.3em;
+  vertical-align: -0.25em;
   margin-right: 0.5rem;
 }
 
@@ -156,7 +156,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 
 /* ===== Sections / Carousel / Download ===== */
 .section{margin-top:32px; padding:28px}
-.section h2{margin:0 0 16px; font-size:clamp(22px,2.8vw,32px)}
+.section h2{margin:0 0 16px; font-size:clamp(24px,3vw,36px); display:flex; align-items:center}
 .section h2 i{margin-right:.5rem; opacity:.9}
 .section p{margin:0; color:var(--muted)}
 
