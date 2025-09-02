@@ -6,9 +6,8 @@ import Modal from "./components/Modal";
 import YouTubeAudio from "./components/YouTubeAudio";
 import NewsBanner from "./components/NewsBanner";
 
-function Nav() {
+function Nav({ setOpenDownload }) {
   const [open, setOpen] = useState(false);
-  const [openDownload, setOpenDownload] = useState(false); // State for the new download modal
   return (
     <nav className="nav">
       <div className="container nav-inner">
@@ -35,10 +34,7 @@ function Nav() {
           onClick={() => setOpen(false)}
         >
           <a className="navlink" href="#news">
-            <i className="fa-solid fa-sparkles"></i> Nouveautés
-          </a>
-          <a className="navlink" href="#captures">
-            <i className="fa-solid fa-images"></i> Captures
+            <i className="fa-solid fa-newspaper"></i> Nouveautés
           </a>
           {/* pas de lien "Téléchargement" ; le CTA ouvre le modal */}
           <span className="nav-cta">
@@ -51,48 +47,7 @@ function Nav() {
           </span>
         </div>
       </div>
-      {/* Download Modal */}
-      <Modal
-        open={openDownload}
-        onClose={() => setOpenDownload(false)}
-        title="Téléchargement"
-      >
-        <div className="download-modal-content">
-          <p>Les patchs ET le jeu se trouveront ici dans ce dossier : <a href="https://replit.com/@steven066996/Pokemon-New-World#src/T%C3%A9l%C3%A9chargement" target="_blank" rel="noreferrer">Lien du dossier</a></p>
-          <div className="modal-buttons">
-            <a 
-              className="btn btn-primary" 
-              href={content.downloads.windows} 
-              onClick={() => setOpenDownload(false)}
-            >
-              <i className="fa-solid fa-download"></i> Télécharger le jeu
-            </a>
-            <a 
-              className="btn btn-primary" 
-              href={content.downloads.patch} 
-              onClick={() => setOpenDownload(false)}
-            >
-              <i className="fa-solid fa-file-arrow-up"></i> Télécharger le patch
-            </a>
-          </div>
-          <div className="patch-instructions">
-            <h3>Note sur les patchs :</h3>
-            <p>
-              Pour installer un patch, assurez-vous d'avoir la version précédente installée. Placez le fichier patch.zip à la racine de votre jeu, extrayez-le, et il mettra à jour les anciens dossiers. 
-            </p>
-            <p>Vous pouvez également consulter la vidéo tutoriel pour plus de détails.</p>
-            <button 
-              className="btn btn-ghost" 
-              onClick={() => {
-                setOpenExplanations(true);
-                setOpenDownload(false); 
-              }}
-            >
-              <i className="fa-solid fa-play"></i> Voir la vidéo explicative
-            </button>
-          </div>
-        </div>
-      </Modal>
+      
     </nav>
   );
 }
@@ -102,10 +57,11 @@ export default function App() {
     content;
   const [openVideo, setOpenVideo] = useState(false);
   const [openExplanations, setOpenExplanations] = useState(false);
+  const [openDownload, setOpenDownload] = useState(false);
 
   return (
     <>
-      <Nav />
+      <Nav setOpenDownload={setOpenDownload} />
 
       <main
         id="top"
@@ -138,9 +94,12 @@ export default function App() {
                 />
                 {/* Titre texte retiré */}
                 <div className="cta">
-                  <a className="btn btn-primary" href="#download">
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => setOpenDownload(true)}
+                  >
                     <i className="fa-solid fa-cloud-arrow-down"></i> Télécharger
-                  </a>
+                  </button>
                   <a
                     className="btn btn-ghost"
                     href={discord?.invite || "#"}
@@ -166,78 +125,11 @@ export default function App() {
             />
           </section>
 
-          {/* CAPTURES */}
-          <section id="captures" className="section card">
-            <h2>
-              <i className="fa-solid fa-images"></i> Captures
-            </h2>
-            <Carousel images={carousel} interval={4200} />
-          </section>
+          
 
-          {/* DISCORD CTA */}
-          <section id="discord" className="section card discord-cta">
-            <i
-              className="fa-brands fa-discord discord-icon"
-              aria-hidden="true"
-            ></i>
-            <div>
-              <h3>Rejoignez le Discord officiel</h3>
-              <p>Actus, entraide, échanges GTS et annonces de versions.</p>
-            </div>
-            <div style={{ marginLeft: "auto" }}>
-              <a
-                className="btn btn-primary"
-                href={discord?.invite || "#"}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <i className="fa-brands fa-discord"></i> Rejoindre
-              </a>
-            </div>
-          </section>
+          
 
-          {/* Meta */}
-          <div className="meta-grid">
-            <div className="card dl-card">
-              <h3 className="dl-title">
-                <i className="fa-solid fa-microchip"></i> Configuration
-                requise
-              </h3>
-              <ul className="list-check" style={{ marginTop: 8 }}>
-                <li>
-                  <i className="fa-solid fa-desktop"></i>{" "}
-                  <span>Windows 10/11 (x64)</span>
-                </li>
-                <li>
-                  <i className="fa-solid fa-microchip"></i>{" "}
-                  <span>CPU 2 cœurs · RAM 4 Go · Stockage 3 Go</span>
-                </li>
-                <li>
-                  <i className="fa-solid fa-microchip"></i>{" "}
-                  <span>GPU OpenGL 2.1+ (Intel/AMD/NVIDIA)</span>
-                </li>
-              </ul>
-            </div>
-            <div className="card dl-card">
-              <h3 className="dl-title">
-                <i className="fa-solid fa-circle-question"></i> Aide rapide
-              </h3>
-              <ul className="list-check" style={{ marginTop: 8 }}>
-                <li>
-                  <i className="fa-solid fa-shield-halved"></i>{" "}
-                  <span>Désactivez SmartScreen si nécessaire.</span>
-                </li>
-                <li>
-                  <i className="fa-solid fa-folder-open"></i>{" "}
-                  <span>Utilisez un chemin simple.</span>
-                </li>
-                <li>
-                  <i className="fa-brands fa-discord"></i>{" "}
-                  <span>Besoin d'aide ? Rejoignez le Discord.</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+          
         </div>
 
         {/* Footer */}
@@ -260,9 +152,13 @@ export default function App() {
                 >
                   <i className="fa-brands fa-discord"></i>
                 </a>
-                <a href="#download" title="Télécharger">
+                <button 
+                  onClick={() => setOpenDownload(true)}
+                  style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
+                  title="Télécharger"
+                >
                   <i className="fa-solid fa-download"></i>
-                </a>
+                </button>
               </div>
             </div>
             <div className="footer-col">
@@ -270,20 +166,18 @@ export default function App() {
               <ul>
                 <li>
                   <a href="#news">
-                    <i className="fa-solid fa-sparkles"></i>{" "}
+                    <i className="fa-solid fa-newspaper"></i>{" "}
                     Nouveautés
                   </a>
                 </li>
                 <li>
-                  <a href="#captures">
-                    <i className="fa-solid fa-images"></i> Captures
-                  </a>
-                </li>
-                <li>
-                  <a href="#download">
+                  <button 
+                    onClick={() => setOpenDownload(true)}
+                    style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
+                  >
                     <i className="fa-solid fa-cloud-arrow-down"></i>{" "}
                     Téléchargement
-                  </a>
+                  </button>
                 </li>
               </ul>
             </div>
@@ -331,6 +225,48 @@ export default function App() {
                 <li>Déplacez ce zip à la racine de votre dossier de jeu</li>
                 <li>Enfin, extrayez le Patch.zip et il mettra à jour vos anciens dossiers</li>
               </ol>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Modal de téléchargement */}
+        <Modal
+          open={openDownload}
+          onClose={() => setOpenDownload(false)}
+          title="Téléchargement"
+        >
+          <div className="download-modal-content">
+            <div className="modal-buttons">
+              <a 
+                className="btn btn-primary" 
+                href={content.downloads.windows} 
+                onClick={() => setOpenDownload(false)}
+              >
+                <i className="fa-solid fa-download"></i> Télécharger le jeu
+              </a>
+              <a 
+                className="btn btn-primary" 
+                href={content.downloads.patch} 
+                onClick={() => setOpenDownload(false)}
+              >
+                <i className="fa-solid fa-file-arrow-up"></i> Télécharger le patch
+              </a>
+            </div>
+            <div className="patch-instructions">
+              <h3>Note sur les patchs :</h3>
+              <p>
+                Pour installer un patch, assurez-vous d'avoir la version précédente installée. Placez le fichier patch.zip à la racine de votre jeu, extrayez-le, et il mettra à jour les anciens dossiers. 
+              </p>
+              <p>Vous pouvez également consulter la vidéo tutoriel pour plus de détails.</p>
+              <button 
+                className="btn btn-ghost" 
+                onClick={() => {
+                  setOpenExplanations(true);
+                  setOpenDownload(false); 
+                }}
+              >
+                <i className="fa-solid fa-play"></i> Voir la vidéo explicative
+              </button>
             </div>
           </div>
         </Modal>
