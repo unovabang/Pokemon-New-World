@@ -97,6 +97,7 @@ export default function App() {
             <NewsBanner 
               banners={content.news?.banners || []} 
               interval={content.news?.interval || 5000}
+              autoLoad={true}
             />
           </section>
 

@@ -1,8 +1,72 @@
 import { useEffect, useState } from "react";
 
-export default function NewsBanner({ banners = [], interval = 5000 }) {
+// Fonction pour charger automatiquement les images du dossier news-images
+async function loadNewsImages() {
+  try {
+    // Liste des extensions d'images supportées
+    const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+    const images = [];
+    
+    // On essaie de charger les images avec des noms séquentiels
+    for (let i = 1; i <= 20; i++) {
+      for (const ext of imageExtensions) {
+        const imagePath = `/news-images/banniere${i}${ext}`;
+        try {
+          const response = await fetch(imagePath, { method: 'HEAD' });
+          if (response.ok) {
+            images.push({ image: imagePath });
+            break;
+          }
+        } catch (e) {
+          // Image n'existe pas, on continue
+        }
+      }
+    }
+    
+    // On essaie aussi des noms génériques
+    const genericNames = ['news', 'banner', 'actualite', 'nouveaute', 'update'];
+    for (const name of genericNames) {
+      for (let i = 1; i <= 10; i++) {
+        for (const ext of imageExtensions) {
+          const imagePath = `/news-images/${name}${i}${ext}`;
+          try {
+            const response = await fetch(imagePath, { method: 'HEAD' });
+            if (response.ok && !images.find(img => img.image === imagePath)) {
+              images.push({ image: imagePath });
+              break;
+            }
+          } catch (e) {
+            // Image n'existe pas, on continue
+          }
+        }
+      }
+    }
+    
+    return images;
+  } catch (error) {
+    console.warn('Erreur lors du chargement des images:', error);
+    return [];
+  }
+}
+
+export default function NewsBanner({ banners = [], interval = 5000, autoLoad = true }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const total = banners.length;
+  const [loadedImages, setLoadedImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(autoLoad);
+  
+  // Charger les images automatiquement si autoLoad est activé
+  useEffect(() => {
+    if (autoLoad) {
+      loadNewsImages().then(images => {
+        setLoadedImages(images);
+        setIsLoading(false);
+      });
+    }
+  }, [autoLoad]);
+  
+  // Utiliser les images chargées automatiquement ou celles passées en props
+  const allBanners = autoLoad ? loadedImages : banners;
+  const total = allBanners.length;
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % total);
@@ -20,9 +84,19 @@ export default function NewsBanner({ banners = [], interval = 5000 }) {
     return () => clearInterval(timer);
   }, [total, interval]);
 
+  if (isLoading) {
+    return (
+      <div className="news-banner-container">
+        <div className="news-banner" style={{minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <p style={{color: 'var(--muted)'}}>Chargement des actualités...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (total === 0) return null;
 
-  const currentBanner = banners[currentIndex];
+  const currentBanner = allBanners[currentIndex];
 
   return (
     <div className="news-banner-container">
@@ -50,7 +124,7 @@ export default function NewsBanner({ banners = [], interval = 5000 }) {
               ›
             </button>
             <div className="news-indicators">
-              {banners.map((_, idx) => (
+              {allBanners.map((_, idx) => (
                 <button
                   key={idx}
                   className={`news-dot ${idx === currentIndex ? "active" : ""}`}
