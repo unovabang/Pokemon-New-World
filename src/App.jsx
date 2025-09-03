@@ -118,7 +118,7 @@ export default function App() {
                     <h3>{content.patreon?.content?.heading || "Soutenez le projet"}</h3>
                     <p>{content.patreon?.content?.description || "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !"}</p>
                     <a 
-                      href={content.patreon?.content?.url || "https://www.patreon.com"} 
+                      href={content.patreon?.content?.url || "https://www.patreon.com/c/unovabang"} 
                       target="_blank" 
                       rel="noreferrer"
                       className="btn btn-primary patreon-btn"
