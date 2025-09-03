@@ -7,26 +7,39 @@ async function loadNewsImages() {
     const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
     const images = [];
     
-    // On essaie de charger les images avec des noms séquentiels
-    for (let i = 1; i <= 20; i++) {
+    // On essaie de charger les images avec des noms séquentiels (banniere1, banniere2, etc.)
+    let consecutiveNotFound = 0;
+    for (let i = 1; i <= 50; i++) {
+      let found = false;
+      
       for (const ext of imageExtensions) {
         const imagePath = `/news-images/banniere${i}${ext}`;
         try {
           const response = await fetch(imagePath, { method: 'HEAD' });
           if (response.ok) {
             images.push({ image: imagePath });
+            found = true;
+            consecutiveNotFound = 0; // Reset le compteur
             break;
           }
         } catch (e) {
           // Image n'existe pas, on continue
         }
       }
+      
+      if (!found) {
+        consecutiveNotFound++;
+        // Si on ne trouve pas 3 images consécutives, on s'arrête
+        if (consecutiveNotFound >= 3) {
+          break;
+        }
+      }
     }
     
-    // On essaie aussi des noms génériques
+    // On essaie aussi quelques noms génériques (limité)
     const genericNames = ['news', 'banner', 'actualite', 'nouveaute', 'update'];
     for (const name of genericNames) {
-      for (let i = 1; i <= 10; i++) {
+      for (let i = 1; i <= 3; i++) {
         for (const ext of imageExtensions) {
           const imagePath = `/news-images/${name}${i}${ext}`;
           try {
@@ -42,6 +55,7 @@ async function loadNewsImages() {
       }
     }
     
+    console.log(`Chargé ${images.length} images depuis /news-images/`);
     return images;
   } catch (error) {
     console.warn('Erreur lors du chargement des images:', error);
