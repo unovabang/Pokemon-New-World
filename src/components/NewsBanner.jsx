@@ -16,11 +16,15 @@ async function loadNewsImages() {
         const imagePath = `/news-images/banniere${i}${ext}`;
         try {
           const response = await fetch(imagePath, { method: 'HEAD' });
-          if (response.ok) {
-            images.push({ image: imagePath });
-            found = true;
-            consecutiveNotFound = 0; // Reset le compteur
-            break;
+          if (response.ok && response.status === 200) {
+            // Vérifier que c'est bien une image en vérifiant le content-type
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.startsWith('image/')) {
+              images.push({ image: imagePath });
+              found = true;
+              consecutiveNotFound = 0; // Reset le compteur
+              break;
+            }
           }
         } catch (e) {
           // Image n'existe pas, on continue
@@ -29,28 +33,9 @@ async function loadNewsImages() {
       
       if (!found) {
         consecutiveNotFound++;
-        // Si on ne trouve pas 3 images consécutives, on s'arrête
-        if (consecutiveNotFound >= 3) {
+        // Si on ne trouve pas 2 images consécutives, on s'arrête
+        if (consecutiveNotFound >= 2) {
           break;
-        }
-      }
-    }
-    
-    // On essaie aussi quelques noms génériques (limité)
-    const genericNames = ['news', 'banner', 'actualite', 'nouveaute', 'update'];
-    for (const name of genericNames) {
-      for (let i = 1; i <= 3; i++) {
-        for (const ext of imageExtensions) {
-          const imagePath = `/news-images/${name}${i}${ext}`;
-          try {
-            const response = await fetch(imagePath, { method: 'HEAD' });
-            if (response.ok && !images.find(img => img.image === imagePath)) {
-              images.push({ image: imagePath });
-              break;
-            }
-          } catch (e) {
-            // Image n'existe pas, on continue
-          }
         }
       }
     }
