@@ -1,0 +1,13 @@
+
+{
+  "title": "Obtiens les nouveautés en avance !",
+  "icon": "/patreonlogo.png",
+  "image": "/patreon.png",
+  "content": {
+    "heading": "Soutenez le projet",
+    "description": "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !",
+    "buttonText": "Soutenir sur Patreon",
+    "buttonIcon": "fa-brands fa-patreon",
+    "url": "https://www.patreon.com"
+  }
+}
