@@ -349,7 +349,7 @@ const AdminPanel = () => {
                 minWidth: '44px',
                 height: '44px'
               }}
-              onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+              onClick={() => logout({ logoutParams: { returnTo: `${window.location.origin}/` } })}
               onMouseOver={(e) => {
                 e.target.style.background = 'linear-gradient(135deg, rgba(239,68,68,0.25) 0%, rgba(220,38,38,0.25) 100%)';
                 e.target.style.transform = 'translateY(-2px)';
