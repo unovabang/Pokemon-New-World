@@ -1,35 +1,44 @@
 import { useState, useEffect } from 'react';
 
+const API_BASE = `${window.location.protocol}//${window.location.hostname}:3001/api`;
+
 const BannerManager = ({ onSave }) => {
   const [bannerImages, setBannerImages] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadBannerImages();
   }, []);
 
-  const loadBannerImages = () => {
-    // Charger les images existantes depuis localStorage et les images connues
-    const savedBanners = JSON.parse(localStorage.getItem('bannerImages') || '[]');
-    
-    // Images par défaut présentes dans le dossier
-    const defaultBanners = [
-      { name: 'banniere1.png', position: 1, isDefault: true },
-      { name: 'banniere2.png', position: 2, isDefault: true },
-      { name: 'banniere3.png', position: 3, isDefault: true }
-    ];
-
-    // Combiner les images par défaut avec les nouvelles
-    const allBanners = [...defaultBanners];
-    
-    // Ajouter les images uploadées qui ne sont pas déjà dans les défauts
-    savedBanners.forEach(saved => {
-      if (!defaultBanners.find(def => def.name === saved.name)) {
-        allBanners.push(saved);
+  const loadBannerImages = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE}/banners`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setBannerImages(data.banners);
+      } else {
+        console.error('Erreur lors du chargement:', data.error);
+        // Fallback vers les images par défaut
+        setBannerImages([
+          { name: 'banniere1.png', position: 1 },
+          { name: 'banniere2.png', position: 2 },
+          { name: 'banniere3.png', position: 3 }
+        ]);
       }
-    });
-
-    setBannerImages(allBanners.sort((a, b) => a.position - b.position));
+    } catch (error) {
+      console.error('Erreur de connexion à l\'API:', error);
+      // Fallback vers les images par défaut
+      setBannerImages([
+        { name: 'banniere1.png', position: 1 },
+        { name: 'banniere2.png', position: 2 },
+        { name: 'banniere3.png', position: 3 }
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleImageUpload = async (event) => {
@@ -39,48 +48,28 @@ const BannerManager = ({ onSave }) => {
     setUploading(true);
     
     try {
-      const newBanners = [];
-      
       for (const file of files) {
-        // Trouver la prochaine position disponible
-        const nextPosition = getNextAvailablePosition();
-        const newFileName = `banniere${nextPosition}.png`;
+        const formData = new FormData();
+        formData.append('banner', file);
         
-        // Créer un URL temporaire pour l'image
-        const imageUrl = URL.createObjectURL(file);
+        const response = await fetch(`${API_BASE}/banners/upload`, {
+          method: 'POST',
+          body: formData
+        });
         
-        // Créer l'objet bannière
-        const newBanner = {
-          name: newFileName,
-          position: nextPosition,
-          url: imageUrl,
-          isNew: true,
-          file: file // Garder une référence au fichier
-        };
+        const data = await response.json();
         
-        newBanners.push(newBanner);
+        if (!data.success) {
+          throw new Error(data.error);
+        }
       }
       
-      // Mettre à jour l'état
-      setBannerImages(prev => {
-        const updated = [...prev, ...newBanners];
-        // Sauvegarder dans localStorage
-        const toSave = newBanners.map(banner => ({
-          name: banner.name,
-          position: banner.position,
-          url: banner.url,
-          isNew: banner.isNew
-        }));
-        const existing = JSON.parse(localStorage.getItem('bannerImages') || '[]');
-        localStorage.setItem('bannerImages', JSON.stringify([...existing, ...toSave]));
-        
-        return updated.sort((a, b) => a.position - b.position);
-      });
-      
-      alert(`${files.length} bannière(s) ajoutée(s) ! NOTE: Pour que les images soient visibles sur le site, vous devez les copier manuellement dans le dossier public/news-images/ avec les noms indiqués.`);
+      // Recharger la liste des bannières
+      await loadBannerImages();
+      alert(`${files.length} bannière(s) uploadée(s) avec succès !`);
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
-      alert('Erreur lors du téléchargement des images');
+      alert(`Erreur: ${error.message}`);
     } finally {
       setUploading(false);
     }
@@ -96,61 +85,55 @@ const BannerManager = ({ onSave }) => {
     return usedPositions.length + 1;
   };
 
-  const deleteBannerImage = (imageName) => {
-    if (!confirm(`Supprimer l'image "${imageName}" de la liste ?`)) return;
+  const deleteBannerImage = async (imageName) => {
+    if (!confirm(`Supprimer définitivement l'image "${imageName}" ?`)) return;
     
-    setBannerImages(prev => {
-      const updated = prev.filter(img => img.name !== imageName);
+    try {
+      const response = await fetch(`${API_BASE}/banners/${imageName}`, {
+        method: 'DELETE'
+      });
       
-      // Mettre à jour localStorage
-      const saved = JSON.parse(localStorage.getItem('bannerImages') || '[]');
-      const filteredSaved = saved.filter(img => img.name !== imageName);
-      localStorage.setItem('bannerImages', JSON.stringify(filteredSaved));
+      const data = await response.json();
       
-      return updated;
-    });
-    
-    alert(`Image supprimée de la liste ! NOTE: Vous devez aussi supprimer manuellement le fichier ${imageName} du dossier public/news-images/ si nécessaire.`);
+      if (data.success) {
+        await loadBannerImages();
+        alert('Image supprimée avec succès !');
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      alert(`Erreur: ${error.message}`);
+    }
   };
 
-  const updatePosition = (imageName, newPosition) => {
+  const updatePosition = async (imageName, newPosition) => {
     const position = parseInt(newPosition);
     if (isNaN(position) || position < 1 || position > 10) {
       alert('La position doit être un nombre entre 1 et 10');
       return;
     }
 
-    setBannerImages(prev => {
-      const updated = [...prev];
+    try {
+      const response = await fetch(`${API_BASE}/banners/${imageName}/position`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ position })
+      });
       
-      // Trouver l'image à déplacer
-      const imgToMove = updated.find(img => img.name === imageName);
-      if (!imgToMove) return prev;
+      const data = await response.json();
       
-      // Vérifier si la position est déjà utilisée
-      const existingAtPosition = updated.find(img => img.position === position && img.name !== imageName);
-      
-      if (existingAtPosition) {
-        // Échanger les positions
-        const oldPosition = imgToMove.position;
-        imgToMove.position = position;
-        existingAtPosition.position = oldPosition;
+      if (data.success) {
+        setBannerImages(data.banners);
       } else {
-        // Simplement mettre à jour la position
-        imgToMove.position = position;
+        throw new Error(data.error);
       }
-      
-      // Sauvegarder dans localStorage
-      const toSave = updated.filter(img => !img.isDefault).map(banner => ({
-        name: banner.name,
-        position: banner.position,
-        url: banner.url,
-        isNew: banner.isNew
-      }));
-      localStorage.setItem('bannerImages', JSON.stringify(toSave));
-      
-      return updated.sort((a, b) => a.position - b.position);
-    });
+    } catch (error) {
+      console.error('Erreur lors du changement de position:', error);
+      alert(`Erreur: ${error.message}`);
+    }
   };
 
   const handleSave = () => {
@@ -185,21 +168,21 @@ const BannerManager = ({ onSave }) => {
 
       {/* Instructions */}
       <div style={{ 
-        background: 'rgba(255, 165, 0, 0.1)', 
+        background: 'rgba(40, 167, 69, 0.1)', 
         borderRadius: '10px', 
         padding: '1.5rem',
         marginBottom: '2rem',
-        border: '1px solid rgba(255, 165, 0, 0.3)'
+        border: '1px solid rgba(40, 167, 69, 0.3)'
       }}>
         <h3 style={{ 
           marginBottom: '1rem',
-          color: '#ffa500',
+          color: '#28a745',
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem'
         }}>
-          <i className="fa-solid fa-exclamation-triangle"></i>
-          Instructions Importantes
+          <i className="fa-solid fa-check-circle"></i>
+          Gestionnaire Automatique Activé
         </h3>
         <div style={{ 
           background: 'rgba(255,255,255,0.1)', 
@@ -207,10 +190,10 @@ const BannerManager = ({ onSave }) => {
           borderRadius: '5px',
           marginBottom: '1rem'
         }}>
-          <strong>⚠️ Action Manuelle Requise :</strong>
+          <strong>✅ Gestion Automatique :</strong>
           <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem' }}>
-            Après avoir uploadé des images ici, vous devez <strong>manuellement</strong> copier les fichiers 
-            dans le dossier <code>public/news-images/</code> avec les noms exacts indiqués (banniere1.png, banniere2.png, etc.)
+            Toutes les modifications sont automatiquement appliquées aux fichiers du serveur. 
+            Aucune action manuelle requise !
           </p>
         </div>
         <ul style={{ margin: 0, paddingLeft: '1.5rem', fontSize: '0.9rem' }}>
@@ -219,6 +202,7 @@ const BannerManager = ({ onSave }) => {
           <li>Les images sont nommées <strong>banniere1.png, banniere2.png, etc.</strong></li>
           <li>Vous pouvez <strong>réorganiser l'ordre</strong> en changeant les positions</li>
           <li>Format recommandé : <strong>1200x300 pixels, PNG ou JPG</strong></li>
+          <li><strong>Limite :</strong> 5MB par image</li>
         </ul>
       </div>
 
@@ -273,7 +257,16 @@ const BannerManager = ({ onSave }) => {
           <i className="fa-solid fa-list"></i> Bannières Actuelles ({bannerImages.length})
         </h3>
 
-        {bannerImages.length === 0 ? (
+        {loading ? (
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '3rem', 
+            opacity: 0.6
+          }}>
+            <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '3rem', marginBottom: '1rem' }}></i>
+            <p>Chargement des bannières...</p>
+          </div>
+        ) : bannerImages.length === 0 ? (
           <div style={{ 
             textAlign: 'center', 
             padding: '3rem', 
