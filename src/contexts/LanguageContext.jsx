@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import translations from '../config/translations.json';
 import patchNotesData from '../config/patchnotes.json';
+import { autoTranslatePatchNotes } from '../utils/autoTranslate';
 
 const LanguageContext = createContext();
 
@@ -26,48 +27,15 @@ export const LanguageProvider = ({ children }) => {
   }, [language]);
 
   const t = (key, fallback = key) => {
-    // Gestion spéciale pour les patch notes qui viennent du JSON séparé
+    // Gestion spéciale pour les patch notes avec traduction automatique
     if (key.startsWith('patchNotes.')) {
       const patchKey = key.replace('patchNotes.', '');
       
       if (language === 'en') {
-        // Traductions anglaises pour les patch notes
-        const englishPatchNotes = {
-          version: patchNotesData.version,
-          date: "January 2025", // Version anglaise de la date
-          title: `Patch notes ${patchNotesData.version}`,
-          sections: [
-            {
-              title: "🆕 New features",
-              items: [
-                "Added game continuation (about 5 hours of gameplay)",
-                "Mega Evolution arrival",
-                "Shiny Pokémon animation",
-                "Dedicated logo for Shiny Pokémon in battle",
-                "Added Fresco-Height Breeding (location allowing to reset Alternative Shiny Pokémon)",
-                "Many new Pokémon make their appearance"
-              ]
-            },
-            {
-              title: "🔧 Bug fixes",
-              items: [
-                "Fixed crash related to Moon Ball",
-                "Fixed crash related to Fmod (during evolution)",
-                "Fixed the following abilities: Purifying Salt, Cruelty, Cursed Body, Illusion",
-                "Fixed Baton Pass move",
-                "Fixed Pokédex numbering",
-                "Fixed some missing collisions"
-              ]
-            },
-            {
-              title: "⚖️ Balance changes",
-              items: [
-                "Nerfed Encornus",
-                "Buffed Feraligatr"
-              ]
-            }
-          ]
-        };
+        // Traduction automatique vers l'anglais
+        const englishPatchNotes = autoTranslatePatchNotes(patchNotesData);
+        
+        if (!englishPatchNotes) return fallback;
         
         const keys = patchKey.split('.');
         let value = englishPatchNotes;
