@@ -11,7 +11,17 @@
       "malice",
       "rpg",
       "jeu gratuit"
-    ]
+    ],
+    "author": "",
+    "lang": "fr"
+  },
+  "theme": {
+    "primary": "#3b82f6",
+    "accent": "#06b6d4"
+  },
+  "branding": {
+    "logo": "public/logo.png",
+    "favicon": "public/logo.png"
   },
   "backgrounds": {
     "home": "https://i.ibb.co/bMzCf1NG/image-2025-09-04-193058804.png",
@@ -26,5 +36,19 @@
     "youtubeId": "NdJQopRuH1E",
     "autoplay": true,
     "startVolume": 1
+  },
+  "game": {
+    "title": "Pokémon New World",
+    "description": "Explorez la région de Bélamie"
+  },
+  "carousel": {
+    "images": [
+      "/screenshot1.png",
+      "/screenshot2.png",
+      "/screenshot3.png"
+    ]
+  },
+  "discord": {
+    "invite": "#"
   }
 }
