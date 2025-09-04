@@ -121,24 +121,12 @@ const BannerManager = ({ onSave }) => {
   };
 
   const moveUp = async (imageName) => {
-    console.log('moveUp appelé pour:', imageName);
-    console.log('Bannières actuelles:', bannerImages);
-    
     const currentIndex = bannerImages.findIndex(img => img.name === imageName);
-    console.log('Index actuel:', currentIndex);
+    if (currentIndex <= 0) return; // Déjà en première position
     
-    if (currentIndex <= 0) {
-      console.log('Déjà en première position, rien à faire');
-      return; // Déjà en première position
-    }
-    
-    const currentImage = bannerImages[currentIndex];
     const previousImage = bannerImages[currentIndex - 1];
-    console.log('Image actuelle:', currentImage);
-    console.log('Image précédente:', previousImage);
     
     try {
-      console.log('Envoi requête API...', `${API_BASE}/banners/${imageName}/position`);
       const response = await fetch(`${API_BASE}/banners/${imageName}/position`, {
         method: 'PUT',
         headers: {
@@ -147,14 +135,17 @@ const BannerManager = ({ onSave }) => {
         body: JSON.stringify({ position: previousImage.position })
       });
       
-      console.log('Réponse API:', response.status);
       const data = await response.json();
-      console.log('Données reçues:', data);
       
       if (data.success) {
         // Mettre à jour immédiatement avec les données du serveur
         setBannerImages(data.banners.sort((a, b) => a.position - b.position));
-        showMessage('Succès', 'Position mise à jour !', 'success');
+        showMessage('Succès', 'Position mise à jour ! La page va se rafraîchir...', 'success');
+        
+        // Actualiser la page après un délai pour voir le message de succès
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } else {
         throw new Error(data.error);
       }
@@ -168,7 +159,6 @@ const BannerManager = ({ onSave }) => {
     const currentIndex = bannerImages.findIndex(img => img.name === imageName);
     if (currentIndex >= bannerImages.length - 1) return; // Déjà en dernière position
     
-    const currentImage = bannerImages[currentIndex];
     const nextImage = bannerImages[currentIndex + 1];
     
     try {
@@ -185,6 +175,12 @@ const BannerManager = ({ onSave }) => {
       if (data.success) {
         // Mettre à jour immédiatement avec les données du serveur
         setBannerImages(data.banners.sort((a, b) => a.position - b.position));
+        showMessage('Succès', 'Position mise à jour ! La page va se rafraîchir...', 'success');
+        
+        // Actualiser la page après un délai pour voir le message de succès
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } else {
         throw new Error(data.error);
       }
@@ -415,11 +411,7 @@ const BannerManager = ({ onSave }) => {
                       <span style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Position {banner.position}:</span>
                       <div style={{ display: 'flex', gap: '0.25rem' }}>
                         <button 
-                          onClick={(e) => {
-                            console.log('Bouton up cliqué pour:', banner.name);
-                            e.preventDefault();
-                            moveUp(banner.name);
-                          }}
+                          onClick={() => moveUp(banner.name)}
                           disabled={bannerImages.findIndex(img => img.name === banner.name) === 0}
                           style={{
                             padding: '0.3rem 0.5rem',
@@ -441,11 +433,7 @@ const BannerManager = ({ onSave }) => {
                           <i className="fa-solid fa-chevron-up"></i>
                         </button>
                         <button 
-                          onClick={(e) => {
-                            console.log('Bouton down cliqué pour:', banner.name);
-                            e.preventDefault();
-                            moveDown(banner.name);
-                          }}
+                          onClick={() => moveDown(banner.name)}
                           disabled={bannerImages.findIndex(img => img.name === banner.name) === bannerImages.length - 1}
                           style={{
                             padding: '0.3rem 0.5rem',
