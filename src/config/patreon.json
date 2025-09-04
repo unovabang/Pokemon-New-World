@@ -1,24 +1,16 @@
-
 {
   "title": "Obtiens les nouveautés en avance !",
   "icon": "/patreonlogo.png",
-  "image": "/patreon.png",
+  "image": "public/patreon.png",
   "content": {
-    "heading": "Soutenez le projet",
+    "heading": "Soutenez le projet ! ",
     "description": "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !",
-    "buttonText": "Soutenir sur Patreon",
-    "buttonIcon": "fa-brands fa-patreon",
+    "button": "",
     "url": "https://www.patreon.com/c/unovabang"
   },
-  "styling": {
-    "showOverlay": true,
-    "overlayOpacity": 0.8,
-    "buttonColor": "patreon",
-    "hoverEffect": true
-  },
-  "settings": {
-    "enabled": true,
-    "showInFooter": false,
-    "openInNewTab": true
+  "goal": {
+    "amount": "",
+    "current": "",
+    "description": ""
   }
 }
