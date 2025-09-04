@@ -21,7 +21,8 @@ const BannerManager = ({ onSave }) => {
   const loadBannerImages = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE}/banners`);
+      // Ajouter un timestamp pour éviter le cache
+      const response = await fetch(`${API_BASE}/banners?t=${Date.now()}`);
       const data = await response.json();
       
       if (data.success) {
@@ -137,8 +138,8 @@ const BannerManager = ({ onSave }) => {
       const data = await response.json();
       
       if (data.success) {
-        // Recharger complètement la liste pour s'assurer de la synchronisation
-        await loadBannerImages();
+        // Mettre à jour immédiatement avec les données du serveur
+        setBannerImages(data.banners.sort((a, b) => a.position - b.position));
       } else {
         throw new Error(data.error);
       }
@@ -167,8 +168,8 @@ const BannerManager = ({ onSave }) => {
       const data = await response.json();
       
       if (data.success) {
-        // Recharger complètement la liste pour s'assurer de la synchronisation
-        await loadBannerImages();
+        // Mettre à jour immédiatement avec les données du serveur
+        setBannerImages(data.banners.sort((a, b) => a.position - b.position));
       } else {
         throw new Error(data.error);
       }
