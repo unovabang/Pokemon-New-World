@@ -138,67 +138,168 @@ const AdminPanel = () => {
     }}>
       {/* Header */}
       <header style={{ 
-        background: 'linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)', 
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(102,126,234,0.08) 50%, rgba(118,75,162,0.06) 100%)', 
         padding: '1.5rem 2rem',
-        backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.15)',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+        backdropFilter: 'blur(25px)',
+        borderBottom: '1px solid rgba(102,126,234,0.25)',
+        boxShadow: '0 8px 40px rgba(102,126,234,0.15), inset 0 1px 0 rgba(255,255,255,0.1)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100
       }}>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: window.innerWidth <= 768 ? 'flex-start' : 'center',
-          maxWidth: '1200px',
+          maxWidth: '1400px',
           margin: '0 auto',
           flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
-          gap: window.innerWidth <= 768 ? '1rem' : '0'
+          gap: window.innerWidth <= 768 ? '1.5rem' : '0'
         }}>
-          <div>
+          {/* Logo et titre */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{
+              width: '50px',
+              height: '50px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: '15px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 10px 25px rgba(102,126,234,0.4)',
+              position: 'relative'
+            }}>
+              <i className="fa-solid fa-shield-halved" style={{
+                fontSize: '1.4rem',
+                color: 'white',
+                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+              }}></i>
+              <div style={{
+                position: 'absolute',
+                inset: '-2px',
+                background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                borderRadius: '17px',
+                opacity: '0.3',
+                filter: 'blur(8px)',
+                zIndex: -1
+              }}></div>
+            </div>
             <div>
               <h1 style={{
                 fontSize: window.innerWidth <= 480 ? '1.6rem' : window.innerWidth <= 768 ? '1.8rem' : '2.2rem',
-                fontWeight: '700',
+                fontWeight: '800',
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                margin: '0 0 0.5rem 0',
+                margin: '0 0 0.3rem 0',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.1
+              }}>
+                Admin Panel
+              </h1>
+              <div style={{ 
                 display: 'flex',
                 alignItems: 'center',
-                gap: window.innerWidth <= 480 ? '0.4rem' : '0.8rem',
-                flexDirection: window.innerWidth <= 480 ? 'column' : 'row',
-                textAlign: window.innerWidth <= 480 ? 'center' : 'left'
+                gap: '0.8rem',
+                flexWrap: 'wrap'
               }}>
-                <i className="fa-solid fa-shield-halved" style={{
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  fontSize: '2rem'
-                }}></i>
-                Panneau d'Administration
-              </h1>
-              <p style={{ 
-                opacity: 0.9, 
-                margin: 0, 
-                fontSize: '1.1rem',
-                color: 'rgba(255,255,255,0.8)'
-              }}>
-                <i className="fa-solid fa-user-circle" style={{marginRight: '0.5rem', color: '#667eea'}}></i>
-                Bienvenue, <span style={{color: '#667eea', fontWeight: '600'}}>{user?.name}</span> | Pokémon New World
-              </p>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  background: 'rgba(102,126,234,0.1)',
+                  padding: '0.3rem 0.8rem',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(102,126,234,0.2)'
+                }}>
+                  <div style={{
+                    width: '8px',
+                    height: '8px',
+                    background: '#4ade80',
+                    borderRadius: '50%',
+                    animation: 'pulse 2s infinite'
+                  }}></div>
+                  <span style={{ 
+                    fontSize: '0.85rem',
+                    color: 'rgba(255,255,255,0.9)',
+                    fontWeight: '500'
+                  }}>
+                    En ligne
+                  </span>
+                </div>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '0.9rem'
+                }}>
+                  <i className="fa-solid fa-user" style={{color: '#667eea'}}></i>
+                  <span style={{color: '#667eea', fontWeight: '600'}}>{user?.name}</span>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Actions de navigation */}
           <div style={{ 
             display: 'flex', 
-            gap: window.innerWidth <= 480 ? '0.5rem' : '1rem', 
+            gap: '0.8rem', 
             alignItems: 'center',
-            flexDirection: window.innerWidth <= 480 ? 'column' : 'row',
-            width: '100%'
+            flexWrap: 'wrap'
           }}>
+            {/* Indicateur de statut */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.6rem 1rem',
+              background: 'rgba(34,197,94,0.1)',
+              border: '1px solid rgba(34,197,94,0.2)',
+              borderRadius: '12px',
+              fontSize: '0.85rem',
+              color: '#4ade80',
+              fontWeight: '500'
+            }}>
+              <i className="fa-solid fa-server"></i>
+              API Active
+            </div>
+
+            {/* Bouton de sauvegarde rapide */}
+            <button style={{
+              padding: '0.7rem 1.2rem',
+              background: 'linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.15) 100%)',
+              border: '1px solid rgba(34,197,94,0.3)',
+              borderRadius: '12px',
+              color: '#4ade80',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.3s ease',
+              backdropFilter: 'blur(10px)',
+              fontSize: '0.9rem',
+              fontWeight: '600'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, rgba(34,197,94,0.25) 0%, rgba(22,163,74,0.25) 100%)';
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 8px 25px rgba(34,197,94,0.3)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.15) 100%)';
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = 'none';
+            }}>
+              <i className="fa-solid fa-save"></i>
+              Sauvegarder
+            </button>
+
+            {/* Lien vers le site principal */}
             <a href="/" style={{
-              padding: window.innerWidth <= 480 ? '0.6rem 1rem' : '0.75rem 1.5rem',
-              background: 'linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%)',
+              padding: '0.7rem 1.2rem',
+              background: 'linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%)',
               border: '1px solid rgba(102,126,234,0.3)',
               borderRadius: '12px',
               color: 'white',
@@ -208,55 +309,61 @@ const AdminPanel = () => {
               gap: '0.5rem',
               transition: 'all 0.3s ease',
               backdropFilter: 'blur(10px)',
-              fontSize: window.innerWidth <= 480 ? '0.85rem' : '0.95rem',
-              fontWeight: '500',
-              width: window.innerWidth <= 480 ? '100%' : 'auto',
-              justifyContent: 'center'
+              fontSize: '0.9rem',
+              fontWeight: '600'
             }}
             onMouseOver={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, rgba(102,126,234,0.3) 0%, rgba(118,75,162,0.3) 100%)';
+              e.target.style.background = 'linear-gradient(135deg, rgba(102,126,234,0.25) 0%, rgba(118,75,162,0.25) 100%)';
               e.target.style.transform = 'translateY(-2px)';
               e.target.style.boxShadow = '0 8px 25px rgba(102,126,234,0.3)';
             }}
             onMouseOut={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%)';
+              e.target.style.background = 'linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%)';
               e.target.style.transform = 'translateY(0)';
               e.target.style.boxShadow = 'none';
             }}>
-              <i className="fa-solid fa-home"></i> Site Principal
+              <i className="fa-solid fa-external-link-alt"></i> 
+              Site Web
             </a>
-            <button 
-              onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-              style={{
-                padding: window.innerWidth <= 480 ? '0.6rem 1rem' : '0.75rem 1.5rem',
-                background: 'linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(153,27,27,0.2) 100%)',
-                border: '1px solid rgba(220,38,38,0.3)',
+
+            {/* Menu utilisateur */}
+            <div style={{
+              position: 'relative',
+              display: 'inline-block'
+            }}>
+              <button style={{
+                padding: '0.7rem',
+                background: 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.15) 100%)',
+                border: '1px solid rgba(239,68,68,0.3)',
                 borderRadius: '12px',
-                color: 'white',
+                color: '#f87171',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
+                justifyContent: 'center',
                 transition: 'all 0.3s ease',
                 backdropFilter: 'blur(10px)',
-                fontSize: window.innerWidth <= 480 ? '0.85rem' : '0.95rem',
-                fontWeight: '500',
-                width: window.innerWidth <= 480 ? '100%' : 'auto',
-                justifyContent: 'center'
+                fontSize: '1.1rem',
+                fontWeight: '600',
+                minWidth: '44px',
+                height: '44px'
               }}
+              onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
               onMouseOver={(e) => {
-                e.target.style.background = 'linear-gradient(135deg, rgba(220,38,38,0.3) 0%, rgba(153,27,27,0.3) 100%)';
+                e.target.style.background = 'linear-gradient(135deg, rgba(239,68,68,0.25) 0%, rgba(220,38,38,0.25) 100%)';
                 e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 8px 25px rgba(220,38,38,0.3)';
+                e.target.style.boxShadow = '0 8px 25px rgba(239,68,68,0.3)';
               }}
               onMouseOut={(e) => {
-                e.target.style.background = 'linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(153,27,27,0.2) 100%)';
+                e.target.style.background = 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.15) 100%)';
                 e.target.style.transform = 'translateY(0)';
                 e.target.style.boxShadow = 'none';
               }}
-            >
-              <i className="fa-solid fa-sign-out-alt"></i> Déconnexion
-            </button>
+              title="Déconnexion"
+              >
+                <i className="fa-solid fa-sign-out-alt"></i>
+              </button>
+            </div>
           </div>
         </div>
       </header>
