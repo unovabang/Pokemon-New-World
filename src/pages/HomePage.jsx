@@ -165,7 +165,7 @@ const HomePage = () => {
           <section id="patreon" className="section card">
             <h2>
               <img src={content.patreon?.icon || "/patreonlogo.png"} alt="Logo Patreon" className="section-icon" />{" "}
-              {t('sections.patreon.title')}
+              {content.patreon?.title || t('sections.patreon.title')}
             </h2>
             <div className="patreon-content">
               <div className="patreon-image-container">
@@ -176,15 +176,15 @@ const HomePage = () => {
                 />
                 <div className="patreon-overlay">
                   <div className="patreon-cta">
-                    <h3>{t('sections.patreon.heading')}</h3>
-                    <p>{t('sections.patreon.description')}</p>
+                    <h3>{content.patreon?.content?.heading || t('sections.patreon.heading')}</h3>
+                    <p>{content.patreon?.content?.description || t('sections.patreon.description')}</p>
                     <a 
                       href={content.patreon?.content?.url || "https://www.patreon.com/c/unovabang"} 
                       target="_blank" 
                       rel="noreferrer"
                       className="btn btn-primary patreon-btn"
                     >
-                      <i className={content.patreon?.content?.buttonIcon || "fa-brands fa-patreon"}></i> {t('buttons.supportOnPatreon')}
+                      <i className={content.patreon?.content?.buttonIcon || "fa-brands fa-patreon"}></i> {content.patreon?.content?.buttonText || content.patreon?.content?.button || t('buttons.supportOnPatreon')}
                     </a>
                   </div>
                 </div>

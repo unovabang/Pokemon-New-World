@@ -1,12 +1,12 @@
 {
-  "title": "Obtiens les nouveautés en avance !",
+  "title": "TEST LIVE - Modifications en temps réel !",
   "icon": "/patreonlogo.png",
   "image": "/patreon.png",
   "content": {
-    "heading": "Soutenez le projet",
-    "description": "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !",
-    "buttonText": "Soutenir sur Patreon",
-    "button": "Soutenir sur Patreon",
+    "heading": "NOUVEAU TITRE MODIFIÉ !!!",
+    "description": "NOUVELLE DESCRIPTION MODIFIÉE - Les changements marchent maintenant !",
+    "buttonText": "NOUVEAU BOUTON",
+    "button": "NOUVEAU BOUTON",
     "url": "https://www.patreon.com/c/unovabang"
   },
   "goal": {
