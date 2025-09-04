@@ -11,6 +11,7 @@ import LanguageSelector from "./components/LanguageSelector";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPanel from "./pages/AdminPanel";
 import HomePage from "./pages/HomePage";
+import LoginAdmin from "./pages/LoginAdmin";
 import { useLanguage } from "./contexts/LanguageContext";
 
 
@@ -20,6 +21,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/login-admin" element={<LoginAdmin />} />
         <Route path="/admin" element={
           <ProtectedRoute>
             <AdminPanel />
