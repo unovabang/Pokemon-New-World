@@ -198,7 +198,12 @@ const LoginAdmin = () => {
             gap: '1rem'
           }}>
             <button 
-              onClick={() => logout({ logoutParams: { returnTo: `${window.location.origin}/admin-login` } })}
+              onClick={() => {
+                // Déconnecter et rediriger vers la page d'accueil
+                logout({ logoutParams: { returnTo: `${window.location.origin}/` } });
+                // Ajouter un indicateur dans localStorage pour rediriger vers admin-login
+                localStorage.setItem('redirectToAdminLogin', 'true');
+              }}
               className="btn btn-ghost"
               style={{ fontSize: '0.9rem' }}
             >
