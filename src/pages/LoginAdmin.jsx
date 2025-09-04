@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginAdmin = () => {
@@ -11,10 +11,21 @@ const LoginAdmin = () => {
   const [isAdminVerified, setIsAdminVerified] = useState(false);
   const navigate = useNavigate();
 
+  // Debug: Log les états pour diagnostiquer le problème
+  useEffect(() => {
+    console.log('LoginAdmin - États:', {
+      isLoading,
+      isAuthenticated,
+      user: user?.name,
+      isAdminVerified,
+      isCodeVerified
+    });
+  }, [isLoading, isAuthenticated, user, isAdminVerified, isCodeVerified]);
+
   // Définir les credentials admin
   const ADMIN_EMAIL = "admin@pokemonnewworld.com";
   const ADMIN_PASSWORD = "AdminPNW2024!";
-  const ADMIN_CODE = "1234";
+  const ADMIN_CODE = "1964";
 
   if (isLoading) {
     return (
