@@ -3,6 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from "../components/LogoutButton";
 import NewsEditor from "../components/NewsEditor";
 import DownloadsEditor from "../components/DownloadsEditor";
+import PatchNotesEditor from "../components/PatchNotesEditor";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -217,7 +218,14 @@ const AdminPanel = () => {
             />
           )}
           
-          {activeTab !== 'news' && activeTab !== 'downloads' && (
+          {activeTab === 'patchnotes' && (
+            <PatchNotesEditor 
+              patchnotesData={configs.patchnotes}
+              onSave={(newConfig) => handleSaveConfig('patchnotes', newConfig)}
+            />
+          )}
+          
+          {activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && (
             <div style={{
               background: 'rgba(255,255,255,0.05)',
               borderRadius: '10px',
