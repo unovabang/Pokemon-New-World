@@ -13,5 +13,19 @@
     "amount": "",
     "current": "",
     "description": ""
+  },
+  "translations": {
+    "en": {
+      "title": "Get the latest news first!",
+      "content": {
+        "heading": "Support the project!!!!",
+        "description": "Get early access to new content and help us develop the game!!!!!!!!!!!!!",
+        "buttonText": "Support on Patreon",
+        "button": "Support on Patreon"
+      },
+      "goal": {
+        "description": ""
+      }
+    }
   }
 }
