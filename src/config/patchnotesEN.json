@@ -1,0 +1,52 @@
+
+{
+  "_documentation": {
+    "_comment": "This file configures the patch notes displayed in the modal (English version)",
+    "_usage": {
+      "version": "Patch version (e.g., '0.6', '1.0', '2.1') - used for PATCHNOTE{version without dot}.png image",
+      "date": "Patch release date (free format)",
+      "content.title": "Title displayed at the top of the modal",
+      "content.sections": "Array of objects containing note sections",
+      "section.title": "Section title (supports emojis)",
+      "section.items": "Array of strings - list of items in this section"
+    },
+    "_imageNaming": "The patch image should be named PATCHNOTE{VERSION_WITHOUT_DOT}.png in /public/"
+  },
+
+  "version": "0.6",
+  "date": "January 2025",
+  "content": {
+    "title": "Patch Notes 0.6",
+    "sections": [
+      {
+        "_comment": "New features section - use emojis to make it more attractive",
+        "title": "🆕 New Features",
+        "items": [
+          "Added game continuation (approximately 5 hours of gameplay)",
+          "Mega Evolution arrival",
+          "Shiny Pokémon animations",
+          "Proper logo for Shiny Pokémon in battle",
+          "Added Fresque-Haute Breeding (location allowing reset of Alternative Shiny Pokémon)",
+          "Many new Pokémon make their appearance"
+        ]
+      },
+      {
+        "_comment": "Bug fixes section",
+        "title": "🔧 Fixes",
+        "items": [
+          "Fixed crash related to Moon Ball",
+          "Fixed crash related to Fmod (during evolution)",
+          "Fixed the following abilities: Salt Cure, Cruelty, Cursed Body, Illusion",
+          "Fixed Baton Pass move",
+          "Fixed Pokédex numbering",
+          "Fixed some missing collisions"
+        ]
+      },
+      {
+        "_comment": "Balance section - for gameplay adjustments",
+        "title": "⚖️ Balance",
+        "items": ["Nerf to Encornus", "Buff to Aligatueur"]
+      }
+    ]
+  }
+}
