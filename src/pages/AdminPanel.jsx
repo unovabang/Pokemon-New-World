@@ -4,6 +4,10 @@ import BannerManager from "../components/BannerManager";
 import DownloadsEditor from "../components/DownloadsEditor";
 import PatchNotesEditor from "../components/PatchNotesEditor";
 import ConfigEditor from "../components/ConfigEditor";
+import SiteEditor from "../components/SiteEditor";
+import PatreonEditor from "../components/PatreonEditor";
+import ExternalLinksEditor from "../components/ExternalLinksEditor";
+import FooterEditor from "../components/FooterEditor";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -230,11 +234,7 @@ const AdminPanel = () => {
           
           {/* Configuration générale pour Site */}
           {activeTab === 'site' && (
-            <ConfigEditor
-              configName="site"
-              title="Configuration du Site"
-              icon="fa-cog"
-              description="Paramètres généraux du site web (titre, description, SEO, etc.)"
+            <SiteEditor
               onSave={(newConfig) => handleSaveConfig('site', newConfig)}
             />
           )}
@@ -253,33 +253,21 @@ const AdminPanel = () => {
 
           {/* Configuration Patreon */}
           {activeTab === 'patreon' && (
-            <ConfigEditor
-              configName="patreon"
-              title="Configuration Patreon"
-              icon="fa-heart"
-              description="Paramètres de la campagne de financement participatif"
+            <PatreonEditor
               onSave={(newConfig) => handleSaveConfig('patreon', newConfig)}
             />
           )}
 
           {/* Configuration Footer */}
           {activeTab === 'footer' && (
-            <ConfigEditor
-              configName="footer"
-              title="Pied de Page"
-              icon="fa-window-minimize"
-              description="Liens et informations du pied de page du site"
+            <FooterEditor
               onSave={(newConfig) => handleSaveConfig('footer', newConfig)}
             />
           )}
 
           {/* Configuration Liens Externes */}
           {activeTab === 'external' && (
-            <ConfigEditor
-              configName="external"
-              title="Liens Externes"
-              icon="fa-external-link"
-              description="Liens vers les réseaux sociaux et services externes"
+            <ExternalLinksEditor
               onSave={(newConfig) => handleSaveConfig('external', newConfig)}
             />
           )}
