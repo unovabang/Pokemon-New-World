@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-// Utiliser l'URL directe pour éviter les problèmes de domaine
-const API_BASE = 'http://localhost:3001/api';
+// Utiliser le domaine Replit pour l'API
+const API_BASE = `${window.location.protocol}//${window.location.hostname.replace(/:\d+$/, '')}:3001/api`;
 
 const BannerManager = ({ onSave }) => {
   const [bannerImages, setBannerImages] = useState([]);
