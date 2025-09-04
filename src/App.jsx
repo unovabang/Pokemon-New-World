@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 import content from "./config/index.js";
 import patchNotesData from "./config/patchnotes.json";
 import HeroVideo from "./components/HeroVideo";
@@ -15,9 +16,16 @@ import LoginAdmin from "./pages/LoginAdmin";
 import Page404 from "./pages/Page404";
 import { useLanguage } from "./contexts/LanguageContext";
 
-
-
 export default function App() {
+  const { isLoading, isAuthenticated, appState } = useAuth0();
+
+  // Gestion du callback Auth0 pour redirection
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && appState?.returnTo) {
+      // Si on a un returnTo dans l'appState, rediriger
+      window.history.pushState(null, '', appState.returnTo);
+    }
+  }, [isLoading, isAuthenticated, appState]);
   return (
     <Router>
       <Routes>
