@@ -10,7 +10,7 @@ import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const HomePage = () => {
-  const { backgrounds, heroVideo, game, carousel, discord, downloads } = content;
+  const { backgrounds, heroVideo, game, carousel, discord, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit } = content;
   const { t, language } = useLanguage();
   const [openVideo, setOpenVideo] = useState(false);
   const [openExplanations, setOpenExplanations] = useState(false);
@@ -76,7 +76,7 @@ const HomePage = () => {
                   </button>
                   <a
                     className="btn btn-ghost"
-                    href={discord?.invite || "#"}
+                    href={discord || "#"}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -119,7 +119,7 @@ const HomePage = () => {
                       <h3>{t('sections.tiktok.heading')}</h3>
                       <p>{t('sections.tiktok.description')}</p>
                       <a 
-                        href="https://www.tiktok.com" 
+                        href={tiktok || "https://www.tiktok.com"} 
                         target="_blank" 
                         rel="noreferrer"
                         className="btn btn-primary dual-btn"
@@ -207,7 +207,7 @@ const HomePage = () => {
               </p>
               <div className="social">
                 <a
-                  href={discord?.invite || "#"}
+                  href={discord || "#"}
                   target="_blank"
                   rel="noreferrer"
                   title="Discord"
