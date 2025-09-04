@@ -62,41 +62,55 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
         .burger{display:inline-flex}
 }
 
-/* ===== SÉLECTEUR DE LANGUE ===== */
-.language-selector-above-video {
+/* ===== SÉLECTEUR DE LANGUE AVEC DRAPEAUX ===== */
+.language-selector {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.language-selector.language-selector-above-video {
+  z-index: 1001; /* Au-dessus de la vidéo */
+}
+
+.flag-selector {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 15px;
-  padding-top: 10px;
-}
-
-.language-select {
-  background: var(--glass);
-  backdrop-filter: saturate(130%) blur(10px);
-  border: 1px solid rgba(126,205,242,.25);
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.8);
   border-radius: 12px;
-  color: var(--text);
-  padding: 0.6rem 0.8rem;
-  font-size: 0.9rem;
+  padding: 6px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.flag-button {
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 4px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 120px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.language-select:hover {
-  border-color: rgba(126,205,242,.45);
-  box-shadow: 0 4px 12px rgba(126,205,242,.15);
+.flag-button:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
 }
 
-.language-select:focus {
-  outline: none;
+.flag-button.active {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(126,205,242,.2);
+  box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.4);
 }
 
-.language-select option {
-  background: var(--bg-elev);
-  color: var(--text);
+.flag-image {
+  width: 24px;
+  height: 18px;
+  object-fit: cover;
+  border-radius: 2px;
 }
 
 /* ===== BOUTONS (effets modernes) ===== */
