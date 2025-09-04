@@ -132,7 +132,7 @@ const AdminPanel = () => {
   return (
     <div style={{ 
       minHeight: '100vh', 
-      backgroundImage: 'url(https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/4fda9f2e-bdae-436e-a729-995e442f0245/dejr7my-4643e7e4-2b76-494b-917e-63dc39d8efa2.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzRmZGE5ZjJlLWJkYWUtNDM2ZS1hNzI5LTk5NWU0NDJmMDI0NVwvZGVqcjdteS00NjQzZTdlNC0yYjc2LTQ5NGItOTE3ZS02M2RjMzlkOGVmYTIuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.mLw8xYJ6thBmuTvz0nAPl0-3I80U6Bei6CiFgIGQR4A)',
+      backgroundImage: 'url(https://art.ngfiles.com/images/2346000/2346850_blue-rabbit-inc_hisui-campfire.gif?f1644561712)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
