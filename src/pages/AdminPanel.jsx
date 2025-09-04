@@ -3,7 +3,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import BannerManager from "../components/BannerManager";
 import DownloadsEditor from "../components/DownloadsEditor";
 import PatchNotesEditor from "../components/PatchNotesEditor";
-import ConfigEditor from "../components/ConfigEditor";
 import SiteEditor from "../components/SiteEditor";
 import PatreonEditor from "../components/PatreonEditor";
 import ExternalLinksEditor from "../components/ExternalLinksEditor";
@@ -11,7 +10,6 @@ import FooterEditor from "../components/FooterEditor";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
-import sectionsConfig from "../config/sections.json";
 import newsConfig from "../config/news.json";
 import downloadsConfig from "../config/downloads.json";
 import patchnotesConfig from "../config/patchnotes.json";
@@ -24,7 +22,6 @@ const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('news');
   const [configs, setConfigs] = useState({
     site: siteConfig,
-    sections: sectionsConfig,
     news: newsConfig,
     downloads: downloadsConfig,
     patchnotes: patchnotesConfig,
@@ -60,7 +57,6 @@ const AdminPanel = () => {
     { id: 'downloads', name: 'Téléchargements', icon: 'fa-download' },
     { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-text' },
     { id: 'site', name: 'Site', icon: 'fa-cog' },
-    { id: 'sections', name: 'Sections', icon: 'fa-th-large' },
     { id: 'patreon', name: 'Patreon', icon: 'fa-heart' },
     { id: 'footer', name: 'Pied de page', icon: 'fa-window-minimize' },
     { id: 'external', name: 'Liens externes', icon: 'fa-external-link' }
@@ -239,17 +235,6 @@ const AdminPanel = () => {
             />
           )}
 
-          {/* Configuration des Sections */}
-          {activeTab === 'sections' && (
-            <ConfigEditor
-              configName="sections"
-              title="Sections du Site"
-              icon="fa-th-large"
-              description="Contenu et structure des différentes sections de la page d'accueil"
-              multilingual={true}
-              onSave={(newConfig) => handleSaveConfig('sections', newConfig)}
-            />
-          )}
 
           {/* Configuration Patreon */}
           {activeTab === 'patreon' && (
@@ -273,7 +258,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
-           activeTab !== 'site' && activeTab !== 'sections' && activeTab !== 'patreon' && 
+           activeTab !== 'site' && activeTab !== 'patreon' && 
            activeTab !== 'footer' && activeTab !== 'external' && (
             <div style={{
               background: 'rgba(255,255,255,0.05)',
@@ -338,9 +323,6 @@ const AdminPanel = () => {
                 )}
                 {activeTab === 'site' && (
                   <p>Interface graphique en développement. Configuration du site avec des champs de formulaire pour le titre, la description, les métadonnées SEO, etc.</p>
-                )}
-                {activeTab === 'sections' && (
-                  <p>Interface graphique en développement. Éditeur visuel pour le contenu des différentes sections de la page.</p>
                 )}
                 {activeTab === 'patreon' && (
                   <p>Interface graphique en développement. Formulaires pour configurer la section Patreon facilement.</p>
