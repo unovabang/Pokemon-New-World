@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginAdmin = () => {
-  const { loginWithRedirect, isAuthenticated, isLoading, user } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, isLoading, user, logout } = useAuth0();
   const [accessCode, setAccessCode] = useState("");
   const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [adminEmail, setAdminEmail] = useState("");
@@ -192,9 +192,19 @@ const LoginAdmin = () => {
             borderTop: '1px solid rgba(255,255,255,0.2)',
             paddingTop: '1.5rem',
             marginTop: '2rem',
-            textAlign: 'center'
+            textAlign: 'center',
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '1rem'
           }}>
-            <a href="/" className="btn btn-ghost">
+            <button 
+              onClick={() => logout({ logoutParams: { returnTo: `${window.location.origin}/admin-login` } })}
+              className="btn btn-ghost"
+              style={{ fontSize: '0.9rem' }}
+            >
+              <i className="fa-solid fa-arrow-left"></i> Changer de compte
+            </button>
+            <a href="/" className="btn btn-ghost" style={{ fontSize: '0.9rem' }}>
               <i className="fa-solid fa-home"></i> Retour à l'accueil
             </a>
           </div>
