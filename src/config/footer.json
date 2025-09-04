@@ -1,13 +1,6 @@
 {
-  "copyright": "© {year} FOOTER MODIFIÉ - Pokémon New World — NOUVEAU FOOTER TESTÉ !!!",
-  "developedBy": "JirôMODIFIÉ",
-  "version": "v2.0.0-TEST",
-  "links": [
-    {
-      "id": "1",
-      "name": "Lien TEST",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-link"
-    }
-  ]
+  "copyright": "© {year} Pokémon New World — tous droits réservés.",
+  "developedBy": "Jirô ❤️",
+  "version": "v1.0.0",
+  "links": []
 }
