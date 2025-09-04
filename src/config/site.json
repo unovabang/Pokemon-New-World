@@ -22,7 +22,7 @@
     "youtubeId": "uZTi9YUo0As"
   },
   "audio": {
-    "enabled": true,
+    "enabled": false,
     "youtubeId": "NdJQopRuH1E",
     "autoplay": true,
     "startVolume": 1
