@@ -15,8 +15,9 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
-// Chemin vers le dossier des images
+// Chemins vers les dossiers
 const NEWS_IMAGES_DIR = path.join(__dirname, '../public/news-images');
+const CONFIG_DIR = path.join(__dirname, '../src/config');
 
 // Configuration multer pour l'upload
 const storage = multer.diskStorage({
@@ -272,13 +273,185 @@ app.use((error, req, res, next) => {
   res.status(500).json({ success: false, error: error.message });
 });
 
+// === PATCH NOTES API ===
+
+// GET /api/patchnotes - Lister toutes les notes de patch
+app.get('/api/patchnotes', (req, res) => {
+  try {
+    const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
+    
+    if (!fs.existsSync(patchnotesPath)) {
+      // Créer un fichier vide s'il n'existe pas
+      const defaultData = {
+        versions: []
+      };
+      fs.writeJsonSync(patchnotesPath, defaultData, { spaces: 2 });
+    }
+    
+    const data = fs.readJsonSync(patchnotesPath);
+    res.json({ success: true, patchnotes: data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST /api/patchnotes - Ajouter une nouvelle version
+app.post('/api/patchnotes/version', (req, res) => {
+  try {
+    const { version, date, sections } = req.body;
+    
+    if (!version || !date || !sections) {
+      return res.status(400).json({ success: false, error: 'Version, date et sections requis' });
+    }
+    
+    const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
+    let data = { versions: [] };
+    
+    if (fs.existsSync(patchnotesPath)) {
+      data = fs.readJsonSync(patchnotesPath);
+    }
+    
+    // Vérifier si la version existe déjà
+    const existingIndex = data.versions.findIndex(v => v.version === version);
+    if (existingIndex !== -1) {
+      return res.status(400).json({ success: false, error: 'Cette version existe déjà' });
+    }
+    
+    // Ajouter la nouvelle version
+    const newVersion = {
+      version,
+      date,
+      sections: sections || []
+    };
+    
+    data.versions.unshift(newVersion); // Ajouter en premier (plus récent)
+    
+    fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
+    
+    res.json({ 
+      success: true, 
+      message: `Version ${version} ajoutée avec succès`,
+      patchnotes: data 
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/patchnotes/version/:version - Modifier une version
+app.put('/api/patchnotes/version/:version', (req, res) => {
+  try {
+    const { version } = req.params;
+    const { date, sections } = req.body;
+    
+    const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
+    
+    if (!fs.existsSync(patchnotesPath)) {
+      return res.status(404).json({ success: false, error: 'Fichier de notes de patch non trouvé' });
+    }
+    
+    const data = fs.readJsonSync(patchnotesPath);
+    const versionIndex = data.versions.findIndex(v => v.version === version);
+    
+    if (versionIndex === -1) {
+      return res.status(404).json({ success: false, error: 'Version non trouvée' });
+    }
+    
+    // Mettre à jour la version
+    if (date) data.versions[versionIndex].date = date;
+    if (sections) data.versions[versionIndex].sections = sections;
+    
+    fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
+    
+    res.json({ 
+      success: true, 
+      message: `Version ${version} mise à jour`,
+      patchnotes: data 
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// DELETE /api/patchnotes/version/:version - Supprimer une version
+app.delete('/api/patchnotes/version/:version', (req, res) => {
+  try {
+    const { version } = req.params;
+    
+    const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
+    
+    if (!fs.existsSync(patchnotesPath)) {
+      return res.status(404).json({ success: false, error: 'Fichier de notes de patch non trouvé' });
+    }
+    
+    const data = fs.readJsonSync(patchnotesPath);
+    const initialLength = data.versions.length;
+    
+    data.versions = data.versions.filter(v => v.version !== version);
+    
+    if (data.versions.length === initialLength) {
+      return res.status(404).json({ success: false, error: 'Version non trouvée' });
+    }
+    
+    fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
+    
+    res.json({ 
+      success: true, 
+      message: `Version ${version} supprimée`,
+      patchnotes: data 
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST /api/patchnotes/version/:version/section - Ajouter une section à une version
+app.post('/api/patchnotes/version/:version/section', (req, res) => {
+  try {
+    const { version } = req.params;
+    const { title, items } = req.body;
+    
+    if (!title || !items) {
+      return res.status(400).json({ success: false, error: 'Titre et éléments requis' });
+    }
+    
+    const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
+    
+    if (!fs.existsSync(patchnotesPath)) {
+      return res.status(404).json({ success: false, error: 'Fichier de notes de patch non trouvé' });
+    }
+    
+    const data = fs.readJsonSync(patchnotesPath);
+    const versionIndex = data.versions.findIndex(v => v.version === version);
+    
+    if (versionIndex === -1) {
+      return res.status(404).json({ success: false, error: 'Version non trouvée' });
+    }
+    
+    const newSection = { title, items };
+    data.versions[versionIndex].sections.push(newSection);
+    
+    fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
+    
+    res.json({ 
+      success: true, 
+      message: `Section "${title}" ajoutée à la version ${version}`,
+      patchnotes: data 
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Démarrage du serveur
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur API bannières démarré sur le port ${PORT}`);
+  console.log(`🚀 Serveur API démarré sur le port ${PORT}`);
   console.log(`📂 Dossier des images: ${NEWS_IMAGES_DIR}`);
+  console.log(`⚙️  Dossier de config: ${CONFIG_DIR}`);
   
-  // Créer le dossier s'il n'existe pas
+  // Créer les dossiers s'ils n'existent pas
   fs.ensureDirSync(NEWS_IMAGES_DIR);
+  fs.ensureDirSync(CONFIG_DIR);
 });
 
 export default app;
