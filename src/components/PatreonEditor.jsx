@@ -42,7 +42,7 @@ const PatreonEditor = ({ onSave }) => {
         setImage(config.image || '');
         setHeading(config.content?.heading || '');
         setDescription(config.content?.description || '');
-        setButtonText(config.content?.button || '');
+        setButtonText(config.content?.buttonText || config.content?.button || '');
         setButtonUrl(config.content?.url || '');
         setGoalAmount(config.goal?.amount || '');
         setCurrentAmount(config.goal?.current || '');
@@ -86,6 +86,7 @@ const PatreonEditor = ({ onSave }) => {
             content: {
               heading,
               description,
+              buttonText: buttonText,
               button: buttonText,
               url: buttonUrl
             },

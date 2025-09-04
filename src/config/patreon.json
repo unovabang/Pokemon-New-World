@@ -1,11 +1,12 @@
 {
   "title": "Obtiens les nouveautés en avance !",
   "icon": "/patreonlogo.png",
-  "image": "public/patreon.png",
+  "image": "/patreon.png",
   "content": {
-    "heading": "Soutenez le projet !!!",
-    "description": "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !!!!!",
-    "button": "",
+    "heading": "Soutenez le projet",
+    "description": "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !",
+    "buttonText": "Soutenir sur Patreon",
+    "button": "Soutenir sur Patreon",
     "url": "https://www.patreon.com/c/unovabang"
   },
   "goal": {

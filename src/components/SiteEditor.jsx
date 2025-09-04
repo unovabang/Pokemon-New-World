@@ -743,6 +743,9 @@ const SiteEditor = ({ onSave }) => {
                         fontSize: '1rem'
                       }}
                     />
+                    <small style={{ color: 'rgba(255,255,255,0.6)' }}>
+                      Extrait de l'URL: https://www.youtube.com/watch?v=<strong>NdJQopRuH1E</strong>
+                    </small>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -759,7 +762,7 @@ const SiteEditor = ({ onSave }) => {
                         }}
                       />
                       <label htmlFor="audioAutoplay" style={{ fontWeight: 'bold' }}>
-                        Lecture automatique
+                        <i className="fa-solid fa-play"></i> Lecture automatique
                       </label>
                     </div>
 
@@ -769,7 +772,7 @@ const SiteEditor = ({ onSave }) => {
                         marginBottom: '0.5rem', 
                         fontWeight: 'bold' 
                       }}>
-                        Volume initial ({Math.round(audioVolume * 100)}%) :
+                        <i className="fa-solid fa-volume-up"></i> Volume initial ({Math.round(audioVolume * 100)}%) :
                       </label>
                       <input
                         type="range"
@@ -783,6 +786,23 @@ const SiteEditor = ({ onSave }) => {
                           accentColor: '#22c55e'
                         }}
                       />
+                    </div>
+                  </div>
+
+                  {/* Aperçu des paramètres audio */}
+                  <div style={{
+                    background: 'rgba(34, 197, 94, 0.05)',
+                    border: '1px solid rgba(34, 197, 94, 0.2)',
+                    borderRadius: '8px',
+                    padding: '1rem'
+                  }}>
+                    <h5 style={{ margin: '0 0 0.5rem 0', color: '#22c55e' }}>
+                      <i className="fa-solid fa-info-circle"></i> Configuration actuelle :
+                    </h5>
+                    <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)' }}>
+                      <div>🎵 Vidéo: {audioVideoId || 'Non configurée'}</div>
+                      <div>🔄 Lecture auto: {audioAutoplay ? '✅ Activée' : '❌ Désactivée'}</div>
+                      <div>🔊 Volume: {Math.round(audioVolume * 100)}%</div>
                     </div>
                   </div>
                 </div>
