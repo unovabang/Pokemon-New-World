@@ -138,14 +138,8 @@ const BannerManager = ({ onSave }) => {
       const data = await response.json();
       
       if (data.success) {
-        // Mettre à jour immédiatement avec les données du serveur
-        setBannerImages(data.banners.sort((a, b) => a.position - b.position));
-        showMessage('Succès', 'Position mise à jour ! La page va se rafraîchir...', 'success');
-        
-        // Actualiser la page après un délai pour voir le message de succès
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        // Actualiser directement la page
+        window.location.reload();
       } else {
         throw new Error(data.error);
       }
@@ -173,14 +167,8 @@ const BannerManager = ({ onSave }) => {
       const data = await response.json();
       
       if (data.success) {
-        // Mettre à jour immédiatement avec les données du serveur
-        setBannerImages(data.banners.sort((a, b) => a.position - b.position));
-        showMessage('Succès', 'Position mise à jour ! La page va se rafraîchir...', 'success');
-        
-        // Actualiser la page après un délai pour voir le message de succès
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        // Actualiser directement la page
+        window.location.reload();
       } else {
         throw new Error(data.error);
       }
