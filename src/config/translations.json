@@ -72,42 +72,6 @@
       "patchNotes": {
         "version": "Version"
       }
-    },
-    "patchNotes": {
-      "version": "0.6",
-      "date": "Janvier 2025",
-      "title": "Notes de patch 0.6",
-      "sections": [
-        {
-          "title": "🆕 Nouveautés",
-          "items": [
-            "Ajout de la suite du jeu (environ 5h de jeu)",
-            "Arrivée de la Méga-Évolution",
-            "Animation des Pokémon Chromatique",
-            "Logo propre aux Pokémon Chromatique en combat",
-            "Ajout de l'Élevage Fresque-Haute (lieu permettant de reset les Pokémon Chromatiques Alternatifs)",
-            "De nombreux nouveaux Pokémon font leur apparition"
-          ]
-        },
-        {
-          "title": "🔧 Corrections",
-          "items": [
-            "Correction du crash lié à la Lune Ball",
-            "Correction du crash lié au Fmod (pendant évolution)",
-            "Correction des talents suivants : Sel Purificateur, Cruauté, Corps Maudit, Illusion",
-            "Correction de la capacité Relais",
-            "Correction de la numérotation du Pokédex",
-            "Correction de certaines collisions manquantes"
-          ]
-        },
-        {
-          "title": "⚖️ Équilibrage",
-          "items": [
-            "Nerf de Encornus",
-            "Buff de Aligatueur"
-          ]
-        }
-      ]
     }
   },
   "en": {
@@ -183,42 +147,6 @@
       "patchNotes": {
         "version": "Version"
       }
-    },
-    "patchNotes": {
-      "version": "0.6",
-      "date": "January 2025",
-      "title": "Patch notes 0.6",
-      "sections": [
-        {
-          "title": "🆕 New features",
-          "items": [
-            "Added game continuation (about 5 hours of gameplay)",
-            "Mega Evolution arrival",
-            "Shiny Pokémon animation",
-            "Dedicated logo for Shiny Pokémon in battle",
-            "Added Fresco-Height Breeding (location allowing to reset Alternative Shiny Pokémon)",
-            "Many new Pokémon make their appearance"
-          ]
-        },
-        {
-          "title": "🔧 Bug fixes",
-          "items": [
-            "Fixed crash related to Moon Ball",
-            "Fixed crash related to Fmod (during evolution)",
-            "Fixed the following abilities: Purifying Salt, Cruelty, Cursed Body, Illusion",
-            "Fixed Baton Pass move",
-            "Fixed Pokédex numbering",
-            "Fixed some missing collisions"
-          ]
-        },
-        {
-          "title": "⚖️ Balance changes",
-          "items": [
-            "Nerfed Encornus",
-            "Buffed Feraligatr"
-          ]
-        }
-      ]
     }
   }
 }
