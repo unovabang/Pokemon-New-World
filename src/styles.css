@@ -63,11 +63,10 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 
 /* ===== SÉLECTEUR DE LANGUE ===== */
-.language-selector-top {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 50;
+.language-selector-content {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px 0;
 }
 
 .language-select {

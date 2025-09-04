@@ -4,8 +4,8 @@ const LanguageSelector = ({ className = "" }) => {
   const { language, changeLanguage } = useLanguage();
 
   const languages = [
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'en', name: 'English', flag: '🇺🇸' }
+    { code: 'fr', flag: '🇫🇷' },
+    { code: 'en', flag: '🇺🇸' }
   ];
 
   return (
@@ -18,7 +18,7 @@ const LanguageSelector = ({ className = "" }) => {
       >
         {languages.map(lang => (
           <option key={lang.code} value={lang.code}>
-            {lang.flag} {lang.name}
+            {lang.flag}
           </option>
         ))}
       </select>
