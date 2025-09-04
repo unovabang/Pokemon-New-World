@@ -4,24 +4,24 @@ const LanguageSelector = ({ className = "" }) => {
   const { language, changeLanguage } = useLanguage();
 
   const languages = [
-    { code: 'fr', flag: '🇫🇷', name: 'Français' },
-    { code: 'en', flag: '🇺🇸', name: 'English' }
+    { code: 'fr', name: 'Français' },
+    { code: 'en', name: 'English' }
   ];
 
   return (
     <div className={`language-selector ${className}`}>
-      <div className="language-buttons">
+      <select 
+        value={language} 
+        onChange={(e) => changeLanguage(e.target.value)}
+        className="language-select"
+        title="Changer la langue / Change language"
+      >
         {languages.map(lang => (
-          <button
-            key={lang.code}
-            onClick={() => changeLanguage(lang.code)}
-            className={`language-btn ${language === lang.code ? 'active' : ''}`}
-            title={`Changer vers ${lang.name} / Switch to ${lang.name}`}
-          >
-            {lang.flag}
-          </button>
+          <option key={lang.code} value={lang.code}>
+            {lang.name}
+          </option>
         ))}
-      </div>
+      </select>
     </div>
   );
 };
