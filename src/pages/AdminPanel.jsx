@@ -147,14 +147,16 @@ const AdminPanel = () => {
         <div style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
-          alignItems: 'center',
+          alignItems: window.innerWidth <= 768 ? 'flex-start' : 'center',
           maxWidth: '1200px',
-          margin: '0 auto'
+          margin: '0 auto',
+          flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+          gap: window.innerWidth <= 768 ? '1rem' : '0'
         }}>
           <div>
             <div>
               <h1 style={{
-                fontSize: '2.2rem',
+                fontSize: window.innerWidth <= 480 ? '1.6rem' : window.innerWidth <= 768 ? '1.8rem' : '2.2rem',
                 fontWeight: '700',
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 backgroundClip: 'text',
@@ -163,7 +165,9 @@ const AdminPanel = () => {
                 margin: '0 0 0.5rem 0',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.8rem'
+                gap: window.innerWidth <= 480 ? '0.4rem' : '0.8rem',
+                flexDirection: window.innerWidth <= 480 ? 'column' : 'row',
+                textAlign: window.innerWidth <= 480 ? 'center' : 'left'
               }}>
                 <i className="fa-solid fa-shield-halved" style={{
                   background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -185,9 +189,15 @@ const AdminPanel = () => {
               </p>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ 
+            display: 'flex', 
+            gap: window.innerWidth <= 480 ? '0.5rem' : '1rem', 
+            alignItems: 'center',
+            flexDirection: window.innerWidth <= 480 ? 'column' : 'row',
+            width: '100%'
+          }}>
             <a href="/" style={{
-              padding: '0.75rem 1.5rem',
+              padding: window.innerWidth <= 480 ? '0.6rem 1rem' : '0.75rem 1.5rem',
               background: 'linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%)',
               border: '1px solid rgba(102,126,234,0.3)',
               borderRadius: '12px',
@@ -198,8 +208,10 @@ const AdminPanel = () => {
               gap: '0.5rem',
               transition: 'all 0.3s ease',
               backdropFilter: 'blur(10px)',
-              fontSize: '0.95rem',
-              fontWeight: '500'
+              fontSize: window.innerWidth <= 480 ? '0.85rem' : '0.95rem',
+              fontWeight: '500',
+              width: window.innerWidth <= 480 ? '100%' : 'auto',
+              justifyContent: 'center'
             }}
             onMouseOver={(e) => {
               e.target.style.background = 'linear-gradient(135deg, rgba(102,126,234,0.3) 0%, rgba(118,75,162,0.3) 100%)';
@@ -216,7 +228,7 @@ const AdminPanel = () => {
             <button 
               onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
               style={{
-                padding: '0.75rem 1.5rem',
+                padding: window.innerWidth <= 480 ? '0.6rem 1rem' : '0.75rem 1.5rem',
                 background: 'linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(153,27,27,0.2) 100%)',
                 border: '1px solid rgba(220,38,38,0.3)',
                 borderRadius: '12px',
@@ -227,8 +239,10 @@ const AdminPanel = () => {
                 gap: '0.5rem',
                 transition: 'all 0.3s ease',
                 backdropFilter: 'blur(10px)',
-                fontSize: '0.95rem',
-                fontWeight: '500'
+                fontSize: window.innerWidth <= 480 ? '0.85rem' : '0.95rem',
+                fontWeight: '500',
+                width: window.innerWidth <= 480 ? '100%' : 'auto',
+                justifyContent: 'center'
               }}
               onMouseOver={(e) => {
                 e.target.style.background = 'linear-gradient(135deg, rgba(220,38,38,0.3) 0%, rgba(153,27,27,0.3) 100%)';
@@ -247,26 +261,32 @@ const AdminPanel = () => {
         </div>
       </header>
 
-      <div style={{ display: 'flex', maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ 
+        display: 'flex', 
+        maxWidth: '1200px', 
+        margin: '0 auto',
+        flexDirection: window.innerWidth <= 768 ? 'column' : 'row'
+      }}>
         {/* Sidebar */}
         <nav style={{ 
-          width: '280px', 
+          width: window.innerWidth <= 768 ? '100%' : '280px', 
           background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)', 
-          minHeight: 'calc(100vh - 100px)',
-          padding: '2rem 1.5rem',
-          borderRight: '1px solid rgba(255,255,255,0.1)',
+          minHeight: window.innerWidth <= 768 ? 'auto' : 'calc(100vh - 100px)',
+          padding: window.innerWidth <= 768 ? '1rem' : '2rem 1.5rem',
+          borderRight: window.innerWidth <= 768 ? 'none' : '1px solid rgba(255,255,255,0.1)',
+          borderBottom: window.innerWidth <= 768 ? '1px solid rgba(255,255,255,0.1)' : 'none',
           backdropFilter: 'blur(15px)',
-          boxShadow: 'inset -1px 0 0 rgba(255,255,255,0.1)'
+          boxShadow: window.innerWidth <= 768 ? 'none' : 'inset -1px 0 0 rgba(255,255,255,0.1)'
         }}>
           <h3 style={{ 
-            marginBottom: '2rem', 
+            marginBottom: window.innerWidth <= 768 ? '1rem' : '2rem', 
             color: '#667eea',
-            fontSize: '1.3rem',
+            fontSize: window.innerWidth <= 480 ? '1.1rem' : '1.3rem',
             fontWeight: '600',
-            display: 'flex',
+            display: window.innerWidth <= 480 ? 'none' : 'flex',
             alignItems: 'center',
             gap: '0.8rem',
-            paddingBottom: '1rem',
+            paddingBottom: window.innerWidth <= 768 ? '0.5rem' : '1rem',
             borderBottom: '2px solid rgba(102,126,234,0.2)'
           }}>
             <i className="fa-solid fa-cogs" style={{fontSize: '1.2rem'}}></i> Configuration
@@ -277,8 +297,8 @@ const AdminPanel = () => {
               onClick={() => setActiveTab(tab.id)}
               style={{
                 width: '100%',
-                padding: '1rem 1.25rem',
-                margin: '0.4rem 0',
+                padding: window.innerWidth <= 768 ? '0.75rem 1rem' : '1rem 1.25rem',
+                margin: window.innerWidth <= 768 ? '0.2rem 0' : '0.4rem 0',
                 background: activeTab === tab.id 
                   ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
                   : 'rgba(255,255,255,0.03)',
@@ -286,13 +306,13 @@ const AdminPanel = () => {
                 border: activeTab === tab.id 
                   ? '1px solid rgba(102,126,234,0.5)' 
                   : '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '12px',
+                borderRadius: window.innerWidth <= 768 ? '8px' : '12px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.75rem',
+                gap: window.innerWidth <= 768 ? '0.5rem' : '0.75rem',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                fontSize: '0.95rem',
+                fontSize: window.innerWidth <= 480 ? '0.85rem' : '0.95rem',
                 fontWeight: activeTab === tab.id ? '600' : '500',
                 boxShadow: activeTab === tab.id 
                   ? '0 8px 25px rgba(102,126,234,0.25)' 
@@ -327,7 +347,7 @@ const AdminPanel = () => {
         {/* Main Content */}
         <main style={{ 
           flex: 1, 
-          padding: '2rem 2.5rem',
+          padding: window.innerWidth <= 768 ? '1rem' : window.innerWidth <= 1024 ? '1.5rem' : '2rem 2.5rem',
           background: 'rgba(255,255,255,0.02)',
           backdropFilter: 'blur(10px)'
         }}>
@@ -384,8 +404,8 @@ const AdminPanel = () => {
            activeTab !== 'footer' && activeTab !== 'external' && (
             <div style={{
               background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
-              borderRadius: '20px',
-              padding: '2.5rem',
+              borderRadius: window.innerWidth <= 768 ? '15px' : '20px',
+              padding: window.innerWidth <= 480 ? '1.5rem' : window.innerWidth <= 768 ? '2rem' : '2.5rem',
               border: '1px solid rgba(255,255,255,0.1)',
               backdropFilter: 'blur(20px)',
               boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
