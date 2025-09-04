@@ -62,10 +62,10 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
         .burger{display:inline-flex}
 }
 
-/* ===== SÉLECTEUR DE LANGUE AVEC DRAPEAUX ===== */
+/* ===== SÉLECTEUR DE LANGUE EN DROPDOWN ===== */
 .language-selector {
   position: fixed;
-  top: 20px;
+  top: 12px;
   right: 20px;
   z-index: 1000;
 }
@@ -74,43 +74,126 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   z-index: 1001; /* Au-dessus de la vidéo */
 }
 
-.flag-selector {
-  display: flex;
-  gap: 8px;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 12px;
-  padding: 6px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.language-dropdown {
+  position: relative;
 }
 
-.flag-button {
-  background: none;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  padding: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.language-trigger {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  background: var(--glass);
+  backdrop-filter: saturate(130%) blur(10px);
+  border: 1px solid rgba(126,205,242,.12);
+  border-radius: 12px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text);
+  font-weight: 600;
+  min-width: 80px;
 }
 
-.flag-button:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+.language-trigger:hover {
+  background: rgba(126,205,242,.08);
+  border-color: rgba(126,205,242,.25);
+  box-shadow: 0 4px 12px rgba(126,205,242,.15);
+  transform: translateY(-1px);
 }
 
-.flag-button.active {
-  border-color: var(--primary);
-  box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.4);
+.language-trigger:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(126,205,242,.35);
 }
 
 .flag-image {
-  width: 24px;
-  height: 18px;
+  width: 20px;
+  height: 15px;
   object-fit: cover;
   border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+}
+
+.language-label {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  color: var(--muted);
+  transition: transform 0.3s ease;
+  margin-left: auto;
+}
+
+.dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.language-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--glass);
+  backdrop-filter: saturate(130%) blur(16px);
+  border: 1px solid rgba(126,205,242,.18);
+  border-radius: 12px;
+  padding: 6px;
+  min-width: 160px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35), 
+             0 0 0 1px rgba(126,205,242,.1) inset;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text);
+  text-align: left;
+}
+
+.language-option:hover {
+  background: rgba(126,205,242,.08);
+  border-color: rgba(126,205,242,.15);
+  transform: translateX(2px);
+}
+
+.language-option.active {
+  background: linear-gradient(135deg, rgba(126,205,242,.12), rgba(46,89,198,.08));
+  border-color: rgba(126,205,242,.25);
+  box-shadow: 0 2px 8px rgba(126,205,242,.2);
+}
+
+.language-option .language-label {
+  font-weight: 700;
+  color: var(--primary-2);
+  min-width: 24px;
+}
+
+.language-name {
+  font-size: 13px;
+  color: var(--muted);
+  margin-left: auto;
 }
 
 /* ===== BOUTONS (effets modernes) ===== */
