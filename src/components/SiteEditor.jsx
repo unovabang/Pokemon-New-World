@@ -14,6 +14,14 @@ const SiteEditor = ({ onSave }) => {
   const [accentColor, setAccentColor] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
   const [faviconUrl, setFaviconUrl] = useState('');
+  const [backgroundUrl, setBackgroundUrl] = useState('');
+  const [backgroundBlur, setBackgroundBlur] = useState(0.5);
+  const [backgroundDim, setBackgroundDim] = useState(0.01);
+  const [heroVideoId, setHeroVideoId] = useState('');
+  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [audioVideoId, setAudioVideoId] = useState('');
+  const [audioAutoplay, setAudioAutoplay] = useState(true);
+  const [audioVolume, setAudioVolume] = useState(1);
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -46,6 +54,14 @@ const SiteEditor = ({ onSave }) => {
         setAccentColor(config.theme?.accent || '#06b6d4');
         setLogoUrl(config.branding?.logo || '');
         setFaviconUrl(config.branding?.favicon || '');
+        setBackgroundUrl(config.backgrounds?.home || '');
+        setBackgroundBlur(config.backgrounds?.blur || 0.5);
+        setBackgroundDim(config.backgrounds?.dim || 0.01);
+        setHeroVideoId(config.heroVideo?.youtubeId || '');
+        setAudioEnabled(config.audio?.enabled || false);
+        setAudioVideoId(config.audio?.youtubeId || '');
+        setAudioAutoplay(config.audio?.autoplay || true);
+        setAudioVolume(config.audio?.startVolume || 1);
       }
     } catch (error) {
       console.error('Erreur lors du chargement de la config site:', error);
@@ -93,6 +109,30 @@ const SiteEditor = ({ onSave }) => {
             branding: {
               logo: logoUrl,
               favicon: faviconUrl
+            },
+            backgrounds: {
+              home: backgroundUrl,
+              blur: backgroundBlur,
+              dim: backgroundDim
+            },
+            heroVideo: {
+              youtubeId: heroVideoId
+            },
+            audio: {
+              enabled: audioEnabled,
+              youtubeId: audioVideoId,
+              autoplay: audioAutoplay,
+              startVolume: audioVolume
+            },
+            game: {
+              title: "Pokémon New World",
+              description: "Explorez la région de Bélamie"
+            },
+            carousel: {
+              images: ["/screenshot1.png", "/screenshot2.png", "/screenshot3.png"]
+            },
+            discord: {
+              invite: "#"
             }
           };
           
@@ -506,6 +546,245 @@ const SiteEditor = ({ onSave }) => {
                   <span style={{ marginLeft: '1rem', color: 'rgba(255,255,255,0.7)' }}>
                     Taille recommandée: 32x32px
                   </span>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '0.5rem', 
+                fontWeight: 'bold' 
+              }}>
+                <i className="fa-solid fa-mountain-city"></i> Image de fond :
+              </label>
+              <input
+                type="url"
+                value={backgroundUrl}
+                onChange={(e) => setBackgroundUrl(e.target.value)}
+                placeholder="https://exemple.com/background.png"
+                style={{
+                  width: '100%',
+                  padding: '1rem',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  background: 'rgba(255,255,255,0.1)',
+                  color: 'white',
+                  fontSize: '1rem'
+                }}
+              />
+              {backgroundUrl && (
+                <div style={{ marginTop: '0.5rem', textAlign: 'center' }}>
+                  <img 
+                    src={backgroundUrl} 
+                    alt="Aperçu fond" 
+                    style={{ 
+                      maxWidth: '300px', 
+                      maxHeight: '150px', 
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      borderRadius: '5px',
+                      objectFit: 'cover'
+                    }}
+                    onError={(e) => e.target.style.display = 'none'}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div>
+                <label style={{ 
+                  display: 'block', 
+                  marginBottom: '0.5rem', 
+                  fontWeight: 'bold' 
+                }}>
+                  <i className="fa-solid fa-eye-dropper"></i> Flou du fond ({backgroundBlur}px) :
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  value={backgroundBlur}
+                  onChange={(e) => setBackgroundBlur(parseFloat(e.target.value))}
+                  style={{
+                    width: '100%',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    background: 'rgba(255,255,255,0.1)',
+                    color: 'white',
+                    fontSize: '1rem'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ 
+                  display: 'block', 
+                  marginBottom: '0.5rem', 
+                  fontWeight: 'bold' 
+                }}>
+                  <i className="fa-solid fa-adjust"></i> Opacité du fond ({Math.round(backgroundDim * 100)}%) :
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={backgroundDim}
+                  onChange={(e) => setBackgroundDim(parseFloat(e.target.value))}
+                  style={{
+                    width: '100%',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    background: 'rgba(255,255,255,0.1)',
+                    color: 'white',
+                    fontSize: '1rem'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Médias et Contenu */}
+        <div style={{ 
+          background: 'rgba(255,255,255,0.05)', 
+          borderRadius: '10px', 
+          padding: '2rem',
+          border: '1px solid rgba(255,255,255,0.1)'
+        }}>
+          <h3 style={{ 
+            marginBottom: '1.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#ef4444'
+          }}>
+            <i className="fa-solid fa-play-circle"></i> Médias et Contenu
+          </h3>
+          
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            <div>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '0.5rem', 
+                fontWeight: 'bold' 
+              }}>
+                <i className="fa-brands fa-youtube"></i> ID Vidéo YouTube (Hero) :
+              </label>
+              <input
+                type="text"
+                value={heroVideoId}
+                onChange={(e) => setHeroVideoId(e.target.value)}
+                placeholder="uZTi9YUo0As"
+                style={{
+                  width: '100%',
+                  padding: '1rem',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  background: 'rgba(255,255,255,0.1)',
+                  color: 'white',
+                  fontSize: '1rem'
+                }}
+              />
+              <small style={{ color: 'rgba(255,255,255,0.6)' }}>
+                Extrait de l'URL: https://www.youtube.com/watch?v=<strong>uZTi9YUo0As</strong>
+              </small>
+            </div>
+
+            <div style={{
+              background: 'rgba(34, 197, 94, 0.1)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: '8px',
+              padding: '1.5rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                <input
+                  type="checkbox"
+                  id="audioEnabled"
+                  checked={audioEnabled}
+                  onChange={(e) => setAudioEnabled(e.target.checked)}
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    accentColor: '#22c55e'
+                  }}
+                />
+                <label htmlFor="audioEnabled" style={{ fontWeight: 'bold', color: '#22c55e' }}>
+                  <i className="fa-solid fa-volume-up"></i> Activer l'audio automatique
+                </label>
+              </div>
+
+              {audioEnabled && (
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  <div>
+                    <label style={{ 
+                      display: 'block', 
+                      marginBottom: '0.5rem', 
+                      fontWeight: 'bold' 
+                    }}>
+                      <i className="fa-brands fa-youtube"></i> ID Vidéo YouTube (Audio) :
+                    </label>
+                    <input
+                      type="text"
+                      value={audioVideoId}
+                      onChange={(e) => setAudioVideoId(e.target.value)}
+                      placeholder="NdJQopRuH1E"
+                      style={{
+                        width: '100%',
+                        padding: '1rem',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255,255,255,0.3)',
+                        background: 'rgba(255,255,255,0.1)',
+                        color: 'white',
+                        fontSize: '1rem'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <input
+                        type="checkbox"
+                        id="audioAutoplay"
+                        checked={audioAutoplay}
+                        onChange={(e) => setAudioAutoplay(e.target.checked)}
+                        style={{
+                          width: '20px',
+                          height: '20px',
+                          accentColor: '#22c55e'
+                        }}
+                      />
+                      <label htmlFor="audioAutoplay" style={{ fontWeight: 'bold' }}>
+                        Lecture automatique
+                      </label>
+                    </div>
+
+                    <div>
+                      <label style={{ 
+                        display: 'block', 
+                        marginBottom: '0.5rem', 
+                        fontWeight: 'bold' 
+                      }}>
+                        Volume initial ({Math.round(audioVolume * 100)}%) :
+                      </label>
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.1"
+                        value={audioVolume}
+                        onChange={(e) => setAudioVolume(parseFloat(e.target.value))}
+                        style={{
+                          width: '100%',
+                          accentColor: '#22c55e'
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
