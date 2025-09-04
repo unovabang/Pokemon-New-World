@@ -194,98 +194,78 @@ export default function App() {
             </div>
           </section>
 
-          {/* FOOTER */}
-          <section className="section">
-            <footer>
-              <div className="footer-links">
-                <a href="#top" className="footer-brand">
-                  {content.footer?.brand?.name || "Pokémon New World"}
-                </a>
-                {content.footer?.links?.map((link) => (
-                  <a
-                    key={link.text}
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <i className={link.icon}></i> {link.text}
-                  </a>
-                ))}
-              </div>
-              <p>
-                {content.footer?.copyright ||
-                  "© 2024 Pokémon New World. Fan-game non officiel."}
-              </p>
-            </footer>
-          </section>
-        </div>
+          </div>
 
         {/* Footer */}
         <footer className="site-footer">
           <div className="container footer-grid">
             <div className="footer-col">
               <div className="footer-brand">
-                {content.footer?.brand?.showLogo && (
-                  <img src="/logo.png" alt="Logo Pokémon New World" />
-                )}
-                <strong>{content.footer?.brand?.name || "Pokémon New World"}</strong>
+                <img src="/logo.png" alt="Logo Pokémon New World" />
+                <strong>Pokémon New World</strong>
               </div>
               <p style={{ marginTop: 8, color: "var(--muted)" }}>
-                {content.footer?.brand?.description || "Site officiel du fangame."}
+                Site officiel du fangame.
               </p>
               <div className="social">
                 <a
-                  href={content.footer?.social?.discord?.url || discord?.invite || "#"}
+                  href={discord?.invite || "#"}
                   target="_blank"
                   rel="noreferrer"
-                  title={content.footer?.social?.discord?.title || "Discord"}
+                  title="Discord"
                 >
-                  <i className={content.footer?.social?.discord?.icon || "fa-brands fa-discord"}></i>
+                  <i className="fa-brands fa-discord"></i>
                 </a>
                 <button 
                   onClick={() => setOpenDownload(true)}
-                  style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
-                  title={content.footer?.social?.download?.title || "Télécharger"}
+                  style={{ 
+                    background: "none", 
+                    border: "1px solid rgba(255,255,255,.18)", 
+                    color: "inherit", 
+                    cursor: "pointer", 
+                    padding: 0, 
+                    font: "inherit",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "10px"
+                  }}
+                  title="Télécharger"
                 >
-                  <i className={content.footer?.social?.download?.icon || "fa-solid fa-download"}></i>
+                  <i className="fa-solid fa-download"></i>
                 </button>
               </div>
             </div>
             <div className="footer-col">
-              <h4>{content.footer?.navigation?.title || "Navigation"}</h4>
+              <h4>Navigation</h4>
               <ul>
-                {content.footer?.navigation?.links?.map((link, index) => (
-                  <li key={index}>
-                    {link.action === "download" ? (
-                      <button 
-                        onClick={() => setOpenDownload(true)}
-                        style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
-                      >
-                        <i className={link.icon}></i>{" "}
-                        {link.text}
-                      </button>
-                    ) : (
-                      <a href={link.href}>
-                        <i className={link.icon}></i>{" "}
-                        {link.text}
-                      </a>
-                    )}
-                  </li>
-                ))}
+                <li>
+                  <a href="#news">
+                    <i className="fa-solid fa-newspaper"></i> Nouveautés
+                  </a>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => setOpenDownload(true)}
+                    style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
+                  >
+                    <i className="fa-solid fa-cloud-arrow-down"></i> Téléchargement
+                  </button>
+                </li>
               </ul>
             </div>
             <div className="footer-col">
-              <h4>{content.footer?.legal?.title || "Légal"}</h4>
+              <h4>Légal</h4>
               <ul>
-                {content.footer?.legal?.text?.map((text, index) => (
-                  <li key={index}>{text}</li>
-                ))}
+                <li>Fan-game non affilié à Nintendo / Creatures / GAME FREAK.</li>
+                <li>Marques et assets appartiennent à leurs ayants droit.</li>
               </ul>
             </div>
           </div>
           <div className="container footnote">
-            {content.footer?.copyright?.replace("{year}", new Date().getFullYear()) || 
-             `© ${new Date().getFullYear()} Pokémon New World — tous droits réservés.`}
+            © {new Date().getFullYear()} Pokémon New World — tous droits réservés.
           </div>
         </footer>
 
