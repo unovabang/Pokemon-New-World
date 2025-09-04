@@ -10,4 +10,7 @@ export default defineConfig({
     strictPort: true, // Force use of port 5000
     allowedHosts: true, // Allow all hosts for Replit proxy
   },
+  define: {
+    'import.meta.env.VITE_AUTH0_DOMAIN': JSON.stringify(process.env.AUTH0_DOMAIN)
+  }
 });
