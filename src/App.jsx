@@ -143,7 +143,7 @@ export default function App() {
               <div className="dual-content">
                 <div className="dual-image-container">
                   <img 
-                    src="/PATCHNOTE06.png" 
+                    src={`/PATCHNOTE${patchNotesData.version.replace('.', '')}.png`}
                     alt="Notes de patch" 
                     className="dual-image"
                   />

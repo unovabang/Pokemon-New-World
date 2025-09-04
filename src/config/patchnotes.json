@@ -1,11 +1,24 @@
-
 {
+  "_documentation": {
+    "_comment": "Ce fichier configure les notes de patch affichées dans le modal",
+    "_usage": {
+      "version": "Version du patch (ex: '0.6', '1.0', '2.1') - utilisée pour l'image PATCHNOTE{version sans point}.png",
+      "date": "Date de sortie du patch (format libre)",
+      "content.title": "Titre affiché en haut du modal",
+      "content.sections": "Array d'objets contenant les sections de notes",
+      "section.title": "Titre de la section (supporte les emojis)",
+      "section.items": "Array de strings - liste des éléments de cette section"
+    },
+    "_imageNaming": "L'image du patch doit être nommée PATCHNOTE{VERSION_SANS_POINT}.png dans /public/"
+  },
+
   "version": "0.6",
   "date": "Janvier 2025",
   "content": {
     "title": "Notes de patch v0.6",
     "sections": [
       {
+        "_comment": "Section des nouveautés - utilisez des emojis pour rendre plus attractif",
         "title": "🆕 Nouveautés",
         "items": [
           "Ajout de nouveaux Pokémon de la région Bélamie",
@@ -15,6 +28,7 @@
         ]
       },
       {
+        "_comment": "Section des corrections de bugs",
         "title": "🔧 Corrections",
         "items": [
           "Correction des bugs de sauvegarde",
@@ -24,6 +38,7 @@
         ]
       },
       {
+        "_comment": "Section de l'équilibrage - pour les ajustements de gameplay",
         "title": "⚖️ Équilibrage",
         "items": [
           "Rééquilibrage des stats des Pokémon Aspic",
