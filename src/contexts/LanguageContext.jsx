@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import translations from '../config/translations.json';
 import patchNotesData from '../config/patchnotes.json';
-import { autoTranslatePatchNotes } from '../utils/autoTranslate';
 
 const LanguageContext = createContext();
 
@@ -27,18 +26,17 @@ export const LanguageProvider = ({ children }) => {
   }, [language]);
 
   const t = (key, fallback = key) => {
-    // Gestion spéciale pour les patch notes avec traduction automatique
+    // Gestion spéciale pour les patch notes - toujours en français
     if (key.startsWith('patchNotes.')) {
       const patchKey = key.replace('patchNotes.', '');
+      const keys = patchKey.split('.');
+      let value = patchNotesData;
       
-      if (language === 'en') {
-        // Traduction automatique vers l'anglais
-        const englishPatchNotes = autoTranslatePatchNotes(patchNotesData);
-        
-        if (!englishPatchNotes) return fallback;
-        
-        const keys = patchKey.split('.');
-        let value = englishPatchNotes;
+      if (patchKey === 'title') {
+        return patchNotesData.content.title;
+      } else if (patchKey === 'sections') {
+        return patchNotesData.content.sections;
+      } else {
         for (const k of keys) {
           if (value && typeof value === 'object' && k in value) {
             value = value[k];
@@ -47,25 +45,6 @@ export const LanguageProvider = ({ children }) => {
           }
         }
         return value;
-      } else {
-        // Version française (originale du JSON)
-        const keys = patchKey.split('.');
-        let value = patchNotesData;
-        
-        if (patchKey === 'title') {
-          return patchNotesData.content.title;
-        } else if (patchKey === 'sections') {
-          return patchNotesData.content.sections;
-        } else {
-          for (const k of keys) {
-            if (value && typeof value === 'object' && k in value) {
-              value = value[k];
-            } else {
-              return fallback;
-            }
-          }
-          return value;
-        }
       }
     }
 
