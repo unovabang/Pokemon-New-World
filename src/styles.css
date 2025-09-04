@@ -199,15 +199,73 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 
 .carousel{position:relative}
 .carousel .viewport{overflow:hidden; border-radius:18px; border:1px solid rgba(126,205,242,.18)}
-.carousel .track{display:flex; transition:transform .6s ease}
-.carousel .slide{min-width:100%; aspect-ratio:16/7; position:relative}
+.carousel .track{
+  display:flex; 
+  transition:transform .6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change:transform;
+}
+.carousel .slide{
+  min-width:100%; 
+  aspect-ratio:16/7; 
+  position:relative;
+  transition:opacity .6s ease, transform .6s ease;
+}
 .carousel img{width:100%; height:100%; object-fit:cover; display:block}
 .carousel .mask{position:absolute; inset:0; background:radial-gradient(100% 100% at 50% 50%,transparent 0%,rgba(10,18,34,.25) 70%,rgba(10,18,34,.5) 100%)}
 .carousel .controls{display:flex; justify-content:center; gap:8px; margin-top:10px}
-.carousel .dot{width:8px; height:8px; border-radius:999px; background:rgba(126,205,242,.35); border:1px solid rgba(126,205,242,.55); cursor:pointer}
-.carousel .dot.active{background:linear-gradient(135deg,var(--primary),var(--primary-2)); border-color:transparent}
-.carousel .arrow{position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.28); border:1px solid rgba(255,255,255,.25); color:#fff; padding:.45rem .6rem; border-radius:12px; cursor:pointer}
-.carousel .arrow:hover{background:rgba(0,0,0,.38)}
+.carousel .dot{
+  width:8px; height:8px; border-radius:999px; 
+  background:rgba(126,205,242,.35); 
+  border:1px solid rgba(126,205,242,.55); 
+  cursor:pointer;
+  transition:all .3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform:scale(1);
+}
+.carousel .dot:hover{
+  background:rgba(126,205,242,.5);
+  transform:scale(1.2);
+  box-shadow:0 2px 8px rgba(126,205,242,.3);
+}
+.carousel .dot.active{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2)); 
+  border-color:transparent;
+  transform:scale(1.3);
+  box-shadow:0 4px 12px rgba(126,205,242,.4);
+}
+.carousel .dot.transitioning{
+  pointer-events:none;
+  opacity:0.7;
+}
+.carousel .dot:disabled{
+  pointer-events:none;
+  opacity:0.5;
+}
+.carousel .arrow{
+  position:absolute; top:50%; transform:translateY(-50%); 
+  background:rgba(0,0,0,.28); 
+  border:1px solid rgba(255,255,255,.25); 
+  color:#fff; padding:.45rem .6rem; border-radius:12px; 
+  cursor:pointer;
+  transition:all .3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  font-size:1.2rem;
+  font-weight:bold;
+}
+.carousel .arrow:hover{
+  background:rgba(0,0,0,.45);
+  transform:translateY(-50%) scale(1.1);
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
+  border-color:rgba(255,255,255,.4);
+}
+.carousel .arrow.transitioning{
+  pointer-events:none;
+  opacity:0.6;
+  transform:translateY(-50%) scale(0.95);
+}
+.carousel .arrow:disabled{
+  pointer-events:none;
+  opacity:0.4;
+  cursor:not-allowed;
+}
 .carousel .prev{left:10px}.carousel .next{right:10px}
 
 .steps-chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
