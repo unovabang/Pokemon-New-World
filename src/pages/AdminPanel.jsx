@@ -8,6 +8,7 @@ import SiteEditor from "../components/SiteEditor";
 import PatreonEditor from "../components/PatreonEditor";
 import ExternalLinksEditor from "../components/ExternalLinksEditor";
 import FooterEditor from "../components/FooterEditor";
+import SectionsEditor from "../components/SectionsEditor";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -241,12 +242,7 @@ const AdminPanel = () => {
 
           {/* Configuration des Sections */}
           {activeTab === 'sections' && (
-            <ConfigEditor
-              configName="sections"
-              title="Sections du Site"
-              icon="fa-th-large"
-              description="Contenu et structure des différentes sections de la page d'accueil"
-              multilingual={true}
+            <SectionsEditor
               onSave={(newConfig) => handleSaveConfig('sections', newConfig)}
             />
           )}
