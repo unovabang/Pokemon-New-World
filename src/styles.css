@@ -201,8 +201,11 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .carousel .viewport{overflow:hidden; border-radius:18px; border:1px solid rgba(126,205,242,.18)}
 .carousel .track{
   display:flex; 
-  transition:transform .6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition:transform .8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   will-change:transform;
+}
+.carousel .track.transitioning{
+  transition-duration:1s;
 }
 .carousel .slide{
   min-width:100%; 

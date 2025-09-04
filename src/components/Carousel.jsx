@@ -8,28 +8,22 @@ export default function Carousel({ images = [], interval = 4000 }) {
 	const next = () => {
 		if (isTransitioning) return;
 		setIsTransitioning(true);
-		setTimeout(() => {
-			setI((v) => (v + 1) % total);
-		}, 50);
-		setTimeout(() => setIsTransitioning(false), 650);
+		setI((v) => (v + 1) % total);
+		setTimeout(() => setIsTransitioning(false), 800);
 	};
 	
 	const prev = () => {
 		if (isTransitioning) return;
 		setIsTransitioning(true);
-		setTimeout(() => {
-			setI((v) => (v - 1 + total) % total);
-		}, 50);
-		setTimeout(() => setIsTransitioning(false), 650);
+		setI((v) => (v - 1 + total) % total);
+		setTimeout(() => setIsTransitioning(false), 800);
 	};
 	
 	const goToSlide = (index) => {
 		if (isTransitioning || index === i) return;
 		setIsTransitioning(true);
-		setTimeout(() => {
-			setI(index);
-		}, 50);
-		setTimeout(() => setIsTransitioning(false), 650);
+		setI(index);
+		setTimeout(() => setIsTransitioning(false), 800);
 	};
 	
 	const timer = useRef(null);
@@ -44,7 +38,7 @@ export default function Carousel({ images = [], interval = 4000 }) {
 		<div className="carousel">
 			<div className="viewport card">
 				<div
-					className="track"
+					className={`track ${isTransitioning ? "transitioning" : ""}`}
 					style={{ transform: `translateX(-${i * 100}%)` }}
 				>
 					{images.map((src, index) => (
