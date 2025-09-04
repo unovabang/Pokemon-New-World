@@ -172,7 +172,7 @@ export default function App() {
               <div className="dual-content">
                 <div className="dual-image-container">
                   <img 
-                    src="/src/Téléchargement/Patch/PATCHNOTE06.png" 
+                    src="/PATCHNOTE06.png" 
                     alt="Notes de patch" 
                     className="dual-image"
                   />
@@ -228,7 +228,7 @@ export default function App() {
                 {content.footer?.brand?.showLogo && (
                   <img src="/logo.png" alt="Logo Pokémon New World" />
                 )}
-                <strong>{content.footer?.brand?.name || "Pokémon New World"}</strong>
+                <strong>{typeof content.footer?.brand === 'string' ? content.footer.brand : (content.footer?.brand?.name || "Pokémon New World")}</strong>
               </div>
               <p style={{ marginTop: 8, color: "var(--muted)" }}>
                 {content.footer?.brand?.description || "Site officiel du fangame."}
