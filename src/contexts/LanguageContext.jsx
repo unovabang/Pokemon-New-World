@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import translations from '../config/translations.json';
 import patchNotesData from '../config/patchnotes.json';
-import patchNotesDataEN from '../config/patchnotesEN.json';
+import patchNotesDataEN from '../config/patchnotes-en.json';
 
 const LanguageContext = createContext();
 
@@ -30,23 +30,28 @@ export const LanguageProvider = ({ children }) => {
     // Gestion spéciale pour les patch notes - selon la langue
     if (key.startsWith('patchNotes.')) {
       const patchKey = key.replace('patchNotes.', '');
-      const keys = patchKey.split('.');
       const currentPatchData = language === 'en' ? patchNotesDataEN : patchNotesData;
-      let value = currentPatchData;
       
-      if (patchKey === 'title') {
-        return currentPatchData.content.title;
-      } else if (patchKey === 'sections') {
-        return currentPatchData.content.sections;
-      } else {
-        for (const k of keys) {
-          if (value && typeof value === 'object' && k in value) {
-            value = value[k];
-          } else {
-            return fallback;
-          }
-        }
-        return value;
+      // Vérification de sécurité - si pas de données, retourner le fallback
+      if (!currentPatchData || !currentPatchData.versions || !currentPatchData.versions[0]) {
+        console.warn(`Patch notes data not available for key: ${key}`);
+        return fallback;
+      }
+      
+      const latestVersion = currentPatchData.versions[0];
+      
+      // Gestion des différentes clés de patch notes
+      switch (patchKey) {
+        case 'version':
+          return latestVersion.version || fallback;
+        case 'date':
+          return latestVersion.date || fallback;
+        case 'title':
+          return `Version ${latestVersion.version}` || fallback;
+        case 'sections':
+          return latestVersion.sections || [];
+        default:
+          return fallback;
       }
     }
 
