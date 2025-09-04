@@ -8,6 +8,20 @@ This is the official website for the Pokémon New World fangame, built as a mode
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### 2025-09-04: Panneau d'Administration Sécurisé
+- **Ajout d'un système d'authentification complet** avec Auth0 pour sécuriser l'accès administrateur
+- **Implémentation d'un panneau d'administration** accessible via `/admin` avec triple authentification :
+  1. Connexion Auth0 (OAuth)
+  2. Vérification email/mot de passe administrateur (`admin@pokemonnewworld.com` / `AdminPNW2024!`)
+  3. Code d'accès à 4 chiffres (`1234`)
+- **Interface d'édition JSON** permettant de modifier tous les fichiers de configuration directement depuis l'interface web
+- **Gestion multi-onglets** pour éditer séparément : actualités, téléchargements, notes de patch, configuration site, sections, Patreon, footer, et liens externes
+- **Protection des routes** avec composants sécurisés pour empêcher l'accès non autorisé
+- **Routing** ajouté avec React Router DOM pour la navigation entre page principale et administration
+- **Bouton d'accès admin** visible en haut à droite de la page d'accueil pour les utilisateurs non connectés
+
 ## System Architecture
 
 ### Frontend Architecture
