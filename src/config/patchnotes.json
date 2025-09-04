@@ -1,51 +1,42 @@
 {
-  "_documentation": {
-    "_comment": "Ce fichier configure les notes de patch affichées dans le modal",
-    "_usage": {
-      "version": "Version du patch (ex: '0.6', '1.0', '2.1') - utilisée pour l'image PATCHNOTE{version sans point}.png",
-      "date": "Date de sortie du patch (format libre)",
-      "content.title": "Titre affiché en haut du modal",
-      "content.sections": "Array d'objets contenant les sections de notes",
-      "section.title": "Titre de la section (supporte les emojis)",
-      "section.items": "Array de strings - liste des éléments de cette section"
-    },
-    "_imageNaming": "L'image du patch doit être nommée PATCHNOTE{VERSION_SANS_POINT}.png dans /public/"
-  },
-
-  "version": "0.6",
-  "date": "Janvier 2025",
-  "content": {
-    "title": "Notes de patch 0.6",
-    "sections": [
-      {
-        "_comment": "Section des nouveautés - utilisez des emojis pour rendre plus attractif",
-        "title": "🆕 Nouveautés",
-        "items": [
-          "Ajout de la suite du jeu (environ 5h de jeu)",
-          "Arrivée de la Méga-Évolution",
-          "Animation des Pokémon Chromatique",
-          "Logo propre aux Pokémon Chromatique en combat",
-          "Ajout de l’Élevage Fresque-Haute (lieu permettant de reset les Pokémon Chromatiques Alternatifs)",
-          "De nombreux nouveaux Pokémon font leur apparition"
-        ]
-      },
-      {
-        "_comment": "Section des corrections de bugs",
-        "title": "🔧 Corrections",
-        "items": [
-          "Correction du crash lié à la Lune Ball",
-          "Correction du crash lié au Fmod (pendant évolution)",
-          "Correction des talents suivants : Sel Purificateur, Cruauté, Corps Maudit, Illusion",
-          "Correction de la capacité Relais",
-          "Correction de la numérotation du Pokédex",
-          "Correction de certaines collisions manquantes"
-        ]
-      },
-      {
-        "_comment": "Section de l'équilibrage - pour les ajustements de gameplay",
-        "title": "⚖️ Équilibrage salut a toi mon ami comment vas-tu !",
-        "items": ["Nerf de Encornus", "Buff de Aligatueur"]
-      }
-    ]
-  }
+  "versions": [
+    {
+      "version": "0.6",
+      "date": "Janvier 2025",
+      "sections": [
+        {
+          "_comment": "Section des nouveautés - utilisez des emojis pour rendre plus attractif",
+          "title": "🆕 Nouveautés",
+          "items": [
+            "Ajout de la suite du jeu (environ 5h de jeu)",
+            "Arrivée de la Méga-Évolution",
+            "Animation des Pokémon Chromatique",
+            "Logo propre aux Pokémon Chromatique en combat",
+            "Ajout de l’Élevage Fresque-Haute (lieu permettant de reset les Pokémon Chromatiques Alternatifs)",
+            "De nombreux nouveaux Pokémon font leur apparition"
+          ]
+        },
+        {
+          "_comment": "Section des corrections de bugs",
+          "title": "🔧 Corrections",
+          "items": [
+            "Correction du crash lié à la Lune Ball",
+            "Correction du crash lié au Fmod (pendant évolution)",
+            "Correction des talents suivants : Sel Purificateur, Cruauté, Corps Maudit, Illusion",
+            "Correction de la capacité Relais",
+            "Correction de la numérotation du Pokédex",
+            "Correction de certaines collisions manquantes"
+          ]
+        },
+        {
+          "_comment": "Section de l'équilibrage - pour les ajustements de gameplay",
+          "title": "⚖️ Équilibrage salut a toi mon ami comment vas-tu !",
+          "items": [
+            "Nerf de Encornus",
+            "Buff de Aligatueur"
+          ]
+        }
+      ]
+    }
+  ]
 }

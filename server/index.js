@@ -286,11 +286,38 @@ app.get('/api/patchnotes', (req, res) => {
         versions: []
       };
       fs.writeJsonSync(patchnotesPath, defaultData, { spaces: 2 });
+      return res.json({ success: true, patchnotes: defaultData });
     }
     
-    const data = fs.readJsonSync(patchnotesPath);
+    let data = fs.readJsonSync(patchnotesPath);
+    
+    // Migration automatique de l'ancien format vers le nouveau
+    if (data.version && data.date && data.content && !data.versions && data._documentation) {
+      console.log('🔄 Migration automatique de l\'ancien format vers le nouveau format');
+      
+      const migratedData = {
+        versions: [{
+          version: data.version,
+          date: data.date,
+          sections: data.content.sections || []
+        }]
+      };
+      
+      // Sauvegarder le nouveau format
+      fs.writeJsonSync(patchnotesPath, migratedData, { spaces: 2 });
+      data = migratedData;
+      
+      console.log('✅ Migration terminée avec succès');
+    }
+    
+    // S'assurer que le format est correct
+    if (!data.versions) {
+      data = { versions: [] };
+    }
+    
     res.json({ success: true, patchnotes: data });
   } catch (error) {
+    console.error('❌ Erreur API /api/patchnotes:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
