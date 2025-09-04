@@ -199,7 +199,7 @@ export default function App() {
             <footer>
               <div className="footer-links">
                 <a href="#top" className="footer-brand">
-                  {content.footer?.brand || "Pokémon New World"}
+                  {typeof content.footer?.brand === 'string' ? content.footer.brand : (content.footer?.brand?.name || "Pokémon New World")}
                 </a>
                 {content.footer?.links?.map((link) => (
                   <a
