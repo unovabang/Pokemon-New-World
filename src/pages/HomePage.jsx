@@ -54,6 +54,15 @@ const HomePage = () => {
 
     const keywordsEl = document.getElementById('page-keywords');
     if (keywordsEl) keywordsEl.setAttribute('content', t('seo.keywords').join(','));
+
+    // Vérifier s'il faut rediriger vers admin-login après logout
+    const shouldRedirectToAdmin = localStorage.getItem('redirectToAdminLogin');
+    if (shouldRedirectToAdmin === 'true') {
+      localStorage.removeItem('redirectToAdminLogin');
+      setTimeout(() => {
+        window.location.href = '/admin-login';
+      }, 1000);
+    }
   }, [language, t]);
 
   return (
