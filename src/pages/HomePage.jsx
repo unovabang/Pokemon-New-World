@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import content from "../config/index.js";
 import patchNotesData from "../config/patchnotes.json";
+import patreonData from "../config/patreon.json";
 import HeroVideo from "../components/HeroVideo";
 import Carousel from "../components/Carousel";
 import Modal from "../components/Modal";
@@ -12,6 +13,30 @@ import { useLanguage } from "../contexts/LanguageContext";
 const HomePage = () => {
   const { backgrounds, heroVideo, game, carousel, discord, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = content;
   const { t, language } = useLanguage();
+  
+  // Fonction pour obtenir le contenu Patreon traduit
+  const getPatreonContent = () => {
+    if (language === 'en' && patreonData.translations?.en) {
+      return {
+        title: patreonData.translations.en.title || patreonData.title,
+        content: {
+          heading: patreonData.translations.en.content?.heading || patreonData.content?.heading,
+          description: patreonData.translations.en.content?.description || patreonData.content?.description,
+          buttonText: patreonData.translations.en.content?.buttonText || patreonData.content?.buttonText,
+          url: patreonData.content?.url
+        },
+        icon: patreonData.icon,
+        image: patreonData.image,
+        goal: {
+          ...patreonData.goal,
+          description: patreonData.translations.en.goal?.description || patreonData.goal?.description
+        }
+      };
+    }
+    return patreonData;
+  };
+  
+  const patreonContent = getPatreonContent();
   const [openVideo, setOpenVideo] = useState(false);
   const [openExplanations, setOpenExplanations] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
@@ -164,27 +189,27 @@ const HomePage = () => {
           {/* SECTION PATREON */}
           <section id="patreon" className="section card">
             <h2>
-              <img src={content.patreon?.icon || "/patreonlogo.png"} alt="Logo Patreon" className="section-icon" />{" "}
-              {content.patreon?.title || t('sections.patreon.title')}
+              <img src={patreonContent?.icon || "/patreonlogo.png"} alt="Logo Patreon" className="section-icon" />{" "}
+              {patreonContent?.title || t('sections.patreon.title')}
             </h2>
             <div className="patreon-content">
               <div className="patreon-image-container">
                 <img 
-                  src={content.patreon?.image || "/patreon.png"} 
+                  src={patreonContent?.image || "/patreon.png"} 
                   alt="Soutenez-nous sur Patreon" 
                   className="patreon-image"
                 />
                 <div className="patreon-overlay">
                   <div className="patreon-cta">
-                    <h3>{content.patreon?.content?.heading || t('sections.patreon.heading')}</h3>
-                    <p>{content.patreon?.content?.description || t('sections.patreon.description')}</p>
+                    <h3>{patreonContent?.content?.heading || t('sections.patreon.heading')}</h3>
+                    <p>{patreonContent?.content?.description || t('sections.patreon.description')}</p>
                     <a 
-                      href={content.patreon?.content?.url || "https://www.patreon.com/c/unovabang"} 
+                      href={patreonContent?.content?.url || "https://www.patreon.com/c/unovabang"} 
                       target="_blank" 
                       rel="noreferrer"
                       className="btn btn-primary patreon-btn"
                     >
-                      <i className={content.patreon?.content?.buttonIcon || "fa-brands fa-patreon"}></i> {content.patreon?.content?.buttonText || content.patreon?.content?.button || t('buttons.supportOnPatreon')}
+                      <i className={patreonContent?.content?.buttonIcon || "fa-brands fa-patreon"}></i> {patreonContent?.content?.buttonText || patreonContent?.content?.button || t('buttons.supportOnPatreon')}
                     </a>
                   </div>
                 </div>
