@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import LogoutButton from "../components/LogoutButton";
 import BannerManager from "../components/BannerManager";
 import DownloadsEditor from "../components/DownloadsEditor";
 import PatchNotesEditor from "../components/PatchNotesEditor";
@@ -16,7 +15,7 @@ import footerConfig from "../config/footer.json";
 import externalConfig from "../config/external.json";
 
 const AdminPanel = () => {
-  const { user } = useAuth0();
+  const { user, logout } = useAuth0();
   const [activeTab, setActiveTab] = useState('news');
   const [configs, setConfigs] = useState({
     site: siteConfig,
@@ -161,7 +160,12 @@ const AdminPanel = () => {
             <a href="/" className="btn btn-ghost">
               <i className="fa-solid fa-home"></i> Site Principal
             </a>
-            <LogoutButton />
+            <button 
+              onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+              className="btn btn-ghost"
+            >
+              <i className="fa-solid fa-sign-out-alt"></i> Déconnexion
+            </button>
           </div>
         </div>
       </header>
