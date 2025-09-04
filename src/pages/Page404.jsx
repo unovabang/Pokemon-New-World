@@ -10,21 +10,26 @@ const Page404 = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%)',
+      backgroundImage: 'url(https://i.pinimg.com/originals/7e/30/f6/7e30f6211a5f6964c45b1a7d222fff45.gif)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       padding: '2rem',
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
     }}>
-      {/* Particules d'arrière-plan */}
+      {/* Overlay pour améliorer la lisibilité */}
       <div style={{
         position: 'fixed',
         top: 0,
         left: 0,
         width: '100%',
         height: '100%',
-        background: 'radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
+        background: 'rgba(0, 0, 0, 0.4)',
+        backdropFilter: 'blur(1px)',
         pointerEvents: 'none',
         zIndex: 1
       }} />
@@ -34,12 +39,12 @@ const Page404 = () => {
         zIndex: 2,
         textAlign: 'center',
         maxWidth: '600px',
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+        background: 'linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%)',
         borderRadius: '24px',
         padding: window.innerWidth <= 768 ? '2rem' : '3rem',
-        border: '1px solid rgba(255,255,255,0.1)',
-        backdropFilter: 'blur(20px)',
-        boxShadow: '0 25px 50px rgba(0,0,0,0.2)'
+        border: '1px solid rgba(255,255,255,0.2)',
+        backdropFilter: 'blur(15px)',
+        boxShadow: '0 25px 50px rgba(0,0,0,0.5)'
       }}>
         {/* Icône 404 */}
         <div style={{
