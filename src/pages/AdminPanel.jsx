@@ -148,14 +148,14 @@ const AdminPanel = () => {
         left: 0,
         width: '100%',
         height: '100%',
-        background: 'rgba(0, 0, 0, 0.5)',
+        background: 'rgba(0, 0, 0, 0.25)',
         pointerEvents: 'none',
         zIndex: 1
       }}></div>
       
       {/* Header */}
       <header style={{ 
-        background: 'linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.75) 50%, rgba(0,0,0,0.8) 100%)', 
+        background: 'linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.55) 100%)', 
         padding: window.innerWidth <= 768 ? '1rem' : '1.5rem 2rem',
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid rgba(255,255,255,0.2)',
