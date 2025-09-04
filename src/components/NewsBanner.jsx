@@ -1,58 +1,88 @@
 import { useEffect, useState } from "react";
 
+// Cache pour éviter de recharger les images à chaque fois
+let cachedImages = null;
+let loadingPromise = null;
+
 // Fonction pour charger automatiquement les images du dossier news-images
 async function loadNewsImages() {
-  try {
-    // Liste des extensions d'images supportées
-    const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
-    const images = [];
-    
-    // On essaie de charger les images avec des noms séquentiels (banniere1, banniere2, etc.)
-    let consecutiveNotFound = 0;
-    for (let i = 1; i <= 50; i++) {
-      let found = false;
-      
-      for (const ext of imageExtensions) {
-        const imagePath = `/news-images/banniere${i}${ext}`;
-        try {
-          const response = await fetch(imagePath, { method: 'HEAD' });
-          if (response.ok && response.status === 200) {
-            // Vérifier que c'est bien une image en vérifiant le content-type
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.startsWith('image/')) {
-              images.push({ image: imagePath });
-              found = true;
-              consecutiveNotFound = 0; // Reset le compteur
-              break;
-            }
-          }
-        } catch (e) {
-          // Image n'existe pas, on continue
-        }
-      }
-      
-      if (!found) {
-        consecutiveNotFound++;
-        // Si on ne trouve pas 2 images consécutives, on s'arrête
-        if (consecutiveNotFound >= 2) {
-          break;
-        }
-      }
-    }
-    
-    console.log(`Chargé ${images.length} images depuis /news-images/`);
-    return images;
-  } catch (error) {
-    console.warn('Erreur lors du chargement des images:', error);
-    return [];
+  // Si on a déjà un cache, on le retourne immédiatement
+  if (cachedImages !== null) {
+    return cachedImages;
   }
+
+  // Si un chargement est en cours, on attend la promesse existante
+  if (loadingPromise) {
+    return await loadingPromise;
+  }
+
+  // Créer une nouvelle promesse de chargement
+  loadingPromise = (async () => {
+    try {
+      // Liste des extensions d'images supportées
+      const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+      const images = [];
+
+      // On utilise Promise.allSettled pour charger en parallèle
+      const promises = [];
+      for (let i = 1; i <= 10; i++) { // Réduit de 50 à 10 pour être plus rapide
+        for (const ext of imageExtensions) {
+          const imagePath = `/news-images/banniere${i}${ext}`;
+          promises.push(
+            new Promise(async (resolve) => {
+              try {
+                // Créer un objet Image pour un chargement plus rapide
+                const img = new Image();
+                img.onload = () => resolve({ image: imagePath, index: i });
+                img.onerror = () => resolve(null);
+                img.src = imagePath;
+              } catch (e) {
+                resolve(null);
+              }
+            })
+          );
+        }
+      }
+
+      const results = await Promise.allSettled(promises);
+      const foundImages = results
+        .map(result => result.status === 'fulfilled' ? result.value : null)
+        .filter(result => result !== null)
+        .sort((a, b) => a.index - b.index) // Trier par index
+        .map(result => ({ image: result.image }));
+
+      // Supprimer les doublons (même index avec différentes extensions)
+      const uniqueImages = [];
+      const seenIndexes = new Set();
+
+      for (const img of foundImages) {
+        const index = img.image.match(/banniere(\d+)/)?.[1];
+        if (index && !seenIndexes.has(index)) {
+          seenIndexes.add(index);
+          uniqueImages.push(img);
+        }
+      }
+
+      cachedImages = uniqueImages;
+      console.log(`Chargé ${cachedImages.length} images depuis /news-images/`);
+      return cachedImages;
+    } catch (error) {
+      console.error('Erreur lors du chargement des images:', error);
+      cachedImages = [];
+      return [];
+    } finally {
+      loadingPromise = null;
+    }
+  })();
+
+  return await loadingPromise;
 }
 
 export default function NewsBanner({ banners = [], interval = 5000, autoLoad = true }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadedImages, setLoadedImages] = useState([]);
   const [isLoading, setIsLoading] = useState(autoLoad);
-  
+
   // Charger les images automatiquement si autoLoad est activé
   useEffect(() => {
     if (autoLoad) {
@@ -62,7 +92,7 @@ export default function NewsBanner({ banners = [], interval = 5000, autoLoad = t
       });
     }
   }, [autoLoad]);
-  
+
   // Utiliser les images chargées automatiquement ou celles passées en props
   const allBanners = autoLoad ? loadedImages : banners;
   const total = allBanners.length;
@@ -77,7 +107,7 @@ export default function NewsBanner({ banners = [], interval = 5000, autoLoad = t
 
   useEffect(() => {
     if (total <= 1) return;
-    
+
     const timer = setInterval(nextSlide, interval);
 
     return () => clearInterval(timer);
@@ -100,9 +130,9 @@ export default function NewsBanner({ banners = [], interval = 5000, autoLoad = t
   return (
     <div className="news-banner-container">
       <div className="news-banner">
-        <img 
-          src={currentBanner.image} 
-          alt={currentBanner.title || "Bannière actualité"} 
+        <img
+          src={currentBanner.image}
+          alt={currentBanner.title || "Bannière actualité"}
           className="news-banner-image"
         />
 
