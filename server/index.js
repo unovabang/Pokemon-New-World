@@ -216,20 +216,39 @@ app.put('/api/banners/:filename/position', (req, res) => {
       return res.status(404).json({ success: false, error: 'Fichier non trouvé' });
     }
     
-    // Si la nouvelle position est occupée, échanger
-    if (fs.existsSync(newPath) && oldPath !== newPath) {
+    // Si c'est déjà à la bonne position, ne rien faire
+    if (oldPath === newPath) {
+      return res.json({ 
+        success: true, 
+        message: `${filename} est déjà à la position ${position}`,
+        banners: getBannerList()
+      });
+    }
+    
+    // Si la nouvelle position est occupée, échanger les fichiers
+    if (fs.existsSync(newPath)) {
       const tempPath = path.join(NEWS_IMAGES_DIR, `temp_${Date.now()}.png`);
+      
+      // Étape 1: Déplacer le fichier cible vers un nom temporaire
       fs.moveSync(newPath, tempPath);
+      
+      // Étape 2: Déplacer notre fichier vers la nouvelle position
       fs.moveSync(oldPath, newPath);
       
-      // Trouver la position originale du fichier déplacé
+      // Étape 3: Trouver l'ancienne position et y déplacer le fichier temporaire
       const oldMatch = filename.match(/banniere(\d+)\.png/);
       if (oldMatch) {
         const oldPosition = oldMatch[1];
         const exchangePath = path.join(NEWS_IMAGES_DIR, `banniere${oldPosition}.png`);
         fs.moveSync(tempPath, exchangePath);
+      } else {
+        // Si on ne peut pas déterminer l'ancienne position, remettre le fichier
+        fs.moveSync(tempPath, newPath);
+        fs.moveSync(newPath, oldPath);
+        throw new Error('Impossible de déterminer l\'ancienne position');
       }
     } else {
+      // Position libre, simple déplacement
       fs.moveSync(oldPath, newPath);
     }
     
