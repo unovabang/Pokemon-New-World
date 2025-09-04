@@ -132,34 +132,18 @@ const AdminPanel = () => {
   return (
     <div style={{ 
       minHeight: '100vh', 
-      backgroundImage: 'url(https://art.ngfiles.com/images/2346000/2346850_blue-rabbit-inc_hisui-campfire.gif?f1644561712)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundAttachment: 'fixed',
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', 
       color: 'white',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      position: 'relative'
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     }}>
-      {/* Overlay pour améliorer la lisibilité */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        background: 'rgba(0, 0, 0, 0.25)',
-        pointerEvents: 'none',
-        zIndex: 1
-      }}></div>
       
       {/* Header */}
       <header style={{ 
-        background: 'linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.55) 100%)', 
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(102,126,234,0.08) 50%, rgba(118,75,162,0.06) 100%)', 
         padding: window.innerWidth <= 768 ? '1rem' : '1.5rem 2rem',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid rgba(255,255,255,0.2)',
-        boxShadow: '0 8px 40px rgba(0,0,0,0.3)',
+        backdropFilter: 'blur(25px)',
+        borderBottom: '1px solid rgba(102,126,234,0.25)',
+        boxShadow: '0 8px 40px rgba(102,126,234,0.15), inset 0 1px 0 rgba(255,255,255,0.1)',
         position: 'sticky',
         top: 0,
         zIndex: 100
