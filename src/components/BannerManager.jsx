@@ -6,6 +6,13 @@ const BannerManager = ({ onSave }) => {
   const [bannerImages, setBannerImages] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    title: '',
+    message: '',
+    type: 'info', // 'info', 'success', 'error', 'confirm'
+    onConfirm: null
+  });
 
   useEffect(() => {
     loadBannerImages();
@@ -66,10 +73,10 @@ const BannerManager = ({ onSave }) => {
       
       // Recharger la liste des bannières
       await loadBannerImages();
-      alert(`${files.length} bannière(s) uploadée(s) avec succès !`);
+      showMessage('Succès !', `${files.length} bannière(s) uploadée(s) avec succès !`, 'success');
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
-      alert(`Erreur: ${error.message}`);
+      showMessage('Erreur', `Erreur lors du téléchargement: ${error.message}`, 'error');
     } finally {
       setUploading(false);
     }
@@ -85,26 +92,30 @@ const BannerManager = ({ onSave }) => {
     return usedPositions.length + 1;
   };
 
-  const deleteBannerImage = async (imageName) => {
-    if (!confirm(`Supprimer définitivement l'image "${imageName}" ?`)) return;
-    
-    try {
-      const response = await fetch(`${API_BASE}/banners/${imageName}`, {
-        method: 'DELETE'
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        await loadBannerImages();
-        alert('Image supprimée avec succès !');
-      } else {
-        throw new Error(data.error);
+  const deleteBannerImage = (imageName) => {
+    showConfirm(
+      'Supprimer la bannière',
+      `Êtes-vous sûr de vouloir supprimer définitivement l'image "${imageName}" ?`,
+      async () => {
+        try {
+          const response = await fetch(`${API_BASE}/banners/${imageName}`, {
+            method: 'DELETE'
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            await loadBannerImages();
+            showMessage('Succès !', 'Image supprimée avec succès !', 'success');
+          } else {
+            throw new Error(data.error);
+          }
+        } catch (error) {
+          console.error('Erreur lors de la suppression:', error);
+          showMessage('Erreur', `Erreur lors de la suppression: ${error.message}`, 'error');
+        }
       }
-    } catch (error) {
-      console.error('Erreur lors de la suppression:', error);
-      alert(`Erreur: ${error.message}`);
-    }
+    );
   };
 
   const moveUp = async (imageName) => {
@@ -132,7 +143,7 @@ const BannerManager = ({ onSave }) => {
       }
     } catch (error) {
       console.error('Erreur lors du déplacement:', error);
-      alert(`Erreur: ${error.message}`);
+      showMessage('Erreur', `Erreur lors du déplacement: ${error.message}`, 'error');
     }
   };
 
@@ -161,8 +172,34 @@ const BannerManager = ({ onSave }) => {
       }
     } catch (error) {
       console.error('Erreur lors du déplacement:', error);
-      alert(`Erreur: ${error.message}`);
+      showMessage('Erreur', `Erreur lors du déplacement: ${error.message}`, 'error');
     }
+  };
+
+  // Fonctions pour les modals
+  const showMessage = (title, message, type = 'info') => {
+    setModalConfig({
+      title,
+      message,
+      type,
+      onConfirm: null
+    });
+    setShowModal(true);
+  };
+
+  const showConfirm = (title, message, onConfirm) => {
+    setModalConfig({
+      title,
+      message,
+      type: 'confirm',
+      onConfirm
+    });
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalConfig({ title: '', message: '', type: 'info', onConfirm: null });
   };
 
   const handleSave = () => {
@@ -176,7 +213,7 @@ const BannerManager = ({ onSave }) => {
       interval: 5000
     };
     onSave(newsConfig);
-    alert('Configuration des bannières sauvegardée !');
+    showMessage('Succès !', 'Configuration des bannières sauvegardée !', 'success');
   };
 
   return (
@@ -490,6 +527,131 @@ const BannerManager = ({ onSave }) => {
           </div>
         )}
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '20px',
+            padding: '2rem',
+            maxWidth: '500px',
+            width: '90%',
+            color: 'white',
+            textAlign: 'center',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+          }}>
+            <div style={{ marginBottom: '1.5rem' }}>
+              {modalConfig.type === 'success' && (
+                <i className="fa-solid fa-check-circle" style={{ 
+                  fontSize: '3rem', 
+                  color: '#28a745',
+                  marginBottom: '1rem',
+                  display: 'block'
+                }}></i>
+              )}
+              {modalConfig.type === 'error' && (
+                <i className="fa-solid fa-exclamation-triangle" style={{ 
+                  fontSize: '3rem', 
+                  color: '#dc3545',
+                  marginBottom: '1rem',
+                  display: 'block'
+                }}></i>
+              )}
+              {modalConfig.type === 'confirm' && (
+                <i className="fa-solid fa-question-circle" style={{ 
+                  fontSize: '3rem', 
+                  color: '#ffc107',
+                  marginBottom: '1rem',
+                  display: 'block'
+                }}></i>
+              )}
+              {modalConfig.type === 'info' && (
+                <i className="fa-solid fa-info-circle" style={{ 
+                  fontSize: '3rem', 
+                  color: '#17a2b8',
+                  marginBottom: '1rem',
+                  display: 'block'
+                }}></i>
+              )}
+              <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.5rem' }}>
+                {modalConfig.title}
+              </h3>
+              <p style={{ margin: '0', opacity: 0.9, lineHeight: '1.5' }}>
+                {modalConfig.message}
+              </p>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              {modalConfig.type === 'confirm' ? (
+                <>
+                  <button
+                    onClick={() => {
+                      closeModal();
+                      if (modalConfig.onConfirm) modalConfig.onConfirm();
+                    }}
+                    style={{
+                      background: 'rgba(220, 53, 69, 0.8)',
+                      border: 'none',
+                      borderRadius: '10px',
+                      padding: '0.75rem 1.5rem',
+                      color: 'white',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    <i className="fa-solid fa-check"></i> Confirmer
+                  </button>
+                  <button
+                    onClick={closeModal}
+                    style={{
+                      background: 'rgba(108, 117, 125, 0.8)',
+                      border: 'none',
+                      borderRadius: '10px',
+                      padding: '0.75rem 1.5rem',
+                      color: 'white',
+                      cursor: 'pointer',
+                      fontSize: '1rem'
+                    }}
+                  >
+                    <i className="fa-solid fa-times"></i> Annuler
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={closeModal}
+                  style={{
+                    background: 'rgba(0, 123, 255, 0.8)',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '0.75rem 2rem',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  <i className="fa-solid fa-check"></i> OK
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
