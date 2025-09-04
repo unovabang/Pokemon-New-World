@@ -148,19 +148,18 @@ const AdminPanel = () => {
         left: 0,
         width: '100%',
         height: '100%',
-        background: 'rgba(0, 0, 0, 0.3)',
-        backdropFilter: 'blur(1px)',
+        background: 'rgba(0, 0, 0, 0.2)',
         pointerEvents: 'none',
         zIndex: 1
       }}></div>
       
       {/* Header */}
       <header style={{ 
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(102,126,234,0.08) 50%, rgba(118,75,162,0.06) 100%)', 
-        padding: '1.5rem 2rem',
-        backdropFilter: 'blur(25px)',
-        borderBottom: '1px solid rgba(102,126,234,0.25)',
-        boxShadow: '0 8px 40px rgba(102,126,234,0.15), inset 0 1px 0 rgba(255,255,255,0.1)',
+        background: 'linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.6) 100%)', 
+        padding: window.innerWidth <= 768 ? '1rem' : '1.5rem 2rem',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(255,255,255,0.2)',
+        boxShadow: '0 8px 40px rgba(0,0,0,0.3)',
         position: 'sticky',
         top: 0,
         zIndex: 100
