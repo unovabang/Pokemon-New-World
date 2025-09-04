@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from "../components/LogoutButton";
+import NewsEditor from "../components/NewsEditor";
+import DownloadsEditor from "../components/DownloadsEditor";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -34,19 +36,13 @@ const AdminPanel = () => {
     setEditContent(JSON.stringify(configs[configName], null, 2));
   };
 
-  const handleSaveConfig = () => {
-    try {
-      const parsedConfig = JSON.parse(editContent);
-      setConfigs(prev => ({
-        ...prev,
-        [editingConfig]: parsedConfig
-      }));
-      setEditingConfig(null);
-      setEditContent('');
-      alert('Configuration sauvegardée avec succès!');
-    } catch (error) {
-      alert('Erreur dans le format JSON: ' + error.message);
-    }
+  const handleSaveConfig = (configName, newConfig) => {
+    setConfigs(prev => ({
+      ...prev,
+      [configName]: newConfig
+    }));
+    // Ici on pourrait sauvegarder dans un fichier JSON ou envoyer à une API
+    localStorage.setItem(`config_${configName}`, JSON.stringify(newConfig));
   };
 
   const handleCancelEdit = () => {
@@ -207,83 +203,100 @@ const AdminPanel = () => {
 
         {/* Main Content */}
         <main style={{ flex: 1, padding: '2rem' }}>
-          <div style={{
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '10px',
-            padding: '2rem'
-          }}>
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              marginBottom: '2rem'
-            }}>
-              <h2>
-                <i className={`fa-solid ${tabs.find(t => t.id === activeTab)?.icon}`}></i>{' '}
-                {tabs.find(t => t.id === activeTab)?.name}
-              </h2>
-              <button 
-                onClick={() => handleEditConfig(activeTab)}
-                className="btn btn-primary"
-              >
-                <i className="fa-solid fa-edit"></i> Modifier
-              </button>
-            </div>
-
-            {/* Preview du contenu */}
+          {activeTab === 'news' && (
+            <NewsEditor 
+              newsData={configs.news}
+              onSave={(newConfig) => handleSaveConfig('news', newConfig)}
+            />
+          )}
+          
+          {activeTab === 'downloads' && (
+            <DownloadsEditor 
+              downloadsData={configs.downloads}
+              onSave={(newConfig) => handleSaveConfig('downloads', newConfig)}
+            />
+          )}
+          
+          {activeTab !== 'news' && activeTab !== 'downloads' && (
             <div style={{
-              background: 'rgba(0,0,0,0.3)',
-              borderRadius: '5px',
-              padding: '1rem',
-              maxHeight: '60vh',
-              overflow: 'auto'
+              background: 'rgba(255,255,255,0.05)',
+              borderRadius: '10px',
+              padding: '2rem'
             }}>
-              <pre style={{ 
-                margin: 0, 
-                fontFamily: 'monospace', 
-                fontSize: '12px',
-                lineHeight: '1.4',
-                whiteSpace: 'pre-wrap'
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                marginBottom: '2rem'
               }}>
-                {JSON.stringify(configs[activeTab], null, 2)}
-              </pre>
-            </div>
+                <h2>
+                  <i className={`fa-solid ${tabs.find(t => t.id === activeTab)?.icon}`}></i>{' '}
+                  {tabs.find(t => t.id === activeTab)?.name}
+                </h2>
+                <div style={{
+                  background: 'rgba(255, 165, 0, 0.2)',
+                  border: '1px solid rgba(255, 165, 0, 0.4)',
+                  color: '#ffa500',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '5px',
+                  fontSize: '0.9rem'
+                }}>
+                  <i className="fa-solid fa-tools"></i> Interface en développement
+                </div>
+              </div>
 
-            {/* Instructions spécifiques par section */}
-            <div style={{ 
-              marginTop: '2rem', 
-              padding: '1rem',
-              background: 'rgba(255,255,255,0.1)',
-              borderRadius: '5px',
-              borderLeft: '4px solid var(--accent)'
-            }}>
-              <h4><i className="fa-solid fa-info-circle"></i> Instructions</h4>
-              {activeTab === 'news' && (
-                <p>Gérez les bannières d'actualités qui apparaissent sur la page d'accueil. Vous pouvez modifier l'intervalle de rotation et ajouter/supprimer des bannières.</p>
-              )}
-              {activeTab === 'downloads' && (
-                <p>Modifiez les liens de téléchargement du jeu et des patchs. Assurez-vous que les URLs sont valides et accessibles.</p>
-              )}
-              {activeTab === 'patchnotes' && (
-                <p>Mettez à jour les notes de patch avec la dernière version. N'oubliez pas de changer le numéro de version et la date.</p>
-              )}
-              {activeTab === 'site' && (
-                <p>Configuration générale du site: titre, description, métadonnées SEO, images de fond, etc.</p>
-              )}
-              {activeTab === 'sections' && (
-                <p>Contenu des différentes sections de la page: textes, descriptions, titres, etc.</p>
-              )}
-              {activeTab === 'patreon' && (
-                <p>Configuration de la section Patreon: lien, images, textes promotionnels.</p>
-              )}
-              {activeTab === 'footer' && (
-                <p>Contenu du pied de page: liens, informations de contact, mentions légales.</p>
-              )}
-              {activeTab === 'external' && (
-                <p>Liens vers les services externes: Discord, réseaux sociaux, etc.</p>
-              )}
+              {/* Preview temporaire du contenu */}
+              <div style={{
+                background: 'rgba(0,0,0,0.3)',
+                borderRadius: '5px',
+                padding: '1rem',
+                maxHeight: '60vh',
+                overflow: 'auto'
+              }}>
+                <pre style={{ 
+                  margin: 0, 
+                  fontFamily: 'monospace', 
+                  fontSize: '12px',
+                  lineHeight: '1.4',
+                  whiteSpace: 'pre-wrap'
+                }}>
+                  {JSON.stringify(configs[activeTab], null, 2)}
+                </pre>
+              </div>
+
+              {/* Instructions spécifiques par section */}
+              <div style={{ 
+                marginTop: '2rem', 
+                padding: '1rem',
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '5px',
+                borderLeft: '4px solid var(--accent)'
+              }}>
+                <h4><i className="fa-solid fa-info-circle"></i> Instructions</h4>
+                {activeTab === 'downloads' && (
+                  <p>Interface graphique en développement. Cette section permettra de modifier facilement les liens de téléchargement du jeu et des patchs avec des formulaires simples.</p>
+                )}
+                {activeTab === 'patchnotes' && (
+                  <p>Interface graphique en développement. Vous pourrez bientôt ajouter et modifier les notes de patch avec un éditeur visuel.</p>
+                )}
+                {activeTab === 'site' && (
+                  <p>Interface graphique en développement. Configuration du site avec des champs de formulaire pour le titre, la description, les métadonnées SEO, etc.</p>
+                )}
+                {activeTab === 'sections' && (
+                  <p>Interface graphique en développement. Éditeur visuel pour le contenu des différentes sections de la page.</p>
+                )}
+                {activeTab === 'patreon' && (
+                  <p>Interface graphique en développement. Formulaires pour configurer la section Patreon facilement.</p>
+                )}
+                {activeTab === 'footer' && (
+                  <p>Interface graphique en développement. Éditeur pour le contenu du pied de page.</p>
+                )}
+                {activeTab === 'external' && (
+                  <p>Interface graphique en développement. Gestion des liens vers les services externes.</p>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </main>
       </div>
     </div>
