@@ -140,7 +140,7 @@ const HomePage = () => {
               <div className="dual-content">
                 <div className="dual-image-container">
                   <img 
-                    src={`/PATCHNOTE${patchNotesData.version.replace('.', '')}.png`}
+                    src={`/PATCHNOTE${patchNotesData.version ? patchNotesData.version.replace('.', '') : '06'}.png`}
                     alt="Notes de patch" 
                     className="dual-image"
                   />
