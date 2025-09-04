@@ -24,7 +24,7 @@ const ProtectedRoute = ({ children }) => {
 
   // Si pas authentifié, rediriger vers la page de connexion admin
   if (!isAuthenticated) {
-    return <Navigate to="/login-admin" replace />;
+    return <Navigate to="/admin-login" replace />;
   }
 
   // Si authentifié, afficher le contenu protégé
