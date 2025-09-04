@@ -125,7 +125,7 @@ const PatchNotesEditor = ({ onSave }) => {
   // Commencer l'édition d'une version
   const startEditingVersion = (version) => {
     setEditingVersion(version.version);
-    setEditingSections([...version.sections]);
+    setEditingSections([...(version.sections || [])]);
   };
 
   // Sauvegarder les modifications d'une version
@@ -168,6 +168,9 @@ const PatchNotesEditor = ({ onSave }) => {
   // Ajouter un élément à une section
   const addItem = (sectionIndex) => {
     const newSections = [...editingSections];
+    if (!newSections[sectionIndex].items) {
+      newSections[sectionIndex].items = [];
+    }
     newSections[sectionIndex].items.push('');
     setEditingSections(newSections);
   };
@@ -175,6 +178,9 @@ const PatchNotesEditor = ({ onSave }) => {
   // Mettre à jour un élément
   const updateItem = (sectionIndex, itemIndex, value) => {
     const newSections = [...editingSections];
+    if (!newSections[sectionIndex].items) {
+      newSections[sectionIndex].items = [];
+    }
     newSections[sectionIndex].items[itemIndex] = value;
     setEditingSections(newSections);
   };
@@ -182,8 +188,10 @@ const PatchNotesEditor = ({ onSave }) => {
   // Supprimer un élément
   const deleteItem = (sectionIndex, itemIndex) => {
     const newSections = [...editingSections];
-    newSections[sectionIndex].items.splice(itemIndex, 1);
-    setEditingSections(newSections);
+    if (newSections[sectionIndex].items) {
+      newSections[sectionIndex].items.splice(itemIndex, 1);
+      setEditingSections(newSections);
+    }
   };
 
   // Supprimer une section
@@ -328,7 +336,7 @@ const PatchNotesEditor = ({ onSave }) => {
         padding: '2rem' 
       }}>
         <h3 style={{ marginBottom: '1.5rem' }}>
-          <i className="fa-solid fa-list"></i> Versions ({patchNotes.versions.length})
+          <i className="fa-solid fa-list"></i> Versions ({patchNotes.versions?.length || 0})
         </h3>
 
         {loading ? (
@@ -340,7 +348,7 @@ const PatchNotesEditor = ({ onSave }) => {
             <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '3rem', marginBottom: '1rem' }}></i>
             <p>Chargement des versions...</p>
           </div>
-        ) : patchNotes.versions.length === 0 ? (
+        ) : !patchNotes.versions || patchNotes.versions.length === 0 ? (
           <div style={{ 
             textAlign: 'center', 
             padding: '3rem', 
@@ -355,7 +363,7 @@ const PatchNotesEditor = ({ onSave }) => {
             display: 'grid', 
             gap: '1.5rem'
           }}>
-            {patchNotes.versions.map((version, index) => (
+            {(patchNotes.versions || []).map((version, index) => (
               <div 
                 key={version.version}
                 style={{
@@ -389,7 +397,7 @@ const PatchNotesEditor = ({ onSave }) => {
                       )}
                     </h4>
                     <p style={{ margin: 0, opacity: 0.7, fontSize: '0.9rem' }}>
-                      <i className="fa-solid fa-calendar"></i> {version.date} • {version.sections.length} section(s)
+                      <i className="fa-solid fa-calendar"></i> {version.date} • {version.sections?.length || 0} section(s)
                     </p>
                   </div>
                   
@@ -418,7 +426,7 @@ const PatchNotesEditor = ({ onSave }) => {
                 </div>
 
                 {/* Aperçu des sections */}
-                {version.sections.length > 0 && (
+                {version.sections && version.sections.length > 0 && (
                   <div style={{ 
                     background: 'rgba(255,255,255,0.05)', 
                     borderRadius: '5px', 
@@ -427,9 +435,9 @@ const PatchNotesEditor = ({ onSave }) => {
                     <h5 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', opacity: 0.8 }}>
                       Aperçu des sections:
                     </h5>
-                    {version.sections.map((section, sIndex) => (
+                    {(version.sections || []).map((section, sIndex) => (
                       <div key={sIndex} style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}>
-                        <strong>{section.title}</strong> ({section.items.length} élément(s))
+                        <strong>{section.title}</strong> ({section.items?.length || 0} élément(s))
                       </div>
                     ))}
                   </div>
@@ -577,7 +585,7 @@ const PatchNotesEditor = ({ onSave }) => {
                     marginBottom: '1rem' 
                   }}>
                     <label style={{ fontWeight: 'bold' }}>
-                      Éléments ({section.items.length}):
+                      Éléments ({section.items?.length || 0}):
                     </label>
                     <button
                       onClick={() => addItem(sectionIndex)}
@@ -588,7 +596,7 @@ const PatchNotesEditor = ({ onSave }) => {
                     </button>
                   </div>
 
-                  {section.items.map((item, itemIndex) => (
+                  {(section.items || []).map((item, itemIndex) => (
                     <div key={itemIndex} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
                       <input
                         type="text"
