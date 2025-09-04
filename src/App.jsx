@@ -23,12 +23,12 @@ export default function App() {
         const titleEl = document.getElementById('page-title');
         if (titleEl) titleEl.textContent = content.seo.title;
       }
-      
+
       if (content.seo.description) {
         const descEl = document.getElementById('page-description');
         if (descEl) descEl.setAttribute('content', content.seo.description);
       }
-      
+
       if (content.seo.keywords) {
         const keywordsEl = document.getElementById('page-keywords');
         if (keywordsEl) keywordsEl.setAttribute('content', content.seo.keywords.join(','));
@@ -132,11 +132,92 @@ export default function App() {
             </div>
           </section>
 
-          
+          {/* SECTIONS TIKTOK & PATCH */}
+          <div className="dual-sections">
+            <section className="section card dual-section">
+              <h2>
+                <i className="fa-brands fa-tiktok"></i>
+                TikTok
+              </h2>
+              <div className="dual-content">
+                <div className="dual-image-container">
+                  <img 
+                    src="/TIKTOK.png" 
+                    alt="TikTok" 
+                    className="dual-image"
+                  />
+                  <div className="dual-overlay">
+                    <div className="dual-cta">
+                      <h3>Suivez-nous !</h3>
+                      <p>Découvrez nos dernières vidéos et actualités sur TikTok</p>
+                      <a 
+                        href="https://www.tiktok.com" 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="btn btn-primary dual-btn"
+                      >
+                        <i className="fa-brands fa-tiktok"></i> Voir sur TikTok
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
 
-          
+            <section className="section card dual-section">
+              <h2>
+                <i className="fa-solid fa-file-text"></i>
+                Notes de patch
+              </h2>
+              <div className="dual-content">
+                <div className="dual-image-container">
+                  <img 
+                    src="/PATCHNOTE06.png" 
+                    alt="Notes de patch" 
+                    className="dual-image"
+                  />
+                  <div className="dual-overlay">
+                    <div className="dual-cta">
+                      <h3>Nouveautés</h3>
+                      <p>Découvrez les dernières améliorations et corrections</p>
+                      <a 
+                        href="#" 
+                        className="btn btn-primary dual-btn"
+                        onClick={(e) => e.preventDefault()}
+                      >
+                        <i className="fa-solid fa-eye"></i> Voir les notes
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
 
-          
+          {/* FOOTER */}
+          <section className="section">
+            <footer>
+              <div className="footer-links">
+                <a href="#top" className="footer-brand">
+                  {content.footer?.brand || "Pokémon New World"}
+                </a>
+                {content.footer?.links?.map((link) => (
+                  <a
+                    key={link.text}
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <i className={link.icon}></i> {link.text}
+                  </a>
+                ))}
+              </div>
+              <p>
+                {content.footer?.copyright ||
+                  "© 2024 Pokémon New World. Fan-game non officiel."}
+              </p>
+            </footer>
+          </section>
         </div>
 
         {/* Footer */}
@@ -147,7 +228,7 @@ export default function App() {
                 {content.footer?.brand?.showLogo && (
                   <img src="/logo.png" alt="Logo Pokémon New World" />
                 )}
-                <strong>{content.footer?.brand?.name || "Pokémon New World"}</strong>
+                <strong>{typeof content.footer?.brand === 'string' ? content.footer.brand : (content.footer?.brand?.name || "Pokémon New World")}</strong>
               </div>
               <p style={{ marginTop: 8, color: "var(--muted)" }}>
                 {content.footer?.brand?.description || "Site officiel du fangame."}
