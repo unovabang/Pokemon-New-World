@@ -1,4 +1,3 @@
-
 {
   "_documentation": {
     "_comment": "Ce fichier configure les notes de patch affichées dans le modal",
@@ -10,12 +9,7 @@
       "section.title": "Titre de la section (supporte les emojis)",
       "section.items": "Array de strings - liste des éléments de cette section"
     },
-    "_imageNaming": "L'image du patch doit être nommée PATCHNOTE{VERSION_SANS_POINT}.png dans /public/",
-    "_examples": {
-      "version_0.6": "Image: PATCHNOTE06.png",
-      "version_1.0": "Image: PATCHNOTE10.png",
-      "version_2.15": "Image: PATCHNOTE215.png"
-    }
+    "_imageNaming": "L'image du patch doit être nommée PATCHNOTE{VERSION_SANS_POINT}.png dans /public/"
   },
 
   "version": "0.6",
@@ -54,21 +48,5 @@
         ]
       }
     ]
-  },
-
-  "_additionalSectionExamples": {
-    "_comment": "Exemples d'autres sections que vous pouvez utiliser",
-    "technical": {
-      "title": "🛠️ Technique",
-      "items": ["Optimisation du moteur", "Réduction de la taille du jeu"]
-    },
-    "content": {
-      "title": "📖 Contenu",
-      "items": ["Nouvelle région disponible", "5 nouveaux Pokémon"]
-    },
-    "ui": {
-      "title": "🎨 Interface",
-      "items": ["Nouveau design des menus", "Amélioration de l'ergonomie"]
-    }
   }
 }
