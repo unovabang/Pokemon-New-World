@@ -132,10 +132,28 @@ const AdminPanel = () => {
   return (
     <div style={{ 
       minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', 
+      backgroundImage: 'url(https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/4fda9f2e-bdae-436e-a729-995e442f0245/dejr7my-4643e7e4-2b76-494b-917e-63dc39d8efa2.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzRmZGE5ZjJlLWJkYWUtNDM2ZS1hNzI5LTk5NWU0NDJmMDI0NVwvZGVqcjdteS00NjQzZTdlNC0yYjc2LTQ5NGItOTE3ZS02M2RjMzlkOGVmYTIuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.mLw8xYJ6thBmuTvz0nAPl0-3I80U6Bei6CiFgIGQR4A)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
       color: 'white',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      position: 'relative'
     }}>
+      {/* Overlay pour améliorer la lisibilité */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'rgba(0, 0, 0, 0.3)',
+        backdropFilter: 'blur(1px)',
+        pointerEvents: 'none',
+        zIndex: 1
+      }}></div>
+      
       {/* Header */}
       <header style={{ 
         background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(102,126,234,0.08) 50%, rgba(118,75,162,0.06) 100%)', 
