@@ -132,15 +132,17 @@ const AdminPanel = () => {
   return (
     <div style={{ 
       minHeight: '100vh', 
-      background: 'var(--bg-dark)', 
-      color: 'white'
+      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', 
+      color: 'white',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     }}>
       {/* Header */}
       <header style={{ 
-        background: 'rgba(255,255,255,0.1)', 
-        padding: '1rem 2rem',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid rgba(255,255,255,0.2)'
+        background: 'linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%)', 
+        padding: '1.5rem 2rem',
+        backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255,255,255,0.15)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
       }}>
         <div style={{ 
           display: 'flex', 
@@ -150,20 +152,94 @@ const AdminPanel = () => {
           margin: '0 auto'
         }}>
           <div>
-            <h1>
-              <i className="fa-solid fa-shield-halved"></i> Panneau d'Administration
-            </h1>
-            <p style={{ opacity: 0.8, margin: 0 }}>
-              Bienvenue, {user?.name} | Pokémon New World
-            </p>
+            <div>
+              <h1 style={{
+                fontSize: '2.2rem',
+                fontWeight: '700',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                margin: '0 0 0.5rem 0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.8rem'
+              }}>
+                <i className="fa-solid fa-shield-halved" style={{
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontSize: '2rem'
+                }}></i>
+                Panneau d'Administration
+              </h1>
+              <p style={{ 
+                opacity: 0.9, 
+                margin: 0, 
+                fontSize: '1.1rem',
+                color: 'rgba(255,255,255,0.8)'
+              }}>
+                <i className="fa-solid fa-user-circle" style={{marginRight: '0.5rem', color: '#667eea'}}></i>
+                Bienvenue, <span style={{color: '#667eea', fontWeight: '600'}}>{user?.name}</span> | Pokémon New World
+              </p>
+            </div>
           </div>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <a href="/" className="btn btn-ghost">
+            <a href="/" style={{
+              padding: '0.75rem 1.5rem',
+              background: 'linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%)',
+              border: '1px solid rgba(102,126,234,0.3)',
+              borderRadius: '12px',
+              color: 'white',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.3s ease',
+              backdropFilter: 'blur(10px)',
+              fontSize: '0.95rem',
+              fontWeight: '500'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, rgba(102,126,234,0.3) 0%, rgba(118,75,162,0.3) 100%)';
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 8px 25px rgba(102,126,234,0.3)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, rgba(102,126,234,0.2) 0%, rgba(118,75,162,0.2) 100%)';
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = 'none';
+            }}>
               <i className="fa-solid fa-home"></i> Site Principal
             </a>
             <button 
               onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-              className="btn btn-ghost"
+              style={{
+                padding: '0.75rem 1.5rem',
+                background: 'linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(153,27,27,0.2) 100%)',
+                border: '1px solid rgba(220,38,38,0.3)',
+                borderRadius: '12px',
+                color: 'white',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                transition: 'all 0.3s ease',
+                backdropFilter: 'blur(10px)',
+                fontSize: '0.95rem',
+                fontWeight: '500'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = 'linear-gradient(135deg, rgba(220,38,38,0.3) 0%, rgba(153,27,27,0.3) 100%)';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 8px 25px rgba(220,38,38,0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = 'linear-gradient(135deg, rgba(220,38,38,0.2) 0%, rgba(153,27,27,0.2) 100%)';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = 'none';
+              }}
             >
               <i className="fa-solid fa-sign-out-alt"></i> Déconnexion
             </button>
@@ -174,13 +250,26 @@ const AdminPanel = () => {
       <div style={{ display: 'flex', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Sidebar */}
         <nav style={{ 
-          width: '250px', 
-          background: 'rgba(255,255,255,0.05)', 
+          width: '280px', 
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)', 
           minHeight: 'calc(100vh - 100px)',
-          padding: '2rem 1rem'
+          padding: '2rem 1.5rem',
+          borderRight: '1px solid rgba(255,255,255,0.1)',
+          backdropFilter: 'blur(15px)',
+          boxShadow: 'inset -1px 0 0 rgba(255,255,255,0.1)'
         }}>
-          <h3 style={{ marginBottom: '1.5rem', color: 'var(--accent)' }}>
-            <i className="fa-solid fa-cogs"></i> Configuration
+          <h3 style={{ 
+            marginBottom: '2rem', 
+            color: '#667eea',
+            fontSize: '1.3rem',
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.8rem',
+            paddingBottom: '1rem',
+            borderBottom: '2px solid rgba(102,126,234,0.2)'
+          }}>
+            <i className="fa-solid fa-cogs" style={{fontSize: '1.2rem'}}></i> Configuration
           </h3>
           {tabs.map(tab => (
             <button
@@ -188,27 +277,60 @@ const AdminPanel = () => {
               onClick={() => setActiveTab(tab.id)}
               style={{
                 width: '100%',
-                padding: '0.75rem 1rem',
-                margin: '0.25rem 0',
-                background: activeTab === tab.id ? 'var(--accent)' : 'transparent',
-                color: activeTab === tab.id ? 'white' : 'rgba(255,255,255,0.8)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '5px',
+                padding: '1rem 1.25rem',
+                margin: '0.4rem 0',
+                background: activeTab === tab.id 
+                  ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
+                  : 'rgba(255,255,255,0.03)',
+                color: activeTab === tab.id ? 'white' : 'rgba(255,255,255,0.85)',
+                border: activeTab === tab.id 
+                  ? '1px solid rgba(102,126,234,0.5)' 
+                  : '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
-                transition: 'all 0.3s ease'
+                gap: '0.75rem',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                fontSize: '0.95rem',
+                fontWeight: activeTab === tab.id ? '600' : '500',
+                boxShadow: activeTab === tab.id 
+                  ? '0 8px 25px rgba(102,126,234,0.25)' 
+                  : '0 2px 10px rgba(0,0,0,0.1)',
+                backdropFilter: 'blur(10px)'
+              }}
+              onMouseOver={(e) => {
+                if (activeTab !== tab.id) {
+                  e.target.style.background = 'rgba(255,255,255,0.08)';
+                  e.target.style.transform = 'translateX(4px)';
+                  e.target.style.borderColor = 'rgba(102,126,234,0.3)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (activeTab !== tab.id) {
+                  e.target.style.background = 'rgba(255,255,255,0.03)';
+                  e.target.style.transform = 'translateX(0)';
+                  e.target.style.borderColor = 'rgba(255,255,255,0.1)';
+                }
               }}
             >
-              <i className={`fa-solid ${tab.icon}`}></i>
+              <i className={`fa-solid ${tab.icon}`} style={{
+                fontSize: '1.1rem',
+                width: '20px',
+                textAlign: 'center'
+              }}></i>
               {tab.name}
             </button>
           ))}
         </nav>
 
         {/* Main Content */}
-        <main style={{ flex: 1, padding: '2rem' }}>
+        <main style={{ 
+          flex: 1, 
+          padding: '2rem 2.5rem',
+          background: 'rgba(255,255,255,0.02)',
+          backdropFilter: 'blur(10px)'
+        }}>
           {activeTab === 'news' && (
             <BannerManager 
               onSave={(newConfig) => handleSaveConfig('news', newConfig)}
@@ -261,9 +383,12 @@ const AdminPanel = () => {
            activeTab !== 'site' && activeTab !== 'patreon' && 
            activeTab !== 'footer' && activeTab !== 'external' && (
             <div style={{
-              background: 'rgba(255,255,255,0.05)',
-              borderRadius: '10px',
-              padding: '2rem'
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+              borderRadius: '20px',
+              padding: '2.5rem',
+              border: '1px solid rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
             }}>
               <div style={{ 
                 display: 'flex', 
@@ -271,29 +396,53 @@ const AdminPanel = () => {
                 alignItems: 'center',
                 marginBottom: '2rem'
               }}>
-                <h2>
-                  <i className={`fa-solid ${tabs.find(t => t.id === activeTab)?.icon}`}></i>{' '}
+                <h2 style={{
+                  fontSize: '2rem',
+                  fontWeight: '700',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  margin: '0 0 1rem 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.8rem'
+                }}>
+                  <i className={`fa-solid ${tabs.find(t => t.id === activeTab)?.icon}`} style={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    fontSize: '1.8rem'
+                  }}></i>
                   {tabs.find(t => t.id === activeTab)?.name}
                 </h2>
                 <div style={{
-                  background: 'rgba(255, 165, 0, 0.2)',
-                  border: '1px solid rgba(255, 165, 0, 0.4)',
-                  color: '#ffa500',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '5px',
-                  fontSize: '0.9rem'
+                  background: 'linear-gradient(135deg, rgba(255, 165, 0, 0.15) 0%, rgba(255, 140, 0, 0.15) 100%)',
+                  border: '1px solid rgba(255, 165, 0, 0.3)',
+                  color: '#ffb347',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '12px',
+                  fontSize: '0.95rem',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                  backdropFilter: 'blur(10px)'
                 }}>
-                  <i className="fa-solid fa-tools"></i> Interface en développement
+                  <i className="fa-solid fa-tools" style={{fontSize: '1rem'}}></i> Interface en développement
                 </div>
               </div>
 
               {/* Preview temporaire du contenu */}
               <div style={{
-                background: 'rgba(0,0,0,0.3)',
-                borderRadius: '5px',
-                padding: '1rem',
+                background: 'linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%)',
+                borderRadius: '15px',
+                padding: '1.5rem',
                 maxHeight: '60vh',
-                overflow: 'auto'
+                overflow: 'auto',
+                border: '1px solid rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(10px)'
               }}>
                 <pre style={{ 
                   margin: 0, 
@@ -309,12 +458,22 @@ const AdminPanel = () => {
               {/* Instructions spécifiques par section */}
               <div style={{ 
                 marginTop: '2rem', 
-                padding: '1rem',
-                background: 'rgba(255,255,255,0.1)',
-                borderRadius: '5px',
-                borderLeft: '4px solid var(--accent)'
+                padding: '1.5rem',
+                background: 'linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%)',
+                borderRadius: '15px',
+                border: '1px solid rgba(102,126,234,0.2)',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 8px 25px rgba(102,126,234,0.1)'
               }}>
-                <h4><i className="fa-solid fa-info-circle"></i> Instructions</h4>
+                <h4 style={{
+                  color: '#667eea',
+                  fontSize: '1.2rem',
+                  fontWeight: '600',
+                  margin: '0 0 1rem 0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.6rem'
+                }}><i className="fa-solid fa-info-circle" style={{fontSize: '1.1rem'}}></i> Instructions</h4>
                 {activeTab === 'downloads' && (
                   <p>Interface graphique en développement. Cette section permettra de modifier facilement les liens de téléchargement du jeu et des patchs avec des formulaires simples.</p>
                 )}
