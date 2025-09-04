@@ -9,14 +9,27 @@ const BannerManager = ({ onSave }) => {
   }, []);
 
   const loadBannerImages = () => {
-    // Charger les images existantes depuis le dossier news-images
-    // Pour cette démo, nous utiliserons les images connues
-    const existingBanners = [
-      { name: 'banniere1.png', position: 1 },
-      { name: 'banniere2.png', position: 2 },
-      { name: 'banniere3.png', position: 3 }
+    // Charger les images existantes depuis localStorage et les images connues
+    const savedBanners = JSON.parse(localStorage.getItem('bannerImages') || '[]');
+    
+    // Images par défaut présentes dans le dossier
+    const defaultBanners = [
+      { name: 'banniere1.png', position: 1, isDefault: true },
+      { name: 'banniere2.png', position: 2, isDefault: true },
+      { name: 'banniere3.png', position: 3, isDefault: true }
     ];
-    setBannerImages(existingBanners);
+
+    // Combiner les images par défaut avec les nouvelles
+    const allBanners = [...defaultBanners];
+    
+    // Ajouter les images uploadées qui ne sont pas déjà dans les défauts
+    savedBanners.forEach(saved => {
+      if (!defaultBanners.find(def => def.name === saved.name)) {
+        allBanners.push(saved);
+      }
+    });
+
+    setBannerImages(allBanners.sort((a, b) => a.position - b.position));
   };
 
   const handleImageUpload = async (event) => {
@@ -26,6 +39,8 @@ const BannerManager = ({ onSave }) => {
     setUploading(true);
     
     try {
+      const newBanners = [];
+      
       for (const file of files) {
         // Trouver la prochaine position disponible
         const nextPosition = getNextAvailablePosition();
@@ -34,18 +49,35 @@ const BannerManager = ({ onSave }) => {
         // Créer un URL temporaire pour l'image
         const imageUrl = URL.createObjectURL(file);
         
-        // Ajouter l'image à la liste
+        // Créer l'objet bannière
         const newBanner = {
           name: newFileName,
           position: nextPosition,
           url: imageUrl,
-          isNew: true
+          isNew: true,
+          file: file // Garder une référence au fichier
         };
         
-        setBannerImages(prev => [...prev, newBanner]);
+        newBanners.push(newBanner);
       }
       
-      alert(`${files.length} bannière(s) ajoutée(s) avec succès !`);
+      // Mettre à jour l'état
+      setBannerImages(prev => {
+        const updated = [...prev, ...newBanners];
+        // Sauvegarder dans localStorage
+        const toSave = newBanners.map(banner => ({
+          name: banner.name,
+          position: banner.position,
+          url: banner.url,
+          isNew: banner.isNew
+        }));
+        const existing = JSON.parse(localStorage.getItem('bannerImages') || '[]');
+        localStorage.setItem('bannerImages', JSON.stringify([...existing, ...toSave]));
+        
+        return updated.sort((a, b) => a.position - b.position);
+      });
+      
+      alert(`${files.length} bannière(s) ajoutée(s) ! NOTE: Pour que les images soient visibles sur le site, vous devez les copier manuellement dans le dossier public/news-images/ avec les noms indiqués.`);
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
       alert('Erreur lors du téléchargement des images');
@@ -65,42 +97,57 @@ const BannerManager = ({ onSave }) => {
   };
 
   const deleteBannerImage = (imageName) => {
-    if (!confirm(`Supprimer définitivement l'image "${imageName}" ?`)) return;
+    if (!confirm(`Supprimer l'image "${imageName}" de la liste ?`)) return;
     
-    setBannerImages(prev => prev.filter(img => img.name !== imageName));
-    alert('Image supprimée avec succès !');
+    setBannerImages(prev => {
+      const updated = prev.filter(img => img.name !== imageName);
+      
+      // Mettre à jour localStorage
+      const saved = JSON.parse(localStorage.getItem('bannerImages') || '[]');
+      const filteredSaved = saved.filter(img => img.name !== imageName);
+      localStorage.setItem('bannerImages', JSON.stringify(filteredSaved));
+      
+      return updated;
+    });
+    
+    alert(`Image supprimée de la liste ! NOTE: Vous devez aussi supprimer manuellement le fichier ${imageName} du dossier public/news-images/ si nécessaire.`);
   };
 
   const updatePosition = (imageName, newPosition) => {
     const position = parseInt(newPosition);
-    if (position < 1 || position > 10) {
-      alert('La position doit être entre 1 et 10');
+    if (isNaN(position) || position < 1 || position > 10) {
+      alert('La position doit être un nombre entre 1 et 10');
       return;
     }
 
-    // Vérifier si la position est déjà utilisée
-    const existingAtPosition = bannerImages.find(img => img.position === position && img.name !== imageName);
-    
     setBannerImages(prev => {
       const updated = [...prev];
       
-      // Si la position est occupée, échanger les positions
+      // Trouver l'image à déplacer
+      const imgToMove = updated.find(img => img.name === imageName);
+      if (!imgToMove) return prev;
+      
+      // Vérifier si la position est déjà utilisée
+      const existingAtPosition = updated.find(img => img.position === position && img.name !== imageName);
+      
       if (existingAtPosition) {
-        const currentImg = updated.find(img => img.name === imageName);
-        const targetImg = updated.find(img => img.name === existingAtPosition.name);
-        
-        if (currentImg && targetImg) {
-          const tempPosition = currentImg.position;
-          currentImg.position = targetImg.position;
-          targetImg.position = tempPosition;
-        }
+        // Échanger les positions
+        const oldPosition = imgToMove.position;
+        imgToMove.position = position;
+        existingAtPosition.position = oldPosition;
       } else {
-        // Sinon, simplement mettre à jour la position
-        const imgToUpdate = updated.find(img => img.name === imageName);
-        if (imgToUpdate) {
-          imgToUpdate.position = position;
-        }
+        // Simplement mettre à jour la position
+        imgToMove.position = position;
       }
+      
+      // Sauvegarder dans localStorage
+      const toSave = updated.filter(img => !img.isDefault).map(banner => ({
+        name: banner.name,
+        position: banner.position,
+        url: banner.url,
+        isNew: banner.isNew
+      }));
+      localStorage.setItem('bannerImages', JSON.stringify(toSave));
       
       return updated.sort((a, b) => a.position - b.position);
     });
@@ -138,23 +185,35 @@ const BannerManager = ({ onSave }) => {
 
       {/* Instructions */}
       <div style={{ 
-        background: 'rgba(0, 123, 255, 0.1)', 
+        background: 'rgba(255, 165, 0, 0.1)', 
         borderRadius: '10px', 
         padding: '1.5rem',
         marginBottom: '2rem',
-        border: '1px solid rgba(0, 123, 255, 0.3)'
+        border: '1px solid rgba(255, 165, 0, 0.3)'
       }}>
         <h3 style={{ 
           marginBottom: '1rem',
-          color: '#007bff',
+          color: '#ffa500',
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem'
         }}>
-          <i className="fa-solid fa-info-circle"></i>
-          Comment ça fonctionne
+          <i className="fa-solid fa-exclamation-triangle"></i>
+          Instructions Importantes
         </h3>
-        <ul style={{ margin: 0, paddingLeft: '1.5rem' }}>
+        <div style={{ 
+          background: 'rgba(255,255,255,0.1)', 
+          padding: '1rem', 
+          borderRadius: '5px',
+          marginBottom: '1rem'
+        }}>
+          <strong>⚠️ Action Manuelle Requise :</strong>
+          <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem' }}>
+            Après avoir uploadé des images ici, vous devez <strong>manuellement</strong> copier les fichiers 
+            dans le dossier <code>public/news-images/</code> avec les noms exacts indiqués (banniere1.png, banniere2.png, etc.)
+          </p>
+        </div>
+        <ul style={{ margin: 0, paddingLeft: '1.5rem', fontSize: '0.9rem' }}>
           <li>Les bannières sont des <strong>images uniquement</strong> (pas de texte)</li>
           <li>Elles s'affichent en <strong>rotation automatique</strong> sur la page d'accueil</li>
           <li>Les images sont nommées <strong>banniere1.png, banniere2.png, etc.</strong></li>
