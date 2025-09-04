@@ -15,6 +15,14 @@ const PatreonEditor = ({ onSave }) => {
   const [currentAmount, setCurrentAmount] = useState('');
   const [goalDescription, setGoalDescription] = useState('');
   
+  // Traductions anglaises
+  const [titleEn, setTitleEn] = useState('');
+  const [headingEn, setHeadingEn] = useState('');
+  const [descriptionEn, setDescriptionEn] = useState('');
+  const [buttonTextEn, setButtonTextEn] = useState('');
+  const [goalDescriptionEn, setGoalDescriptionEn] = useState('');
+  
+  const [activeLanguage, setActiveLanguage] = useState('fr');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -47,6 +55,14 @@ const PatreonEditor = ({ onSave }) => {
         setGoalAmount(config.goal?.amount || '');
         setCurrentAmount(config.goal?.current || '');
         setGoalDescription(config.goal?.description || '');
+        
+        // Chargement des traductions anglaises
+        const enTranslations = config.translations?.en || {};
+        setTitleEn(enTranslations.title || '');
+        setHeadingEn(enTranslations.content?.heading || '');
+        setDescriptionEn(enTranslations.content?.description || '');
+        setButtonTextEn(enTranslations.content?.buttonText || enTranslations.content?.button || '');
+        setGoalDescriptionEn(enTranslations.goal?.description || '');
       }
     } catch (error) {
       console.error('Erreur lors du chargement de la config Patreon:', error);
@@ -94,6 +110,20 @@ const PatreonEditor = ({ onSave }) => {
               amount: goalAmount,
               current: currentAmount,
               description: goalDescription
+            },
+            translations: {
+              en: {
+                title: titleEn,
+                content: {
+                  heading: headingEn,
+                  description: descriptionEn,
+                  buttonText: buttonTextEn,
+                  button: buttonTextEn
+                },
+                goal: {
+                  description: goalDescriptionEn
+                }
+              }
             }
           };
           
@@ -154,9 +184,50 @@ const PatreonEditor = ({ onSave }) => {
         alignItems: 'center', 
         marginBottom: '2rem' 
       }}>
-        <h2>
-          <i className="fa-solid fa-heart"></i> Configuration Patreon
-        </h2>
+        <div>
+          <h2 style={{ margin: '0 0 1rem 0' }}>
+            <i className="fa-solid fa-heart"></i> Configuration Patreon
+          </h2>
+          
+          {/* Onglets de langue */}
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button
+              onClick={() => setActiveLanguage('fr')}
+              style={{
+                padding: '0.5rem 1rem',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                background: activeLanguage === 'fr' 
+                  ? 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
+                  : 'rgba(255,255,255,0.05)',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              🇫🇷 Français
+            </button>
+            <button
+              onClick={() => setActiveLanguage('en')}
+              style={{
+                padding: '0.5rem 1rem',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                background: activeLanguage === 'en' 
+                  ? 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
+                  : 'rgba(255,255,255,0.05)',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              🇬🇧 English
+            </button>
+          </div>
+        </div>
+        
         <button 
           onClick={handleSave} 
           className="btn btn-primary"
@@ -195,13 +266,13 @@ const PatreonEditor = ({ onSave }) => {
                 marginBottom: '0.5rem', 
                 fontWeight: 'bold' 
               }}>
-                <i className="fa-solid fa-heading"></i> Titre de la section :
+                <i className="fa-solid fa-heading"></i> Titre de la section ({activeLanguage === 'fr' ? 'Français' : 'English'}) :
               </label>
               <input
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Obtiens les nouveautés en avance !"
+                value={activeLanguage === 'fr' ? title : titleEn}
+                onChange={(e) => activeLanguage === 'fr' ? setTitle(e.target.value) : setTitleEn(e.target.value)}
+                placeholder={activeLanguage === 'fr' ? "Obtiens les nouveautés en avance !" : "Get the latest news first!"}
                 style={{
                   width: '100%',
                   padding: '1rem',
@@ -322,13 +393,13 @@ const PatreonEditor = ({ onSave }) => {
                 marginBottom: '0.5rem', 
                 fontWeight: 'bold' 
               }}>
-                <i className="fa-solid fa-heading"></i> Titre principal :
+                <i className="fa-solid fa-heading"></i> Titre principal ({activeLanguage === 'fr' ? 'Français' : 'English'}) :
               </label>
               <input
                 type="text"
-                value={heading}
-                onChange={(e) => setHeading(e.target.value)}
-                placeholder="Soutenez-nous sur Patreon"
+                value={activeLanguage === 'fr' ? heading : headingEn}
+                onChange={(e) => activeLanguage === 'fr' ? setHeading(e.target.value) : setHeadingEn(e.target.value)}
+                placeholder={activeLanguage === 'fr' ? "Soutenez le projet !!!!" : "Support the project!!!!"}
                 style={{
                   width: '100%',
                   padding: '1rem',
@@ -347,12 +418,12 @@ const PatreonEditor = ({ onSave }) => {
                 marginBottom: '0.5rem', 
                 fontWeight: 'bold' 
               }}>
-                <i className="fa-solid fa-align-left"></i> Description :
+                <i className="fa-solid fa-align-left"></i> Description ({activeLanguage === 'fr' ? 'Français' : 'English'}) :
               </label>
               <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Votre soutien nous aide à développer le jeu et à ajouter du nouveau contenu..."
+                value={activeLanguage === 'fr' ? description : descriptionEn}
+                onChange={(e) => activeLanguage === 'fr' ? setDescription(e.target.value) : setDescriptionEn(e.target.value)}
+                placeholder={activeLanguage === 'fr' ? "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !" : "Get early access to new content and help us develop the game!"}
                 rows="4"
                 style={{
                   width: '100%',
@@ -374,13 +445,13 @@ const PatreonEditor = ({ onSave }) => {
                   marginBottom: '0.5rem', 
                   fontWeight: 'bold' 
                 }}>
-                  <i className="fa-solid fa-mouse-pointer"></i> Texte du bouton :
+                  <i className="fa-solid fa-mouse-pointer"></i> Texte du bouton ({activeLanguage === 'fr' ? 'Français' : 'English'}) :
                 </label>
                 <input
                   type="text"
-                  value={buttonText}
-                  onChange={(e) => setButtonText(e.target.value)}
-                  placeholder="Soutenir sur Patreon"
+                  value={activeLanguage === 'fr' ? buttonText : buttonTextEn}
+                  onChange={(e) => activeLanguage === 'fr' ? setButtonText(e.target.value) : setButtonTextEn(e.target.value)}
+                  placeholder={activeLanguage === 'fr' ? "Soutenir sur Patreon" : "Support on Patreon"}
                   style={{
                     width: '100%',
                     padding: '1rem',
@@ -454,13 +525,13 @@ const PatreonEditor = ({ onSave }) => {
                 marginBottom: '0.5rem', 
                 fontWeight: 'bold' 
               }}>
-                <i className="fa-solid fa-bullseye"></i> Description de l'objectif :
+                <i className="fa-solid fa-bullseye"></i> Description de l'objectif ({activeLanguage === 'fr' ? 'Français' : 'English'}) :
               </label>
               <input
                 type="text"
-                value={goalDescription}
-                onChange={(e) => setGoalDescription(e.target.value)}
-                placeholder="Prochaine mise à jour majeure"
+                value={activeLanguage === 'fr' ? goalDescription : goalDescriptionEn}
+                onChange={(e) => activeLanguage === 'fr' ? setGoalDescription(e.target.value) : setGoalDescriptionEn(e.target.value)}
+                placeholder={activeLanguage === 'fr' ? "Prochaine mise à jour majeure" : "Next major update"}
                 style={{
                   width: '100%',
                   padding: '1rem',
