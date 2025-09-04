@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPanel from "./pages/AdminPanel";
 import HomePage from "./pages/HomePage";
 import LoginAdmin from "./pages/LoginAdmin";
+import Page404 from "./pages/Page404";
 import { useLanguage } from "./contexts/LanguageContext";
 
 
@@ -27,6 +28,8 @@ export default function App() {
             <AdminPanel />
           </ProtectedRoute>
         } />
+        {/* Route catch-all pour les pages inexistantes */}
+        <Route path="*" element={<Page404 />} />
       </Routes>
     </Router>
   );
