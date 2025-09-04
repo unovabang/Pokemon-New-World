@@ -107,20 +107,20 @@ const BannerManager = ({ onSave }) => {
     }
   };
 
-  const updatePosition = async (imageName, newPosition) => {
-    const position = parseInt(newPosition);
-    if (isNaN(position) || position < 1 || position > 10) {
-      alert('La position doit être un nombre entre 1 et 10');
-      return;
-    }
-
+  const moveUp = async (imageName) => {
+    const currentIndex = bannerImages.findIndex(img => img.name === imageName);
+    if (currentIndex <= 0) return; // Déjà en première position
+    
+    const currentImage = bannerImages[currentIndex];
+    const previousImage = bannerImages[currentIndex - 1];
+    
     try {
       const response = await fetch(`${API_BASE}/banners/${imageName}/position`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ position })
+        body: JSON.stringify({ position: previousImage.position })
       });
       
       const data = await response.json();
@@ -131,7 +131,36 @@ const BannerManager = ({ onSave }) => {
         throw new Error(data.error);
       }
     } catch (error) {
-      console.error('Erreur lors du changement de position:', error);
+      console.error('Erreur lors du déplacement:', error);
+      alert(`Erreur: ${error.message}`);
+    }
+  };
+
+  const moveDown = async (imageName) => {
+    const currentIndex = bannerImages.findIndex(img => img.name === imageName);
+    if (currentIndex >= bannerImages.length - 1) return; // Déjà en dernière position
+    
+    const currentImage = bannerImages[currentIndex];
+    const nextImage = bannerImages[currentIndex + 1];
+    
+    try {
+      const response = await fetch(`${API_BASE}/banners/${imageName}/position`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ position: nextImage.position })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setBannerImages(data.banners);
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      console.error('Erreur lors du déplacement:', error);
       alert(`Erreur: ${error.message}`);
     }
   };
@@ -327,25 +356,54 @@ const BannerManager = ({ onSave }) => {
                   </h4>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <label style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>
-                        <i className="fa-solid fa-sort-numeric-up"></i> Position:
-                      </label>
-                      <input
-                        type="number"
-                        value={banner.position}
-                        onChange={(e) => updatePosition(banner.name, e.target.value)}
-                        min="1"
-                        max="10"
-                        style={{
-                          width: '60px',
-                          padding: '0.3rem',
-                          borderRadius: '4px',
-                          border: '1px solid rgba(255,255,255,0.3)',
-                          background: 'rgba(255,255,255,0.1)',
-                          color: 'white',
-                          textAlign: 'center'
-                        }}
-                      />
+                      <i className="fa-solid fa-arrows-alt-v" style={{ color: '#007bff' }}></i>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Position {banner.position}:</span>
+                      <div style={{ display: 'flex', gap: '0.25rem' }}>
+                        <button 
+                          onClick={() => moveUp(banner.name)}
+                          disabled={bannerImages.findIndex(img => img.name === banner.name) === 0}
+                          style={{
+                            padding: '0.3rem 0.5rem',
+                            border: 'none',
+                            borderRadius: '3px',
+                            background: bannerImages.findIndex(img => img.name === banner.name) === 0 
+                              ? 'rgba(255,255,255,0.1)' 
+                              : 'rgba(0, 123, 255, 0.8)',
+                            color: bannerImages.findIndex(img => img.name === banner.name) === 0 
+                              ? 'rgba(255,255,255,0.5)' 
+                              : 'white',
+                            cursor: bannerImages.findIndex(img => img.name === banner.name) === 0 
+                              ? 'not-allowed' 
+                              : 'pointer',
+                            fontSize: '0.8rem'
+                          }}
+                          title="Déplacer vers le haut"
+                        >
+                          <i className="fa-solid fa-chevron-up"></i>
+                        </button>
+                        <button 
+                          onClick={() => moveDown(banner.name)}
+                          disabled={bannerImages.findIndex(img => img.name === banner.name) === bannerImages.length - 1}
+                          style={{
+                            padding: '0.3rem 0.5rem',
+                            border: 'none',
+                            borderRadius: '3px',
+                            background: bannerImages.findIndex(img => img.name === banner.name) === bannerImages.length - 1 
+                              ? 'rgba(255,255,255,0.1)' 
+                              : 'rgba(0, 123, 255, 0.8)',
+                            color: bannerImages.findIndex(img => img.name === banner.name) === bannerImages.length - 1 
+                              ? 'rgba(255,255,255,0.5)' 
+                              : 'white',
+                            cursor: bannerImages.findIndex(img => img.name === banner.name) === bannerImages.length - 1 
+                              ? 'not-allowed' 
+                              : 'pointer',
+                            fontSize: '0.8rem'
+                          }}
+                          title="Déplacer vers le bas"
+                        >
+                          <i className="fa-solid fa-chevron-down"></i>
+                        </button>
+                      </div>
                     </div>
                     <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
                       Ordre d'affichage dans la rotation
