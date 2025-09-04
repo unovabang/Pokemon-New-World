@@ -8,22 +8,28 @@ export default function Carousel({ images = [], interval = 4000 }) {
 	const next = () => {
 		if (isTransitioning) return;
 		setIsTransitioning(true);
-		setI((v) => (v + 1) % total);
-		setTimeout(() => setIsTransitioning(false), 600);
+		setTimeout(() => {
+			setI((v) => (v + 1) % total);
+		}, 50);
+		setTimeout(() => setIsTransitioning(false), 650);
 	};
 	
 	const prev = () => {
 		if (isTransitioning) return;
 		setIsTransitioning(true);
-		setI((v) => (v - 1 + total) % total);
-		setTimeout(() => setIsTransitioning(false), 600);
+		setTimeout(() => {
+			setI((v) => (v - 1 + total) % total);
+		}, 50);
+		setTimeout(() => setIsTransitioning(false), 650);
 	};
 	
 	const goToSlide = (index) => {
 		if (isTransitioning || index === i) return;
 		setIsTransitioning(true);
-		setI(index);
-		setTimeout(() => setIsTransitioning(false), 600);
+		setTimeout(() => {
+			setI(index);
+		}, 50);
+		setTimeout(() => setIsTransitioning(false), 650);
 	};
 	
 	const timer = useRef(null);
@@ -41,8 +47,8 @@ export default function Carousel({ images = [], interval = 4000 }) {
 					className="track"
 					style={{ transform: `translateX(-${i * 100}%)` }}
 				>
-					{images.map((src) => (
-						<div key={src} className="slide">
+					{images.map((src, index) => (
+						<div key={src} className={`slide ${index === i ? "active" : ""}`}>
 							<img src={src} alt="Capture" loading="lazy" />
 							<div className="mask" />
 						</div>
