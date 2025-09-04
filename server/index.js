@@ -275,10 +275,21 @@ app.use((error, req, res, next) => {
 
 // === PATCH NOTES API ===
 
-// GET /api/patchnotes - Lister toutes les notes de patch
+// GET /api/patchnotes et /api/patchnotes/:lang - Lister toutes les notes de patch (avec support multilingue)
 app.get('/api/patchnotes', (req, res) => {
+  req.params.lang = 'fr';
+  handlePatchnotesGet(req, res);
+});
+
+app.get('/api/patchnotes/:lang', (req, res) => {
+  handlePatchnotesGet(req, res);
+});
+
+function handlePatchnotesGet(req, res) {
   try {
-    const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
+    const lang = req.params.lang || 'fr';
+    const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
+    const patchnotesPath = path.join(CONFIG_DIR, filename);
     
     if (!fs.existsSync(patchnotesPath)) {
       // Créer un fichier vide s'il n'existe pas
@@ -320,18 +331,20 @@ app.get('/api/patchnotes', (req, res) => {
     console.error('❌ Erreur API /api/patchnotes:', error);
     res.status(500).json({ success: false, error: error.message });
   }
-});
+}
 
-// POST /api/patchnotes - Ajouter une nouvelle version
-app.post('/api/patchnotes/version', (req, res) => {
+// POST /api/patchnotes/:lang/version - Ajouter une nouvelle version
+app.post('/api/patchnotes/:lang/version', (req, res) => {
   try {
+    const lang = req.params.lang || 'fr';
+    const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
     const { version, date, sections } = req.body;
     
     if (!version || !date || !sections) {
       return res.status(400).json({ success: false, error: 'Version, date et sections requis' });
     }
     
-    const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
+    const patchnotesPath = path.join(CONFIG_DIR, filename);
     let data = { versions: [] };
     
     if (fs.existsSync(patchnotesPath)) {
@@ -365,13 +378,15 @@ app.post('/api/patchnotes/version', (req, res) => {
   }
 });
 
-// PUT /api/patchnotes/version/:version - Modifier une version
-app.put('/api/patchnotes/version/:version', (req, res) => {
+// PUT /api/patchnotes/:lang/version/:version - Modifier une version
+app.put('/api/patchnotes/:lang/version/:version', (req, res) => {
   try {
+    const lang = req.params.lang || 'fr';
+    const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
     const { version } = req.params;
     const { date, sections } = req.body;
     
-    const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
+    const patchnotesPath = path.join(CONFIG_DIR, filename);
     
     if (!fs.existsSync(patchnotesPath)) {
       return res.status(404).json({ success: false, error: 'Fichier de notes de patch non trouvé' });
@@ -400,12 +415,14 @@ app.put('/api/patchnotes/version/:version', (req, res) => {
   }
 });
 
-// DELETE /api/patchnotes/version/:version - Supprimer une version
-app.delete('/api/patchnotes/version/:version', (req, res) => {
+// DELETE /api/patchnotes/:lang/version/:version - Supprimer une version
+app.delete('/api/patchnotes/:lang/version/:version', (req, res) => {
   try {
+    const lang = req.params.lang || 'fr';
+    const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
     const { version } = req.params;
     
-    const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
+    const patchnotesPath = path.join(CONFIG_DIR, filename);
     
     if (!fs.existsSync(patchnotesPath)) {
       return res.status(404).json({ success: false, error: 'Fichier de notes de patch non trouvé' });

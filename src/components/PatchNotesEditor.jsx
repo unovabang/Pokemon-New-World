@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 const API_BASE = `${window.location.protocol}//${window.location.hostname.replace(/:\d+$/, '')}:3001/api`;
 
 const PatchNotesEditor = ({ onSave }) => {
+  const [currentLang, setCurrentLang] = useState('fr');
   const [patchNotes, setPatchNotes] = useState({ versions: [] });
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -27,12 +28,12 @@ const PatchNotesEditor = ({ onSave }) => {
 
   useEffect(() => {
     loadPatchNotes();
-  }, []);
+  }, [currentLang]);
 
   const loadPatchNotes = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE}/patchnotes?t=${Date.now()}`);
+      const response = await fetch(`${API_BASE}/patchnotes/${currentLang}?t=${Date.now()}`);
       const data = await response.json();
       
       if (data.success) {
@@ -73,7 +74,7 @@ const PatchNotesEditor = ({ onSave }) => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/patchnotes/version`, {
+      const response = await fetch(`${API_BASE}/patchnotes/${currentLang}/version`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -104,7 +105,7 @@ const PatchNotesEditor = ({ onSave }) => {
       `Êtes-vous sûr de vouloir supprimer la version "${version}" ?`,
       async () => {
         try {
-          const response = await fetch(`${API_BASE}/patchnotes/version/${version}`, {
+          const response = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${version}`, {
             method: 'DELETE'
           });
 
@@ -131,7 +132,7 @@ const PatchNotesEditor = ({ onSave }) => {
   // Sauvegarder les modifications d'une version
   const saveVersionEdits = async () => {
     try {
-      const response = await fetch(`${API_BASE}/patchnotes/version/${editingVersion}`, {
+      const response = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${editingVersion}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -206,13 +207,20 @@ const PatchNotesEditor = ({ onSave }) => {
     );
   };
 
-  const commonSectionTitles = [
+  const commonSectionTitles = currentLang === 'fr' ? [
     '🆕 Nouveautés',
     '🔧 Corrections', 
     '⚖️ Équilibrage',
     '🎨 Améliorations visuelles',
     '🎵 Audio',
     '🌟 Contenu'
+  ] : [
+    '🆕 New Features',
+    '🔧 Bug Fixes', 
+    '⚖️ Balance Changes',
+    '🎨 Visual Improvements',
+    '🎵 Audio',
+    '🌟 Content'
   ];
 
   return (
@@ -223,9 +231,37 @@ const PatchNotesEditor = ({ onSave }) => {
         alignItems: 'center', 
         marginBottom: '2rem' 
       }}>
-        <h2>
-          <i className="fa-solid fa-file-text"></i> Gestion des Notes de Patch
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <h2>
+            <i className="fa-solid fa-file-text"></i> Gestion des Notes de Patch
+          </h2>
+          
+          {/* Sélecteur de langue */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>Langue:</span>
+            <select 
+              value={currentLang} 
+              onChange={(e) => setCurrentLang(e.target.value)}
+              style={{
+                padding: '0.5rem 1rem',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                background: 'rgba(255,255,255,0.1)',
+                color: 'white',
+                fontSize: '0.9rem',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="fr" style={{ background: '#1a1a1a', color: 'white' }}>
+                🇫🇷 Français
+              </option>
+              <option value="en" style={{ background: '#1a1a1a', color: 'white' }}>
+                🇺🇸 English
+              </option>
+            </select>
+          </div>
+        </div>
+        
         <button 
           onClick={() => setShowNewVersionForm(true)}
           className="btn btn-primary"
