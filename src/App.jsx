@@ -6,12 +6,15 @@ import Carousel from "./components/Carousel";
 import Modal from "./components/Modal";
 import YouTubeAudio from "./components/YouTubeAudio";
 import NewsBanner from "./components/NewsBanner";
+import LanguageSelector from "./components/LanguageSelector";
+import { useLanguage } from "./contexts/LanguageContext";
 
 
 
 export default function App() {
   const { backgrounds, heroVideo, game, carousel, discord, downloads } =
     content;
+  const { t, language } = useLanguage();
   const [openVideo, setOpenVideo] = useState(false);
   const [openExplanations, setOpenExplanations] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
@@ -19,24 +22,18 @@ export default function App() {
 
   // Mise à jour des métadonnées SEO
   useEffect(() => {
-    if (content.seo) {
-      if (content.seo.title) {
-        document.title = content.seo.title;
-        const titleEl = document.getElementById('page-title');
-        if (titleEl) titleEl.textContent = content.seo.title;
-      }
+    // Utiliser les traductions pour les métadonnées SEO
+    document.title = t('seo.title');
+    
+    const titleEl = document.getElementById('page-title');
+    if (titleEl) titleEl.textContent = t('seo.title');
 
-      if (content.seo.description) {
-        const descEl = document.getElementById('page-description');
-        if (descEl) descEl.setAttribute('content', content.seo.description);
-      }
+    const descEl = document.getElementById('page-description');
+    if (descEl) descEl.setAttribute('content', t('seo.description'));
 
-      if (content.seo.keywords) {
-        const keywordsEl = document.getElementById('page-keywords');
-        if (keywordsEl) keywordsEl.setAttribute('content', content.seo.keywords.join(','));
-      }
-    }
-  }, []);
+    const keywordsEl = document.getElementById('page-keywords');
+    if (keywordsEl) keywordsEl.setAttribute('content', t('seo.keywords').join(','));
+  }, [language, t]);
 
   return (
     <>
@@ -60,6 +57,9 @@ export default function App() {
         )}
 
         <div className="container">
+          {/* Sélecteur de langue */}
+          <LanguageSelector className="language-selector-above-video" />
+          
           {/* HERO vidéo : on retire le H1 et on agrandit le logo */}
           <section className="section" style={{ padding: 0 }}>
             <HeroVideo videoId={heroVideo.youtubeId}>
@@ -75,7 +75,7 @@ export default function App() {
                     className="btn btn-primary" 
                     onClick={() => setOpenDownload(true)}
                   >
-                    <i className="fa-solid fa-cloud-arrow-down"></i> Télécharger
+                    <i className="fa-solid fa-cloud-arrow-down"></i> {t('buttons.download')}
                   </button>
                   <a
                     className="btn btn-ghost"
@@ -83,7 +83,7 @@ export default function App() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <i className="fa-brands fa-discord"></i> Discord
+                    <i className="fa-brands fa-discord"></i> {t('buttons.discord')}
                   </a>
                 </div>
               </div>
@@ -94,7 +94,7 @@ export default function App() {
           <section id="news" className="section card">
             <h2>
               <img src="/newsCLEAN3.png" alt="Icône nouveautés" className="section-icon" />{" "}
-              {content.sections?.news?.title || "DERNIÈRES NOUVEAUTÉS"}
+              {t('sections.news.title')}
             </h2>
             <NewsBanner 
               banners={content.news?.banners || []} 
@@ -108,7 +108,7 @@ export default function App() {
             <section className="section card dual-section">
               <h2>
                 <i className="fa-brands fa-tiktok"></i>
-                TikTok
+                {t('sections.tiktok.title')}
               </h2>
               <div className="dual-content">
                 <div className="dual-image-container">
@@ -119,15 +119,15 @@ export default function App() {
                   />
                   <div className="dual-overlay">
                     <div className="dual-cta">
-                      <h3>Suivez-nous !</h3>
-                      <p>Découvrez nos dernières vidéos et actualités sur TikTok</p>
+                      <h3>{t('sections.tiktok.heading')}</h3>
+                      <p>{t('sections.tiktok.description')}</p>
                       <a 
                         href="https://www.tiktok.com" 
                         target="_blank" 
                         rel="noreferrer"
                         className="btn btn-primary dual-btn"
                       >
-                        <i className="fa-brands fa-tiktok"></i> Voir sur TikTok
+                        <i className="fa-brands fa-tiktok"></i> {t('buttons.viewOnTikTok')}
                       </a>
                     </div>
                   </div>
@@ -138,7 +138,7 @@ export default function App() {
             <section className="section card dual-section">
               <h2>
                 <i className="fa-solid fa-file-text"></i>
-                Notes de patch
+                {t('sections.patchNotes.title')}
               </h2>
               <div className="dual-content">
                 <div className="dual-image-container">
@@ -149,13 +149,13 @@ export default function App() {
                   />
                   <div className="dual-overlay">
                     <div className="dual-cta">
-                      <h3>Nouveautés</h3>
-                      <p>Découvrez les dernières améliorations et corrections</p>
+                      <h3>{t('sections.patchNotes.heading')}</h3>
+                      <p>{t('sections.patchNotes.description')}</p>
                       <button 
                         className="btn btn-primary dual-btn"
                         onClick={() => setOpenPatchNotes(true)}
                       >
-                        <i className="fa-solid fa-eye"></i> Voir les notes
+                        <i className="fa-solid fa-eye"></i> {t('buttons.viewNotes')}
                       </button>
                     </div>
                   </div>
@@ -168,7 +168,7 @@ export default function App() {
           <section id="patreon" className="section card">
             <h2>
               <img src={content.patreon?.icon || "/patreonlogo.png"} alt="Logo Patreon" className="section-icon" />{" "}
-              {content.patreon?.title || "Obtiens les nouveautés en avance !"}
+              {t('sections.patreon.title')}
             </h2>
             <div className="patreon-content">
               <div className="patreon-image-container">
@@ -179,15 +179,15 @@ export default function App() {
                 />
                 <div className="patreon-overlay">
                   <div className="patreon-cta">
-                    <h3>{content.patreon?.content?.heading || "Soutenez le projet"}</h3>
-                    <p>{content.patreon?.content?.description || "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !"}</p>
+                    <h3>{t('sections.patreon.heading')}</h3>
+                    <p>{t('sections.patreon.description')}</p>
                     <a 
                       href={content.patreon?.content?.url || "https://www.patreon.com/c/unovabang"} 
                       target="_blank" 
                       rel="noreferrer"
                       className="btn btn-primary patreon-btn"
                     >
-                      <i className={content.patreon?.content?.buttonIcon || "fa-brands fa-patreon"}></i> {content.patreon?.content?.buttonText || "Soutenir sur Patreon"}
+                      <i className={content.patreon?.content?.buttonIcon || "fa-brands fa-patreon"}></i> {t('buttons.supportOnPatreon')}
                     </a>
                   </div>
                 </div>
@@ -206,7 +206,7 @@ export default function App() {
                 <strong>Pokémon New World</strong>
               </div>
               <p style={{ marginTop: 8, color: "var(--muted)" }}>
-                Site officiel du fangame.
+                {t('footer.description')}
               </p>
               <div className="social">
                 <a
@@ -233,18 +233,18 @@ export default function App() {
                     height: "36px",
                     borderRadius: "10px"
                   }}
-                  title="Télécharger"
+                  title={t('buttons.download')}
                 >
                   <i className="fa-solid fa-download"></i>
                 </button>
               </div>
             </div>
             <div className="footer-col">
-              <h4>Navigation</h4>
+              <h4>{t('navigation.navigation')}</h4>
               <ul>
                 <li>
                   <a href="#news">
-                    <i className="fa-solid fa-newspaper"></i> Nouveautés
+                    <i className="fa-solid fa-newspaper"></i> {t('navigation.news')}
                   </a>
                 </li>
                 <li>
@@ -252,21 +252,21 @@ export default function App() {
                     onClick={() => setOpenDownload(true)}
                     style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
                   >
-                    <i className="fa-solid fa-cloud-arrow-down"></i> Téléchargement
+                    <i className="fa-solid fa-cloud-arrow-down"></i> {t('navigation.download')}
                   </button>
                 </li>
               </ul>
             </div>
             <div className="footer-col">
-              <h4>Légal</h4>
+              <h4>{t('navigation.legal')}</h4>
               <ul>
-                <li>Fan-game non affilié à Nintendo / Creatures / GAME FREAK.</li>
-                <li>Marques et assets appartiennent à leurs ayants droit.</li>
+                <li>{t('footer.legal.disclaimer1')}</li>
+                <li>{t('footer.legal.disclaimer2')}</li>
               </ul>
             </div>
           </div>
           <div className="container footnote">
-            © {new Date().getFullYear()} Pokémon New World — tous droits réservés.
+            © {new Date().getFullYear()} Pokémon New World — {t('footer.copyright')}
           </div>
         </footer>
 
@@ -274,7 +274,7 @@ export default function App() {
         <Modal
           open={openExplanations}
           onClose={() => setOpenExplanations(false)}
-          title="Installer un patch — Explications"
+          title={t('modals.patchExplanations.title')}
         >
           <div className="explanations-content">
             <div className="explanations-video">
@@ -289,14 +289,14 @@ export default function App() {
               />
             </div>
             <div className="explanations-text">
-              <h3>Installation d'un patch</h3>
+              <h3>{t('modals.patchExplanations.heading')}</h3>
               <p>
-                Tout d'abord, pour pouvoir installer un patch, il faut déjà être sur la version qui précède le patch que vous voulez installer. Si cette condition est remplie, il suffit de suivre ces étapes :
+                {t('modals.patchExplanations.description')}
               </p>
               <ol>
-                <li>Téléchargez le Patch.zip correspondant à la version que vous voulez installer</li>
-                <li>Déplacez ce zip à la racine de votre dossier de jeu</li>
-                <li>Enfin, extrayez le Patch.zip et il mettra à jour vos anciens dossiers</li>
+                {t('modals.patchExplanations.steps').map((step, index) => (
+                  <li key={index}>{step}</li>
+                ))}
               </ol>
             </div>
           </div>
@@ -306,7 +306,7 @@ export default function App() {
         <Modal
           open={openDownload}
           onClose={() => setOpenDownload(false)}
-          title="Téléchargement"
+          title={t('modals.download.title')}
         >
           <div className="download-modal-content">
             <div className="modal-buttons">
@@ -315,22 +315,22 @@ export default function App() {
                 href={content.downloads.windows} 
                 onClick={() => setOpenDownload(false)}
               >
-                <i className="fa-solid fa-download"></i> Télécharger le jeu
+                <i className="fa-solid fa-download"></i> {t('buttons.downloadGame')}
               </a>
               <a 
                 className="btn btn-primary" 
                 href={content.downloads.patch} 
                 onClick={() => setOpenDownload(false)}
               >
-                <i className="fa-solid fa-file-arrow-up"></i> Télécharger le patch
+                <i className="fa-solid fa-file-arrow-up"></i> {t('buttons.downloadPatch')}
               </a>
             </div>
             <div className="patch-instructions">
-              <h3>Note sur les patchs :</h3>
+              <h3>{t('modals.download.patchInstructions.title')}</h3>
               <p>
-                Pour installer un patch, assurez-vous d'avoir la version précédente installée. Placez le fichier patch.zip à la racine de votre jeu, extrayez-le, et il mettra à jour les anciens dossiers. 
+                {t('modals.download.patchInstructions.description')}
               </p>
-              <p>Vous pouvez également consulter la vidéo tutoriel pour plus de détails.</p>
+              <p>{t('modals.download.patchInstructions.videoNote')}</p>
               <button 
                 className="btn btn-ghost" 
                 onClick={() => {
@@ -338,7 +338,7 @@ export default function App() {
                   setOpenDownload(false); 
                 }}
               >
-                <i className="fa-solid fa-play"></i> Voir la vidéo explicative
+                <i className="fa-solid fa-play"></i> {t('buttons.watchVideo')}
               </button>
             </div>
           </div>
@@ -348,15 +348,15 @@ export default function App() {
         <Modal
           open={openPatchNotes}
           onClose={() => setOpenPatchNotes(false)}
-          title={`Notes de patch ${patchNotesData.version}`}
+          title={`${t('modals.patchNotes.version')} ${t('patchNotes.version')}`}
         >
           <div className="patch-notes-content">
             <div className="patch-header">
-              <h3>{patchNotesData.content.title}</h3>
-              <p className="patch-date">Version {patchNotesData.version} - {patchNotesData.date}</p>
+              <h3>{t('patchNotes.title')}</h3>
+              <p className="patch-date">{t('modals.patchNotes.version')} {t('patchNotes.version')} - {t('patchNotes.date')}</p>
             </div>
             
-            {patchNotesData.content.sections.map((section, index) => (
+            {t('patchNotes.sections').map((section, index) => (
               <div key={index} className="patch-section">
                 <h4>{section.title}</h4>
                 <ul>

@@ -1,0 +1,152 @@
+{
+  "fr": {
+    "seo": {
+      "title": "Pokémon New World • Site officiel",
+      "description": "Site officiel du fangame Pokémon New World : explorez Bélamie, découvrez les nouveaux types Aspic & Malice, et téléchargez le jeu gratuitement.",
+      "keywords": ["pokemon", "fangame", "new world", "belamie", "aspic", "malice", "rpg", "jeu gratuit"]
+    },
+    "navigation": {
+      "navigation": "Navigation",
+      "news": "Nouveautés",
+      "download": "Téléchargement",
+      "legal": "Légal"
+    },
+    "buttons": {
+      "download": "Télécharger",
+      "discord": "Discord",
+      "followUs": "Suivez-nous !",
+      "viewOnTikTok": "Voir sur TikTok",
+      "viewNotes": "Voir les notes",
+      "supportOnPatreon": "Soutenir sur Patreon",
+      "downloadGame": "Télécharger le jeu",
+      "downloadPatch": "Télécharger le patch",
+      "watchVideo": "Voir la vidéo explicative"
+    },
+    "sections": {
+      "news": {
+        "title": "DERNIÈRES NOUVEAUTÉS"
+      },
+      "tiktok": {
+        "title": "TikTok",
+        "heading": "Suivez-nous !",
+        "description": "Découvrez nos dernières vidéos et actualités sur TikTok"
+      },
+      "patchNotes": {
+        "title": "Notes de patch",
+        "heading": "Nouveautés",
+        "description": "Découvrez les dernières améliorations et corrections"
+      },
+      "patreon": {
+        "title": "Obtiens les nouveautés en avance !",
+        "heading": "Soutenez le projet",
+        "description": "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !"
+      }
+    },
+    "footer": {
+      "description": "Site officiel du fangame.",
+      "copyright": "tous droits réservés.",
+      "legal": {
+        "disclaimer1": "Fan-game non affilié à Nintendo / Creatures / GAME FREAK.",
+        "disclaimer2": "Marques et assets appartiennent à leurs ayants droit."
+      }
+    },
+    "modals": {
+      "download": {
+        "title": "Téléchargement",
+        "patchInstructions": {
+          "title": "Note sur les patchs :",
+          "description": "Pour installer un patch, assurez-vous d'avoir la version précédente installée. Placez le fichier patch.zip à la racine de votre jeu, extrayez-le, et il mettra à jour les anciens dossiers.",
+          "videoNote": "Vous pouvez également consulter la vidéo tutoriel pour plus de détails."
+        }
+      },
+      "patchExplanations": {
+        "title": "Installer un patch — Explications",
+        "heading": "Installation d'un patch",
+        "description": "Tout d'abord, pour pouvoir installer un patch, il faut déjà être sur la version qui précède le patch que vous voulez installer. Si cette condition est remplie, il suffit de suivre ces étapes :",
+        "steps": [
+          "Téléchargez le Patch.zip correspondant à la version que vous voulez installer",
+          "Déplacez ce zip à la racine de votre dossier de jeu",
+          "Enfin, extrayez le Patch.zip et il mettra à jour vos anciens dossiers"
+        ]
+      },
+      "patchNotes": {
+        "version": "Version"
+      }
+    }
+  },
+  "en": {
+    "seo": {
+      "title": "Pokémon New World • Official Website",
+      "description": "Official website of the Pokémon New World fangame: explore Bélamie, discover the new Aspic & Malice types, and download the game for free.",
+      "keywords": ["pokemon", "fangame", "new world", "belamie", "aspic", "malice", "rpg", "free game"]
+    },
+    "navigation": {
+      "navigation": "Navigation",
+      "news": "News",
+      "download": "Download",
+      "legal": "Legal"
+    },
+    "buttons": {
+      "download": "Download",
+      "discord": "Discord",
+      "followUs": "Follow us!",
+      "viewOnTikTok": "View on TikTok",
+      "viewNotes": "View notes",
+      "supportOnPatreon": "Support on Patreon",
+      "downloadGame": "Download game",
+      "downloadPatch": "Download patch",
+      "watchVideo": "Watch explanation video"
+    },
+    "sections": {
+      "news": {
+        "title": "LATEST NEWS"
+      },
+      "tiktok": {
+        "title": "TikTok",
+        "heading": "Follow us!",
+        "description": "Discover our latest videos and news on TikTok"
+      },
+      "patchNotes": {
+        "title": "Patch notes",
+        "heading": "Updates",
+        "description": "Discover the latest improvements and fixes"
+      },
+      "patreon": {
+        "title": "Get the updates early!",
+        "heading": "Support the project",
+        "description": "Get early access to updates and help us develop the game!"
+      }
+    },
+    "footer": {
+      "description": "Official fangame website.",
+      "copyright": "all rights reserved.",
+      "legal": {
+        "disclaimer1": "Fan-game not affiliated with Nintendo / Creatures / GAME FREAK.",
+        "disclaimer2": "Trademarks and assets belong to their respective owners."
+      }
+    },
+    "modals": {
+      "download": {
+        "title": "Download",
+        "patchInstructions": {
+          "title": "Note about patches:",
+          "description": "To install a patch, make sure you have the previous version installed. Place the patch.zip file at the root of your game, extract it, and it will update the old folders.",
+          "videoNote": "You can also check the video tutorial for more details."
+        }
+      },
+      "patchExplanations": {
+        "title": "Installing a patch — Instructions",
+        "heading": "Patch installation",
+        "description": "First, to be able to install a patch, you must already be on the version that precedes the patch you want to install. If this condition is met, just follow these steps:",
+        "steps": [
+          "Download the Patch.zip corresponding to the version you want to install",
+          "Move this zip to the root of your game folder",
+          "Finally, extract the Patch.zip and it will update your old folders"
+        ]
+      },
+      "patchNotes": {
+        "version": "Version"
+      }
+    }
+  }
+}
