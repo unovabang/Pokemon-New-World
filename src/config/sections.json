@@ -6,5 +6,9 @@
   "gameplay": {
     "title": "Système de Jeu",
     "icon": "fa-solid fa-gamepad"
+  },
+  "test": {
+    "title": "test",
+    "icon": "fa-solid fa-square"
   }
 }
