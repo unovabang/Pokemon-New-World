@@ -2,30 +2,9 @@ import { useEffect, useState, useRef } from "react";
 
 export default function Carousel({ images = [], interval = 4000 }) {
 	const [i, setI] = useState(0);
-	const [isTransitioning, setIsTransitioning] = useState(false);
 	const total = images.length;
-	
-	const next = () => {
-		if (isTransitioning) return;
-		setIsTransitioning(true);
-		setI((v) => (v + 1) % total);
-		setTimeout(() => setIsTransitioning(false), 800);
-	};
-	
-	const prev = () => {
-		if (isTransitioning) return;
-		setIsTransitioning(true);
-		setI((v) => (v - 1 + total) % total);
-		setTimeout(() => setIsTransitioning(false), 800);
-	};
-	
-	const goToSlide = (index) => {
-		if (isTransitioning || index === i) return;
-		setIsTransitioning(true);
-		setI(index);
-		setTimeout(() => setIsTransitioning(false), 800);
-	};
-	
+	const next = () => setI((v) => (v + 1) % total);
+	const prev = () => setI((v) => (v - 1 + total) % total);
 	const timer = useRef(null);
 
 	useEffect(() => {
@@ -38,11 +17,11 @@ export default function Carousel({ images = [], interval = 4000 }) {
 		<div className="carousel">
 			<div className="viewport card">
 				<div
-					className={`track ${isTransitioning ? "transitioning" : ""}`}
+					className="track"
 					style={{ transform: `translateX(-${i * 100}%)` }}
 				>
-					{images.map((src, index) => (
-						<div key={src} className={`slide ${index === i ? "active" : ""}`}>
+					{images.map((src) => (
+						<div key={src} className="slide">
 							<img src={src} alt="Capture" loading="lazy" />
 							<div className="mask" />
 						</div>
@@ -51,19 +30,13 @@ export default function Carousel({ images = [], interval = 4000 }) {
 				{total > 1 && (
 					<>
 						<button
-							className={`arrow prev ${isTransitioning ? "transitioning" : ""}`}
+							className="arrow prev"
 							onClick={prev}
 							aria-label="Précédent"
-							disabled={isTransitioning}
 						>
 							‹
 						</button>
-						<button 
-							className={`arrow next ${isTransitioning ? "transitioning" : ""}`} 
-							onClick={next} 
-							aria-label="Suivant"
-							disabled={isTransitioning}
-						>
+						<button className="arrow next" onClick={next} aria-label="Suivant">
 							›
 						</button>
 					</>
@@ -74,10 +47,9 @@ export default function Carousel({ images = [], interval = 4000 }) {
 					{images.map((_, idx) => (
 						<button
 							key={idx}
-							className={`dot ${idx === i ? "active" : ""} ${isTransitioning ? "transitioning" : ""}`}
-							onClick={() => goToSlide(idx)}
+							className={`dot ${idx === i ? "active" : ""}`}
+							onClick={() => setI(idx)}
 							aria-label={`Aller à l'image ${idx + 1}`}
-							disabled={isTransitioning}
 						/>
 					))}
 				</div>
