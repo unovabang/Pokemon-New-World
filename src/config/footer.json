@@ -1,42 +1,13 @@
-
 {
-  "brand": {
-    "name": "Pokémon New World",
-    "description": "Site officiel du fangame.",
-    "showLogo": true
-  },
-  "social": {
-    "discord": {
-      "url": "#",
-      "title": "Discord",
-      "icon": "fa-brands fa-discord"
-    },
-    "download": {
-      "title": "Télécharger",
-      "icon": "fa-solid fa-download"
+  "copyright": "© {year} FOOTER MODIFIÉ - Pokémon New World — NOUVEAU FOOTER TESTÉ !!!",
+  "developedBy": "JirôMODIFIÉ",
+  "version": "v2.0.0-TEST",
+  "links": [
+    {
+      "id": "1",
+      "name": "Lien TEST",
+      "url": "https://example.com",
+      "icon": "fa-solid fa-link"
     }
-  },
-  "navigation": {
-    "title": "Navigation",
-    "links": [
-      {
-        "text": "Nouveautés",
-        "href": "#news",
-        "icon": "fa-solid fa-newspaper"
-      },
-      {
-        "text": "Téléchargement",
-        "action": "download",
-        "icon": "fa-solid fa-cloud-arrow-down"
-      }
-    ]
-  },
-  "legal": {
-    "title": "Légal",
-    "text": [
-      "Fan-game non affilié à Nintendo / Creatures / GAME FREAK.",
-      "Marques et assets appartiennent à leurs ayants droit."
-    ]
-  },
-  "copyright": "© {year} Pokémon New World — tous droits réservés."
+  ]
 }
