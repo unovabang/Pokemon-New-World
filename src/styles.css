@@ -63,38 +63,51 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 
 /* ===== SÉLECTEUR DE LANGUE ===== */
-.language-selector-content {
+.language-selector-above-video {
   display: flex;
   justify-content: flex-end;
-  margin: 20px 0;
+  margin-bottom: 15px;
+  padding-top: 10px;
 }
 
-.language-select {
+.language-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.language-btn {
   background: var(--glass);
   backdrop-filter: saturate(130%) blur(10px);
   border: 1px solid rgba(126,205,242,.25);
   border-radius: 12px;
   color: var(--text);
-  padding: 0.5rem 0.8rem;
-  font-size: 0.9rem;
+  padding: 0.6rem 0.8rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-width: 50px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.language-select:hover {
+.language-btn:hover {
   border-color: rgba(126,205,242,.45);
   box-shadow: 0 4px 12px rgba(126,205,242,.15);
+  transform: translateY(-1px);
 }
 
-.language-select:focus {
+.language-btn.active {
+  border-color: var(--primary);
+  background: rgba(126,205,242,.1);
+  box-shadow: 0 0 0 2px rgba(126,205,242,.2);
+}
+
+.language-btn:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(126,205,242,.2);
-}
-
-.language-select option {
-  background: var(--bg-elev);
-  color: var(--text);
 }
 
 /* ===== BOUTONS (effets modernes) ===== */

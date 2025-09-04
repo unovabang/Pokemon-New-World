@@ -57,6 +57,9 @@ export default function App() {
         )}
 
         <div className="container">
+          {/* Sélecteur de langue */}
+          <LanguageSelector className="language-selector-above-video" />
+          
           {/* HERO vidéo : on retire le H1 et on agrandit le logo */}
           <section className="section" style={{ padding: 0 }}>
             <HeroVideo videoId={heroVideo.youtubeId}>
@@ -86,9 +89,6 @@ export default function App() {
               </div>
             </HeroVideo>
           </section>
-
-          {/* Sélecteur de langue */}
-          <LanguageSelector className="language-selector-content" />
 
           {/* DERNIÈRES NOUVEAUTÉS */}
           <section id="news" className="section card">
