@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import content from "./config/index.js";
+import patchNotesData from "./config/patchnotes.json";
 import HeroVideo from "./components/HeroVideo";
 import Carousel from "./components/Carousel";
 import Modal from "./components/Modal";
@@ -14,6 +15,7 @@ export default function App() {
   const [openVideo, setOpenVideo] = useState(false);
   const [openExplanations, setOpenExplanations] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
+  const [openPatchNotes, setOpenPatchNotes] = useState(false);
 
   // Mise à jour des métadonnées SEO
   useEffect(() => {
@@ -149,13 +151,12 @@ export default function App() {
                     <div className="dual-cta">
                       <h3>Nouveautés</h3>
                       <p>Découvrez les dernières améliorations et corrections</p>
-                      <a 
-                        href="#" 
+                      <button 
                         className="btn btn-primary dual-btn"
-                        onClick={(e) => e.preventDefault()}
+                        onClick={() => setOpenPatchNotes(true)}
                       >
                         <i className="fa-solid fa-eye"></i> Voir les notes
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -340,6 +341,31 @@ export default function App() {
                 <i className="fa-solid fa-play"></i> Voir la vidéo explicative
               </button>
             </div>
+          </div>
+        </Modal>
+
+        {/* Modal notes de patch */}
+        <Modal
+          open={openPatchNotes}
+          onClose={() => setOpenPatchNotes(false)}
+          title={`Notes de patch ${patchNotesData.version}`}
+        >
+          <div className="patch-notes-content">
+            <div className="patch-header">
+              <h3>{patchNotesData.content.title}</h3>
+              <p className="patch-date">Version {patchNotesData.version} - {patchNotesData.date}</p>
+            </div>
+            
+            {patchNotesData.content.sections.map((section, index) => (
+              <div key={index} className="patch-section">
+                <h4>{section.title}</h4>
+                <ul>
+                  {section.items.map((item, itemIndex) => (
+                    <li key={itemIndex}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </Modal>
 

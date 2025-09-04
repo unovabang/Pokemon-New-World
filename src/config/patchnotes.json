@@ -1,0 +1,37 @@
+
+{
+  "version": "0.6",
+  "date": "Janvier 2025",
+  "content": {
+    "title": "Notes de patch v0.6",
+    "sections": [
+      {
+        "title": "🆕 Nouveautés",
+        "items": [
+          "Ajout de nouveaux Pokémon de la région Bélamie",
+          "Implémentation du type Aspic avec ses mécaniques uniques",
+          "Nouveau système de combat amélioré",
+          "Interface utilisateur redesignée"
+        ]
+      },
+      {
+        "title": "🔧 Corrections",
+        "items": [
+          "Correction des bugs de sauvegarde",
+          "Amélioration des performances",
+          "Correction des animations de combat",
+          "Stabilisation du système de capture"
+        ]
+      },
+      {
+        "title": "⚖️ Équilibrage",
+        "items": [
+          "Rééquilibrage des stats des Pokémon Aspic",
+          "Ajustement de la difficulté des dresseurs",
+          "Modification des taux de capture",
+          "Optimisation des EV/IV"
+        ]
+      }
+    ]
+  }
+}
