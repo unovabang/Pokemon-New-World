@@ -10,7 +10,7 @@ import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const HomePage = () => {
-  const { backgrounds, heroVideo, game, carousel, discord, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit } = content;
+  const { backgrounds, heroVideo, game, carousel, discord, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = content;
   const { t, language } = useLanguage();
   const [openVideo, setOpenVideo] = useState(false);
   const [openExplanations, setOpenExplanations] = useState(false);
@@ -261,9 +261,34 @@ const HomePage = () => {
                 <li>{t('footer.legal.disclaimer2')}</li>
               </ul>
             </div>
+            {footer?.links && footer.links.length > 0 && (
+              <div className="footer-col">
+                <h4>Liens du Footer</h4>
+                <ul>
+                  {footer.links.map((link, index) => (
+                    <li key={link.id || index}>
+                      <a href={link.url} target="_blank" rel="noreferrer">
+                        {link.icon && <i className={link.icon} style={{marginRight: '8px'}}></i>}
+                        {link.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
           <div className="container footnote">
-            © {new Date().getFullYear()} Pokémon New World — {t('footer.copyright')}
+            {footer?.copyright ? footer.copyright.replace('{year}', new Date().getFullYear()) : `© ${new Date().getFullYear()} Pokémon New World — ${t('footer.copyright')}`}
+            {footer?.developedBy && (
+              <span style={{marginLeft: '10px', opacity: 0.7}}>
+                Développé par : {footer.developedBy}
+              </span>
+            )}
+            {footer?.version && (
+              <span style={{marginLeft: '10px', opacity: 0.7}}>
+                {footer.version}
+              </span>
+            )}
           </div>
         </footer>
 
