@@ -137,7 +137,8 @@ const BannerManager = ({ onSave }) => {
       const data = await response.json();
       
       if (data.success) {
-        setBannerImages(data.banners);
+        // Recharger complètement la liste pour s'assurer de la synchronisation
+        await loadBannerImages();
       } else {
         throw new Error(data.error);
       }
@@ -166,7 +167,8 @@ const BannerManager = ({ onSave }) => {
       const data = await response.json();
       
       if (data.success) {
-        setBannerImages(data.banners);
+        // Recharger complètement la liste pour s'assurer de la synchronisation
+        await loadBannerImages();
       } else {
         throw new Error(data.error);
       }
