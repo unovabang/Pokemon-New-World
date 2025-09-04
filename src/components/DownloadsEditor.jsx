@@ -1,35 +1,121 @@
 import { useState, useEffect } from 'react';
+import AdvancedModal from './AdvancedModal';
 
-const DownloadsEditor = ({ downloadsData, onSave }) => {
+const API_BASE = `${window.location.protocol}//${window.location.hostname.replace(/:\d+$/, '')}:3001/api`;
+
+const DownloadsEditor = ({ onSave }) => {
   const [windowsLink, setWindowsLink] = useState('');
   const [patchLink, setPatchLink] = useState('');
   const [patchVideo, setPatchVideo] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    title: '',
+    message: '',
+    type: 'info',
+    onConfirm: null
+  });
 
   useEffect(() => {
-    if (downloadsData) {
-      setWindowsLink(downloadsData.windows || '');
-      setPatchLink(downloadsData.patch || '');
-      setPatchVideo(downloadsData.patchVideo || '');
-    }
-  }, [downloadsData]);
+    loadDownloads();
+  }, []);
 
-  const handleSave = () => {
-    const downloadsConfig = {
-      windows: windowsLink,
-      patch: patchLink,
-      patchVideo: patchVideo
-    };
-    onSave(downloadsConfig);
-    alert('Liens de téléchargement sauvegardés avec succès !');
+  const loadDownloads = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_BASE}/downloads?t=${Date.now()}`);
+      const data = await response.json();
+      
+      if (data.success && data.downloads) {
+        setWindowsLink(data.downloads.windows || '');
+        setPatchLink(data.downloads.patch || '');
+        setPatchVideo(data.downloads.patchVideo || '');
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des téléchargements:', error);
+      showMessage('Erreur', 'Impossible de charger les téléchargements', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const showMessage = (title, message, type = 'info') => {
+    setModalConfig({ title, message, type, onConfirm: null });
+    setShowModal(true);
+  };
+
+  const showConfirm = (title, message, onConfirm) => {
+    setModalConfig({ title, message, type: 'confirm', onConfirm });
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalConfig({ title: '', message: '', type: 'info', onConfirm: null });
+  };
+
+  const handleSave = async () => {
+    showConfirm(
+      'Confirmer la sauvegarde',
+      'Êtes-vous sûr de vouloir sauvegarder les modifications des téléchargements ?',
+      async () => {
+        try {
+          setSaving(true);
+          const downloadsConfig = {
+            windows: windowsLink,
+            patch: patchLink,
+            patchVideo: patchVideo
+          };
+          
+          const response = await fetch(`${API_BASE}/downloads`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ downloads: downloadsConfig })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            onSave(downloadsConfig);
+            showMessage('Succès !', 'Liens de téléchargement sauvegardés avec succès !', 'success');
+          } else {
+            throw new Error(data.error || 'Erreur lors de la sauvegarde');
+          }
+        } catch (error) {
+          console.error('Erreur lors de la sauvegarde:', error);
+          showMessage('Erreur', `Impossible de sauvegarder: ${error.message}`, 'error');
+        } finally {
+          setSaving(false);
+        }
+      }
+    );
   };
 
   const testLink = (url) => {
     if (url) {
       window.open(url, '_blank');
     } else {
-      alert('Aucun lien à tester');
+      showMessage('Aucun lien', 'Aucun lien à tester', 'info');
     }
   };
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '400px',
+        gap: '1rem'
+      }}>
+        <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '2rem', color: 'var(--primary)' }}></i>
+        <span>Chargement des téléchargements...</span>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -42,8 +128,16 @@ const DownloadsEditor = ({ downloadsData, onSave }) => {
         <h2>
           <i className="fa-solid fa-download"></i> Gestion des Téléchargements
         </h2>
-        <button onClick={handleSave} className="btn btn-primary">
-          <i className="fa-solid fa-save"></i> Sauvegarder
+        <button 
+          onClick={handleSave} 
+          className="btn btn-primary"
+          disabled={saving}
+        >
+          {saving ? (
+            <><i className="fa-solid fa-spinner fa-spin"></i> Sauvegarde...</>
+          ) : (
+            <><i className="fa-solid fa-save"></i> Sauvegarder</>
+          )}
         </button>
       </div>
 
@@ -285,6 +379,17 @@ const DownloadsEditor = ({ downloadsData, onSave }) => {
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      <AdvancedModal
+        open={showModal}
+        onClose={closeModal}
+        title={modalConfig.title}
+        type={modalConfig.type}
+        onConfirm={modalConfig.onConfirm}
+      >
+        {modalConfig.message}
+      </AdvancedModal>
     </div>
   );
 };

@@ -1,7 +1,6 @@
-
 {
   "news": {
-    "title": "Dernières nouveautés",
-    "icon": "fa-solid fa-newspaper"
+    "title": "Test Nouvelles",
+    "icon": "fa-newspaper"
   }
 }

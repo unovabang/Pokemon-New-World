@@ -487,6 +487,107 @@ app.post('/api/patchnotes/version/:version/section', (req, res) => {
   }
 });
 
+// === CONFIGURATIONS GÉNÉRALES API ===
+// Fonction générique pour gérer les configurations JSON
+const getConfig = (configName) => {
+  const configPath = path.join(CONFIG_DIR, `${configName}.json`);
+  if (!fs.existsSync(configPath)) {
+    return null;
+  }
+  try {
+    return fs.readJsonSync(configPath);
+  } catch (error) {
+    console.error(`❌ Erreur lecture ${configName}:`, error);
+    return null;
+  }
+};
+
+const saveConfig = (configName, data) => {
+  const configPath = path.join(CONFIG_DIR, `${configName}.json`);
+  try {
+    fs.writeJsonSync(configPath, data, { spaces: 2 });
+    return true;
+  } catch (error) {
+    console.error(`❌ Erreur sauvegarde ${configName}:`, error);
+    return false;
+  }
+};
+
+// GET /api/config/:name - Lire une configuration
+app.get('/api/config/:name', (req, res) => {
+  try {
+    const { name } = req.params;
+    const configData = getConfig(name);
+    
+    if (!configData) {
+      return res.status(404).json({ success: false, error: `Configuration ${name} non trouvée` });
+    }
+    
+    res.json({ success: true, config: configData });
+  } catch (error) {
+    console.error(`❌ Erreur API /api/config/${req.params.name}:`, error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST /api/config/:name - Sauvegarder une configuration
+app.post('/api/config/:name', (req, res) => {
+  try {
+    const { name } = req.params;
+    const { config } = req.body;
+    
+    if (!config) {
+      return res.status(400).json({ success: false, error: 'Données de configuration manquantes' });
+    }
+    
+    const success = saveConfig(name, config);
+    
+    if (!success) {
+      return res.status(500).json({ success: false, error: 'Erreur lors de la sauvegarde' });
+    }
+    
+    res.json({ 
+      success: true, 
+      message: `Configuration ${name} sauvegardée avec succès`,
+      config: config 
+    });
+  } catch (error) {
+    console.error(`❌ Erreur API /api/config/${req.params.name}:`, error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// API spécifique pour les téléchargements
+app.get('/api/downloads', (req, res) => {
+  try {
+    const downloadsData = getConfig('downloads');
+    res.json({ success: true, downloads: downloadsData || {} });
+  } catch (error) {
+    console.error('❌ Erreur API /api/downloads:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/downloads', (req, res) => {
+  try {
+    const { downloads } = req.body;
+    const success = saveConfig('downloads', downloads);
+    
+    if (!success) {
+      return res.status(500).json({ success: false, error: 'Erreur lors de la sauvegarde' });
+    }
+    
+    res.json({ 
+      success: true, 
+      message: 'Téléchargements sauvegardés avec succès',
+      downloads: downloads 
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/downloads:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Démarrage du serveur
 app.listen(PORT, () => {
   console.log(`🚀 Serveur API démarré sur le port ${PORT}`);
