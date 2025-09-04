@@ -1,9 +1,10 @@
-
 {
-  "discord": { 
-    "invite": "#" 
-  },
-  "tiktok": {
-    "url": "https://www.tiktok.com/@votre_compte"
-  }
+  "discord": "https://discord.gg/wBrq36qT",
+  "tiktok": "https://www.tiktok.com/",
+  "youtube": "",
+  "twitter": "",
+  "instagram": "",
+  "facebook": "",
+  "github": "",
+  "reddit": ""
 }
