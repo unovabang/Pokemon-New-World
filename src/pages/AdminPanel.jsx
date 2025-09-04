@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from "../components/LogoutButton";
-import NewsEditor from "../components/NewsEditor";
+import BannerManager from "../components/BannerManager";
 import DownloadsEditor from "../components/DownloadsEditor";
 import PatchNotesEditor from "../components/PatchNotesEditor";
 
@@ -205,8 +205,7 @@ const AdminPanel = () => {
         {/* Main Content */}
         <main style={{ flex: 1, padding: '2rem' }}>
           {activeTab === 'news' && (
-            <NewsEditor 
-              newsData={configs.news}
+            <BannerManager 
               onSave={(newConfig) => handleSaveConfig('news', newConfig)}
             />
           )}
