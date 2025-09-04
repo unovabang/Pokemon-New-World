@@ -1,14 +1,6 @@
 {
   "news": {
-    "title": "Actualités MODIFIÉES",
-    "icon": "fa-solid fa-newspaper"
-  },
-  "gameplay": {
-    "title": "Système de Jeu",
-    "icon": "fa-solid fa-gamepad"
-  },
-  "test": {
-    "title": "test",
-    "icon": "fa-solid fa-square"
+    "title": "Test Nouvelles",
+    "icon": "fa-newspaper"
   }
 }
