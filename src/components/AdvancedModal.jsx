@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const AdvancedModal = ({ 
   open, 
@@ -50,7 +51,7 @@ const AdvancedModal = ({
     }
   };
 
-  return (
+  const modalContent = (
     <div style={{
       position: 'fixed',
       top: 0,
@@ -170,6 +171,8 @@ const AdvancedModal = ({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default AdvancedModal;
