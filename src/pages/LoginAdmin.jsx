@@ -76,11 +76,7 @@ const LoginAdmin = () => {
             <p style={{ marginBottom: '1.5rem' }}>Étape 1/3 : Authentification OAuth</p>
             <button 
               className="btn btn-primary"
-              onClick={() => loginWithRedirect({
-                appState: {
-                  returnTo: '/admin-login'
-                }
-              })}
+              onClick={() => loginWithRedirect()}
               style={{ 
                 width: '100%',
                 padding: '1rem',
