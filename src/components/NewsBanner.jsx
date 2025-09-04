@@ -4,11 +4,6 @@ import { useEffect, useState } from "react";
 let cachedImages = null;
 let loadingPromise = null;
 
-// Précharger les images au démarrage du module
-if (typeof window !== 'undefined') {
-  loadNewsImages();
-}
-
 // Fonction pour charger automatiquement les images du dossier news-images
 async function loadNewsImages() {
   // Si on a déjà un cache, on le retourne immédiatement
@@ -86,12 +81,14 @@ async function loadNewsImages() {
 export default function NewsBanner({ banners = [], interval = 5000, autoLoad = true }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadedImages, setLoadedImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(autoLoad);
 
   // Charger les images automatiquement si autoLoad est activé
   useEffect(() => {
     if (autoLoad) {
       loadNewsImages().then(images => {
         setLoadedImages(images);
+        setIsLoading(false);
       });
     }
   }, [autoLoad]);
@@ -116,7 +113,16 @@ export default function NewsBanner({ banners = [], interval = 5000, autoLoad = t
     return () => clearInterval(timer);
   }, [total, interval]);
 
-  // Si pas d'images, ne rien afficher (pas de message de chargement)
+  if (isLoading) {
+    return (
+      <div className="news-banner-container">
+        <div className="news-banner" style={{minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <p style={{color: 'var(--muted)'}}>Chargement des actualités...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (total === 0) return null;
 
   const currentBanner = allBanners[currentIndex];
