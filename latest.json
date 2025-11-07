@@ -1,21 +1,9 @@
 {
   "name": "Pokemon New World",
   "version": "0.51",
-  "releaseDate": "2025-09-05T10:00:00Z",
-  "minimumLauncherVersion": "1.0.0",
   "changelog": {
-    "fr": "## Version 0.51\n- Première beta ouverte VF\n- Ajout du système de mise à jour via le launcher\n- Téléchargement depuis GitHub Releases",
+    "fr": "## Version 0.51\n- Première bêta ouverte VF\n- Ajout du système de mise à jour via le launcher\n- Téléchargement depuis GitHub Releases",
     "en": "## Version 0.51\n- First open beta (French)\n- Added update system via launcher\n- Download from GitHub Releases"
   },
-  "downloadUrl": "https://github.com/unovabang/Pokemon-New-World/releases/download/0.51/PNW.0.51.zip",
-  "downloadSize": 0,
-  "files": [],
-  "requirements": {
-    "minimumRAM": 2048,
-    "diskSpace": 500000000
-  },
-  "integrity": {
-    "archiveHash": "sha256:pending",
-    "archiveSize": 0
-  }
+  "downloadUrl": "https://github.com/unovabang/Pokemon-New-World/releases/download/v0.51/PNW.0.51.zip"
 }
