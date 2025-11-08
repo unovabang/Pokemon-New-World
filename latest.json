@@ -2,7 +2,8 @@
   "name": "Pokemon New World",
   "version": "0.6",
   "changelog": {
-    "fr": "Dernier release"
+    "fr": "## Version 0.6\n- Première bêta ouverte VF\n- Ajout du système de mise à jour via le launcher\n- Téléchargement depuis GitHub Releases",
+    "en": "## Version 0.6\n- First open beta (French)\n- Added update system via launcher\n- Download from GitHub Releases"
   },
   "downloadUrl": "https://github.com/unovabang/Pokemon-New-World/releases/download/0.6/PNW.0.6.Open.Beta.zip"
 }
