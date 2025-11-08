@@ -9,22 +9,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Récupérer le dépôt complet
+      # 1️⃣ Clone full repo
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2️⃣ Installer jq pour manipuler le JSON
+      # 2️⃣ Install jq
       - name: Install jq
         run: sudo apt-get install jq -y
 
-      # 3️⃣ Générer automatiquement le fichier latest.json
+      # 3️⃣ Generate latest.json
       - name: Generate latest.json
         run: |
-          echo "Generating latest.json..."
           VERSION=${GITHUB_REF#refs/tags/}
-          echo "Version tag detected: $VERSION"
+          echo "Detected version tag: $VERSION"
 
           RELEASE_DATA=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest)
           ASSET_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[0].browser_download_url')
@@ -41,30 +40,27 @@ jobs:
           }
           EOF
 
-          echo "✅ latest.json generated:"
+          echo "✅ Generated latest.json:"
           cat latest.json
 
-      # 4️⃣ Vérifier que le JSON est valide
+      # 4️⃣ Validate JSON
       - name: Validate JSON
-        run: |
-          cat latest.json | jq empty
-          echo "✅ JSON valid"
+        run: jq empty latest.json
 
-      # 5️⃣ Commiter et pousser sur main
-      - name: Commit and push latest.json
+      # 5️⃣ Switch to main and push the change
+      - name: Commit and push to main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # 🔧 Revenir explicitement sur la branche main
+          # 🔧 Make sure we are on main, not the detached tag
           git fetch origin main
           git checkout main
+          git pull origin main
 
-          # Copier le fichier latest.json généré à la racine
           cp latest.json ./latest.json
-
           git add latest.json
-          git commit -m "Update latest.json for release $VERSION" || echo "No changes to commit"
-          git push origin HEAD:main
+          git commit -m "Auto-update latest.json for release $VERSION" || echo "No changes to commit"
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
