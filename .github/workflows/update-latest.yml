@@ -9,29 +9,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ✅ 1. Récupère le code de la branche principale (main)
-      - name: Checkout repository
+      # 1️⃣ Récupération du code de la branche main
+      - name: Checkout main branch
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
 
-      # ✅ 2. Installe jq (outil pour manipuler le JSON dans le shell)
+      # 2️⃣ Installation de jq pour traiter le JSON
       - name: Install jq
         run: sudo apt-get install jq -y
 
-      # ✅ 3. Génère automatiquement le fichier latest.json
+      # 3️⃣ Génération automatique du fichier latest.json
       - name: Generate latest.json
         run: |
           echo "Generating latest.json..."
           VERSION=${GITHUB_REF#refs/tags/}
           echo "Version tag detected: $VERSION"
 
-          # Récupérer les infos de la dernière release depuis l'API GitHub
           RELEASE_DATA=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest)
           ASSET_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[0].browser_download_url')
           CHANGELOG=$(echo "$RELEASE_DATA" | jq -r '.body' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
-          # Créer le fichier JSON
           cat <<EOF > latest.json
           {
             "name": "Pokemon New World",
@@ -43,22 +42,30 @@ jobs:
           }
           EOF
 
-          echo "latest.json generated successfully:"
+          echo "✅ latest.json generated:"
           cat latest.json
 
-      # ✅ 4. Valide le JSON (évite de pousser un fichier cassé)
+      # 4️⃣ Validation du JSON
       - name: Validate JSON
         run: |
           cat latest.json | jq empty
-          echo "✅ latest.json is valid."
+          echo "✅ JSON valid"
 
-      # ✅ 5. Commit et push sur la branche main
+      # 5️⃣ Commit + push sur main (forcé)
       - name: Commit and push latest.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Rebasculer explicitement sur main
+          git fetch origin main
+          git checkout main
+
+          # Copier le fichier généré sur main
+          cp latest.json ./latest.json
+
           git add latest.json
           git commit -m "Update latest.json for release $VERSION" || echo "No changes to commit"
           git push origin main
