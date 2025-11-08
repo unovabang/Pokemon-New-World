@@ -1,0 +1,46 @@
+Patchnote 0.6
+
+Voici la liste de tous les changements apportés avec la version 0.6 de Pokémon New World. Les bugs mineurs ne sont pas listés mais sont corrigés dans chaque patch.
+
+Ajouts :
+
+- Ajout de la suite du jeu (un total de 5H de gameplay)
+
+- Ajout de la Méga-Évolution
+Liste des Méga-Évolutions ajoutées (disponibles ou visibles) dans la 0.6 : 
+· Méga-Florizarre
+· Méga-Dracaufeu X (exclusivité Hopegrave)
+· Méga-Dracaufeu Y (exclusivité Truespirit)
+· Méga-Tortank
+· Méga-Empiflor
+· Méga-Dracolosse
+· Méga-Ohmassacre
+· Méga-Mélodelfe
+· Méga-Brutalibré
+· Méga-Zoroark
+
+- Ajout de l’animation d’apparition des Pokémon Chromatiques
+
+- Ajout du logo Star (ref. cartes Pokémon) sur la barre d’informations des Chromatiques
+
+- Ajout de l’Élevage Fresque-Haute (lieu permettant de reset les Pokémon Chromatiques Alternatifs)
+
+- Ajout de nouveaux Chromatiques Alternatifs : Évoli de Belamie + l’intégralité de ses évolutions, line de Amphinobi de Bélamie
+
+- Ajout des failles d’Explorakit qui se reset toutes les 24H
+
+- Ajout de nombreux Pokémon au jeu, check le wiki (page Pokédex) pour plus d’informations 
+https://pokemon-new-world-fr.fandom.com/fr/wiki/Pokédex
+
+Corrections :
+
+- Correction du crash lié à la Lune Ball
+- Correction du crash lié au Fmod (pendant évolution)
+- Correction des talents suivants : Sel Purificateur, Cruauté, Corps Maudit, Illusion
+- Correction de la capacité Relais
+- Correction de la numérotation du Pokédex
+- Correction de certaines collisions manquantes
+
+Modifications : 
+
+- Modification de la MAP (visuels et emplacements visibles depuis l’objet Carte)
