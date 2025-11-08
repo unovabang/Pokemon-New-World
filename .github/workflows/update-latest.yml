@@ -9,17 +9,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Clone full repo
-      - name: Checkout repository
+      # 1️⃣ Cloner le dépôt à partir du tag (nécessaire pour lire la release)
+      - name: Checkout tag context
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2️⃣ Install jq
+      # 2️⃣ Installer jq
       - name: Install jq
         run: sudo apt-get install jq -y
 
-      # 3️⃣ Generate latest.json
+      # 3️⃣ Générer le fichier latest.json
       - name: Generate latest.json
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
@@ -43,24 +43,22 @@ jobs:
           echo "✅ Generated latest.json:"
           cat latest.json
 
-      # 4️⃣ Validate JSON
+      # 4️⃣ Valider le JSON
       - name: Validate JSON
         run: jq empty latest.json
 
-      # 5️⃣ Switch to main and push the change
-      - name: Commit and push to main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 5️⃣ Cloner à nouveau la branche main dans un dossier séparé
+      - name: Checkout main branch in separate folder
         run: |
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} main-repo
+          cd main-repo
+          git checkout main
+
+          # Copier le nouveau fichier latest.json
+          cp ../latest.json ./latest.json
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # 🔧 Make sure we are on main, not the detached tag
-          git fetch origin main
-          git checkout main
-          git pull origin main
-
-          cp latest.json ./latest.json
           git add latest.json
-          git commit -m "Auto-update latest.json for release $VERSION" || echo "No changes to commit"
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
+          git commit -m "Update latest.json for release ${VERSION}" || echo "No changes to commit"
+          git push origin main
