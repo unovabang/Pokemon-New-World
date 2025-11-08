@@ -9,23 +9,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ✅ 1. Récupère le code de la branche principale (main)
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
 
+      # ✅ 2. Installe jq (outil pour manipuler le JSON dans le shell)
       - name: Install jq
         run: sudo apt-get install jq -y
 
+      # ✅ 3. Génère automatiquement le fichier latest.json
       - name: Generate latest.json
         run: |
           echo "Generating latest.json..."
           VERSION=${GITHUB_REF#refs/tags/}
-          echo "Version: $VERSION"
+          echo "Version tag detected: $VERSION"
 
-          # Récupérer les infos de la dernière release
+          # Récupérer les infos de la dernière release depuis l'API GitHub
           RELEASE_DATA=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest)
           ASSET_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[0].browser_download_url')
           CHANGELOG=$(echo "$RELEASE_DATA" | jq -r '.body' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
+          # Créer le fichier JSON
           cat <<EOF > latest.json
           {
             "name": "Pokemon New World",
@@ -37,6 +43,16 @@ jobs:
           }
           EOF
 
+          echo "latest.json generated successfully:"
+          cat latest.json
+
+      # ✅ 4. Valide le JSON (évite de pousser un fichier cassé)
+      - name: Validate JSON
+        run: |
+          cat latest.json | jq empty
+          echo "✅ latest.json is valid."
+
+      # ✅ 5. Commit et push sur la branche main
       - name: Commit and push latest.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -45,4 +61,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add latest.json
           git commit -m "Update latest.json for release $VERSION" || echo "No changes to commit"
-          git push
+          git push origin main
