@@ -9,18 +9,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Récupération du code de la branche main
-      - name: Checkout main branch
+      # 1️⃣ Récupérer le dépôt complet
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: main
           fetch-depth: 0
 
-      # 2️⃣ Installation de jq pour traiter le JSON
+      # 2️⃣ Installer jq pour manipuler le JSON
       - name: Install jq
         run: sudo apt-get install jq -y
 
-      # 3️⃣ Génération automatique du fichier latest.json
+      # 3️⃣ Générer automatiquement le fichier latest.json
       - name: Generate latest.json
         run: |
           echo "Generating latest.json..."
@@ -45,13 +44,13 @@ jobs:
           echo "✅ latest.json generated:"
           cat latest.json
 
-      # 4️⃣ Validation du JSON
+      # 4️⃣ Vérifier que le JSON est valide
       - name: Validate JSON
         run: |
           cat latest.json | jq empty
           echo "✅ JSON valid"
 
-      # 5️⃣ Commit + push sur main (forcé)
+      # 5️⃣ Commiter et pousser sur main
       - name: Commit and push latest.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,13 +58,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Rebasculer explicitement sur main
+          # 🔧 Revenir explicitement sur la branche main
           git fetch origin main
           git checkout main
 
-          # Copier le fichier généré sur main
+          # Copier le fichier latest.json généré à la racine
           cp latest.json ./latest.json
 
           git add latest.json
           git commit -m "Update latest.json for release $VERSION" || echo "No changes to commit"
-          git push origin main
+          git push origin HEAD:main
