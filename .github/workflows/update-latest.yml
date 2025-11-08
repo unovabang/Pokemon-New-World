@@ -1,9 +1,5 @@
 name: Update latest.json automatically
 
-# 🟢 donne les permissions avant tout
-permissions:
-  contents: write
-
 on:
   release:
     types: [published]
@@ -11,32 +7,30 @@ on:
 jobs:
   update-latest:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-      - name: Checkout current ref (the release tag)
+      - name: Checkout tag
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Install jq
-        run: sudo apt-get install -y jq
+        run: sudo apt-get install jq -y
 
       - name: Generate latest.json
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
           echo "Detected version: $VERSION"
-
           RELEASE_DATA=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest)
           ASSET_URL=$(echo "$RELEASE_DATA" | jq -r '.assets[0].browser_download_url')
           CHANGELOG=$(echo "$RELEASE_DATA" | jq -r '.body' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-
           cat <<EOF > latest.json
           {
             "name": "Pokemon New World",
             "version": "${VERSION#v}",
-            "changelog": {
-              "fr": "$CHANGELOG"
-            },
+            "changelog": { "fr": "$CHANGELOG" },
             "downloadUrl": "$ASSET_URL"
           }
           EOF
@@ -44,13 +38,21 @@ jobs:
       - name: Validate JSON
         run: jq empty latest.json
 
-      - name: Commit and push latest.json to main
+      # ✅ Second clone sur main avec token d'écriture
+      - name: Push latest.json to main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "Cloning main branch..."
+          git clone https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} main-repo
+          cd main-repo
+          git checkout main
+
+          echo "Copying latest.json..."
+          cp ../latest.json ./latest.json
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add latest.json
-          git commit -m "Update latest.json for release ${VERSION}" || echo "No changes to commit"
-          # 🟢 pousse depuis le HEAD détaché vers main explicitement
-          git push origin HEAD:main
+          git commit -m "Auto-update latest.json for release ${VERSION}" || echo "No changes to commit"
+          git push origin main
