@@ -1,5 +1,8 @@
 name: Update latest.json automatically
 
+permissions:
+  contents: write  # Autorise les commits et push sur le dépôt
+
 on:
   release:
     types: [published]
@@ -9,17 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Cloner le dépôt
+      # 1️⃣ Récupération du dépôt complet
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
-      # 2️⃣ Installer jq
+      # 2️⃣ Installation de jq
       - name: Install jq
         run: sudo apt-get install jq -y
 
-      # 3️⃣ Générer le latest.json
+      # 3️⃣ Génération du fichier latest.json
       - name: Generate latest.json
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
@@ -40,19 +44,28 @@ jobs:
           }
           EOF
 
-          echo "✅ latest.json generated"
+          echo "✅ latest.json generated successfully:"
           cat latest.json
 
-      # 4️⃣ Valider le JSON
+      # 4️⃣ Validation du JSON
       - name: Validate JSON
-        run: jq empty latest.json
+        run: |
+          jq empty latest.json
+          echo "✅ JSON valid"
 
-      # 5️⃣ Ajouter et commiter via une action externe (pas git push)
-      - name: Commit latest.json to main
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: "Update latest.json for release ${{ github.event.release.tag_name }}"
-          add: "latest.json"
-          branch: "main"
+      # 5️⃣ Commit et push automatique sur main
+      - name: Commit and push latest.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
+          cp latest.json ./latest.json
+          git add latest.json
+          git commit -m "Update latest.json for release ${VERSION}" || echo "No changes to commit"
+          git push origin main
