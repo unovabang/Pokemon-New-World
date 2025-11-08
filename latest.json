@@ -1,6 +1,6 @@
 {
   "name": "Pokemon New World",
   "version": "0.6",
-  "changelog":"https://github.com/unovabang/Pokemon-New-World/blob/607de2bde0b88fb93f3f127e9a496f3b1bd2a9fe/patchnotes",
+  "changelog":"https://raw.githubusercontent.com/unovabang/Pokemon-New-World/607de2bde0b88fb93f3f127e9a496f3b1bd2a9fe/patchnotes",
   "downloadUrl": "https://github.com/unovabang/Pokemon-New-World/releases/download/0.6/PNW.0.6.Open.Beta.zip"
 }
