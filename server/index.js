@@ -20,6 +20,9 @@ app.use(express.json());
 // Auth & logs (login, /me, /logs)
 app.use('/api/auth', authRoutes);
 
+// Health check (pour Railway / load balancers)
+app.get('/health', (req, res) => res.status(200).json({ ok: true }));
+
 // Chemins vers les dossiers
 const NEWS_IMAGES_DIR = path.join(__dirname, '../public/news-images');
 const CONFIG_DIR = path.join(__dirname, '../src/config');
@@ -277,13 +280,6 @@ app.use((error, req, res, next) => {
   }
   res.status(500).json({ success: false, error: error.message });
 });
-
-// Servir le frontend React (build Vite) en production
-const DIST_DIR = path.join(__dirname, '../dist');
-if (fs.existsSync(DIST_DIR)) {
-  app.use(express.static(DIST_DIR));
-  app.get('*', (req, res) => res.sendFile(path.join(DIST_DIR, 'index.html')));
-}
 
 // === PATCH NOTES API ===
 
@@ -600,16 +596,28 @@ app.post('/api/downloads', (req, res) => {
   }
 });
 
+// Servir le frontend React (build Vite) en production — doit être en dernier
+const DIST_DIR = path.join(__dirname, '../dist');
+if (fs.existsSync(DIST_DIR)) {
+  app.use(express.static(DIST_DIR));
+  app.get('*', (req, res) => res.sendFile(path.join(DIST_DIR, 'index.html')));
+}
+
 // Démarrage du serveur
-app.listen(PORT, async () => {
-  console.log(`🚀 Serveur API démarré sur le port ${PORT}`);
+const port = Number(PORT) || 3000;
+app.listen(port, '0.0.0.0', async () => {
+  console.log(`🚀 Serveur démarré sur le port ${port}`);
   console.log(`📂 Dossier des images: ${NEWS_IMAGES_DIR}`);
   console.log(`⚙️  Dossier de config: ${CONFIG_DIR}`);
   
   fs.ensureDirSync(NEWS_IMAGES_DIR);
   fs.ensureDirSync(CONFIG_DIR);
 
-  await initDb();
+  try {
+    await initDb();
+  } catch (err) {
+    console.error('⚠️ Init DB:', err.message);
+  }
 });
 
 export default app;
