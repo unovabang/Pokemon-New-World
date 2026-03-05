@@ -278,6 +278,13 @@ app.use((error, req, res, next) => {
   res.status(500).json({ success: false, error: error.message });
 });
 
+// Servir le frontend React (build Vite) en production
+const DIST_DIR = path.join(__dirname, '../dist');
+if (fs.existsSync(DIST_DIR)) {
+  app.use(express.static(DIST_DIR));
+  app.get('*', (req, res) => res.sendFile(path.join(DIST_DIR, 'index.html')));
+}
+
 // === PATCH NOTES API ===
 
 // GET /api/patchnotes et /api/patchnotes/:lang - Lister toutes les notes de patch (avec support multilingue)

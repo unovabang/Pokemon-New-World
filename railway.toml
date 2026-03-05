@@ -1,0 +1,7 @@
+# Railway: build le frontend puis démarre le serveur
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm start"
+buildCommand = "npm run build"
