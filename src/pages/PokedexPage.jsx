@@ -78,8 +78,9 @@ export default function PokedexPage() {
   }, [entries, search, selectedTypes]);
 
   const backgrounds = content.backgrounds || {};
-  const pageBg = (backgrounds.pokedex ? `url(${backgrounds.pokedex})` : backgrounds.home) || "url(/logo.png)";
-  const pokedexBanner = content.pokedexBanner || "";
+  const pokedexBgPath = backgrounds.pokedex || "/pokedex-background.jpg";
+  const pageBg = pokedexBgPath.startsWith("url(") ? pokedexBgPath : `url(${pokedexBgPath})`;
+  const pokedexBanner = content.pokedexBanner || "/pokedex-banner.jpg";
 
   return (
     <main
@@ -87,7 +88,7 @@ export default function PokedexPage() {
       style={{
         "--page-bg": pageBg,
         "--bg-blur": "14px",
-        "--bg-dim": "0.5",
+        "--bg-dim": "0.45",
       }}
     >
       <Sidebar />
@@ -111,6 +112,7 @@ export default function PokedexPage() {
               <div>
                 <h1 className="pokedex-title">Pokédex</h1>
                 <p className="pokedex-subtitle">
+                  <i className="fa-solid fa-wand-magic-sparkles pokedex-subtitle-icon" aria-hidden />
                   Pokémon New World — {entries.length} créatures
                 </p>
               </div>
@@ -153,18 +155,20 @@ export default function PokedexPage() {
             </div>
           </div>
           <div className="pokedex-filter-panel">
-            <span className="pokedex-filter-label">Filtrer par type (1 ou 2 types)</span>
+            <span className="pokedex-filter-label">
+              <i className="fa-solid fa-filter" aria-hidden /> Filtrer par type (1 ou 2 types)
+            </span>
             <div className="pokedex-filters">
               <button
                 type="button"
                 className={`pokedex-filter-pill pokedex-filter-all ${selectedTypes.length === 0 ? "active" : ""}`}
                 onClick={() => setSelectedTypes([])}
               >
-                Tous
+                <i className="fa-solid fa-layer-group" aria-hidden /> Tous
               </button>
               {selectedTypes.length > 0 && (
                 <button type="button" className="pokedex-filter-pill pokedex-filter-clear" onClick={() => setSelectedTypes([])}>
-                  Effacer
+                  <i className="fa-solid fa-eraser" aria-hidden /> Effacer
                 </button>
               )}
               <span className="pokedex-filter-sep" aria-hidden />
@@ -183,7 +187,7 @@ export default function PokedexPage() {
             </div>
             {selectedTypes.length > 0 && (
               <p className="pokedex-filter-hint">
-                Sélection : {selectedTypes.join(" + ")} — affiche les Pokémon ayant {selectedTypes.length === 1 ? "ce type" : "ces 2 types"}.
+                <i className="fa-solid fa-circle-info" aria-hidden /> Sélection : {selectedTypes.join(" + ")} — affiche les Pokémon ayant {selectedTypes.length === 1 ? "ce type" : "ces 2 types"}.
               </p>
             )}
           </div>
@@ -191,7 +195,7 @@ export default function PokedexPage() {
 
         <section className="pokedex-content-wrap container">
           <p className="pokedex-count">
-            {filtered.length} résultat{filtered.length !== 1 ? "s" : ""}
+            <i className="fa-solid fa-list-check" aria-hidden /> {filtered.length} résultat{filtered.length !== 1 ? "s" : ""}
           </p>
           {viewMode === "grid" && (
             <div className="pokedex-grid">
@@ -239,12 +243,12 @@ export default function PokedexPage() {
             <div className="pokedex-table-wrap">
               <div className="pokedex-table pokedex-table-grid" role="table" aria-label="Liste des Pokémon">
                 <div className="pokedex-table-header" role="row">
-                  <div className="pokedex-table-th pokedex-col-num" role="columnheader">N°</div>
-                  <div className="pokedex-table-th pokedex-col-name" role="columnheader">Pokémon</div>
-                  <div className="pokedex-table-th pokedex-col-sprite" role="columnheader">Image</div>
-                  <div className="pokedex-table-th pokedex-col-types" role="columnheader">Type</div>
-                  <div className="pokedex-table-th pokedex-col-rarity" role="columnheader">Rareté</div>
-                  <div className="pokedex-table-th pokedex-col-obtention" role="columnheader">Obtention</div>
+                  <div className="pokedex-table-th pokedex-col-num" role="columnheader"><i className="fa-solid fa-hashtag" aria-hidden /> N°</div>
+                  <div className="pokedex-table-th pokedex-col-name" role="columnheader"><i className="fa-solid fa-dragon" aria-hidden /> Pokémon</div>
+                  <div className="pokedex-table-th pokedex-col-sprite" role="columnheader"><i className="fa-solid fa-image" aria-hidden /> Image</div>
+                  <div className="pokedex-table-th pokedex-col-types" role="columnheader"><i className="fa-solid fa-bolt" aria-hidden /> Type</div>
+                  <div className="pokedex-table-th pokedex-col-rarity" role="columnheader"><i className="fa-solid fa-gem" aria-hidden /> Rareté</div>
+                  <div className="pokedex-table-th pokedex-col-obtention" role="columnheader"><i className="fa-solid fa-map-location-dot" aria-hidden /> Obtention</div>
                 </div>
                 {filtered.map((pokemon, i) => (
                   <div
@@ -314,7 +318,7 @@ export default function PokedexPage() {
               <h2 id="pokedex-modal-title" className="pokedex-modal-name">
                 {selectedPokemon.name}
               </h2>
-              <p className="pokedex-modal-num">#{selectedPokemon.num}</p>
+              <p className="pokedex-modal-num"><i className="fa-solid fa-fingerprint" aria-hidden /> #{selectedPokemon.num}</p>
               <div className="pokedex-modal-types">
                 {selectedPokemon.types?.length
                   ? selectedPokemon.types.map((t) => (
@@ -330,13 +334,13 @@ export default function PokedexPage() {
               </div>
               {selectedPokemon.rarity && (
                 <div className="pokedex-modal-row">
-                  <span className="pokedex-modal-label">Rareté</span>
+                  <span className="pokedex-modal-label"><i className="fa-solid fa-gem" aria-hidden /> Rareté</span>
                   <span>{selectedPokemon.rarity}</span>
                 </div>
               )}
               {selectedPokemon.obtention && (
                 <div className="pokedex-modal-row">
-                  <span className="pokedex-modal-label">Obtention</span>
+                  <span className="pokedex-modal-label"><i className="fa-solid fa-map-location-dot" aria-hidden /> Obtention</span>
                   <span>{selectedPokemon.obtention}</span>
                 </div>
               )}

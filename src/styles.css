@@ -27,8 +27,9 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 .page{position:relative; padding-top:20px}
 .page-with-sidebar{padding-top:1rem}
-.page::before{content:""; position:fixed; inset:0; background-image:var(--page-bg); background-size:cover; background-position:center; filter:blur(var(--bg-blur,12px)) saturate(130%) brightness(.7); transform:scale(1.05); z-index:-2}
+.page::before{content:""; position:fixed; inset:0; background-image:var(--page-bg); background-size:cover; background-position:center; background-repeat:no-repeat; filter:blur(var(--bg-blur,12px)) saturate(130%) brightness(.7); transform:scale(1.05); z-index:-2}
 .page::after{content:""; position:fixed; inset:0; background:linear-gradient(170deg,rgba(5,9,20,.6) 0%,rgba(8,14,28,.7) 50%,rgba(5,9,20,.75) 100%); background-color:rgba(8,14,28,var(--bg-dim,.4)); z-index:-1}
+.pokedex-page.page::before{background-image:var(--page-bg, url(/pokedex-background.jpg))}
 
 /* ===== NAVBAR fix top ===== */
 .nav{
@@ -233,7 +234,18 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   margin:0;
   color:var(--muted);
   font-size:1.05rem;
+  display:flex;
+  align-items:center;
+  gap:.5rem;
 }
+.pokedex-subtitle-icon{color:var(--primary-2); font-size:.9em; opacity:.9}
+.pokedex-filter-label i,
+.pokedex-filter-hint i{margin-right:.35rem; opacity:.9}
+.pokedex-filter-pill i{margin-right:.4rem}
+.pokedex-count i{margin-right:.5rem; color:var(--primary-2)}
+.pokedex-table-th i{margin-right:.4rem; opacity:.85}
+.pokedex-modal-num i{margin-right:.4rem; opacity:.8}
+.pokedex-modal-label i{margin-right:.4rem; color:var(--primary-2)}
 .pokedex-toolbar{
   margin-bottom:2rem;
   display:flex; flex-direction:column; gap:1.25rem;
