@@ -57,7 +57,11 @@ export default function PokedexPage() {
     const q = search.trim().toLowerCase();
     return entries.filter((e) => {
       const matchSearch = !q || e.name.toLowerCase().includes(q) || e.num.includes(q);
-      const matchType = !selectedType || e.types.includes(selectedType);
+      const types = Array.isArray(e.types) ? e.types : [];
+      const typeNormalized = types.map((t) => String(t).toLowerCase().trim());
+      const matchType =
+        !selectedType ||
+        typeNormalized.includes(selectedType.toLowerCase().trim());
       return matchSearch && matchType;
     });
   }, [entries, search, selectedType]);
@@ -132,27 +136,32 @@ export default function PokedexPage() {
             </div>
           </div>
           <div className="pokedex-filter-panel">
-            <span className="pokedex-filter-label">Filtrer par type</span>
-            <div className="pokedex-filters">
-              <button
-                type="button"
-                className={`pokedex-filter-pill pokedex-filter-all ${!selectedType ? "active" : ""}`}
-                onClick={() => setSelectedType("")}
+            <label htmlFor="pokedex-type-filter" className="pokedex-filter-label">
+              Filtrer par type
+            </label>
+            <div className="pokedex-filter-dropdown-wrap">
+              <select
+                id="pokedex-type-filter"
+                className="pokedex-filter-dropdown"
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                aria-label="Choisir un type de Pokémon"
               >
-                Tous
-              </button>
-              <span className="pokedex-filter-sep" aria-hidden />
-              {allTypes.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  className={`pokedex-filter-pill pokedex-filter-type ${selectedType === t ? "active" : ""}`}
-                  style={getTypeStyle(t)}
-                  onClick={() => setSelectedType(selectedType === t ? "" : t)}
+                <option value="">Tous les types</option>
+                {allTypes.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+              {selectedType ? (
+                <span
+                  className="pokedex-filter-type-badge"
+                  style={getTypeStyle(selectedType)}
                 >
-                  {t}
-                </button>
-              ))}
+                  {selectedType}
+                </span>
+              ) : null}
             </div>
           </div>
         </section>
