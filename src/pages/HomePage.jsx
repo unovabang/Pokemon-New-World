@@ -8,7 +8,7 @@ import Modal from "../components/Modal";
 import YouTubeAudio from "../components/YouTubeAudio";
 import NewsBanner from "../components/NewsBanner";
 import LanguageSelector from "../components/LanguageSelector";
-import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const HomePage = () => {
@@ -77,7 +77,7 @@ const HomePage = () => {
           "--bg-dim": backgrounds.dim,
         }}
       >
-        <Navbar />
+        <Sidebar />
 
         {/* Lecteur audio discret */}
         {content.audio?.enabled && (
