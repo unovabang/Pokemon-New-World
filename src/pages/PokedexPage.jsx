@@ -99,9 +99,6 @@ export default function PokedexPage() {
             <Link to="/" className="pokedex-back">
               <i className="fa-solid fa-arrow-left" /> Retour
             </Link>
-            <div className="pokedex-hero-banner" aria-hidden>
-              <img src={pokedexBannerSrc} alt="" />
-            </div>
             <div className="pokedex-hero-inner">
               <div className="pokedex-hero-icon">
                 <i className="fa-solid fa-book-open" />
@@ -113,6 +110,9 @@ export default function PokedexPage() {
                   Pokémon New World — {entries.length} créatures
                 </p>
               </div>
+            </div>
+            <div className="pokedex-hero-banner-rect" aria-hidden>
+              <img src={pokedexBannerSrc} alt="" />
             </div>
           </div>
         </header>
