@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import pokedexData from "../config/pokedex.json";
 import content from "../config/index.js";
+// Images importées pour que Vite les inclue au build (URLs garanties)
+import pokedexBgImg from "../assets/pokedex-background.jpg";
+import pokedexBannerImg from "../assets/pokedex-banner.jpg";
 
 const TYPE_COLORS = {
   plante: { bg: "rgba(126,200,80,.35)", border: "rgba(126,200,80,.6)", text: "#a6e88a" },
@@ -77,16 +80,14 @@ export default function PokedexPage() {
     });
   }, [entries, search, selectedTypes]);
 
-  const backgrounds = content.backgrounds || {};
-  const pokedexBgPath = backgrounds.pokedex || "/pokedex-background.jpg";
-  const pageBg = pokedexBgPath.startsWith("url(") ? pokedexBgPath : `url(${pokedexBgPath})`;
-  const pokedexBanner = content.pokedexBanner || "/pokedex-banner.jpg";
+  // URLs des images : importées depuis src/assets pour que le build les inclue (plus fiable que public/)
+  const pokedexBgSrc = pokedexBgImg;
+  const pokedexBannerSrc = pokedexBannerImg;
 
   return (
     <main className="page page-with-sidebar pokedex-page">
-      {/* Fond en élément réel (comme la bannière) pour garantir l'affichage */}
       <div className="pokedex-page-bg" aria-hidden>
-        <img src={pokedexBgPath} alt="" />
+        <img src={pokedexBgSrc} alt="" />
       </div>
       <div className="pokedex-page-overlay" aria-hidden />
       <Sidebar />
@@ -98,11 +99,9 @@ export default function PokedexPage() {
             <Link to="/" className="pokedex-back">
               <i className="fa-solid fa-arrow-left" /> Retour
             </Link>
-            {pokedexBanner && (
-              <div className="pokedex-hero-banner" aria-hidden>
-                <img src={pokedexBanner} alt="" />
-              </div>
-            )}
+            <div className="pokedex-hero-banner" aria-hidden>
+              <img src={pokedexBannerSrc} alt="" />
+            </div>
             <div className="pokedex-hero-inner">
               <div className="pokedex-hero-icon">
                 <i className="fa-solid fa-book-open" />
