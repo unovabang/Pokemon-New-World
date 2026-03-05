@@ -8,6 +8,7 @@ import Modal from "../components/Modal";
 import YouTubeAudio from "../components/YouTubeAudio";
 import NewsBanner from "../components/NewsBanner";
 import LanguageSelector from "../components/LanguageSelector";
+import Navbar from "../components/Navbar";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const HomePage = () => {
@@ -69,13 +70,14 @@ const HomePage = () => {
     <>
       <main
         id="top"
-        className="page"
+        className="page page-with-nav"
         style={{
           "--page-bg": `url(${backgrounds.home})`,
           "--bg-blur": `${backgrounds.blur}px`,
           "--bg-dim": backgrounds.dim,
         }}
       >
+        <Navbar />
 
         {/* Lecteur audio discret */}
         {content.audio?.enabled && (
