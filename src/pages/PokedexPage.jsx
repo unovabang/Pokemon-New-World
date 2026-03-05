@@ -90,7 +90,6 @@ export default function PokedexPage() {
 
       <div className="pokedex-wrap">
         <header className="pokedex-hero">
-          <div className="pokedex-hero-bg" aria-hidden />
           <div className="container pokedex-hero-content">
             <Link to="/" className="pokedex-back">
               <i className="fa-solid fa-arrow-left" /> Retour
