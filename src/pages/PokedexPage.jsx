@@ -83,14 +83,12 @@ export default function PokedexPage() {
   const pokedexBanner = content.pokedexBanner || "/pokedex-banner.jpg";
 
   return (
-    <main
-      className="page page-with-sidebar pokedex-page"
-      style={{
-        "--page-bg": pageBg,
-        "--bg-blur": "14px",
-        "--bg-dim": "0.45",
-      }}
-    >
+    <main className="page page-with-sidebar pokedex-page">
+      {/* Fond en élément réel (comme la bannière) pour garantir l'affichage */}
+      <div className="pokedex-page-bg" aria-hidden>
+        <img src={pokedexBgPath} alt="" />
+      </div>
+      <div className="pokedex-page-overlay" aria-hidden />
       <Sidebar />
 
       <div className="pokedex-wrap">
