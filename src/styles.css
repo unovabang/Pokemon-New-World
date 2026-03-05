@@ -45,15 +45,15 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   height:100%;
   object-fit:cover;
   object-position:center;
-  filter:blur(14px) saturate(130%) brightness(0.7);
-  transform:scale(1.05);
+  filter:blur(10px) saturate(120%) brightness(0.75);
+  transform:scale(1.03);
 }
 .pokedex-page-overlay{
   position:fixed;
   inset:0;
   z-index:-1;
-  background:linear-gradient(170deg, rgba(5,9,20,.6) 0%, rgba(8,14,28,.7) 50%, rgba(5,9,20,.75) 100%);
-  background-color:rgba(8,14,28,.45);
+  background:linear-gradient(170deg, rgba(5,9,20,.45) 0%, rgba(8,14,28,.5) 50%, rgba(5,9,20,.55) 100%);
+  background-color:rgba(8,14,28,.28);
   pointer-events:none;
 }
 
@@ -203,33 +203,33 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .pokedex-page .pokedex-wrap{min-height:100vh; padding-bottom:4rem}
 .pokedex-hero{
   position:relative;
-  padding:2.5rem 0 2rem;
+  padding:2.5rem 0 2.5rem;
   overflow:hidden;
+  min-height:220px;
 }
-.pokedex-hero-bg{
-  position:absolute; inset:0;
-  background:linear-gradient(160deg, rgba(46,89,198,.2) 0%, rgba(126,205,242,.1) 40%, rgba(167,139,250,.12) 100%);
+.pokedex-hero-banner-bg{
+  position:absolute;
+  inset:0;
+  z-index:0;
   pointer-events:none;
 }
-.pokedex-hero-banner-rect{
-  width:100%;
-  max-width:min(92vw, 900px);
-  margin:1.5rem auto 0;
-  aspect-ratio:3/1;
-  min-height:140px;
-  max-height:220px;
-  border-radius:20px;
-  overflow:hidden;
-  border:2px solid rgba(126,205,242,.25);
-  box-shadow:0 12px 40px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.06) inset;
-  background:linear-gradient(145deg, rgba(126,205,242,.08), rgba(167,139,250,.06));
-}
-.pokedex-hero-banner-rect img{
+.pokedex-hero-banner-bg img{
   width:100%;
   height:100%;
   display:block;
   object-fit:cover;
   object-position:center;
+  opacity:0.42;
+}
+.pokedex-hero-bg{
+  position:absolute; inset:0;
+  z-index:1;
+  background:linear-gradient(160deg, rgba(5,9,20,.5) 0%, rgba(8,14,28,.35) 50%, rgba(5,9,20,.6) 100%);
+  pointer-events:none;
+}
+.pokedex-hero-content{
+  position:relative;
+  z-index:2;
 }
 .pokedex-back{
   display:inline-flex; align-items:center; gap:.5rem;
