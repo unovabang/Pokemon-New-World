@@ -41,8 +41,8 @@ function getTypeStyle(type) {
 
 export default function PokedexPage() {
   const [search, setSearch] = useState("");
-  const [selectedType, setSelectedType] = useState("");
-  const [viewMode, setViewMode] = useState("grid"); // 'grid' | 'table'
+  const [selectedTypes, setSelectedTypes] = useState([]); // max 2 types pour filtre double
+  const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
 
   const entries = Array.isArray(pokedexData?.entries) ? pokedexData.entries : [];
@@ -55,21 +55,31 @@ export default function PokedexPage() {
     return Array.from(set).filter(Boolean).sort((a, b) => a.localeCompare(b));
   }, [entries]);
 
+  const toggleType = (t) => {
+    setSelectedTypes((prev) => {
+      const has = prev.includes(t);
+      if (has) return prev.filter((x) => x !== t);
+      if (prev.length >= 2) return [prev[1], t];
+      return [...prev, t];
+    });
+  };
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    const typeFilter = selectedType ? selectedType.toLowerCase().trim() : "";
+    const typeFilters = selectedTypes.map((x) => x.toLowerCase().trim()).filter(Boolean);
     return entries.filter((e) => {
       const matchSearch = !q || (e.name && e.name.toLowerCase().includes(q)) || (e.num && String(e.num).includes(q));
       if (!matchSearch) return false;
-      if (!typeFilter) return true;
-      const types = Array.isArray(e.types) ? e.types : [];
-      const hasType = types.some((t) => String(t).toLowerCase().trim() === typeFilter);
-      return hasType;
+      if (typeFilters.length === 0) return true;
+      const types = (Array.isArray(e.types) ? e.types : []).map((x) => String(x).toLowerCase().trim());
+      const hasAll = typeFilters.every((tf) => types.includes(tf));
+      return hasAll;
     });
-  }, [entries, search, selectedType]);
+  }, [entries, search, selectedTypes]);
 
   const backgrounds = content.backgrounds || {};
-  const pageBg = backgrounds.home || backgrounds.pokedex || "url(/logo.png)";
+  const pageBg = (backgrounds.pokedex ? `url(${backgrounds.pokedex})` : backgrounds.home) || "url(/logo.png)";
+  const pokedexBanner = content.pokedexBanner || "";
 
   return (
     <main
@@ -89,6 +99,11 @@ export default function PokedexPage() {
             <Link to="/" className="pokedex-back">
               <i className="fa-solid fa-arrow-left" /> Retour
             </Link>
+            {pokedexBanner && (
+              <div className="pokedex-hero-banner" aria-hidden>
+                <img src={pokedexBanner} alt="" />
+              </div>
+            )}
             <div className="pokedex-hero-inner">
               <div className="pokedex-hero-icon">
                 <i className="fa-solid fa-book-open" />
@@ -138,28 +153,39 @@ export default function PokedexPage() {
             </div>
           </div>
           <div className="pokedex-filter-panel">
-            <span className="pokedex-filter-label">Filtrer par type</span>
+            <span className="pokedex-filter-label">Filtrer par type (1 ou 2 types)</span>
             <div className="pokedex-filters">
               <button
                 type="button"
-                className={`pokedex-filter-pill pokedex-filter-all ${!selectedType ? "active" : ""}`}
-                onClick={() => setSelectedType("")}
+                className={`pokedex-filter-pill pokedex-filter-all ${selectedTypes.length === 0 ? "active" : ""}`}
+                onClick={() => setSelectedTypes([])}
               >
                 Tous
               </button>
+              {selectedTypes.length > 0 && (
+                <button type="button" className="pokedex-filter-pill pokedex-filter-clear" onClick={() => setSelectedTypes([])}>
+                  Effacer
+                </button>
+              )}
               <span className="pokedex-filter-sep" aria-hidden />
               {allTypes.map((t) => (
                 <button
                   key={t}
                   type="button"
-                  className={`pokedex-filter-pill pokedex-filter-type ${selectedType === t ? "active" : ""}`}
+                  className={`pokedex-filter-pill pokedex-filter-type ${selectedTypes.includes(t) ? "active" : ""}`}
                   style={getTypeStyle(t)}
-                  onClick={() => setSelectedType(selectedType === t ? "" : t)}
+                  onClick={() => toggleType(t)}
+                  title={selectedTypes.includes(t) ? "Désélectionner" : selectedTypes.length >= 2 ? "Remplacer un type" : "Ajouter ce type"}
                 >
                   {t}
                 </button>
               ))}
             </div>
+            {selectedTypes.length > 0 && (
+              <p className="pokedex-filter-hint">
+                Sélection : {selectedTypes.join(" + ")} — affiche les Pokémon ayant {selectedTypes.length === 1 ? "ce type" : "ces 2 types"}.
+              </p>
+            )}
           </div>
         </section>
 
@@ -211,63 +237,43 @@ export default function PokedexPage() {
           )}
           {viewMode === "table" && (
             <div className="pokedex-table-wrap">
-              <table className="pokedex-table">
-                <thead>
-                  <tr>
-                    <th scope="col" className="pokedex-th-num">N°</th>
-                    <th scope="col" className="pokedex-th-name">Pokémon</th>
-                    <th scope="col" className="pokedex-th-sprite">Image</th>
-                    <th scope="col" className="pokedex-th-types">Type</th>
-                    <th scope="col" className="pokedex-th-rarity">Rareté</th>
-                    <th scope="col" className="pokedex-th-obtention">Obtention</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((pokemon, i) => (
-                    <tr
-                      key={`table-${i}-${pokemon.num}-${pokemon.name}`}
-                      onClick={() => setSelectedPokemon(pokemon)}
-                      className="pokedex-table-row"
-                    >
-                      <td className="pokedex-table-num"><span>#{pokemon.num}</span></td>
-                      <td className="pokedex-table-name"><span>{pokemon.name}</span></td>
-                      <td className="pokedex-table-sprite">
-                        <span className="pokedex-table-sprite-inner">
-                          {pokemon.imageUrl ? (
-                            <img
-                              src={pokemon.imageUrl}
-                              alt=""
-                              loading="lazy"
-                              onError={(e) => {
-                                e.target.style.display = "none";
-                              }}
-                            />
-                          ) : (
-                            <i className="fa-solid fa-paw" />
-                          )}
-                        </span>
-                      </td>
-                      <td className="pokedex-table-types">
-                        <span className="pokedex-table-types-inner">
-                          {pokemon.types?.length
-                            ? pokemon.types.map((t) => (
-                                <span
-                                  key={t}
-                                  className="pokedex-type-pill"
-                                  style={getTypeStyle(t)}
-                                >
-                                  {t}
-                                </span>
-                              ))
-                            : "—"}
-                        </span>
-                      </td>
-                      <td className="pokedex-table-rarity"><span>{pokemon.rarity ?? "—"}</span></td>
-                      <td className="pokedex-table-obtention"><span>{pokemon.obtention ?? "—"}</span></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="pokedex-table pokedex-table-grid" role="table" aria-label="Liste des Pokémon">
+                <div className="pokedex-table-header" role="row">
+                  <div className="pokedex-table-th pokedex-col-num" role="columnheader">N°</div>
+                  <div className="pokedex-table-th pokedex-col-name" role="columnheader">Pokémon</div>
+                  <div className="pokedex-table-th pokedex-col-sprite" role="columnheader">Image</div>
+                  <div className="pokedex-table-th pokedex-col-types" role="columnheader">Type</div>
+                  <div className="pokedex-table-th pokedex-col-rarity" role="columnheader">Rareté</div>
+                  <div className="pokedex-table-th pokedex-col-obtention" role="columnheader">Obtention</div>
+                </div>
+                {filtered.map((pokemon, i) => (
+                  <div
+                    key={`table-${i}-${pokemon.num}-${pokemon.name}`}
+                    className="pokedex-table-row"
+                    role="row"
+                    onClick={() => setSelectedPokemon(pokemon)}
+                  >
+                    <div className="pokedex-table-cell pokedex-table-num" role="cell">#{pokemon.num}</div>
+                    <div className="pokedex-table-cell pokedex-table-name" role="cell">{pokemon.name}</div>
+                    <div className="pokedex-table-cell pokedex-table-sprite" role="cell">
+                      {pokemon.imageUrl ? (
+                        <img src={pokemon.imageUrl} alt="" loading="lazy" onError={(e) => { e.target.style.display = "none"; }} />
+                      ) : (
+                        <i className="fa-solid fa-paw" />
+                      )}
+                    </div>
+                    <div className="pokedex-table-cell pokedex-table-types" role="cell">
+                      {pokemon.types?.length
+                        ? pokemon.types.map((t) => (
+                            <span key={t} className="pokedex-type-pill" style={getTypeStyle(t)}>{t}</span>
+                          ))
+                        : "—"}
+                    </div>
+                    <div className="pokedex-table-cell pokedex-table-rarity" role="cell">{pokemon.rarity ?? "—"}</div>
+                    <div className="pokedex-table-cell pokedex-table-obtention" role="cell">{pokemon.obtention ?? "—"}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>
