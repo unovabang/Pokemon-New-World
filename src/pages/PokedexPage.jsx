@@ -23,6 +23,8 @@ const TYPE_COLORS = {
   roche: { bg: "rgba(184,160,56,.35)", border: "rgba(184,160,56,.6)", text: "#d8c878" },
   acier: { bg: "rgba(168,168,192,.35)", border: "rgba(168,168,192,.6)", text: "#c0c0e0" },
   normal: { bg: "rgba(168,168,120,.25)", border: "rgba(168,168,120,.5)", text: "#c6c6a7" },
+  insecte: { bg: "rgba(168,184,32,.35)", border: "rgba(168,184,32,.6)", text: "#c6d16e" },
+  aspic: { bg: "rgba(160,128,96,.35)", border: "rgba(160,128,96,.6)", text: "#d4b896" },
 };
 
 const defaultTypeStyle = { bg: "rgba(255,255,255,.1)", border: "rgba(255,255,255,.25)", text: "var(--text)" };
@@ -40,6 +42,7 @@ function getTypeStyle(type) {
 export default function PokedexPage() {
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState("");
+  const [viewMode, setViewMode] = useState("grid"); // 'grid' | 'table'
   const [selectedPokemon, setSelectedPokemon] = useState(null);
 
   const entries = pokedexData.entries || [];
@@ -95,83 +98,167 @@ export default function PokedexPage() {
         </header>
 
         <section className="pokedex-toolbar container">
-          <div className="pokedex-search-wrap">
-            <i className="fa-solid fa-magnifying-glass pokedex-search-icon" />
-            <input
-              type="search"
-              className="pokedex-search"
-              placeholder="Rechercher un Pokémon ou un nº..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              aria-label="Recherche"
-            />
-          </div>
-          <div className="pokedex-filters">
-            <button
-              type="button"
-              className={`pokedex-filter-pill ${!selectedType ? "active" : ""}`}
-              onClick={() => setSelectedType("")}
-            >
-              Tous
-            </button>
-            {allTypes.map((t) => (
+          <div className="pokedex-toolbar-row">
+            <div className="pokedex-search-wrap">
+              <i className="fa-solid fa-magnifying-glass pokedex-search-icon" />
+              <input
+                type="search"
+                className="pokedex-search"
+                placeholder="Rechercher un Pokémon ou un nº..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                aria-label="Recherche"
+              />
+            </div>
+            <div className="pokedex-view-toggle" role="group" aria-label="Mode d’affichage">
               <button
-                key={t}
                 type="button"
-                className={`pokedex-filter-pill ${selectedType === t ? "active" : ""}`}
-                style={selectedType === t ? getTypeStyle(t) : {}}
-                onClick={() => setSelectedType(selectedType === t ? "" : t)}
+                className={`pokedex-view-btn ${viewMode === "grid" ? "active" : ""}`}
+                onClick={() => setViewMode("grid")}
+                title="Vue grille"
+                aria-pressed={viewMode === "grid"}
               >
-                {t}
+                <i className="fa-solid fa-grip" /> Grille
               </button>
-            ))}
+              <button
+                type="button"
+                className={`pokedex-view-btn ${viewMode === "table" ? "active" : ""}`}
+                onClick={() => setViewMode("table")}
+                title="Vue tableau (style Fandom)"
+                aria-pressed={viewMode === "table"}
+              >
+                <i className="fa-solid fa-table-list" /> Tableau
+              </button>
+            </div>
+          </div>
+          <div className="pokedex-filter-panel">
+            <span className="pokedex-filter-label">Filtrer par type</span>
+            <div className="pokedex-filters">
+              <button
+                type="button"
+                className={`pokedex-filter-pill ${!selectedType ? "active" : ""}`}
+                onClick={() => setSelectedType("")}
+              >
+                Tous
+              </button>
+              {allTypes.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  className={`pokedex-filter-pill ${selectedType === t ? "active" : ""}`}
+                  style={selectedType === t ? getTypeStyle(t) : {}}
+                  onClick={() => setSelectedType(selectedType === t ? "" : t)}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section className="pokedex-grid-wrap container">
+        <section className="pokedex-content-wrap container">
           <p className="pokedex-count">
             {filtered.length} résultat{filtered.length !== 1 ? "s" : ""}
           </p>
-          <div className="pokedex-grid">
-            {filtered.map((pokemon) => (
-              <button
-                key={`${pokemon.num}-${pokemon.name}`}
-                type="button"
-                className="pokedex-card"
-                onClick={() => setSelectedPokemon(pokemon)}
-              >
-                <div className="pokedex-card-sprite">
-                  {pokemon.imageUrl ? (
-                    <img
-                      src={pokemon.imageUrl}
-                      alt=""
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    <i className="fa-solid fa-paw" />
-                  )}
-                </div>
-                <span className="pokedex-card-num">#{pokemon.num}</span>
-                <span className="pokedex-card-name">{pokemon.name}</span>
-                <div className="pokedex-card-types">
-                  {pokemon.types.length
-                    ? pokemon.types.map((t) => (
-                        <span
-                          key={t}
-                          className="pokedex-type-pill"
-                          style={getTypeStyle(t)}
-                        >
-                          {t}
-                        </span>
-                      ))
-                    : null}
-                </div>
-              </button>
-            ))}
-          </div>
+          {viewMode === "grid" && (
+            <div className="pokedex-grid">
+              {filtered.map((pokemon) => (
+                <button
+                  key={`${pokemon.num}-${pokemon.name}`}
+                  type="button"
+                  className="pokedex-card"
+                  onClick={() => setSelectedPokemon(pokemon)}
+                >
+                  <div className="pokedex-card-sprite">
+                    {pokemon.imageUrl ? (
+                      <img
+                        src={pokemon.imageUrl}
+                        alt=""
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      <i className="fa-solid fa-paw" />
+                    )}
+                  </div>
+                  <span className="pokedex-card-num">#{pokemon.num}</span>
+                  <span className="pokedex-card-name">{pokemon.name}</span>
+                  <div className="pokedex-card-types">
+                    {pokemon.types?.length
+                      ? pokemon.types.map((t) => (
+                          <span
+                            key={t}
+                            className="pokedex-type-pill"
+                            style={getTypeStyle(t)}
+                          >
+                            {t}
+                          </span>
+                        ))
+                      : null}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+          {viewMode === "table" && (
+            <div className="pokedex-table-wrap">
+              <table className="pokedex-table">
+                <thead>
+                  <tr>
+                    <th>N°</th>
+                    <th>Pokémon</th>
+                    <th>Image</th>
+                    <th>Type</th>
+                    <th>Rareté</th>
+                    <th>Obtention</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((pokemon) => (
+                    <tr
+                      key={`${pokemon.num}-${pokemon.name}`}
+                      onClick={() => setSelectedPokemon(pokemon)}
+                      className="pokedex-table-row"
+                    >
+                      <td className="pokedex-table-num">#{pokemon.num}</td>
+                      <td className="pokedex-table-name">{pokemon.name}</td>
+                      <td className="pokedex-table-sprite">
+                        {pokemon.imageUrl ? (
+                          <img
+                            src={pokemon.imageUrl}
+                            alt=""
+                            loading="lazy"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                            }}
+                          />
+                        ) : (
+                          <i className="fa-solid fa-paw" />
+                        )}
+                      </td>
+                      <td className="pokedex-table-types">
+                        {pokemon.types?.length
+                          ? pokemon.types.map((t) => (
+                              <span
+                                key={t}
+                                className="pokedex-type-pill"
+                                style={getTypeStyle(t)}
+                              >
+                                {t}
+                              </span>
+                            ))
+                          : "—"}
+                      </td>
+                      <td className="pokedex-table-rarity">{pokemon.rarity || "—"}</td>
+                      <td className="pokedex-table-obtention">{pokemon.obtention || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
       </div>
 
@@ -212,15 +299,17 @@ export default function PokedexPage() {
               </h2>
               <p className="pokedex-modal-num">#{selectedPokemon.num}</p>
               <div className="pokedex-modal-types">
-                {selectedPokemon.types.map((t) => (
-                  <span
-                    key={t}
-                    className="pokedex-type-pill"
-                    style={getTypeStyle(t)}
-                  >
-                    {t}
-                  </span>
-                ))}
+                {selectedPokemon.types?.length
+                  ? selectedPokemon.types.map((t) => (
+                      <span
+                        key={t}
+                        className="pokedex-type-pill"
+                        style={getTypeStyle(t)}
+                      >
+                        {t}
+                      </span>
+                    ))
+                  : "—"}
               </div>
               {selectedPokemon.rarity && (
                 <div className="pokedex-modal-row">

@@ -131,7 +131,10 @@
       "num": "012",
       "name": "Méga-Florizarre",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/a/ab/D90mwfa-487a0604-957a-4fb8-90d2-29caf0a5a476.gif/revision/latest?cb=20251020151120&path-prefix=fr",
-      "types": [],
+      "types": [
+        "plante",
+        "poison"
+      ],
       "rarity": "Forme atteinte en synergie avec la Florizarrite",
       "obtention": ""
     },
@@ -222,7 +225,9 @@
       "num": "018",
       "name": "Méga-Tortank",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/c/c7/Dcuxbdj-28e81df9-4dda-48f0-b42e-d31116e2f52e.gif/revision/latest?cb=20251020151223&path-prefix=fr",
-      "types": [],
+      "types": [
+        "eau"
+      ],
       "rarity": "Forme atteinte en synergie avec la Tortankite",
       "obtention": ""
     },
@@ -835,7 +840,10 @@
       "num": "075",
       "name": "Méga-Brutapode",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/a/a8/Ezgif-12355e6af010e6.gif/revision/latest?cb=20251022232954&path-prefix=fr",
-      "types": [],
+      "types": [
+        "insecte",
+        "poison"
+      ],
       "rarity": "Forme atteinte en synergie avec la Brutapodite",
       "obtention": ""
     },
@@ -947,7 +955,9 @@
       "num": "085",
       "name": "Géolithe Enfant du Néant",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/c/c2/525_01.gif/revision/latest?cb=20241129212010&path-prefix=fr",
-      "types": [],
+      "types": [
+        "roche"
+      ],
       "rarity": "Non capturable",
       "obtention": "Affrontable sur l'Île Vaguelettes"
     },
@@ -1363,7 +1373,10 @@
       "num": "123",
       "name": "Méga-Minotaupe",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/7/7c/Ezgif-5bb04123e87625.gif/revision/latest?cb=20251102154129&path-prefix=fr",
-      "types": [],
+      "types": [
+        "sol",
+        "acier"
+      ],
       "rarity": "Forme atteinte en synergie avec la Minotaupite",
       "obtention": ""
     },
@@ -1404,7 +1417,10 @@
       "num": "126",
       "name": "Méga-Scarhino",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/f6/HERACROSS_1.gif/revision/latest?cb=20251022172451&path-prefix=fr",
-      "types": [],
+      "types": [
+        "insecte",
+        "combat"
+      ],
       "rarity": "Forme atteinte en synergie avec la Scarhinoïte",
       "obtention": ""
     },
@@ -1442,7 +1458,9 @@
       "num": "129",
       "name": "Bétochef Enfant du Néant",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/1/13/534_01.gif/revision/latest?cb=20241214035934&path-prefix=fr",
-      "types": [],
+      "types": [
+        "combat"
+      ],
       "rarity": "Non capturable",
       "obtention": "Tombeau du Colosse"
     },
@@ -1461,7 +1479,10 @@
       "num": "130",
       "name": "Méga-Mysdibule",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/5/51/Mawile-mega.gif/revision/latest?cb=20251020150045&path-prefix=fr",
-      "types": [],
+      "types": [
+        "acier",
+        "fee"
+      ],
       "rarity": "Forme atteinte en synergie avec la Mysdibulite",
       "obtention": ""
     },
@@ -1595,7 +1616,10 @@
       "num": "142",
       "name": "???",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/9/93/NW_Pokedex_000.png/revision/latest?cb=20230327172759&path-prefix=fr",
-      "types": [],
+      "types": [
+        "psy",
+        "fee"
+      ],
       "rarity": "Très rare (Exclu Truespirit)",
       "obtention": "???"
     },
@@ -1614,7 +1638,10 @@
       "num": "143",
       "name": "???",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/9/93/NW_Pokedex_000.png/revision/latest?cb=20230327172759&path-prefix=fr",
-      "types": [],
+      "types": [
+        "psy",
+        "combat"
+      ],
       "rarity": "Très rare (Exclu Hopegrave)",
       "obtention": "???"
     },
@@ -2003,7 +2030,10 @@
       "num": "178",
       "name": "Ursaking Lune Vermeille",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/fa/Ursaluna-bloodmoon.gif/revision/latest?cb=20241201003528&path-prefix=fr",
-      "types": [],
+      "types": [
+        "normal",
+        "sol"
+      ],
       "rarity": "???",
       "obtention": ""
     },
@@ -2076,7 +2106,10 @@
       "num": "183",
       "name": "Méga-Golemastoc",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/5/58/Ezgif-794275eddcf41a73.gif/revision/latest?cb=20260122043328&path-prefix=fr",
-      "types": [],
+      "types": [
+        "sol",
+        "spectre"
+      ],
       "rarity": "Forme atteinte en synergie avec la Golemastokite",
       "obtention": ""
     },
@@ -2514,7 +2547,10 @@
       "num": "224",
       "name": "???",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/4/48/Vignette_combat.png/revision/latest?cb=20230402135848&path-prefix=fr",
-      "types": [],
+      "types": [
+        "eau",
+        "tenebres"
+      ],
       "rarity": "Faire évoluer Croâporal au N.36 à la Place Mondrée",
       "obtention": ""
     },
@@ -2552,7 +2588,9 @@
       "num": "227",
       "name": "Méga-Ohmassacre",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/9/99/Ezgif-5fdd8ed6fa156f.gif/revision/latest?cb=20251102154032&path-prefix=fr",
-      "types": [],
+      "types": [
+        "electr"
+      ],
       "rarity": "Forme atteinte en synergie avec la Ohmassacrite",
       "obtention": ""
     },
@@ -2668,7 +2706,9 @@
       "num": "234",
       "name": "Méga-Mistigrix",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/5/5f/Ezgif-464b2d1010f18e66.gif/revision/latest?cb=20251213175827&path-prefix=fr",
-      "types": [],
+      "types": [
+        "psy"
+      ],
       "rarity": "Forme atteinte en Synergie avec la Mistigrixite",
       "obtention": ""
     },
@@ -2697,7 +2737,10 @@
       "num": "236",
       "name": "Méga-Oniglali",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/0/0e/Glalie-mega.gif/revision/latest/scale-to-width-down/60?cb=20251018160234&path-prefix=fr",
-      "types": [],
+      "types": [
+        "glace",
+        "malice"
+      ],
       "rarity": "Forme atteinte en Synergie avec la Oniglalite",
       "obtention": ""
     },
@@ -2716,7 +2759,10 @@
       "num": "237",
       "name": "Méga-Momartik",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/4/4c/Ezgif-2694bc525babee.gif/revision/latest?cb=20251028214842&path-prefix=fr",
-      "types": [],
+      "types": [
+        "glace",
+        "spectre"
+      ],
       "rarity": "Forme atteinte en Synergie avec la Momartikite",
       "obtention": ""
     },
@@ -2810,7 +2856,10 @@
       "num": "245",
       "name": "???",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/0/04/Vignette_eau.png/revision/latest?cb=20230402135849&path-prefix=fr",
-      "types": [],
+      "types": [
+        "sol",
+        "tenebres"
+      ],
       "rarity": "Désert Macabre ( Eau salée )",
       "obtention": ""
     },
@@ -3094,7 +3143,10 @@
       "num": "266",
       "name": "Méga-Baggaïd",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/f3/Ezgif-1b6692976dc9ef.gif/revision/latest?cb=20251021234100&path-prefix=fr",
-      "types": [],
+      "types": [
+        "tenebres",
+        "combat"
+      ],
       "rarity": "Forme atteinte en Synergie avec la Baggaïdite",
       "obtention": ""
     },
@@ -3304,7 +3356,10 @@
       "num": "284",
       "name": "Méga-Démolosse",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/e/ed/229_30.gif/revision/latest?cb=20251017180425&path-prefix=fr",
-      "types": [],
+      "types": [
+        "tenebres",
+        "feu"
+      ],
       "rarity": "Forme atteinte en synergie avec la Démolossite",
       "obtention": ""
     },
@@ -3334,7 +3389,10 @@
       "num": "286",
       "name": "Méga-Élecsprint",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/2/26/310_30.gif/revision/latest?cb=20251017180826&path-prefix=fr",
-      "types": [],
+      "types": [
+        "normal",
+        "electr"
+      ],
       "rarity": "Forme atteinte en synergie avec l' Élecsprintite",
       "obtention": ""
     },
@@ -3364,7 +3422,10 @@
       "num": "288",
       "name": "Méga-Némélios",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/c/c5/Ezgif-3bf97b72d35e4581.gif/revision/latest?cb=20251108193634&path-prefix=fr",
-      "types": [],
+      "types": [
+        "feu",
+        "normal"
+      ],
       "rarity": "Forme atteinte en synergie avec la Néméliosite",
       "obtention": ""
     },
@@ -3443,7 +3504,10 @@
       "num": "294",
       "name": "Méga-Kravarech",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/e/ef/Ezgif-780da32a4f45b8.gif/revision/latest?cb=20251102202401&path-prefix=fr",
-      "types": [],
+      "types": [
+        "poison",
+        "dragon"
+      ],
       "rarity": "Forme atteinte en synergie avec la Kravarekite",
       "obtention": ""
     },
@@ -3636,7 +3700,10 @@
       "num": "311",
       "name": "Méga-Branette",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/9/99/Banette-mega.gif/revision/latest?cb=20251023025414&path-prefix=fr",
-      "types": [],
+      "types": [
+        "spectre",
+        "tenebres"
+      ],
       "rarity": "Forme atteinte en synergie avec la Branettite",
       "obtention": ""
     },
@@ -3666,7 +3733,10 @@
       "num": "313",
       "name": "Méga-Sépiatroce",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/1/17/Mega_malamar_gen_5_pokemon_sprite_by_retronc_dkid14d_%281%29.gif/revision/latest?cb=20250910204440&path-prefix=fr",
-      "types": [],
+      "types": [
+        "tenebres",
+        "psy"
+      ],
       "rarity": "Forme atteinte en synergie avec la Sepiatrocite",
       "obtention": ""
     },
@@ -3707,7 +3777,10 @@
       "num": "316",
       "name": "Méga-Lugulabre",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/f8/Ezgif-61b1aad10603a9.gif/revision/latest?cb=20251030164830&path-prefix=fr",
-      "types": [],
+      "types": [
+        "spectre",
+        "feu"
+      ],
       "rarity": "Forme atteinte en Synergie avec la Lugulabrite",
       "obtention": ""
     },
@@ -3736,7 +3809,10 @@
       "num": "318",
       "name": "Méga-Airmure",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/8/8b/Ezgif-193494a60e1f0c.gif/revision/latest?cb=20251020211700&path-prefix=fr",
-      "types": [],
+      "types": [
+        "acier",
+        "vol"
+      ],
       "rarity": "Forme atteinte en synergie avec la Airmurite",
       "obtention": ""
     },
@@ -3755,7 +3831,10 @@
       "num": "319",
       "name": "Méga-Brutalibré",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/1/13/Ezgif-79b052f10b8959.gif/revision/latest?cb=20250829162443&path-prefix=fr",
-      "types": [],
+      "types": [
+        "combat",
+        "vol"
+      ],
       "rarity": "Forme atteinte en synergie avec la Brutalibrite",
       "obtention": ""
     },
@@ -3773,7 +3852,9 @@
       "num": "320",
       "name": "Méga-Hexadron",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/1/1b/Ezgif-40d16b3bac909as.gif/revision/latest?cb=20251028193226&path-prefix=fr",
-      "types": [],
+      "types": [
+        "combat"
+      ],
       "rarity": "Forme atteinte en synergie avec la Hexadronite",
       "obtention": ""
     },
@@ -4131,7 +4212,9 @@
       "num": "351",
       "name": "Superdofin",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/9/99/981_01gfh.gif/revision/latest?cb=20241231165429&path-prefix=fr",
-      "types": [],
+      "types": [
+        "eau"
+      ],
       "rarity": "Retirer Superdofin Forme Zéro puis le renvoyer sur le terrain",
       "obtention": ""
     },
@@ -4471,7 +4554,10 @@
       "num": "379",
       "name": "Méga-Draïeul",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/3/3e/Ezgif-53009d757a511f.gif/revision/latest?cb=20251102154202&path-prefix=fr",
-      "types": [],
+      "types": [
+        "normal",
+        "dragon"
+      ],
       "rarity": "Forme atteinte en synergie avec la Draïeulite",
       "obtention": ""
     },
@@ -4606,7 +4692,10 @@
       "num": "391",
       "name": "Méga-Crabominable",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/d/d6/Ezgif-4701064e6e53ba12.gif/revision/latest?cb=20260228203455&path-prefix=fr",
-      "types": [],
+      "types": [
+        "combat",
+        "glace"
+      ],
       "rarity": "Forme atteinte en synergie avec la Crabominablite",
       "obtention": ""
     },
@@ -4765,7 +4854,10 @@
       "num": "405",
       "name": "Méga-Métalosse",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/9/95/376_30cb.gif/revision/latest?cb=20250930133443&path-prefix=fr",
-      "types": [],
+      "types": [
+        "acier",
+        "psy"
+      ],
       "rarity": "Forme atteinte en synergie avec la Métalossite",
       "obtention": ""
     },
@@ -4837,7 +4929,10 @@
       "num": "411",
       "name": "Méga-Dracolosse",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/0/02/Ezgif-1a7e0acc51aa8f.gif/revision/latest?cb=20250819224446&path-prefix=fr",
-      "types": [],
+      "types": [
+        "dragon",
+        "vol"
+      ],
       "rarity": "Forme atteinte en synergie avec la Dracolossite",
       "obtention": ""
     },
@@ -4876,7 +4971,10 @@
       "num": "414",
       "name": "Méga-Drattak",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/0/03/SALAMENCE_1.gif/revision/latest?cb=20250926130354&path-prefix=fr",
-      "types": [],
+      "types": [
+        "dragon",
+        "vol"
+      ],
       "rarity": "Forme atteinte en synergie avec la Drattakite",
       "obtention": ""
     },
@@ -4917,7 +5015,10 @@
       "num": "417",
       "name": "Méga-Carchacrok",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/8/84/GARCHOMP_1.gif/revision/latest?cb=20251022033824&path-prefix=fr",
-      "types": [],
+      "types": [
+        "dragon",
+        "sol"
+      ],
       "rarity": "Forme atteinte en synergie avec la Carchacrokite",
       "obtention": ""
     },
@@ -4946,7 +5047,10 @@
       "num": "418",
       "name": "???",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/9/99/Vignette_acier.png/revision/latest?cb=20230402135850&path-prefix=fr",
-      "types": [],
+      "types": [
+        "tenebres",
+        "dragon"
+      ],
       "rarity": "???",
       "obtention": ""
     },
@@ -5031,7 +5135,10 @@
       "num": "425",
       "name": "Méga-Lanssorien",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/1/13/840_30.gif/revision/latest?cb=20251012003425&path-prefix=fr",
-      "types": [],
+      "types": [
+        "dragon",
+        "spectre"
+      ],
       "rarity": "Forme atteinte en synergie avec la Lanssorite",
       "obtention": ""
     },
@@ -5126,7 +5233,10 @@
       "num": "433",
       "name": "???",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/4/48/Vignette_combat.png/revision/latest?cb=20230402135848&path-prefix=fr",
-      "types": [],
+      "types": [
+        "combat",
+        "tenebres"
+      ],
       "rarity": "Utiliser le Rouleau de l'Eau sur Wushours",
       "obtention": ""
     },
@@ -5156,7 +5266,10 @@
       "num": "435",
       "name": "Méga-Latias",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/d/d3/Ezgif-14634d224be00b.gif/revision/latest?cb=20250926125430&path-prefix=fr",
-      "types": [],
+      "types": [
+        "dragon",
+        "psy"
+      ],
       "rarity": "Forme atteinte en synergie avec la Latiasite",
       "obtention": ""
     },
@@ -5175,7 +5288,10 @@
       "num": "436",
       "name": "Méga-Latios",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/0/00/Ezgif-185085a46ddf90.gif/revision/latest?cb=20250926125542&path-prefix=fr",
-      "types": [],
+      "types": [
+        "dragon",
+        "psy"
+      ],
       "rarity": "Forme atteinte en synergie avec la Latiosite",
       "obtention": ""
     },
@@ -5307,7 +5423,10 @@
       "num": "447",
       "name": "Méga-Volcanion",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/9/93/NW_Pokedex_000.png/revision/latest?cb=20230327172759&path-prefix=fr",
-      "types": [],
+      "types": [
+        "feu",
+        "eau"
+      ],
       "rarity": "Forme atteinte en synergie avec la Volcanionite",
       "obtention": ""
     },
@@ -5325,7 +5444,9 @@
       "num": "448",
       "name": "Méga-Floette",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/b/bd/Ezgif-6a576cca93e15b.gif/revision/latest?cb=20251024132009&path-prefix=fr",
-      "types": [],
+      "types": [
+        "fee"
+      ],
       "rarity": "Forme atteinte en synergie avec la Floettite",
       "obtention": ""
     },
@@ -5343,7 +5464,9 @@
       "num": "449",
       "name": "Méga-Zeraora",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/9/94/1012_30.gif/revision/latest?cb=20251012003149&path-prefix=fr",
-      "types": [],
+      "types": [
+        "electr"
+      ],
       "rarity": "Forme atteinte en synergie avec la Zeraorite",
       "obtention": ""
     },
@@ -5362,7 +5485,10 @@
       "num": "450",
       "name": "Méga-Marshadow",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/6/61/1011_30.gif/revision/latest?cb=20251012003313&path-prefix=fr",
-      "types": [],
+      "types": [
+        "combat",
+        "spectre"
+      ],
       "rarity": "Forme atteinte en synergie avec la Marshadite",
       "obtention": ""
     }
