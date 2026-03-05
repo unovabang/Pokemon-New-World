@@ -1,15 +1,16 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
-// Mêmes intitulés que le launcher (pnw-launcher)
+// Mêmes intitulés que le launcher (pnw-launcher) — to = route ou #id
 const SIDEBAR_ITEMS = [
-  { id: "accueil", label: "Accueil", icon: "fa-house" },
-  { id: "pokedex", label: "Pokedex", icon: "fa-book" },
-  { id: "guide", label: "Guide", icon: "fa-book-open" },
-  { id: "patchnotes", label: "PatchNotes", icon: "fa-file-lines" },
-  { id: "items", label: "Items locations", icon: "fa-location-dot" },
-  { id: "evs", label: "EVs locations", icon: "fa-location-dot" },
-  { id: "bst", label: "All BST + new Abilities", icon: "fa-table" },
-  { id: "nerfs", label: "Nerfs and buffs", icon: "fa-scale-balanced" },
+  { id: "accueil", label: "Accueil", icon: "fa-house", to: "/" },
+  { id: "pokedex", label: "Pokedex", icon: "fa-book", to: "/pokedex" },
+  { id: "guide", label: "Guide", icon: "fa-book-open", to: "#guide" },
+  { id: "patchnotes", label: "PatchNotes", icon: "fa-file-lines", to: "#patchnotes" },
+  { id: "items", label: "Items locations", icon: "fa-location-dot", to: "#items" },
+  { id: "evs", label: "EVs locations", icon: "fa-location-dot", to: "#evs" },
+  { id: "bst", label: "All BST + new Abilities", icon: "fa-table", to: "#bst" },
+  { id: "nerfs", label: "Nerfs and buffs", icon: "fa-scale-balanced", to: "#nerfs" },
 ];
 
 const Sidebar = () => {
@@ -62,17 +63,29 @@ const Sidebar = () => {
           </div>
 
           <nav className="sidebar-nav">
-            {SIDEBAR_ITEMS.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                className="sidebar-link"
-                onClick={close}
-              >
-                <i className={`fa-solid ${item.icon}`} aria-hidden />
-                <span>{item.label}</span>
-              </a>
-            ))}
+            {SIDEBAR_ITEMS.map((item) =>
+              item.to.startsWith("/") ? (
+                <Link
+                  key={item.id}
+                  to={item.to}
+                  className="sidebar-link"
+                  onClick={close}
+                >
+                  <i className={`fa-solid ${item.icon}`} aria-hidden />
+                  <span>{item.label}</span>
+                </Link>
+              ) : (
+                <a
+                  key={item.id}
+                  href={item.to}
+                  className="sidebar-link"
+                  onClick={close}
+                >
+                  <i className={`fa-solid ${item.icon}`} aria-hidden />
+                  <span>{item.label}</span>
+                </a>
+              )
+            )}
           </nav>
         </div>
       </aside>

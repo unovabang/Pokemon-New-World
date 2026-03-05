@@ -11,6 +11,7 @@ import LanguageSelector from "./components/LanguageSelector";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPanel from "./pages/AdminPanel";
 import HomePage from "./pages/HomePage";
+import PokedexPage from "./pages/PokedexPage";
 import LoginAdmin from "./pages/LoginAdmin";
 import Page404 from "./pages/Page404";
 import { useLanguage } from "./contexts/LanguageContext";
@@ -21,6 +22,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/pokedex" element={<PokedexPage />} />
         <Route path="/admin-login" element={<LoginAdmin />} />
         <Route path="/admin" element={
           <ProtectedRoute>
