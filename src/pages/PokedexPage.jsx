@@ -136,17 +136,18 @@ export default function PokedexPage() {
             <div className="pokedex-filters">
               <button
                 type="button"
-                className={`pokedex-filter-pill ${!selectedType ? "active" : ""}`}
+                className={`pokedex-filter-pill pokedex-filter-all ${!selectedType ? "active" : ""}`}
                 onClick={() => setSelectedType("")}
               >
                 Tous
               </button>
+              <span className="pokedex-filter-sep" aria-hidden />
               {allTypes.map((t) => (
                 <button
                   key={t}
                   type="button"
-                  className={`pokedex-filter-pill ${selectedType === t ? "active" : ""}`}
-                  style={selectedType === t ? getTypeStyle(t) : {}}
+                  className={`pokedex-filter-pill pokedex-filter-type ${selectedType === t ? "active" : ""}`}
+                  style={getTypeStyle(t)}
                   onClick={() => setSelectedType(selectedType === t ? "" : t)}
                 >
                   {t}
