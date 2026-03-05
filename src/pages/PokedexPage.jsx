@@ -3,9 +3,7 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import pokedexData from "../config/pokedex.json";
 import content from "../config/index.js";
-// Images importées pour que Vite les inclue au build (URLs garanties)
 import pokedexBgImg from "../assets/pokedex-background.jpg";
-import pokedexBannerImg from "../assets/pokedex-banner.jpg";
 
 const TYPE_COLORS = {
   plante: { bg: "rgba(126,200,80,.35)", border: "rgba(126,200,80,.6)", text: "#a6e88a" },
@@ -80,9 +78,7 @@ export default function PokedexPage() {
     });
   }, [entries, search, selectedTypes]);
 
-  // URLs des images : importées depuis src/assets pour que le build les inclue (plus fiable que public/)
   const pokedexBgSrc = pokedexBgImg;
-  const pokedexBannerSrc = pokedexBannerImg;
 
   return (
     <main className="page page-with-sidebar pokedex-page">
@@ -94,9 +90,6 @@ export default function PokedexPage() {
 
       <div className="pokedex-wrap">
         <header className="pokedex-hero">
-          <div className="pokedex-hero-banner-bg" aria-hidden>
-            <img src={pokedexBannerSrc} alt="" />
-          </div>
           <div className="pokedex-hero-bg" aria-hidden />
           <div className="container pokedex-hero-content">
             <Link to="/" className="pokedex-back">
@@ -106,7 +99,7 @@ export default function PokedexPage() {
               <div className="pokedex-hero-icon">
                 <i className="fa-solid fa-book-open" />
               </div>
-              <div>
+              <div className="pokedex-hero-text">
                 <h1 className="pokedex-title">Pokédex</h1>
                 <p className="pokedex-subtitle">
                   <i className="fa-solid fa-wand-magic-sparkles pokedex-subtitle-icon" aria-hidden />

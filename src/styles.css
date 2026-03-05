@@ -203,33 +203,32 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .pokedex-page .pokedex-wrap{min-height:100vh; padding-bottom:4rem}
 .pokedex-hero{
   position:relative;
-  padding:2.5rem 0 2.5rem;
+  padding:2.5rem 0 2.25rem;
   overflow:hidden;
-  min-height:220px;
 }
-.pokedex-hero-banner-bg{
+.pokedex-hero-bg{
   position:absolute;
   inset:0;
   z-index:0;
-  pointer-events:none;
-}
-.pokedex-hero-banner-bg img{
-  width:100%;
-  height:100%;
-  display:block;
-  object-fit:cover;
-  object-position:center;
-  opacity:0.42;
-}
-.pokedex-hero-bg{
-  position:absolute; inset:0;
-  z-index:1;
-  background:linear-gradient(160deg, rgba(5,9,20,.5) 0%, rgba(8,14,28,.35) 50%, rgba(5,9,20,.6) 100%);
+  background:linear-gradient(165deg, rgba(46,89,198,.12) 0%, rgba(126,205,242,.06) 35%, rgba(167,139,250,.1) 100%);
   pointer-events:none;
 }
 .pokedex-hero-content{
   position:relative;
-  z-index:2;
+  z-index:1;
+}
+.pokedex-hero-inner{
+  display:flex;
+  align-items:center;
+  gap:1.5rem;
+  padding:1.5rem 1.75rem;
+  background:linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border:1px solid rgba(126,205,242,.18);
+  border-radius:24px;
+  box-shadow:0 8px 32px rgba(0,0,0,.2), 0 0 0 1px rgba(255,255,255,.03) inset;
+}
+.pokedex-hero-text{
+  flex:1;
 }
 .pokedex-back{
   display:inline-flex; align-items:center; gap:.5rem;
@@ -238,9 +237,6 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   transition:color .2s;
 }
 .pokedex-back:hover{color:var(--primary-2)}
-.pokedex-hero-inner{
-  display:flex; align-items:center; gap:1.5rem;
-}
 .pokedex-hero-icon{
   width:72px; height:72px;
   display:flex; align-items:center; justify-content:center;
