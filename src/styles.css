@@ -530,16 +530,17 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 .pokedex-table{
   width:100%;
+  min-width:50rem;
   table-layout:fixed;
   border-collapse:collapse;
   font-size:.95rem;
 }
-.pokedex-col-num{ width:4.5rem }
-.pokedex-col-name{ width:11rem }
-.pokedex-col-sprite{ width:6rem }
-.pokedex-col-types{ width:10rem }
-.pokedex-col-rarity{ width:10rem }
-.pokedex-col-obtention{ min-width:12rem }
+.pokedex-th-num,.pokedex-table-num{ width:4rem; min-width:4rem; max-width:4rem; box-sizing:border-box }
+.pokedex-th-name,.pokedex-table-name{ width:10rem; min-width:10rem; box-sizing:border-box }
+.pokedex-th-sprite,.pokedex-table-sprite{ width:5.5rem; min-width:5.5rem; max-width:5.5rem; box-sizing:border-box }
+.pokedex-th-types,.pokedex-table-types{ width:9rem; min-width:9rem; box-sizing:border-box }
+.pokedex-th-rarity,.pokedex-table-rarity{ width:10rem; min-width:10rem; box-sizing:border-box }
+.pokedex-th-obtention,.pokedex-table-obtention{ width:auto; min-width:12rem; box-sizing:border-box }
 .pokedex-table th{
   text-align:left;
   padding:1rem 1.25rem;
@@ -552,9 +553,16 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   border-bottom:1px solid rgba(126,205,242,.2);
 }
 .pokedex-table td{
-  padding:.85rem 1.25rem;
+  padding:.85rem 1rem;
   border-bottom:1px solid rgba(255,255,255,.06);
   vertical-align:middle;
+  overflow:hidden;
+}
+.pokedex-table td > span,
+.pokedex-table-sprite-inner,
+.pokedex-table-types-inner{
+  display:block;
+  overflow:hidden;
 }
 .pokedex-table-row{
   cursor:pointer;
@@ -573,14 +581,14 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   color:var(--primary-2);
 }
 .pokedex-table-sprite{
-  width:80px;
-  height:80px;
-  min-width:80px;
-  display:flex; align-items:center; justify-content:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
 }
 .pokedex-table-sprite img{
-  width:72px;
-  height:72px;
+  width:56px;
+  height:56px;
   object-fit:contain;
   image-rendering:pixelated;
   image-rendering:crisp-edges;

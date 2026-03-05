@@ -212,22 +212,14 @@ export default function PokedexPage() {
           {viewMode === "table" && (
             <div className="pokedex-table-wrap">
               <table className="pokedex-table">
-                <colgroup>
-                  <col className="pokedex-col-num" />
-                  <col className="pokedex-col-name" />
-                  <col className="pokedex-col-sprite" />
-                  <col className="pokedex-col-types" />
-                  <col className="pokedex-col-rarity" />
-                  <col className="pokedex-col-obtention" />
-                </colgroup>
                 <thead>
                   <tr>
-                    <th scope="col">N°</th>
-                    <th scope="col">Pokémon</th>
-                    <th scope="col">Image</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Rareté</th>
-                    <th scope="col">Obtention</th>
+                    <th scope="col" className="pokedex-th-num">N°</th>
+                    <th scope="col" className="pokedex-th-name">Pokémon</th>
+                    <th scope="col" className="pokedex-th-sprite">Image</th>
+                    <th scope="col" className="pokedex-th-types">Type</th>
+                    <th scope="col" className="pokedex-th-rarity">Rareté</th>
+                    <th scope="col" className="pokedex-th-obtention">Obtention</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -237,37 +229,41 @@ export default function PokedexPage() {
                       onClick={() => setSelectedPokemon(pokemon)}
                       className="pokedex-table-row"
                     >
-                      <td className="pokedex-table-num">#{pokemon.num}</td>
-                      <td className="pokedex-table-name">{pokemon.name}</td>
+                      <td className="pokedex-table-num"><span>#{pokemon.num}</span></td>
+                      <td className="pokedex-table-name"><span>{pokemon.name}</span></td>
                       <td className="pokedex-table-sprite">
-                        {pokemon.imageUrl ? (
-                          <img
-                            src={pokemon.imageUrl}
-                            alt=""
-                            loading="lazy"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                            }}
-                          />
-                        ) : (
-                          <i className="fa-solid fa-paw" />
-                        )}
+                        <span className="pokedex-table-sprite-inner">
+                          {pokemon.imageUrl ? (
+                            <img
+                              src={pokemon.imageUrl}
+                              alt=""
+                              loading="lazy"
+                              onError={(e) => {
+                                e.target.style.display = "none";
+                              }}
+                            />
+                          ) : (
+                            <i className="fa-solid fa-paw" />
+                          )}
+                        </span>
                       </td>
                       <td className="pokedex-table-types">
-                        {pokemon.types?.length
-                          ? pokemon.types.map((t) => (
-                              <span
-                                key={t}
-                                className="pokedex-type-pill"
-                                style={getTypeStyle(t)}
-                              >
-                                {t}
-                              </span>
-                            ))
-                          : "—"}
+                        <span className="pokedex-table-types-inner">
+                          {pokemon.types?.length
+                            ? pokemon.types.map((t) => (
+                                <span
+                                  key={t}
+                                  className="pokedex-type-pill"
+                                  style={getTypeStyle(t)}
+                                >
+                                  {t}
+                                </span>
+                              ))
+                            : "—"}
+                        </span>
                       </td>
-                      <td className="pokedex-table-rarity">{pokemon.rarity ?? "—"}</td>
-                      <td className="pokedex-table-obtention">{pokemon.obtention ?? "—"}</td>
+                      <td className="pokedex-table-rarity"><span>{pokemon.rarity ?? "—"}</span></td>
+                      <td className="pokedex-table-obtention"><span>{pokemon.obtention ?? "—"}</span></td>
                     </tr>
                   ))}
                 </tbody>
