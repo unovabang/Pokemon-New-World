@@ -45,15 +45,15 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   height:100%;
   object-fit:cover;
   object-position:center;
-  filter:blur(10px) saturate(120%) brightness(0.75);
+  filter:blur(10px) saturate(120%) brightness(0.65);
   transform:scale(1.03);
 }
 .pokedex-page-overlay{
   position:fixed;
   inset:0;
   z-index:-1;
-  background:linear-gradient(170deg, rgba(5,9,20,.45) 0%, rgba(8,14,28,.5) 50%, rgba(5,9,20,.55) 100%);
-  background-color:rgba(8,14,28,.28);
+  background:linear-gradient(170deg, rgba(5,9,20,.5) 0%, rgba(8,14,28,.55) 50%, rgba(5,9,20,.6) 100%);
+  background-color:rgba(8,14,28,.36);
   pointer-events:none;
 }
 
