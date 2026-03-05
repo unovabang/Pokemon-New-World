@@ -1,15 +1,15 @@
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { token, loading } = useAuth();
 
-  if (isLoading) {
+  if (loading) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         height: '100vh',
         background: 'var(--bg-dark)',
         color: 'white'
@@ -22,12 +22,10 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // Si pas authentifié, rediriger vers la page de connexion admin
-  if (!isAuthenticated) {
+  if (!token) {
     return <Navigate to="/admin-login" replace />;
   }
 
-  // Si authentifié, afficher le contenu protégé
   return children;
 };
 

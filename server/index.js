@@ -4,16 +4,21 @@ import cors from 'cors';
 import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { initDb } from './db.js';
+import authRoutes from './auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+
+// Auth & logs (login, /me, /logs)
+app.use('/api/auth', authRoutes);
 
 // Chemins vers les dossiers
 const NEWS_IMAGES_DIR = path.join(__dirname, '../public/news-images');
@@ -589,14 +594,15 @@ app.post('/api/downloads', (req, res) => {
 });
 
 // Démarrage du serveur
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 Serveur API démarré sur le port ${PORT}`);
   console.log(`📂 Dossier des images: ${NEWS_IMAGES_DIR}`);
   console.log(`⚙️  Dossier de config: ${CONFIG_DIR}`);
   
-  // Créer les dossiers s'ils n'existent pas
   fs.ensureDirSync(NEWS_IMAGES_DIR);
   fs.ensureDirSync(CONFIG_DIR);
+
+  await initDb();
 });
 
 export default app;

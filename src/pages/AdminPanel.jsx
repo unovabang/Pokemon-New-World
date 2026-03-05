@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import BannerManager from "../components/BannerManager";
 import DownloadsEditor from "../components/DownloadsEditor";
 import PatchNotesEditor from "../components/PatchNotesEditor";
@@ -17,9 +18,14 @@ import patreonConfig from "../config/patreon.json";
 import footerConfig from "../config/footer.json";
 import externalConfig from "../config/external.json";
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 const AdminPanel = () => {
-  const { user, logout } = useAuth0();
+  const { admin, logout, token } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('news');
+  const [logs, setLogs] = useState([]);
+  const [logsLoading, setLogsLoading] = useState(false);
   const [configs, setConfigs] = useState({
     site: siteConfig,
     news: newsConfig,
@@ -59,8 +65,19 @@ const AdminPanel = () => {
     { id: 'site', name: 'Site', icon: 'fa-cog' },
     { id: 'patreon', name: 'Patreon', icon: 'fa-heart' },
     { id: 'footer', name: 'Pied de page', icon: 'fa-window-minimize' },
-    { id: 'external', name: 'Liens externes', icon: 'fa-external-link' }
+    { id: 'external', name: 'Liens externes', icon: 'fa-external-link' },
+    { id: 'logs', name: 'Logs de connexion', icon: 'fa-list-alt' }
   ];
+
+  useEffect(() => {
+    if (activeTab === 'logs' && token) {
+      setLogsLoading(true);
+      fetch(`${API_BASE}/api/auth/logs`, { headers: { Authorization: `Bearer ${token}` } })
+        .then((r) => r.json())
+        .then((d) => { if (d.success) setLogs(d.logs); })
+        .finally(() => setLogsLoading(false));
+    }
+  }, [activeTab, token]);
 
   if (editingConfig) {
     return (
@@ -237,7 +254,7 @@ const AdminPanel = () => {
                   fontSize: '0.9rem'
                 }}>
                   <i className="fa-solid fa-user" style={{color: '#667eea'}}></i>
-                  <span style={{color: '#667eea', fontWeight: '600'}}>{user?.name}</span>
+                  <span style={{color: '#667eea', fontWeight: '600'}}>{admin?.name || admin?.email}</span>
                 </div>
               </div>
             </div>
@@ -349,7 +366,7 @@ const AdminPanel = () => {
                 minWidth: '44px',
                 height: '44px'
               }}
-              onClick={() => logout({ logoutParams: { returnTo: `${window.location.origin}/` } })}
+              onClick={() => { logout(); navigate('/'); }}
               onMouseOver={(e) => {
                 e.target.style.background = 'linear-gradient(135deg, rgba(239,68,68,0.25) 0%, rgba(220,38,38,0.25) 100%)';
                 e.target.style.transform = 'translateY(-2px)';
@@ -507,9 +524,55 @@ const AdminPanel = () => {
             />
           )}
 
+          {activeTab === 'logs' && (
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+              borderRadius: '15px',
+              padding: '1.5rem',
+              border: '1px solid rgba(255,255,255,0.1)',
+              overflow: 'auto'
+            }}>
+              <h2 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <i className="fa-solid fa-list-alt"></i> Logs de connexion
+              </h2>
+              {logsLoading ? (
+                <p><i className="fa-solid fa-spinner fa-spin"></i> Chargement...</p>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.2)' }}>
+                        <th style={{ textAlign: 'left', padding: '0.75rem' }}>Date</th>
+                        <th style={{ textAlign: 'left', padding: '0.75rem' }}>Email</th>
+                        <th style={{ textAlign: 'left', padding: '0.75rem' }}>IP</th>
+                        <th style={{ textAlign: 'left', padding: '0.75rem' }}>Succès</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {logs.length === 0 ? (
+                        <tr><td colSpan="4" style={{ padding: '1rem', opacity: 0.7 }}>Aucun log pour le moment.</td></tr>
+                      ) : (
+                        logs.map((log) => (
+                          <tr key={log.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                            <td style={{ padding: '0.75rem' }}>{new Date(log.created_at).toLocaleString('fr-FR')}</td>
+                            <td style={{ padding: '0.75rem' }}>{log.email}</td>
+                            <td style={{ padding: '0.75rem' }}>{log.ip || '—'}</td>
+                            <td style={{ padding: '0.75rem' }}>
+                              {log.success ? <span style={{ color: '#4ade80' }}>✓ Oui</span> : <span style={{ color: '#f87171' }}>✗ Non</span>}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+
           {activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
            activeTab !== 'site' && activeTab !== 'patreon' && 
-           activeTab !== 'footer' && activeTab !== 'external' && (
+           activeTab !== 'footer' && activeTab !== 'external' && activeTab !== 'logs' && (
             <div style={{
               background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
               borderRadius: window.innerWidth <= 768 ? '15px' : '20px',

@@ -5,12 +5,10 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: "0.0.0.0", // Bind to all interfaces
+    host: "0.0.0.0",
     port: 5000,
-    strictPort: true, // Force use of port 5000
-    allowedHosts: true, // Allow all hosts for Replit proxy
-  },
-  define: {
-    'import.meta.env.VITE_AUTH0_DOMAIN': JSON.stringify(process.env.AUTH0_DOMAIN)
+    strictPort: true,
+    allowedHosts: true,
+    proxy: { "/api": "http://localhost:3001" }
   }
 });
