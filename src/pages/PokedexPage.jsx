@@ -45,24 +45,26 @@ export default function PokedexPage() {
   const [viewMode, setViewMode] = useState("grid"); // 'grid' | 'table'
   const [selectedPokemon, setSelectedPokemon] = useState(null);
 
-  const entries = pokedexData.entries || [];
+  const entries = Array.isArray(pokedexData?.entries) ? pokedexData.entries : [];
 
   const allTypes = useMemo(() => {
     const set = new Set();
-    entries.forEach((e) => e.types.forEach((t) => set.add(t)));
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
+    entries.forEach((e) => {
+      if (Array.isArray(e.types)) e.types.forEach((t) => set.add(String(t).trim()));
+    });
+    return Array.from(set).filter(Boolean).sort((a, b) => a.localeCompare(b));
   }, [entries]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
+    const typeFilter = selectedType ? selectedType.toLowerCase().trim() : "";
     return entries.filter((e) => {
-      const matchSearch = !q || e.name.toLowerCase().includes(q) || e.num.includes(q);
+      const matchSearch = !q || (e.name && e.name.toLowerCase().includes(q)) || (e.num && String(e.num).includes(q));
+      if (!matchSearch) return false;
+      if (!typeFilter) return true;
       const types = Array.isArray(e.types) ? e.types : [];
-      const typeNormalized = types.map((t) => String(t).toLowerCase().trim());
-      const matchType =
-        !selectedType ||
-        typeNormalized.includes(selectedType.toLowerCase().trim());
-      return matchSearch && matchType;
+      const hasType = types.some((t) => String(t).toLowerCase().trim() === typeFilter);
+      return hasType;
     });
   }, [entries, search, selectedType]);
 
@@ -136,32 +138,27 @@ export default function PokedexPage() {
             </div>
           </div>
           <div className="pokedex-filter-panel">
-            <label htmlFor="pokedex-type-filter" className="pokedex-filter-label">
-              Filtrer par type
-            </label>
-            <div className="pokedex-filter-dropdown-wrap">
-              <select
-                id="pokedex-type-filter"
-                className="pokedex-filter-dropdown"
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                aria-label="Choisir un type de Pokémon"
+            <span className="pokedex-filter-label">Filtrer par type</span>
+            <div className="pokedex-filters">
+              <button
+                type="button"
+                className={`pokedex-filter-pill pokedex-filter-all ${!selectedType ? "active" : ""}`}
+                onClick={() => setSelectedType("")}
               >
-                <option value="">Tous les types</option>
-                {allTypes.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
-              {selectedType ? (
-                <span
-                  className="pokedex-filter-type-badge"
-                  style={getTypeStyle(selectedType)}
+                Tous
+              </button>
+              <span className="pokedex-filter-sep" aria-hidden />
+              {allTypes.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  className={`pokedex-filter-pill pokedex-filter-type ${selectedType === t ? "active" : ""}`}
+                  style={getTypeStyle(t)}
+                  onClick={() => setSelectedType(selectedType === t ? "" : t)}
                 >
-                  {selectedType}
-                </span>
-              ) : null}
+                  {t}
+                </button>
+              ))}
             </div>
           </div>
         </section>
@@ -172,9 +169,9 @@ export default function PokedexPage() {
           </p>
           {viewMode === "grid" && (
             <div className="pokedex-grid">
-              {filtered.map((pokemon) => (
+              {filtered.map((pokemon, i) => (
                 <button
-                  key={`${pokemon.num}-${pokemon.name}`}
+                  key={`grid-${i}-${pokemon.num}-${pokemon.name}`}
                   type="button"
                   className="pokedex-card"
                   onClick={() => setSelectedPokemon(pokemon)}
@@ -215,20 +212,28 @@ export default function PokedexPage() {
           {viewMode === "table" && (
             <div className="pokedex-table-wrap">
               <table className="pokedex-table">
+                <colgroup>
+                  <col className="pokedex-col-num" />
+                  <col className="pokedex-col-name" />
+                  <col className="pokedex-col-sprite" />
+                  <col className="pokedex-col-types" />
+                  <col className="pokedex-col-rarity" />
+                  <col className="pokedex-col-obtention" />
+                </colgroup>
                 <thead>
                   <tr>
-                    <th>N°</th>
-                    <th>Pokémon</th>
-                    <th>Image</th>
-                    <th>Type</th>
-                    <th>Rareté</th>
-                    <th>Obtention</th>
+                    <th scope="col">N°</th>
+                    <th scope="col">Pokémon</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Rareté</th>
+                    <th scope="col">Obtention</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((pokemon) => (
+                  {filtered.map((pokemon, i) => (
                     <tr
-                      key={`${pokemon.num}-${pokemon.name}`}
+                      key={`table-${i}-${pokemon.num}-${pokemon.name}`}
                       onClick={() => setSelectedPokemon(pokemon)}
                       className="pokedex-table-row"
                     >
@@ -261,8 +266,8 @@ export default function PokedexPage() {
                             ))
                           : "—"}
                       </td>
-                      <td className="pokedex-table-rarity">{pokemon.rarity || "—"}</td>
-                      <td className="pokedex-table-obtention">{pokemon.obtention || "—"}</td>
+                      <td className="pokedex-table-rarity">{pokemon.rarity ?? "—"}</td>
+                      <td className="pokedex-table-obtention">{pokemon.obtention ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
