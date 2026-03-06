@@ -25,11 +25,14 @@ function splitByHighlights(text, highlight = []) {
   }));
 }
 
+const EXAMPLE_MAP = "/guide-map.png";
+
 function StepCard({ step }) {
   const parts = splitByHighlights(step.text, step.highlight);
+  const imageSrc = step.imageUrl?.trim() || EXAMPLE_MAP;
 
   return (
-    <article className="guide-step card" id={`guide-step-${step.num}`}>
+    <article className="guide-step" id={`guide-step-${step.num}`}>
       <div className="guide-step-header">
         <span className="guide-step-badge">Étape {step.num}</span>
       </div>
@@ -47,16 +50,14 @@ function StepCard({ step }) {
               )
             : step.text}
         </p>
-        {step.imageUrl && step.imageUrl.trim() && (
-          <div className="guide-step-image-wrap">
-            <img
-              src={step.imageUrl}
-              alt={`Illustration étape ${step.num}`}
-              className="guide-step-image"
-              loading="lazy"
-            />
-          </div>
-        )}
+        <div className="guide-step-image-wrap">
+          <img
+            src={imageSrc}
+            alt={`Carte — Étape ${step.num}`}
+            className="guide-step-image"
+            loading="lazy"
+          />
+        </div>
       </div>
     </article>
   );
