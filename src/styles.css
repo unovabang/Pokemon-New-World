@@ -646,6 +646,22 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   border-color:rgba(126,205,242,.35);
   box-shadow:0 24px 72px rgba(0,0,0,.45), 0 0 40px rgba(126,205,242,.08), 0 0 0 1px rgba(255,255,255,.05) inset;
 }
+.bst-section--grid{
+  border:none;
+  background:transparent;
+  box-shadow:none;
+  overflow:visible;
+}
+.bst-section--grid:hover{
+  border:none;
+  box-shadow:none;
+}
+.bst-section--grid .bst-section-header{
+  border-bottom:none;
+  background:transparent;
+  padding-left:0;
+  padding-right:0;
+}
 .bst-section-header{
   display:flex;
   align-items:center;
@@ -773,15 +789,25 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   min-width:2.5em;
 }
 .bst-td-ability{
+  max-width:320px;
   font-size:.88rem;
-  color:var(--muted);
+  color:rgba(255,255,255,.88);
   font-weight:500;
+  line-height:1.55;
+  padding:.85rem 1.1rem;
+  white-space:normal;
+  word-wrap:break-word;
+  vertical-align:top;
 }
 .bst-th-desc, .bst-td-desc{
-  max-width:300px;
+  max-width:280px;
   font-size:.82rem;
-  color:rgba(255,255,255,.75);
-  line-height:1.5;
+  color:rgba(255,255,255,.78);
+  line-height:1.55;
+  padding:.85rem 1.1rem;
+  white-space:normal;
+  word-wrap:break-word;
+  vertical-align:top;
 }
 @media (max-width:900px){
   .bst-table th.bst-th-stat, .bst-table td.bst-td-stat{display:none}
@@ -790,7 +816,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   .bst-filter-pill{padding:.6rem .85rem}
 }
 
-/* Vue grille BST */
+/* Vue grille BST (sans rebords de tableau) */
 .bst-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
@@ -802,7 +828,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   align-items:center;
   padding:1.35rem 1.1rem;
   background:linear-gradient(165deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
-  border:1px solid rgba(126,205,242,.15);
+  border:none;
   border-radius:22px;
   cursor:pointer;
   transition:transform .25s ease, border-color .25s, box-shadow .25s;

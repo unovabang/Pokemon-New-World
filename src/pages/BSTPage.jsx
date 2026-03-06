@@ -209,7 +209,7 @@ function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode })
 
   if (viewMode === "grid") {
     return (
-      <section className="bst-section" data-accent={id}>
+      <section className="bst-section bst-section--grid" data-accent={id}>
         <div className="bst-section-header">
           <i className={`fa-solid ${icon} bst-section-icon`} aria-hidden />
           <h2 className="bst-section-title">{title}</h2>
