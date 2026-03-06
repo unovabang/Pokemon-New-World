@@ -433,6 +433,7 @@ export default function BSTPage() {
           ))}
         </div>
           </div>
+        </header>
       </main>
 
       {selectedPokemon && (
