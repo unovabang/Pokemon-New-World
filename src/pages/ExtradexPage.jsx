@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import extradexData from "../config/extradex.json";
@@ -51,82 +51,339 @@ function getTypeStyle(type) {
   };
 }
 
-export default function ExtradexPage() {
-  const entries = Array.isArray(extradexData.entries) ? extradexData.entries : [];
-  const [selected, setSelected] = useState(entries[0] || null);
+function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [open]);
+
+  const displayLabel = value ? getTypeLabel(value) : "— Aucun —";
+  const displayStyle = value ? getTypeStyle(value) : { background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.2)", color: "var(--text)" };
 
   return (
-    <main className="page page-with-sidebar extradex-page">
-      <div className="extradex-page-bg" aria-hidden>
+    <label className="pokedex-filter-select-label" ref={ref}>
+      {label}
+      <div className="pokedex-type-dropdown">
+        <button
+          type="button"
+          className="pokedex-type-dropdown-trigger"
+          onClick={() => setOpen((o) => !o)}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-label={ariaLabel}
+          style={displayStyle}
+        >
+          <span className="pokedex-type-dropdown-value">{displayLabel}</span>
+          <i className={`fa-solid fa-chevron-down pokedex-type-dropdown-chevron ${open ? "open" : ""}`} aria-hidden />
+        </button>
+        {open && (
+          <ul className="pokedex-type-dropdown-list" role="listbox" aria-label={ariaLabel}>
+            <li
+              role="option"
+              aria-selected={!value}
+              className="pokedex-type-dropdown-option pokedex-type-dropdown-option-none"
+              onClick={() => { onChange(null); setOpen(false); }}
+            >
+              — Aucun —
+            </li>
+            {options.map((t) => (
+              <li
+                key={t}
+                role="option"
+                aria-selected={value === t}
+                className="pokedex-type-dropdown-option"
+                style={getTypeStyle(t)}
+                onClick={() => { onChange(t); setOpen(false); }}
+              >
+                {getTypeLabel(t)}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </label>
+  );
+}
+
+export default function ExtradexPage() {
+  const entries = Array.isArray(extradexData?.entries) ? extradexData.entries : [];
+  const [search, setSearch] = useState("");
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [viewMode, setViewMode] = useState("grid");
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
+
+  const allTypes = useMemo(() => {
+    const set = new Set();
+    entries.forEach((e) => {
+      if (Array.isArray(e.types)) e.types.forEach((t) => set.add(String(t).trim()));
+    });
+    return Array.from(set).filter(Boolean).sort((a, b) => a.localeCompare(b));
+  }, [entries]);
+
+  const setType1 = (key) => {
+    setSelectedTypes((prev) => (key ? [key, prev[1]].filter(Boolean) : (prev[1] ? [prev[1]] : [])));
+  };
+  const setType2 = (key) => {
+    setSelectedTypes((prev) => (key ? [prev[0], key].filter(Boolean) : (prev[0] ? [prev[0]] : [])));
+  };
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const typeFilters = selectedTypes.map((x) => x.toLowerCase().trim()).filter(Boolean);
+    return entries.filter((e) => {
+      const matchSearch = !q || (e.name && e.name.toLowerCase().includes(q)) || (e.num && String(e.num).includes(q));
+      if (!matchSearch) return false;
+      if (typeFilters.length === 0) return true;
+      const types = (Array.isArray(e.types) ? e.types : []).map((x) => String(x).toLowerCase().trim());
+      return typeFilters.every((tf) => types.includes(tf));
+    });
+  }, [entries, search, selectedTypes]);
+
+  return (
+    <main className="page page-with-sidebar pokedex-page extradex-page">
+      <div className="pokedex-page-bg" aria-hidden>
         <img src={extradexBgImg} alt="" />
       </div>
-      <div className="extradex-page-overlay" aria-hidden />
+      <div className="pokedex-page-overlay" aria-hidden />
       <Sidebar />
 
-      <div className="extradex-wrap">
-        <header className="extradex-hero">
-          <div className="container extradex-hero-content">
-            <Link to="/pokedex" className="extradex-back">
-              <i className="fa-solid fa-arrow-left" /> Retour au Pokédex
-            </Link>
-            <div className="extradex-hero-inner">
-              <h1 className="extradex-title">EXTRADEX</h1>
-              <p className="extradex-subtitle">
-                VUS : {entries.length} — PRIS : {entries.length}
-              </p>
+      <div className="pokedex-wrap">
+        <header className="pokedex-hero">
+          <div className="container pokedex-hero-content">
+            <div className="pokedex-hero-left">
+              <Link to="/pokedex" className="pokedex-back">
+                <i className="fa-solid fa-arrow-left" /> Retour
+              </Link>
+              <div className="pokedex-hero-inner">
+                <div className="pokedex-hero-icon">
+                  <i className="fa-solid fa-book-bookmark" aria-hidden />
+                </div>
+                <div className="pokedex-hero-text">
+                  <h1 className="pokedex-title">Extradex</h1>
+                  <p className="pokedex-subtitle">
+                    <i className="fa-solid fa-wand-magic-sparkles pokedex-subtitle-icon" aria-hidden />
+                    Pokémon New World — {entries.length} créatures
+                  </p>
+                </div>
+              </div>
             </div>
+            <Link to="/pokedex" className="pokedex-pokedex-link">
+              Pokédex
+            </Link>
           </div>
         </header>
 
-        <section className="extradex-main container">
-          <div className="extradex-layout">
-            <div className="extradex-detail">
-              {selected ? (
-                <>
-                  <div className="extradex-detail-sprite">
-                    <img src={selected.imageUrl} alt={selected.name} />
-                  </div>
-                  <div className="extradex-info">
-                    <h2 className="extradex-info-title">&lt; INFO &gt;</h2>
-                    <button type="button" className="extradex-info-btn" onClick={() => {}}>
-                      {selected.name.toUpperCase()}
-                    </button>
-                    <p className="extradex-obtention">{selected.obtention}</p>
-                    <div className="extradex-types">
-                      {(Array.isArray(selected.types) ? selected.types : [selected.types]).filter(Boolean).map((t) => (
-                        <span key={t} className="extradex-type-pill" style={getTypeStyle(t)}>
-                          {getTypeLabel(t)}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <p className="extradex-empty">Sélectionnez une créature.</p>
-              )}
+        <section className="pokedex-toolbar container">
+          <div className="pokedex-toolbar-row">
+            <div className="pokedex-search-wrap">
+              <i className="fa-solid fa-magnifying-glass pokedex-search-icon" />
+              <input
+                type="search"
+                className="pokedex-search"
+                placeholder="Rechercher un Pokémon ou un nº..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                aria-label="Recherche"
+              />
             </div>
-
-            <div className="extradex-list-wrap">
-              <ul className="extradex-list" role="list">
-                {entries.map((e) => (
-                  <li key={`${e.num}-${e.name}`}>
-                    <button
-                      type="button"
-                      className={`extradex-list-item ${selected?.num === e.num && selected?.name === e.name ? "active" : ""}`}
-                      onClick={() => setSelected(e)}
-                    >
-                      <img src={e.imageUrl} alt="" className="extradex-list-sprite" />
-                      <span className="extradex-list-num">#{String(e.num).padStart(3, "0")}</span>
-                      <span className="extradex-list-name">{e.name}</span>
-                      <i className="fa-solid fa-pokeball extradex-list-ball" aria-hidden />
-                    </button>
-                  </li>
-                ))}
-              </ul>
+            <div className="pokedex-view-toggle" role="group" aria-label="Mode d'affichage">
+              <button
+                type="button"
+                className={`pokedex-view-btn ${viewMode === "grid" ? "active" : ""}`}
+                onClick={() => setViewMode("grid")}
+                title="Vue grille"
+                aria-pressed={viewMode === "grid"}
+              >
+                <i className="fa-solid fa-grip" /> Grille
+              </button>
+              <button
+                type="button"
+                className={`pokedex-view-btn ${viewMode === "table" ? "active" : ""}`}
+                onClick={() => setViewMode("table")}
+                title="Vue tableau"
+                aria-pressed={viewMode === "table"}
+              >
+                <i className="fa-solid fa-table-list" /> Tableau
+              </button>
             </div>
           </div>
+          <div className="pokedex-filter-panel pokedex-filter-panel-dropdown">
+            <span className="pokedex-filter-label">
+              <i className="fa-solid fa-filter" aria-hidden /> Filtrer par type (1 ou 2 types)
+            </span>
+            <div className="pokedex-filter-dropdown-wrap">
+              <TypeDropdown
+                label="Type 1"
+                value={selectedTypes[0] ?? null}
+                options={allTypes}
+                onChange={(v) => setType1(v)}
+                ariaLabel="Premier type"
+              />
+              <span className="pokedex-filter-plus" aria-hidden>+</span>
+              <TypeDropdown
+                label="Type 2"
+                value={selectedTypes[1] ?? null}
+                options={allTypes}
+                onChange={(v) => setType2(v)}
+                ariaLabel="Deuxième type"
+              />
+            </div>
+            {selectedTypes.length > 0 && (
+              <p className="pokedex-filter-hint">
+                <i className="fa-solid fa-circle-info" aria-hidden />
+                Sélection : {selectedTypes.map(getTypeLabel).join(" + ")} — affiche les Pokémon ayant {selectedTypes.length === 1 ? "ce type" : "ces 2 types"}.
+              </p>
+            )}
+          </div>
+        </section>
+
+        <section className="pokedex-content-wrap container">
+          <p className="pokedex-count">
+            <i className="fa-solid fa-list-check" aria-hidden /> {filtered.length} résultat{filtered.length !== 1 ? "s" : ""}
+          </p>
+          {viewMode === "grid" && (
+            <div className="pokedex-grid">
+              {filtered.map((pokemon, i) => (
+                <button
+                  key={`grid-${i}-${pokemon.num}-${pokemon.name}`}
+                  type="button"
+                  className="pokedex-card"
+                  onClick={() => setSelectedPokemon(pokemon)}
+                >
+                  <div className="pokedex-card-sprite">
+                    {pokemon.imageUrl ? (
+                      <img src={pokemon.imageUrl} alt="" loading="lazy" onError={(e) => { e.target.style.display = "none"; }} />
+                    ) : (
+                      <i className="fa-solid fa-paw" />
+                    )}
+                  </div>
+                  <span className="pokedex-card-num">#{pokemon.num}</span>
+                  <span className="pokedex-card-name">{pokemon.name}</span>
+                  <div className="pokedex-card-types">
+                    {pokemon.types?.length
+                      ? pokemon.types.map((t) => (
+                          <span key={t} className="pokedex-type-pill" style={getTypeStyle(t)}>
+                            {getTypeLabel(t)}
+                          </span>
+                        ))
+                      : null}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+          {viewMode === "table" && (
+            <div className="pokedex-table-wrap">
+              <div className="pokedex-table pokedex-table-grid" role="table" aria-label="Liste des Pokémon">
+                <div className="pokedex-table-header" role="row">
+                  <div className="pokedex-table-th pokedex-col-num" role="columnheader"><i className="fa-solid fa-hashtag" aria-hidden /> N°</div>
+                  <div className="pokedex-table-th pokedex-col-name" role="columnheader"><i className="fa-solid fa-dragon" aria-hidden /> Pokémon</div>
+                  <div className="pokedex-table-th pokedex-col-sprite" role="columnheader"><i className="fa-solid fa-image" aria-hidden /> Image</div>
+                  <div className="pokedex-table-th pokedex-col-types" role="columnheader"><i className="fa-solid fa-bolt" aria-hidden /> Type</div>
+                  <div className="pokedex-table-th pokedex-col-rarity" role="columnheader"><i className="fa-solid fa-gem" aria-hidden /> Rareté</div>
+                  <div className="pokedex-table-th pokedex-col-obtention" role="columnheader"><i className="fa-solid fa-map-location-dot" aria-hidden /> Obtention</div>
+                </div>
+                {filtered.map((pokemon, i) => (
+                  <div
+                    key={`table-${i}-${pokemon.num}-${pokemon.name}`}
+                    className="pokedex-table-row"
+                    role="row"
+                    onClick={() => setSelectedPokemon(pokemon)}
+                  >
+                    <div className="pokedex-table-cell pokedex-table-num" role="cell">#{pokemon.num}</div>
+                    <div className="pokedex-table-cell pokedex-table-name" role="cell">{pokemon.name}</div>
+                    <div className="pokedex-table-cell pokedex-table-sprite" role="cell">
+                      {pokemon.imageUrl ? (
+                        <img src={pokemon.imageUrl} alt="" loading="lazy" onError={(e) => { e.target.style.display = "none"; }} />
+                      ) : (
+                        <i className="fa-solid fa-paw" />
+                      )}
+                    </div>
+                    <div className="pokedex-table-cell pokedex-table-types" role="cell">
+                      {pokemon.types?.length
+                        ? pokemon.types.map((t) => (
+                            <span key={t} className="pokedex-type-pill" style={getTypeStyle(t)}>{getTypeLabel(t)}</span>
+                          ))
+                        : "—"}
+                    </div>
+                    <div className="pokedex-table-cell pokedex-table-rarity" role="cell">{pokemon.rarity ?? "—"}</div>
+                    <div className="pokedex-table-cell pokedex-table-obtention" role="cell">{pokemon.obtention ?? "—"}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
       </div>
+
+      {selectedPokemon && (
+        <div
+          className="pokedex-modal-overlay"
+          onClick={() => setSelectedPokemon(null)}
+          onKeyDown={(e) => e.key === "Escape" && setSelectedPokemon(null)}
+          role="button"
+          tabIndex={0}
+          aria-label="Fermer"
+        >
+          <div
+            className="pokedex-modal card"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pokedex-modal-title"
+          >
+            <button
+              type="button"
+              className="pokedex-modal-close"
+              onClick={() => setSelectedPokemon(null)}
+              aria-label="Fermer"
+            >
+              <i className="fa-solid fa-xmark" />
+            </button>
+            <div className="pokedex-modal-content">
+              <div className="pokedex-modal-sprite">
+                {selectedPokemon.imageUrl ? (
+                  <img src={selectedPokemon.imageUrl} alt="" />
+                ) : (
+                  <i className="fa-solid fa-paw" />
+                )}
+              </div>
+              <h2 id="pokedex-modal-title" className="pokedex-modal-name">
+                {selectedPokemon.name}
+              </h2>
+              <p className="pokedex-modal-num"><i className="fa-solid fa-fingerprint" aria-hidden /> #{selectedPokemon.num}</p>
+              <div className="pokedex-modal-types">
+                {selectedPokemon.types?.length
+                  ? selectedPokemon.types.map((t) => (
+                      <span key={t} className="pokedex-type-pill" style={getTypeStyle(t)}>
+                        {getTypeLabel(t)}
+                      </span>
+                    ))
+                  : "—"}
+              </div>
+              {selectedPokemon.rarity && (
+                <div className="pokedex-modal-row">
+                  <span className="pokedex-modal-label"><i className="fa-solid fa-gem" aria-hidden /> Rareté</span>
+                  <span>{selectedPokemon.rarity}</span>
+                </div>
+              )}
+              {selectedPokemon.obtention && (
+                <div className="pokedex-modal-row">
+                  <span className="pokedex-modal-label"><i className="fa-solid fa-map-location-dot" aria-hidden /> Obtention</span>
+                  <span>{selectedPokemon.obtention}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

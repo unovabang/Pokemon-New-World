@@ -477,161 +477,88 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   color:var(--text);
 }
 
-/* ===== PAGE EXTRADEX (thème rouge) ===== */
-.extradex-page{--extradex-red:#c84040; --extradex-red-dim:rgba(180,50,50,.4); --extradex-bg:#1a1515;}
-.extradex-page .extradex-wrap{min-height:100vh; padding-bottom:4rem; position:relative;}
-.extradex-page-bg{
-  position:fixed;
-  inset:0;
-  z-index:-2;
-  overflow:hidden;
+/* ===== PAGE EXTRADEX (même esthétique que Pokédex, thème rouge) ===== */
+.extradex-page{
+  --primary:#a82e2e;
+  --primary-2:#f28a8a;
+  --accent:#e07070;
+  --ring: rgba(220,100,100,.45);
+  --glow-blue: rgba(220,100,100,.2);
+  --glow-purple: rgba(200,80,80,.15);
 }
-.extradex-page-bg img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center;
-  filter:blur(4px) saturate(100%) brightness(0.7);
-  transform:scale(1.02);
+.extradex-page .pokedex-page-overlay{
+  background:linear-gradient(170deg, rgba(20,10,12,.5) 0%, rgba(28,14,16,.55) 50%, rgba(20,10,12,.6) 100%);
+  background-color:rgba(25,12,14,.4);
 }
-.extradex-page-overlay{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  background:linear-gradient(170deg, rgba(20,12,12,.5) 0%, rgba(30,15,15,.45) 50%, rgba(20,10,10,.55) 100%);
-  pointer-events:none;
-}
-.extradex-page .extradex-wrap{position:relative; z-index:1;}
-.extradex-hero{
-  position:relative;
-  padding:2rem 0 1.5rem;
-  border-bottom:2px solid var(--extradex-red-dim);
-}
-.extradex-hero-content{position:relative;}
-.extradex-back{
-  display:inline-flex; align-items:center; gap:.5rem;
-  color:rgba(255,255,255,.7); text-decoration:none; font-weight:600; font-size:.95rem;
-  margin-bottom:1rem;
-  transition:color .2s;
-}
-.extradex-back:hover{color:#f0a0a0;}
-.extradex-hero-inner{}
-.extradex-title{
-  margin:0 0 .35rem 0;
-  font-size:clamp(1.75rem, 4vw, 2.5rem);
-  font-weight:800;
-  color:#fff;
-  letter-spacing:.05em;
-  text-shadow:0 0 20px rgba(200,64,64,.4);
-}
-.extradex-subtitle{
-  margin:0;
-  color:rgba(255,255,255,.65);
-  font-size:1rem;
-}
-.extradex-main{padding:1.5rem 0 3rem;}
-.extradex-layout{
-  display:grid;
-  grid-template-columns:1fr 320px;
-  gap:2rem;
-  align-items:start;
-}
-@media (max-width: 900px){
-  .extradex-layout{grid-template-columns:1fr;}
-}
-.extradex-detail{
-  padding:1.5rem;
-  background:rgba(0,0,0,.35);
-  border:2px solid var(--extradex-red-dim);
-  border-radius:16px;
-  min-height:280px;
-}
-.extradex-detail-sprite{
-  display:flex; align-items:center; justify-content:center;
-  margin-bottom:1.25rem;
-}
-.extradex-detail-sprite img{width:120px; height:120px; object-fit:contain;}
-.extradex-info-title{
-  font-size:.9rem;
-  color:rgba(255,255,255,.8);
-  margin:0 0 .5rem 0;
-  letter-spacing:.1em;
-}
-.extradex-info-btn{
-  display:block;
-  width:100%;
-  padding:.6rem 1rem;
-  background:rgba(40,25,25,.8);
-  border:2px solid var(--extradex-red-dim);
-  border-radius:10px;
-  color:#fff;
-  font-weight:700;
-  font-size:1rem;
-  letter-spacing:.05em;
-  cursor:pointer;
-  margin-bottom:.75rem;
-  transition:background .2s, border-color .2s;
-}
-.extradex-info-btn:hover{
-  background:rgba(60,35,35,.9);
-  border-color:rgba(220,80,80,.6);
-}
-.extradex-obtention{
-  margin:0 0 .75rem 0;
-  color:rgba(255,255,255,.75);
-  font-size:.95rem;
-}
-.extradex-types{display:flex; flex-wrap:wrap; gap:.5rem;}
-.extradex-type-pill{
-  padding:.35rem .75rem;
-  border-radius:999px;
-  font-size:.85rem;
-  font-weight:600;
-}
-.extradex-empty{color:rgba(255,255,255,.5); margin:0;}
-.extradex-list-wrap{
-  background:rgba(0,0,0,.3);
-  border:2px solid var(--extradex-red-dim);
-  border-radius:14px;
-  overflow:hidden;
-  max-height:70vh;
-  overflow-y:auto;
-}
-.extradex-list{
-  list-style:none;
-  margin:0;
-  padding:.5rem;
-}
-.extradex-list-item{
-  display:flex;
+/* Lien "Pokédex" dans son cadre (miroir du lien Extradex sur la page Pokédex) */
+.pokedex-pokedex-link{
+  display:inline-flex;
   align-items:center;
-  gap:.75rem;
-  width:100%;
-  padding:.6rem .75rem;
-  background:rgba(30,20,20,.6);
-  border:2px solid var(--extradex-red-dim);
-  border-radius:10px;
-  color:#fff;
-  font-weight:600;
-  text-align:left;
-  cursor:pointer;
-  margin-bottom:.4rem;
-  transition:background .2s, border-color .2s;
+  justify-content:center;
+  padding:.85rem 1.5rem;
+  background:rgba(46,89,198,.15);
+  border:2px solid rgba(126,205,242,.6);
+  border-radius:14px;
+  color:#7ecdf2;
+  font-weight:700;
+  font-size:1.05rem;
+  text-decoration:none;
+  transition:background .2s, border-color .2s, color .2s;
+  box-shadow:0 4px 16px rgba(46,89,198,.2);
 }
-.extradex-list-item:last-child{margin-bottom:0;}
-.extradex-list-item:hover{
-  background:rgba(50,30,30,.8);
-  border-color:rgba(220,80,80,.5);
+.pokedex-pokedex-link:hover{
+  background:rgba(46,89,198,.25);
+  border-color:rgba(126,205,242,.85);
+  color:#a8dcff;
 }
-.extradex-list-item.active{
-  border-color:rgba(220,80,80,.9);
-  background:rgba(80,40,40,.4);
-  box-shadow:0 0 12px rgba(200,64,64,.2);
+
+/* Surcharges thème rouge pour les éléments en dur (même esthétique que Pokédex) */
+.extradex-page .pokedex-hero-inner{
+  border-color:rgba(220,100,100,.2);
+  box-shadow:0 8px 32px rgba(0,0,0,.2), 0 0 0 1px rgba(255,255,255,.03) inset;
 }
-.extradex-list-sprite{width:40px; height:40px; object-fit:contain; flex-shrink:0;}
-.extradex-list-num{font-size:.85rem; color:rgba(255,255,255,.7); min-width:2.5rem;}
-.extradex-list-name{flex:1;}
-.extradex-list-ball{color:var(--extradex-red); font-size:.9rem;}
+.extradex-page .pokedex-hero-icon{
+  background:linear-gradient(145deg, rgba(220,100,100,.25), rgba(180,70,70,.2));
+  border-color:rgba(220,100,100,.4);
+  box-shadow:0 8px 32px rgba(180,50,50,.25);
+}
+.extradex-page .pokedex-view-toggle{
+  border-color:rgba(220,100,100,.25);
+}
+.extradex-page .pokedex-view-btn.active{
+  background:rgba(220,100,100,.25);
+  border-color:rgba(220,100,100,.35);
+}
+.extradex-page .pokedex-search-wrap .pokedex-search,
+.extradex-page .pokedex-filter-panel{
+  border-color:rgba(220,100,100,.22);
+}
+.extradex-page .pokedex-type-dropdown-trigger,
+.extradex-page .pokedex-type-dropdown-list{
+  border-color:rgba(220,100,100,.28);
+}
+.extradex-page .pokedex-card{
+  border-color:rgba(220,100,100,.18);
+  box-shadow:0 8px 28px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.03) inset;
+}
+.extradex-page .pokedex-card:hover{
+  border-color:rgba(220,100,100,.35);
+  box-shadow:0 12px 36px rgba(0,0,0,.4), 0 0 24px rgba(220,100,100,.15), 0 0 0 1px rgba(255,255,255,.04) inset;
+}
+.extradex-page .pokedex-modal,
+.extradex-page .pokedex-modal .card{
+  border-color:rgba(220,100,100,.2);
+  box-shadow:0 12px 40px rgba(0,0,0,.45), 0 0 30px rgba(220,100,100,.12), 0 0 0 1px rgba(255,255,255,.04) inset;
+}
+.extradex-page .pokedex-table-wrap,
+.extradex-page .pokedex-table-header,
+.extradex-page .pokedex-table-row{
+  border-color:rgba(220,100,100,.18);
+}
+.extradex-page .pokedex-modal-close:hover{
+  background:rgba(220,100,100,.15);
+  border-color:rgba(220,100,100,.3);
+}
 
 .pokedex-filter-dropdown-wrap{
   display:flex;
