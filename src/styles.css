@@ -867,7 +867,24 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   line-height:1.2;
 }
 .bst-card-types{
-  margin-bottom:.5rem;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:.4rem .5rem;
+  margin-bottom:.6rem;
+  min-height:2rem;
+}
+.bst-card-types .bst-type-badges{
+  display:inline-flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:.35rem;
+}
+.bst-card-types .bst-type-badge{
+  font-size:.7rem;
+  padding:.22rem .5rem;
+  white-space:nowrap;
 }
 .bst-card-total{
   display:inline-flex;
