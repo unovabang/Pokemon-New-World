@@ -1809,6 +1809,57 @@ a.dex-panel--active{cursor:default}
   left: 0;
 }
 
+/* ===== ADMIN PANEL — PARAMÈTRES UNIFIÉS ===== */
+.admin-settings-unified {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.admin-settings-section {
+  background: rgba(8,12,24,.92);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.06);
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+.admin-settings-section-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255,255,255,.04);
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+  text-align: left;
+}
+.admin-settings-section-header:hover {
+  background: rgba(255,255,255,.08);
+}
+.admin-settings-section-header i:first-of-type {
+  color: #a5b4fc;
+  width: 1.25rem;
+}
+.admin-settings-chevron {
+  margin-left: auto;
+  transition: transform .25s ease;
+  opacity: .8;
+}
+.admin-settings-chevron.open {
+  transform: rotate(180deg);
+}
+.admin-settings-section-body {
+  padding: 0 1.25rem 1.25rem;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.admin-settings-section-body > * {
+  margin-top: 1rem;
+}
+
 /* ===== ADMIN PANEL — POKÉDEX EDITOR ===== */
 .admin-pokedex {
   max-width: 100%;

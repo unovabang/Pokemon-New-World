@@ -659,6 +659,30 @@ app.put('/api/pokedex', (req, res) => {
   }
 });
 
+// === POKÉDEX + EXTRADEX PUBLIC (pour le launcher) ===
+// GET /api/dex - Retourne pokedex + extradex en une requête (sans auth)
+app.get('/api/dex', (req, res) => {
+  try {
+    const pokedexData = getConfig('pokedex');
+    const extradexData = getConfig('extradex');
+    res.json({
+      success: true,
+      pokedex: {
+        entries: Array.isArray(pokedexData?.entries) ? pokedexData.entries : [],
+        count: Array.isArray(pokedexData?.entries) ? pokedexData.entries.length : 0,
+      },
+      extradex: {
+        title: extradexData?.title || 'Extradex',
+        entries: Array.isArray(extradexData?.entries) ? extradexData.entries : [],
+        count: Array.isArray(extradexData?.entries) ? extradexData.entries.length : 0,
+      },
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/dex:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // === EXTRADEX API ===
 // GET /api/extradex - Lire l'Extradex (title + entries + background + customTypes)
 app.get('/api/extradex', (req, res) => {

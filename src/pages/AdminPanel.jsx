@@ -12,10 +12,7 @@ const ADMIN_BACKGROUNDS = [bgAdmin1, bgAdmin2, bgAdmin3, bgAdmin4];
 const ADMIN_BG_INTERVAL_MS = 12000;
 import DownloadsEditor from "../components/DownloadsEditor";
 import PatchNotesEditor from "../components/PatchNotesEditor";
-import SiteEditor from "../components/SiteEditor";
-import PatreonEditor from "../components/PatreonEditor";
-import ExternalLinksEditor from "../components/ExternalLinksEditor";
-import FooterEditor from "../components/FooterEditor";
+import SiteSettingsEditor from "../components/SiteSettingsEditor";
 import PokedexEditor from "../components/PokedexEditor";
 import ExtradexEditor from "../components/ExtradexEditor";
 
@@ -86,10 +83,7 @@ const AdminPanel = () => {
     { id: 'pokedex', name: 'Pokédex', icon: 'fa-book-open' },
     { id: 'downloads', name: 'Téléchargements', icon: 'fa-download' },
     { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-text' },
-    { id: 'site', name: 'Site', icon: 'fa-cog' },
-    { id: 'patreon', name: 'Patreon', icon: 'fa-heart' },
-    { id: 'footer', name: 'Pied de page', icon: 'fa-window-minimize' },
-    { id: 'external', name: 'Liens externes', icon: 'fa-external-link' },
+    { id: 'settings', name: 'Paramètres', icon: 'fa-sliders' },
     { id: 'logs', name: 'Logs de connexion', icon: 'fa-list-alt' }
   ];
 
@@ -276,32 +270,10 @@ const AdminPanel = () => {
             </>
           )}
           
-          {/* Configuration générale pour Site */}
-          {activeTab === 'site' && (
-            <SiteEditor
-              onSave={(newConfig) => handleSaveConfig('site', newConfig)}
-            />
-          )}
-
-
-          {/* Configuration Patreon */}
-          {activeTab === 'patreon' && (
-            <PatreonEditor
-              onSave={(newConfig) => handleSaveConfig('patreon', newConfig)}
-            />
-          )}
-
-          {/* Configuration Footer */}
-          {activeTab === 'footer' && (
-            <FooterEditor
-              onSave={(newConfig) => handleSaveConfig('footer', newConfig)}
-            />
-          )}
-
-          {/* Configuration Liens Externes */}
-          {activeTab === 'external' && (
-            <ExternalLinksEditor
-              onSave={(newConfig) => handleSaveConfig('external', newConfig)}
+          {/* Paramètres unifiés : Site + Patreon + Pied de page + Liens externes */}
+          {activeTab === 'settings' && (
+            <SiteSettingsEditor
+              onSave={(configName, newConfig) => handleSaveConfig(configName, newConfig)}
             />
           )}
 
@@ -346,8 +318,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
-           activeTab !== 'pokedex' && activeTab !== 'site' && activeTab !== 'patreon' && 
-           activeTab !== 'footer' && activeTab !== 'external' && activeTab !== 'logs' && (
+           activeTab !== 'pokedex' && activeTab !== 'settings' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">
                 <h2 className="admin-panel-card-title">
@@ -369,18 +340,6 @@ const AdminPanel = () => {
                 )}
                 {activeTab === 'patchnotes' && (
                   <p>Interface graphique en développement. Vous pourrez bientôt ajouter et modifier les notes de patch avec un éditeur visuel.</p>
-                )}
-                {activeTab === 'site' && (
-                  <p>Interface graphique en développement. Configuration du site avec des champs de formulaire pour le titre, la description, les métadonnées SEO, etc.</p>
-                )}
-                {activeTab === 'patreon' && (
-                  <p>Interface graphique en développement. Formulaires pour configurer la section Patreon facilement.</p>
-                )}
-                {activeTab === 'footer' && (
-                  <p>Interface graphique en développement. Éditeur pour le contenu du pied de page.</p>
-                )}
-                {activeTab === 'external' && (
-                  <p>Interface graphique en développement. Gestion des liens vers les services externes.</p>
                 )}
               </div>
             </div>
