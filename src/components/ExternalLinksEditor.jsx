@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import AdvancedModal from './AdvancedModal';
 
-const API_BASE = `${window.location.protocol}//${window.location.hostname.replace(/:\d+$/, '')}:3001/api`;
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
 
 const ExternalLinksEditor = ({ onSave }) => {
   const [discordUrl, setDiscordUrl] = useState('');

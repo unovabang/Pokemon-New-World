@@ -20,7 +20,8 @@ import patreonConfig from "../config/patreon.json";
 import footerConfig from "../config/footer.json";
 import externalConfig from "../config/external.json";
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL
+  || (import.meta.env.DEV ? `${window.location.protocol}//${window.location.hostname}:3001` : window.location.origin);
 
 const AdminPanel = () => {
   const { admin, logout, token } = useAuth();
