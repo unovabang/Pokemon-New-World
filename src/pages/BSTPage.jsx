@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
 import Sidebar from "../components/Sidebar";
 import bstData from "../config/bst.json";
 import pokedexData from "../config/pokedex.json";
 
-const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect fill='%23222' width='64' height='64' rx='8'/%3E%3Ctext x='32' y='38' fill='%23555' font-size='14' text-anchor='middle' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E";
+const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Crect fill='%23222' width='96' height='96' rx='12'/%3E%3Ctext x='48' y='56' fill='%23555' font-size='24' text-anchor='middle' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E";
 
 const FILTER_OPTIONS = [
   { id: "all", label: "Tout afficher", icon: "fa-layer-group" },
@@ -124,7 +125,77 @@ function TypeBadges({ types }) {
   );
 }
 
-function BSTTable({ id, title, icon, data, pokedexEntries, accent }) {
+function BSTModal({ pokemon, pokedexEntries, onClose }) {
+  const overlayRef = useRef(null);
+  useEffect(() => {
+    const fn = (e) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", fn);
+    overlayRef.current?.focus();
+    return () => document.removeEventListener("keydown", fn);
+  }, [onClose]);
+
+  if (!pokemon) return null;
+  const types = pokemon.types || getTypes(pokemon, findPokedexEntry(pokemon.name, pokedexEntries || []));
+
+  return createPortal(
+    <div
+      ref={overlayRef}
+      className="bst-modal-overlay"
+      onClick={onClose}
+      tabIndex={-1}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bst-modal-title"
+    >
+      <div className="bst-modal" onClick={(e) => e.stopPropagation()}>
+        <button
+          type="button"
+          className="bst-modal-close"
+          onClick={onClose}
+          aria-label="Fermer"
+        >
+          <i className="fa-solid fa-xmark" />
+        </button>
+        <div className="bst-modal-sprite-wrap">
+          <img
+            src={pokemon.sprite || PLACEHOLDER_SPRITE}
+            alt=""
+            className="bst-modal-sprite"
+            onError={(e) => (e.target.src = PLACEHOLDER_SPRITE)}
+          />
+        </div>
+        <h2 id="bst-modal-title" className="bst-modal-name">{pokemon.name}</h2>
+        <div className="bst-modal-types">
+          <TypeBadges types={types} />
+        </div>
+        <div className="bst-modal-stats">
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label">PV</span><span>{pokemon.hp}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label">ATK</span><span>{pokemon.atk}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label">DEF</span><span>{pokemon.def}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label">ATK SPE</span><span>{pokemon.spa}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label">DEF SPE</span><span>{pokemon.spd}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label">SPE</span><span>{pokemon.spe}</span></div>
+          <div className="bst-modal-stat bst-modal-stat-total"><span className="bst-modal-stat-label">Total</span><span>{pokemon.total}</span></div>
+        </div>
+        {pokemon.ability && (
+          <div className="bst-modal-ability">
+            <strong><i className="fa-solid fa-sparkles" /> Talent</strong>
+            <p>{pokemon.ability}</p>
+          </div>
+        )}
+        {pokemon.abilityDesc && (
+          <div className="bst-modal-ability-desc">
+            <strong><i className="fa-solid fa-book" /> Description</strong>
+            <p>{pokemon.abilityDesc}</p>
+          </div>
+        )}
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode }) {
   const rows = useMemo(() => {
     return (data || []).map((row) => {
       const entry = findPokedexEntry(row.name, pokedexEntries);
@@ -136,8 +207,45 @@ function BSTTable({ id, title, icon, data, pokedexEntries, accent }) {
     });
   }, [data, pokedexEntries]);
 
+  if (viewMode === "grid") {
+    return (
+      <section className="bst-section" data-accent={id}>
+        <div className="bst-section-header">
+          <i className={`fa-solid ${icon} bst-section-icon`} />
+          <h2 className="bst-section-title">{title}</h2>
+          <span className="bst-section-count">{rows.length} Pokémon</span>
+        </div>
+        <div className="bst-grid">
+          {rows.map((row, i) => (
+            <button
+              key={`${row.name}-${i}`}
+              type="button"
+              className="bst-card"
+              onClick={() => onSelect(row)}
+            >
+              <div className="bst-card-sprite-wrap">
+                <img
+                  src={row.sprite}
+                  alt=""
+                  className="bst-card-sprite"
+                  loading="lazy"
+                  onError={(e) => (e.target.src = PLACEHOLDER_SPRITE)}
+                />
+              </div>
+              <span className="bst-card-name">{row.name}</span>
+              <div className="bst-card-types">
+                <TypeBadges types={row.types} />
+              </div>
+              <span className="bst-card-total">{row.total}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="bst-section" data-accent={accent}>
+    <section className="bst-section" data-accent={id}>
       <div className="bst-section-header">
         <i className={`fa-solid ${icon} bst-section-icon`} />
         <h2 className="bst-section-title">{title}</h2>
@@ -163,7 +271,11 @@ function BSTTable({ id, title, icon, data, pokedexEntries, accent }) {
           </thead>
           <tbody>
             {rows.map((row, i) => (
-              <tr key={`${row.name}-${i}`} className="bst-row">
+              <tr
+                key={`${row.name}-${i}`}
+                className="bst-row bst-row-clickable"
+                onClick={() => onSelect(row)}
+              >
                 <td className="bst-td-sprite">
                   <div className="bst-sprite-wrap">
                     <img
@@ -201,31 +313,15 @@ function BSTTable({ id, title, icon, data, pokedexEntries, accent }) {
 
 export default function BSTPage() {
   const [filter, setFilter] = useState("all");
+  const [viewMode, setViewMode] = useState("grid");
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
   const pokedexEntries = pokedexData?.entries || [];
 
   const sections = useMemo(() => {
     const list = [
-      {
-        id: "fakemon",
-        title: "Fakemon + Formes Régionales",
-        icon: "fa-leaf",
-        accent: "plante",
-        data: bstData.fakemon,
-      },
-      {
-        id: "megas",
-        title: "Nouvelles Mégas",
-        icon: "fa-bolt",
-        accent: "electrik",
-        data: bstData.megas,
-      },
-      {
-        id: "speciaux",
-        title: "Pokémons Spéciaux",
-        icon: "fa-star",
-        accent: "fee",
-        data: bstData.speciaux,
-      },
+      { id: "fakemon", title: "Fakemon + Formes Régionales", icon: "fa-leaf", accent: "plante", data: bstData.fakemon },
+      { id: "megas", title: "Nouvelles Mégas", icon: "fa-bolt", accent: "electrik", data: bstData.megas },
+      { id: "speciaux", title: "Pokémons Spéciaux", icon: "fa-star", accent: "fee", data: bstData.speciaux },
     ];
     if (filter === "all") return list;
     return list.filter((s) => s.id === filter);
@@ -255,18 +351,40 @@ export default function BSTPage() {
             </p>
           </div>
 
-          <div className="bst-filter">
-            {FILTER_OPTIONS.map((opt) => (
+          <div className="bst-toolbar">
+            <div className="bst-filter">
+              {FILTER_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  className={`bst-filter-btn ${filter === opt.id ? "bst-filter-btn--active" : ""}`}
+                  onClick={() => setFilter(opt.id)}
+                >
+                  <i className={`fa-solid ${opt.icon}`} />
+                  <span>{opt.label}</span>
+                </button>
+              ))}
+            </div>
+            <div className="bst-view-toggle">
               <button
-                key={opt.id}
                 type="button"
-                className={`bst-filter-btn ${filter === opt.id ? "bst-filter-btn--active" : ""}`}
-                onClick={() => setFilter(opt.id)}
+                className={`bst-view-btn ${viewMode === "grid" ? "bst-view-btn--active" : ""}`}
+                onClick={() => setViewMode("grid")}
+                title="Vue grille"
+                aria-pressed={viewMode === "grid"}
               >
-                <i className={`fa-solid ${opt.icon}`} />
-                <span>{opt.label}</span>
+                <i className="fa-solid fa-grip" /> Grille
               </button>
-            ))}
+              <button
+                type="button"
+                className={`bst-view-btn ${viewMode === "table" ? "bst-view-btn--active" : ""}`}
+                onClick={() => setViewMode("table")}
+                title="Vue tableau"
+                aria-pressed={viewMode === "table"}
+              >
+                <i className="fa-solid fa-table-list" /> Tableau
+              </button>
+            </div>
           </div>
         </header>
 
@@ -279,11 +397,20 @@ export default function BSTPage() {
               icon={s.icon}
               data={s.data}
               pokedexEntries={pokedexEntries}
-              accent={s.accent}
+              onSelect={setSelectedPokemon}
+              viewMode={viewMode}
             />
           ))}
         </div>
       </main>
+
+      {selectedPokemon && (
+        <BSTModal
+          pokemon={selectedPokemon}
+          pokedexEntries={pokedexEntries}
+          onClose={() => setSelectedPokemon(null)}
+        />
+      )}
     </div>
   );
 }

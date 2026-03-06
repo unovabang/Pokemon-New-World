@@ -502,11 +502,45 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   font-size:1.05rem;
   letter-spacing:.02em;
 }
+.bst-toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  gap:1.5rem;
+}
 .bst-filter{
   display:flex;
   flex-wrap:wrap;
   justify-content:center;
   gap:.5rem;
+}
+.bst-view-toggle{
+  display:flex;
+  gap:.25rem;
+}
+.bst-view-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.5rem 1rem;
+  border-radius:12px;
+  font-weight:600;
+  font-size:.9rem;
+  border:1px solid rgba(126,205,242,.25);
+  background:rgba(255,255,255,.04);
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .25s;
+}
+.bst-view-btn:hover{
+  background:rgba(126,205,242,.1);
+  color:var(--primary-2);
+}
+.bst-view-btn--active{
+  background:rgba(126,205,242,.2);
+  border-color:var(--primary-2);
+  color:#fff;
 }
 .bst-filter-btn{
   display:inline-flex;
@@ -608,25 +642,27 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .bst-table tbody tr.bst-row:hover td{
   background:rgba(126,205,242,.06);
 }
-.bst-th-sprite, .bst-td-sprite{width:64px; text-align:center; padding:.6rem}
+.bst-th-sprite, .bst-td-sprite{width:100px; text-align:center; padding:.75rem}
 .bst-sprite-wrap{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:52px;
-  height:52px;
+  width:80px;
+  height:80px;
   background:rgba(0,0,0,.4);
-  border-radius:12px;
-  border:1px solid rgba(126,205,242,.15);
+  border-radius:14px;
+  border:1px solid rgba(126,205,242,.2);
   overflow:hidden;
 }
 .bst-sprite{
-  width:44px;
-  height:44px;
+  width:72px;
+  height:72px;
   object-fit:contain;
   image-rendering:pixelated;
   image-rendering:crisp-edges;
 }
+.bst-row-clickable{cursor:pointer}
+.bst-row-clickable:hover td{background:rgba(126,205,242,.08)}
 .bst-td-name{
   font-weight:700;
   color:var(--text);
@@ -692,6 +728,208 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   .bst-th-desc, .bst-td-desc{max-width:160px}
   .bst-filter-btn span{display:none}
   .bst-filter-btn{padding:.6rem 1rem}
+}
+
+/* Vue grille BST */
+.bst-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));
+  gap:1.25rem;
+}
+.bst-card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:1.5rem 1.25rem;
+  background:linear-gradient(165deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+  border:1px solid rgba(126,205,242,.18);
+  border-radius:20px;
+  cursor:pointer;
+  transition:transform .25s ease, border-color .25s, box-shadow .25s;
+  text-align:center;
+  color:var(--text);
+  box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.bst-card:hover{
+  transform:translateY(-6px) scale(1.02);
+  border-color:rgba(126,205,242,.4);
+  box-shadow:0 24px 48px rgba(0,0,0,.4), 0 0 48px var(--glow-blue);
+}
+.bst-card-sprite-wrap{
+  width:120px;
+  height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:1rem;
+  background:rgba(0,0,0,.35);
+  border-radius:16px;
+  border:1px solid rgba(126,205,242,.2);
+  overflow:hidden;
+}
+.bst-card-sprite{
+  width:100px;
+  height:100px;
+  object-fit:contain;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+}
+.bst-card-name{
+  font-weight:700;
+  font-size:1rem;
+  margin-bottom:.5rem;
+  line-height:1.2;
+}
+.bst-card-types{
+  margin-bottom:.5rem;
+}
+.bst-card-total{
+  font-weight:800;
+  font-size:1rem;
+  color:var(--primary-2);
+  background:rgba(126,205,242,.15);
+  padding:.2rem .6rem;
+  border-radius:10px;
+  border:1px solid rgba(126,205,242,.3);
+}
+
+/* Modal BST */
+.bst-modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1.5rem;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(10px);
+  animation:bstModalFadeIn .2s ease;
+}
+@keyframes bstModalFadeIn{from{opacity:0}to{opacity:1}}
+.bst-modal{
+  position:relative;
+  max-width:480px;
+  width:100%;
+  padding:2.25rem;
+  background:linear-gradient(165deg, rgba(255,255,255,.1), rgba(255,255,255,.04));
+  border:1px solid rgba(126,205,242,.25);
+  border-radius:24px;
+  box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px var(--glow-blue), 0 0 0 1px rgba(255,255,255,.05) inset;
+  animation:bstModalIn .3s ease;
+}
+@keyframes bstModalIn{
+  from{opacity:0; transform:scale(0.95) translateY(12px)}
+  to{opacity:1; transform:scale(1) translateY(0)}
+}
+.bst-modal-close{
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  width:42px;
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:12px;
+  color:var(--text);
+  cursor:pointer;
+  transition:background .2s, border-color .2s;
+}
+.bst-modal-close:hover{
+  background:rgba(255,255,255,.15);
+  border-color:rgba(126,205,242,.4);
+}
+.bst-modal-sprite-wrap{
+  width:200px;
+  height:200px;
+  margin:0 auto 1.25rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.35);
+  border-radius:20px;
+  border:1px solid rgba(126,205,242,.2);
+  overflow:hidden;
+}
+.bst-modal-sprite{
+  width:180px;
+  height:180px;
+  object-fit:contain;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+}
+.bst-modal-name{
+  margin:0 0 .5rem 0;
+  font-size:1.6rem;
+  font-weight:800;
+  text-align:center;
+  color:var(--text);
+}
+.bst-modal-types{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:.5rem;
+  margin-bottom:1.25rem;
+}
+.bst-modal-stats{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:.6rem;
+  margin-bottom:1.25rem;
+}
+.bst-modal-stat{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:.6rem .4rem;
+  background:rgba(0,0,0,.3);
+  border-radius:12px;
+  border:1px solid rgba(126,205,242,.15);
+}
+.bst-modal-stat-label{
+  font-size:.7rem;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin-bottom:.25rem;
+}
+.bst-modal-stat-total{
+  grid-column:1 / -1;
+  background:rgba(126,205,242,.12);
+  border-color:rgba(126,205,242,.3);
+}
+.bst-modal-stat-total .bst-modal-stat-label{color:var(--primary-2)}
+.bst-modal-stat-total span{font-weight:800; color:var(--primary-2); font-size:1.1rem}
+.bst-modal-ability,
+.bst-modal-ability-desc{
+  text-align:left;
+  padding:1rem 1.25rem;
+  background:rgba(0,0,0,.25);
+  border-radius:14px;
+  border:1px solid rgba(126,205,242,.12);
+  margin-top:.75rem;
+}
+.bst-modal-ability strong,
+.bst-modal-ability-desc strong{
+  display:block;
+  margin-bottom:.5rem;
+  color:var(--primary-2);
+  font-size:.9rem;
+}
+.bst-modal-ability p,
+.bst-modal-ability-desc p{
+  margin:0;
+  font-size:.9rem;
+  color:rgba(255,255,255,.9);
+  line-height:1.5;
+}
+@media (max-width:520px){
+  .bst-modal-stats{grid-template-columns:repeat(3, 1fr)}
+  .bst-grid{grid-template-columns:repeat(auto-fill, minmax(130px, 1fr))}
 }
 
 /* Fond Pokédex en élément réel (img) pour affichage fiable */

@@ -14,17 +14,17 @@
       "abilityDesc": ""
     },
     {
-      "name": "Feu/Ténèbres",
-      "type": "80",
-      "hp": "60",
-      "atk": "132",
-      "def": "90",
-      "spa": "126",
-      "spd": "60",
-      "spe": "548",
-      "total": "Silence des Agneaux",
+      "name": "Pyrosheitan",
+      "type": "Feu/Ténèbres",
+      "hp": "80",
+      "atk": "60",
+      "def": "132",
+      "spa": "90",
+      "spd": "126",
+      "spe": "60",
+      "total": "548",
       "ability": "Silence des Agneaux",
-      "abilityDesc": "Silence des Agneaux"
+      "abilityDesc": ""
     },
     {
       "name": "Fouerpent",
