@@ -706,6 +706,63 @@ app.get('/api/extradex', (req, res) => {
   }
 });
 
+// === GUIDE API ===
+// GET /api/guide - Lire le guide (title, subtitle, disclaimer, steps)
+app.get('/api/guide', (req, res) => {
+  try {
+    const guideData = getConfig('guide');
+    if (!guideData) {
+      return res.status(404).json({ success: false, error: 'Fichier guide non trouvé' });
+    }
+    res.json({
+      success: true,
+      guide: {
+        title: guideData.title || 'Guide Pokémon New World',
+        subtitle: guideData.subtitle || '',
+        disclaimer: guideData.disclaimer || '',
+        steps: Array.isArray(guideData.steps) ? guideData.steps : []
+      }
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/guide:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/guide - Sauvegarder le guide (écrit dans guide.json)
+app.put('/api/guide', (req, res) => {
+  try {
+    const { title, subtitle, disclaimer, steps } = req.body;
+    const guidePath = path.join(CONFIG_DIR, 'guide.json');
+
+    let current = { title: '', subtitle: '', disclaimer: '', steps: [] };
+    if (fs.existsSync(guidePath)) {
+      current = fs.readJsonSync(guidePath);
+    }
+    if (!Array.isArray(current.steps)) {
+      current.steps = [];
+    }
+
+    const updated = {
+      title: typeof title === 'string' ? title : (current.title || 'Guide Pokémon New World'),
+      subtitle: typeof subtitle === 'string' ? subtitle : (current.subtitle || ''),
+      disclaimer: typeof disclaimer === 'string' ? disclaimer : (current.disclaimer || ''),
+      steps: Array.isArray(steps) ? steps : current.steps
+    };
+
+    fs.writeJsonSync(guidePath, updated, { spaces: 2 });
+
+    res.json({
+      success: true,
+      message: 'Guide sauvegardé dans le fichier JSON.',
+      guide: updated
+    });
+  } catch (error) {
+    console.error('❌ Erreur API PUT /api/guide:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // PUT /api/extradex - Sauvegarder l'Extradex (écrit dans extradex.json)
 app.put('/api/extradex', (req, res) => {
   try {

@@ -15,6 +15,7 @@ import PatchNotesEditor from "../components/PatchNotesEditor";
 import SiteSettingsEditor from "../components/SiteSettingsEditor";
 import PokedexEditor from "../components/PokedexEditor";
 import ExtradexEditor from "../components/ExtradexEditor";
+import GuideEditor from "../components/GuideEditor";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -26,6 +27,7 @@ import patreonConfig from "../config/patreon.json";
 import footerConfig from "../config/footer.json";
 import externalConfig from "../config/external.json";
 import extradexData from "../config/extradex.json";
+import guideData from "../config/guide.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   || (import.meta.env.DEV ? `${window.location.protocol}//${window.location.hostname}:3001` : window.location.origin);
@@ -81,6 +83,7 @@ const AdminPanel = () => {
   const tabs = [
     { id: 'news', name: 'Actualités', icon: 'fa-newspaper' },
     { id: 'pokedex', name: 'Pokédex', icon: 'fa-book-open' },
+    { id: 'guide', name: 'Guide', icon: 'fa-route' },
     { id: 'downloads', name: 'Téléchargements', icon: 'fa-download' },
     { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-text' },
     { id: 'settings', name: 'Paramètres', icon: 'fa-sliders' },
@@ -269,6 +272,13 @@ const AdminPanel = () => {
               )}
             </>
           )}
+
+          {activeTab === 'guide' && (
+            <GuideEditor
+              initialData={guideData || { title: "", subtitle: "", disclaimer: "", steps: [] }}
+              onSave={() => {}}
+            />
+          )}
           
           {/* Paramètres unifiés : Site + Patreon + Pied de page + Liens externes */}
           {activeTab === 'settings' && (
@@ -318,7 +328,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
-           activeTab !== 'pokedex' && activeTab !== 'settings' && activeTab !== 'logs' && (
+           activeTab !== 'pokedex' && activeTab !== 'guide' && activeTab !== 'settings' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">
                 <h2 className="admin-panel-card-title">

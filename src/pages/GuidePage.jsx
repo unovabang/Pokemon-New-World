@@ -1,6 +1,15 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import guideData from "../config/guide.json";
+import guideDataFallback from "../config/guide.json";
+
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
+
+const STORAGE_GUIDE = "admin_guide_data";
 
 /** Découpe le texte en segments (texte normal / termes à mettre en évidence) */
 function splitByHighlights(text, highlight = []) {
@@ -54,6 +63,44 @@ function StepCard({ step }) {
 }
 
 export default function GuidePage() {
+  const [guideData, setGuideData] = useState(guideDataFallback);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE}/guide?t=${Date.now()}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.success && data.guide) {
+          setGuideData({
+            title: data.guide.title || guideDataFallback.title,
+            subtitle: data.guide.subtitle || "",
+            disclaimer: data.guide.disclaimer || "",
+            steps: Array.isArray(data.guide.steps) ? data.guide.steps : [],
+          });
+          return;
+        }
+        const stored = localStorage.getItem(STORAGE_GUIDE);
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            setGuideData(parsed);
+          } catch {}
+        }
+      })
+      .catch(() => {
+        if (cancelled) return;
+        const stored = localStorage.getItem(STORAGE_GUIDE);
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            setGuideData(parsed);
+          } catch {}
+        }
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   const { title, subtitle, disclaimer, steps } = guideData;
   const stepList = Array.isArray(steps) ? steps : [];
 
@@ -84,8 +131,8 @@ export default function GuidePage() {
 
         <section className="guide-content container">
           <ol className="guide-steps">
-            {stepList.map((step) => (
-              <li key={step.num} className="guide-step-item">
+            {stepList.map((step, i) => (
+              <li key={`${step.num}-${i}`} className="guide-step-item">
                 <StepCard step={step} />
               </li>
             ))}
