@@ -2855,13 +2855,13 @@
     {
       "num": "245",
       "name": "???",
-      "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/0/04/Vignette_eau.png/revision/latest?cb=20230402135849&path-prefix=fr",
+      "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/0/09/551_01.png/revision/latest?cb=20230625010418&path-prefix=fr",
       "types": [
-        "sol",
+        "eau",
         "tenebres"
       ],
-      "rarity": "Désert Macabre ( Eau salée )",
-      "obtention": ""
+      "rarity": "40%",
+      "obtention": "Désert Macabre (Eau salée)"
     },
     {
       "num": "246",
@@ -3466,7 +3466,7 @@
       "num": "291",
       "name": "Flingouste",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/a/a8/NW_Pokedex_242.gif/revision/latest?cb=20230328090542&path-prefix=fr",
-      "types": [],
+      "types": ["eau"],
       "rarity": "30% (Exclu Truespirit)",
       "obtention": "Helheim (Pêche)"
     },
@@ -3474,7 +3474,7 @@
       "num": "292",
       "name": "Gamblast",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/3/31/CLAWITZER.gif/revision/latest?cb=20241130114302&path-prefix=fr",
-      "types": [],
+      "types": ["eau"],
       "rarity": "Évolution (Exclu Truespirit)",
       "obtention": "Faire évoluer Flingouste au N.37"
     },
@@ -3515,7 +3515,7 @@
       "num": "295",
       "name": "Cabriolaine",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/8/86/NW_Pokedex_244.gif/revision/latest?cb=20230328090542&path-prefix=fr",
-      "types": [],
+      "types": ["plante"],
       "rarity": "10%",
       "obtention": "Les Rocheries"
     },
@@ -3523,7 +3523,7 @@
       "num": "296",
       "name": "Chevroum",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/3/33/NW_Pokedex_245.gif/revision/latest?cb=20230328090542&path-prefix=fr",
-      "types": [],
+      "types": ["plante"],
       "rarity": "Évolution",
       "obtention": "Faire évoluer Cabriolaine au N.32"
     },
@@ -4194,7 +4194,7 @@
       "num": "350",
       "name": "Dofin",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/5/53/Finizen_%281%29.gif/revision/latest?cb=20241224180958&path-prefix=fr",
-      "types": [],
+      "types": ["eau"],
       "rarity": "35%",
       "obtention": "Félindra (Pêche)"
     },
@@ -5046,9 +5046,9 @@
     {
       "num": "418",
       "name": "???",
-      "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/9/99/Vignette_acier.png/revision/latest?cb=20230402135850&path-prefix=fr",
+      "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/ff/Deinoj.gif/revision/latest?cb=20251102201614&path-prefix=fr",
       "types": [
-        "tenebres",
+        "acier",
         "dragon"
       ],
       "rarity": "???",
@@ -5396,7 +5396,7 @@
       "num": "446",
       "name": "Darkrai",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/2/2f/NW_Pokedex_350.gif/revision/latest?cb=20230328095901&path-prefix=fr",
-      "types": [],
+      "types": ["tenebres"],
       "rarity": "Spécial",
       "obtention": "Non découvert"
     },
@@ -5404,7 +5404,7 @@
       "num": "446",
       "name": "Méga-Darkrai",
       "imageUrl": "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/f7/Darkrai2.gif/revision/latest?cb=20260130212808&path-prefix=fr",
-      "types": [],
+      "types": ["tenebres"],
       "rarity": "Forme atteinte en synergie avec la Darkrite",
       "obtention": ""
     },

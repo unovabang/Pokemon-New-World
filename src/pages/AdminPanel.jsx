@@ -8,9 +8,11 @@ import SiteEditor from "../components/SiteEditor";
 import PatreonEditor from "../components/PatreonEditor";
 import ExternalLinksEditor from "../components/ExternalLinksEditor";
 import FooterEditor from "../components/FooterEditor";
+import PokedexEditor from "../components/PokedexEditor";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
+import pokedexData from "../config/pokedex.json";
 import newsConfig from "../config/news.json";
 import downloadsConfig from "../config/downloads.json";
 import patchnotesConfig from "../config/patchnotes.json";
@@ -60,6 +62,7 @@ const AdminPanel = () => {
 
   const tabs = [
     { id: 'news', name: 'Actualités', icon: 'fa-newspaper' },
+    { id: 'pokedex', name: 'Pokédex', icon: 'fa-book-open' },
     { id: 'downloads', name: 'Téléchargements', icon: 'fa-download' },
     { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-text' },
     { id: 'site', name: 'Site', icon: 'fa-cog' },
@@ -489,9 +492,16 @@ const AdminPanel = () => {
           )}
           
           {activeTab === 'patchnotes' && (
-            <PatchNotesEditor 
+            <PatchNotesEditor
               patchnotesData={configs.patchnotes}
               onSave={(newConfig) => handleSaveConfig('patchnotes', newConfig)}
+            />
+          )}
+
+          {activeTab === 'pokedex' && (
+            <PokedexEditor
+              initialEntries={pokedexData?.entries ?? []}
+              onSave={() => {}}
             />
           )}
           
@@ -571,7 +581,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
-           activeTab !== 'site' && activeTab !== 'patreon' && 
+           activeTab !== 'pokedex' && activeTab !== 'site' && activeTab !== 'patreon' && 
            activeTab !== 'footer' && activeTab !== 'external' && activeTab !== 'logs' && (
             <div style={{
               background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',

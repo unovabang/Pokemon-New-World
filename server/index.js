@@ -596,6 +596,69 @@ app.post('/api/downloads', (req, res) => {
   }
 });
 
+// === POKÉDEX API ===
+// GET /api/pokedex - Lire le Pokédex (entries + background + customTypes)
+app.get('/api/pokedex', (req, res) => {
+  try {
+    const pokedexData = getConfig('pokedex');
+    if (!pokedexData) {
+      return res.status(404).json({ success: false, error: 'Fichier Pokédex non trouvé' });
+    }
+    res.json({
+      success: true,
+      pokedex: {
+        source: pokedexData.source,
+        updated: pokedexData.updated,
+        entries: Array.isArray(pokedexData.entries) ? pokedexData.entries : [],
+        background: pokedexData.background || null,
+        customTypes: Array.isArray(pokedexData.customTypes) ? pokedexData.customTypes : []
+      }
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/pokedex:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/pokedex - Sauvegarder le Pokédex (écrit dans pokedex.json)
+app.put('/api/pokedex', (req, res) => {
+  try {
+    const { entries, background, customTypes } = req.body;
+    const pokedexPath = path.join(CONFIG_DIR, 'pokedex.json');
+
+    let current = { source: '', updated: '', entries: [] };
+    if (fs.existsSync(pokedexPath)) {
+      current = fs.readJsonSync(pokedexPath);
+    }
+    if (!Array.isArray(current.entries)) {
+      current.entries = [];
+    }
+
+    const updated = {
+      source: current.source || 'https://pokemon-new-world-fr.fandom.com/fr/wiki/Pok%C3%A9dex',
+      updated: new Date().toISOString().slice(0, 10),
+      entries: Array.isArray(entries) ? entries : current.entries,
+      ...(background !== undefined && { background: background || null }),
+      ...(customTypes !== undefined && { customTypes: Array.isArray(customTypes) ? customTypes : [] })
+    };
+
+    // Si on n'a pas envoyé background/customTypes, garder les anciennes valeurs
+    if (background === undefined && current.background !== undefined) updated.background = current.background;
+    if (customTypes === undefined && current.customTypes !== undefined) updated.customTypes = current.customTypes;
+
+    fs.writeJsonSync(pokedexPath, updated, { spaces: 2 });
+
+    res.json({
+      success: true,
+      message: 'Pokédex sauvegardé dans le fichier JSON.',
+      pokedex: updated
+    });
+  } catch (error) {
+    console.error('❌ Erreur API PUT /api/pokedex:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Servir le frontend React (build Vite) en production — doit être en dernier
 const DIST_DIR = path.join(__dirname, '../dist');
 if (fs.existsSync(DIST_DIR)) {
