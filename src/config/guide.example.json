@@ -7,13 +7,21 @@
       "num": 1,
       "text": "Sortez de chez-vous, allez voir Kéen et allez choisir votre starter, une fois le choix fait, retournez parler à votre mère pour pouvoir débuter votre aventure.",
       "imageUrl": "/guide-map.png",
-      "highlight": ["Kéen"]
+      "highlight": ["Kéen"],
+      "characters": [
+        { "name": "Kéen", "description": "Votre rival d'enfance. Il vous accompagne au début de l'aventure et vous défie régulièrement.", "imageUrl": "/guide-sprites/sprite-test.gif" },
+        { "name": "Mère", "description": "Votre mère qui vous encourage à partir à l'aventure.", "imageUrl": "/guide-sprites/sprite-test1.gif" }
+      ]
     },
     {
       "num": 2,
       "text": "Direction Liora en passant par le Sentier Bifröst à l'Est de la ville, rencontrez Rose & obtenez vos premières pokéballs. Ensuite, allez affronter Kéen au Nord de la ville.",
       "imageUrl": "/guide-map.png",
-      "highlight": ["Liora", "Sentier Bifröst", "Rose", "Kéen"]
+      "highlight": ["Liora", "Sentier Bifröst", "Rose", "Kéen"],
+      "characters": [
+        { "name": "Rose", "description": "Une dresseuse qui vous remet vos premières Poké Balls.", "imageUrl": "/guide-sprites/sprite-test1.gif" },
+        { "name": "Kéen", "description": "Votre rival. Affrontez-le au Nord de Liora.", "imageUrl": "/guide-sprites/sprite-test.gif" }
+      ]
     },
     {
       "num": 3,
@@ -25,7 +33,8 @@
       "num": 4,
       "text": "Arrivé à Locuflorum, Kéen vous donne le Smartphone. Ensuite, direction le nord de la ville, et affrontez Kamille au Carré Floral. En ressortant, Rose vous interpelle et vous demande de l'aide pour contrer les Anarchistes.",
       "imageUrl": "/guide-map.png",
-      "highlight": ["Locuflorum", "Kéen", "Kamille", "Carré Floral", "Rose"]
+      "highlight": ["Locuflorum", "Kéen", "Kamille", "Carré Floral", "Rose"],
+      "characters": []
     }
   ]
 }

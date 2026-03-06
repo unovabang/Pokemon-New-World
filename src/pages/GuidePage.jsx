@@ -27,14 +27,79 @@ function splitByHighlights(text, highlight = []) {
 
 const EXAMPLE_MAP = "/guide-map.png";
 
-function StepCard({ step }) {
+function CharacterBubble({ character, onClick }) {
+  const imgSrc = character.imageUrl?.trim() || "/guide-sprites/sprite-test.gif";
+  return (
+    <button
+      type="button"
+      className="guide-character-bubble"
+      onClick={() => onClick(character)}
+      title={character.name}
+      aria-label={`Voir la fiche de ${character.name}`}
+    >
+      <div className="guide-character-bubble-inner">
+        <img
+          src={imgSrc}
+          alt=""
+          className="guide-character-bubble-img"
+          loading="lazy"
+        />
+      </div>
+      <span className="guide-character-bubble-name">{character.name}</span>
+    </button>
+  );
+}
+
+function CharacterModal({ character, onClose }) {
+  if (!character) return null;
+  const imgSrc = character.imageUrl?.trim() || "/guide-sprites/sprite-test.gif";
+  return (
+    <div
+      className="guide-character-modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="guide-character-modal-title"
+    >
+      <div className="guide-character-modal" onClick={(e) => e.stopPropagation()}>
+        <button
+          type="button"
+          className="guide-character-modal-close"
+          onClick={onClose}
+          aria-label="Fermer"
+        >
+          <i className="fa-solid fa-xmark" />
+        </button>
+        <h3 id="guide-character-modal-title" className="guide-character-modal-title">
+          {character.name}
+        </h3>
+        <div className="guide-character-modal-content">
+          <div className="guide-character-modal-sprite">
+            <img src={imgSrc} alt={character.name} />
+          </div>
+          <p className="guide-character-modal-desc">{character.description || "Aucune description."}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StepCard({ step, onCharacterClick }) {
   const parts = splitByHighlights(step.text, step.highlight);
   const imageSrc = step.imageUrl?.trim() || EXAMPLE_MAP;
+  const characters = Array.isArray(step.characters) ? step.characters : [];
 
   return (
     <article className="guide-step" id={`guide-step-${step.num}`}>
       <div className="guide-step-header">
         <span className="guide-step-badge">Étape {step.num}</span>
+        {characters.length > 0 && (
+          <div className="guide-step-characters">
+            {characters.map((c, i) => (
+              <CharacterBubble key={`${c.name}-${i}`} character={c} onClick={onCharacterClick} />
+            ))}
+          </div>
+        )}
       </div>
       <div className="guide-step-body">
         <p className="guide-step-text">
@@ -65,6 +130,7 @@ function StepCard({ step }) {
 
 export default function GuidePage() {
   const [guideData, setGuideData] = useState(guideDataFallback);
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -134,10 +200,16 @@ export default function GuidePage() {
           <ol className="guide-steps">
             {stepList.map((step, i) => (
               <li key={`${step.num}-${i}`} className="guide-step-item">
-                <StepCard step={step} />
+                <StepCard step={step} onCharacterClick={setSelectedCharacter} />
               </li>
             ))}
           </ol>
+          {selectedCharacter && (
+            <CharacterModal
+              character={selectedCharacter}
+              onClose={() => setSelectedCharacter(null)}
+            />
+          )}
           {stepList.length === 0 && (
             <p className="guide-empty">
               <i className="fa-solid fa-book-open" /> Aucune étape pour le moment.

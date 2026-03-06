@@ -175,7 +175,146 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   margin-bottom:1.25rem;
   display:flex;
   align-items:center;
+  flex-wrap:wrap;
   gap:1rem;
+}
+.guide-step-characters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.5rem;
+  margin-left:auto;
+}
+.guide-character-bubble{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.25rem;
+  padding:0.35rem;
+  background:rgba(255,255,255,.06);
+  border:2px solid rgba(126,205,242,.25);
+  border-radius:50%;
+  cursor:pointer;
+  transition:all .25s;
+}
+.guide-character-bubble:hover{
+  border-color:rgba(126,205,242,.5);
+  box-shadow:0 0 20px rgba(126,205,242,.25);
+  transform:scale(1.08);
+}
+.guide-character-bubble-inner{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  overflow:hidden;
+  background:rgba(0,0,0,.3);
+}
+.guide-character-bubble-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:top center;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+}
+.guide-character-bubble-name{
+  font-size:0.65rem;
+  font-weight:700;
+  color:var(--primary-2);
+  max-width:52px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  text-align:center;
+}
+.guide-character-modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1.5rem;
+  background:rgba(0,0,0,.75);
+  backdrop-filter:blur(8px);
+  animation:guideModalFadeIn .2s ease;
+}
+@keyframes guideModalFadeIn{from{opacity:0}to{opacity:1}}
+.guide-character-modal{
+  position:relative;
+  max-width:380px;
+  width:100%;
+  padding:1.75rem;
+  background:linear-gradient(165deg, rgba(20,28,50,.98), rgba(12,18,35,.98));
+  border:2px solid rgba(126,205,242,.3);
+  border-radius:24px;
+  box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px rgba(126,205,242,.15);
+  animation:guideModalIn .25s ease;
+}
+@keyframes guideModalIn{
+  from{opacity:0; transform:scale(0.95) translateY(10px)}
+  to{opacity:1; transform:scale(1) translateY(0)}
+}
+.guide-character-modal-close{
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:12px;
+  color:var(--text);
+  cursor:pointer;
+  transition:all .2s;
+}
+.guide-character-modal-close:hover{
+  background:rgba(239,68,68,.2);
+  border-color:rgba(239,68,68,.4);
+  color:#fca5a5;
+}
+.guide-character-modal-title{
+  margin:0 0 1.25rem 0;
+  font-size:1.5rem;
+  font-weight:800;
+  background:linear-gradient(135deg, var(--primary-2), var(--accent));
+  background-clip:text;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  padding-right:3rem;
+}
+.guide-character-modal-content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1.25rem;
+}
+.guide-character-modal-sprite{
+  width:120px;
+  height:160px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,.3);
+  border-radius:16px;
+  border:2px solid rgba(126,205,242,.25);
+  overflow:hidden;
+}
+.guide-character-modal-sprite img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+}
+.guide-character-modal-desc{
+  margin:0;
+  color:var(--muted);
+  font-size:0.95rem;
+  line-height:1.6;
+  text-align:center;
 }
 .guide-step-badge{
   display:inline-flex;
@@ -2470,6 +2609,25 @@ a.dex-panel--active{cursor:default}
   gap: 0.5rem;
 }
 .admin-guide-field-with-preset input { flex: 1; }
+.admin-guide-characters-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.admin-guide-character-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.admin-guide-character-row input {
+  flex: 1;
+  min-width: 80px;
+}
+.admin-guide-character-row input:first-of-type { flex: 0 0 100px; }
+.admin-guide-character-row input:nth-of-type(2) { flex: 0 0 180px; }
+.admin-guide-character-row input:nth-of-type(3) { flex: 1 1 200px; }
+.admin-guide-character-row .admin-guide-btn { flex-shrink: 0; }
 .admin-guide-steps-header {
   display: flex;
   flex-wrap: wrap;
@@ -2606,6 +2764,20 @@ a.dex-panel--active{cursor:default}
   padding: 1rem 1.25rem;
   border-left: 4px solid var(--primary-2);
 }
+.admin-guide-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.admin-guide-preview-header .guide-step-characters {
+  display: flex;
+  gap: 0.35rem;
+}
+.admin-guide-preview-header .guide-character-bubble {
+  cursor: default;
+}
 .admin-guide-preview-badge {
   display: inline-block;
   padding: 0.25rem 0.6rem;
@@ -2614,7 +2786,6 @@ a.dex-panel--active{cursor:default}
   font-size: 0.75rem;
   font-weight: 700;
   border-radius: 8px;
-  margin-bottom: 0.5rem;
 }
 .admin-guide-preview-text {
   margin: 0 0 0.75rem 0;

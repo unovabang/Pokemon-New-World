@@ -26,10 +26,30 @@ function splitByHighlights(text, highlight = []) {
 function StepPreview({ step }) {
   const parts = splitByHighlights(step.text || "", step.highlight || []);
   const imgSrc = step.imageUrl?.trim() || DEFAULT_IMAGE;
+  const characters = step.characters || [];
 
   return (
     <div className="admin-guide-preview">
-      <div className="admin-guide-preview-badge">Étape {step.num}</div>
+      <div className="admin-guide-preview-header">
+        <div className="admin-guide-preview-badge">Étape {step.num}</div>
+        {characters.length > 0 && (
+          <div className="guide-step-characters">
+            {characters.map((c, i) => (
+              <div key={i} className="guide-character-bubble" title={c.name || "Personnage"}>
+                <div className="guide-character-bubble-inner">
+                  <img
+                    src={c.imageUrl || "/guide-sprites/sprite-test.gif"}
+                    alt={c.name || ""}
+                    className="guide-character-bubble-img"
+                    onError={(e) => (e.target.src = "/guide-sprites/sprite-test.gif")}
+                  />
+                </div>
+                <span className="guide-character-bubble-name">{c.name || "?"}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       <p className="admin-guide-preview-text">
         {parts.map((p, i) =>
           p.type === "highlight" ? (
@@ -64,6 +84,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
     text: "",
     imageUrl: "",
     highlightStr: "",
+    characters: [],
   });
 
   useEffect(() => {
@@ -152,7 +173,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
         nextNum = Math.max(...steps.map((s) => parseInt(s.num, 10) || 0)) + 1;
       }
     }
-    setForm({ num: String(nextNum), text: "", imageUrl: "", highlightStr: "" });
+    setForm({ num: String(nextNum), text: "", imageUrl: "", highlightStr: "", characters: [] });
     setEditingIndex(null);
     setInsertAfterIndex(afterIndex);
     setShowStepModal(true);
@@ -165,6 +186,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
       text: s.text || "",
       imageUrl: s.imageUrl || "",
       highlightStr: Array.isArray(s.highlight) ? s.highlight.join(", ") : "",
+      characters: Array.isArray(s.characters) ? s.characters.map((c) => ({ ...c })) : [],
     });
     setEditingIndex(index);
     setInsertAfterIndex(null);
@@ -179,6 +201,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
       text: s.text || "",
       imageUrl: s.imageUrl || "",
       highlightStr: Array.isArray(s.highlight) ? s.highlight.join(", ") : "",
+      characters: Array.isArray(s.characters) ? s.characters.map((c) => ({ ...c })) : [],
     });
     setEditingIndex(null);
     setInsertAfterIndex(index);
@@ -195,6 +218,15 @@ export default function GuideEditor({ initialData = null, onSave }) {
       text: form.text.trim(),
       imageUrl: form.imageUrl.trim() || "",
       highlight,
+      characters: Array.isArray(form.characters)
+        ? form.characters
+            .filter((c) => c && (c.name || c.description || c.imageUrl))
+            .map((c) => ({
+              name: (c.name || "").trim(),
+              description: (c.description || "").trim(),
+              imageUrl: (c.imageUrl || "").trim(),
+            }))
+        : [],
     };
     if (editingIndex !== null) {
       const next = [...steps];
@@ -443,6 +475,70 @@ export default function GuideEditor({ initialData = null, onSave }) {
                       placeholder="Kéen, Liora, Rose, Sentier Bifröst"
                     />
                   </div>
+                  <div className="admin-guide-field">
+                    <label>Personnages <span className="admin-guide-hint">(bulles cliquables)</span></label>
+                    <div className="admin-guide-characters-list">
+                      {(form.characters || []).map((c, i) => (
+                        <div key={i} className="admin-guide-character-row">
+                          <input
+                            type="text"
+                            placeholder="Nom"
+                            value={c.name || ""}
+                            onChange={(e) => {
+                              const next = [...(form.characters || [])];
+                              next[i] = { ...next[i], name: e.target.value };
+                              setForm((f) => ({ ...f, characters: next }));
+                            }}
+                          />
+                          <input
+                            type="text"
+                            placeholder="URL sprite"
+                            value={c.imageUrl || ""}
+                            onChange={(e) => {
+                              const next = [...(form.characters || [])];
+                              next[i] = { ...next[i], imageUrl: e.target.value };
+                              setForm((f) => ({ ...f, characters: next }));
+                            }}
+                          />
+                          <input
+                            type="text"
+                            placeholder="Description"
+                            value={c.description || ""}
+                            onChange={(e) => {
+                              const next = [...(form.characters || [])];
+                              next[i] = { ...next[i], description: e.target.value };
+                              setForm((f) => ({ ...f, characters: next }));
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setForm((f) => ({
+                                ...f,
+                                characters: (f.characters || []).filter((_, j) => j !== i),
+                              }))
+                            }
+                            className="admin-guide-btn admin-guide-btn-danger"
+                            title="Supprimer"
+                          >
+                            <i className="fa-solid fa-trash" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setForm((f) => ({
+                            ...f,
+                            characters: [...(f.characters || []), { name: "", description: "", imageUrl: "/guide-sprites/sprite-test.gif" }],
+                          }))
+                        }
+                        className="admin-guide-btn admin-guide-btn-ghost"
+                      >
+                        <i className="fa-solid fa-plus" /> Ajouter un personnage
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div className="admin-guide-modal-preview">
                   <label>Aperçu</label>
@@ -452,6 +548,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
                       text: form.text || "Aperçu du texte…",
                       imageUrl: form.imageUrl.trim() || DEFAULT_IMAGE,
                       highlight: form.highlightStr.split(",").map((h) => h.trim()).filter(Boolean),
+                      characters: form.characters || [],
                     }}
                   />
                 </div>
