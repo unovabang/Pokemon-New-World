@@ -148,7 +148,11 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 .sidebar-inner{
   height:100%;
-  background:linear-gradient(180deg, rgba(12,18,35,.97), rgba(8,14,28,.98));
+  background-image:
+    linear-gradient(180deg, rgba(8,14,28,.85) 0%, rgba(5,9,20,.9) 100%),
+    url(./assets/sidebar-background.jpg);
+  background-size:cover;
+  background-position:center;
   backdrop-filter:blur(20px);
   border-right:1px solid rgba(126,205,242,.15);
   box-shadow:8px 0 32px rgba(0,0,0,.4);
