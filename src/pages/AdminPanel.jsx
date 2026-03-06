@@ -2,6 +2,14 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import BannerManager from "../components/BannerManager";
+
+import bgAdmin1 from "../assets/background-administrateur1.jpg";
+import bgAdmin2 from "../assets/background-administrateur2.jpg";
+import bgAdmin3 from "../assets/background-administrateur3.jpg";
+import bgAdmin4 from "../assets/background-administrateur4.jpg";
+
+const ADMIN_BACKGROUNDS = [bgAdmin1, bgAdmin2, bgAdmin3, bgAdmin4];
+const ADMIN_BG_INTERVAL_MS = 12000;
 import DownloadsEditor from "../components/DownloadsEditor";
 import PatchNotesEditor from "../components/PatchNotesEditor";
 import SiteEditor from "../components/SiteEditor";
@@ -29,6 +37,15 @@ const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('news');
   const [logs, setLogs] = useState([]);
   const [logsLoading, setLogsLoading] = useState(false);
+  const [bgIndex, setBgIndex] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(
+      () => setBgIndex((i) => (i + 1) % ADMIN_BACKGROUNDS.length),
+      ADMIN_BG_INTERVAL_MS
+    );
+    return () => clearInterval(t);
+  }, []);
   const [configs, setConfigs] = useState({
     site: siteConfig,
     news: newsConfig,
@@ -85,64 +102,48 @@ const AdminPanel = () => {
 
   if (editingConfig) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        background: 'var(--bg-dark)', 
-        color: 'white',
-        padding: '2rem'
-      }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center',
-            marginBottom: '2rem',
-            padding: '1rem',
-            background: 'rgba(255,255,255,0.1)',
-            borderRadius: '10px',
-            backdropFilter: 'blur(10px)'
-          }}>
-            <h2>
-              <i className="fa-solid fa-edit"></i> Édition: {tabs.find(t => t.id === editingConfig)?.name}
+      <div className="admin-panel admin-panel--editing">
+        <div
+          className="admin-panel-bg"
+          style={{
+            backgroundImage: `linear-gradient(180deg, rgba(8,14,28,.85) 0%, rgba(5,9,20,.92) 100%), url(${ADMIN_BACKGROUNDS[0]})`
+          }}
+        />
+        <div className="admin-panel-header">
+          <div className="admin-panel-header-inner">
+            <h2 className="admin-panel-title">
+              <i className="fa-solid fa-edit" aria-hidden /> Édition: {tabs.find(t => t.id === editingConfig)?.name}
             </h2>
-            <div>
-              <button 
-                onClick={handleSaveConfig}
-                className="btn btn-primary"
-                style={{ marginRight: '1rem' }}
+            <div className="admin-panel-actions">
+              <button
+                type="button"
+                onClick={() => {
+                  try {
+                    handleSaveConfig(editingConfig, JSON.parse(editContent));
+                    setEditingConfig(null);
+                    setEditContent("");
+                  } catch (err) {
+                    alert("JSON invalide.");
+                  }
+                }}
+                className="admin-panel-btn admin-panel-btn--primary"
               >
-                <i className="fa-solid fa-save"></i> Sauvegarder
+                <i className="fa-solid fa-save" aria-hidden /> Sauvegarder
               </button>
-              <button 
-                onClick={handleCancelEdit}
-                className="btn btn-ghost"
-              >
-                <i className="fa-solid fa-times"></i> Annuler
+              <button type="button" onClick={handleCancelEdit} className="admin-panel-btn admin-panel-btn--secondary">
+                <i className="fa-solid fa-xmark" aria-hidden /> Annuler
               </button>
             </div>
           </div>
-          
-          <div style={{
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '10px',
-            padding: '1rem'
-          }}>
+        </div>
+        <div className="admin-panel-body" style={{ maxWidth: "900px", margin: "0 auto", padding: "2rem" }}>
+          <div className="admin-panel-card">
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              style={{
-                width: '100%',
-                height: '70vh',
-                background: 'rgba(0,0,0,0.3)',
-                color: 'white',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '5px',
-                padding: '1rem',
-                fontFamily: 'monospace',
-                fontSize: '14px',
-                resize: 'vertical'
-              }}
+              className="admin-panel-json-edit"
               placeholder="Contenu JSON..."
+              spellCheck={false}
             />
           </div>
         </div>
@@ -151,335 +152,73 @@ const AdminPanel = () => {
   }
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)', 
-      color: 'white',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    }}>
-      
-      {/* Header */}
-      <header style={{ 
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(102,126,234,0.08) 50%, rgba(118,75,162,0.06) 100%)', 
-        padding: window.innerWidth <= 768 ? '1rem' : '1.5rem 2rem',
-        backdropFilter: 'blur(25px)',
-        borderBottom: '1px solid rgba(102,126,234,0.25)',
-        boxShadow: '0 8px 40px rgba(102,126,234,0.15), inset 0 1px 0 rgba(255,255,255,0.1)',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100
-      }}>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: window.innerWidth <= 768 ? 'flex-start' : 'center',
-          maxWidth: '1400px',
-          margin: '0 auto',
-          flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
-          gap: window.innerWidth <= 768 ? '1.5rem' : '0'
-        }}>
-          {/* Logo et titre */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <div style={{
-              width: '50px',
-              height: '50px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: '15px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 10px 25px rgba(102,126,234,0.4)',
-              position: 'relative'
-            }}>
-              <i className="fa-solid fa-shield-halved" style={{
-                fontSize: '1.4rem',
-                color: 'white',
-                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
-              }}></i>
-              <div style={{
-                position: 'absolute',
-                inset: '-2px',
-                background: 'linear-gradient(135deg, #667eea, #764ba2)',
-                borderRadius: '17px',
-                opacity: '0.3',
-                filter: 'blur(8px)',
-                zIndex: -1
-              }}></div>
+    <div className="admin-panel">
+      <div
+        className="admin-panel-bg"
+        style={{
+          backgroundImage: `linear-gradient(180deg, rgba(8,14,28,.78) 0%, rgba(5,9,20,.88) 100%), url(${ADMIN_BACKGROUNDS[bgIndex]})`
+        }}
+      />
+      <header className="admin-panel-header">
+        <div className="admin-panel-header-inner">
+          <div className="admin-panel-brand">
+            <div className="admin-panel-logo">
+              <i className="fa-solid fa-shield-halved" aria-hidden />
             </div>
             <div>
-              <h1 style={{
-                fontSize: window.innerWidth <= 480 ? '1.6rem' : window.innerWidth <= 768 ? '1.8rem' : '2.2rem',
-                fontWeight: '800',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                margin: '0 0 0.3rem 0',
-                letterSpacing: '-0.02em',
-                lineHeight: 1.1
-              }}>
-                Admin Panel
-              </h1>
-              <div style={{ 
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.8rem',
-                flexWrap: 'wrap'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  background: 'rgba(102,126,234,0.1)',
-                  padding: '0.3rem 0.8rem',
-                  borderRadius: '20px',
-                  border: '1px solid rgba(102,126,234,0.2)'
-                }}>
-                  <div style={{
-                    width: '8px',
-                    height: '8px',
-                    background: '#4ade80',
-                    borderRadius: '50%',
-                    animation: 'pulse 2s infinite'
-                  }}></div>
-                  <span style={{ 
-                    fontSize: '0.85rem',
-                    color: 'rgba(255,255,255,0.9)',
-                    fontWeight: '500'
-                  }}>
-                    En ligne
-                  </span>
-                </div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  color: 'rgba(255,255,255,0.8)',
-                  fontSize: '0.9rem'
-                }}>
-                  <i className="fa-solid fa-user" style={{color: '#667eea'}}></i>
-                  <span style={{color: '#667eea', fontWeight: '600'}}>{admin?.name || admin?.email}</span>
-                </div>
+              <h1 className="admin-panel-title">Admin Panel</h1>
+              <div className="admin-panel-meta">
+                <span className="admin-panel-status">
+                  <span className="admin-panel-dot" /> En ligne
+                </span>
+                <span className="admin-panel-user">
+                  <i className="fa-solid fa-user" aria-hidden /> {admin?.name || admin?.email}
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Actions de navigation */}
-          <div style={{ 
-            display: 'flex', 
-            gap: '0.8rem', 
-            alignItems: 'center',
-            flexWrap: 'wrap'
-          }}>
-            {/* Indicateur de statut */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.6rem 1rem',
-              background: 'rgba(34,197,94,0.1)',
-              border: '1px solid rgba(34,197,94,0.2)',
-              borderRadius: '12px',
-              fontSize: '0.85rem',
-              color: '#4ade80',
-              fontWeight: '500'
-            }}>
-              <i className="fa-solid fa-server"></i>
-              API Active
-            </div>
-
-            {/* Bouton de sauvegarde rapide */}
-            <button style={{
-              padding: '0.7rem 1.2rem',
-              background: 'linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.15) 100%)',
-              border: '1px solid rgba(34,197,94,0.3)',
-              borderRadius: '12px',
-              color: '#4ade80',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(10px)',
-              fontSize: '0.9rem',
-              fontWeight: '600'
-            }}
-            onMouseOver={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, rgba(34,197,94,0.25) 0%, rgba(22,163,74,0.25) 100%)';
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 8px 25px rgba(34,197,94,0.3)';
-            }}
-            onMouseOut={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.15) 100%)';
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = 'none';
-            }}>
-              <i className="fa-solid fa-save"></i>
-              Sauvegarder
+          <div className="admin-panel-actions">
+            <span className="admin-panel-badge admin-panel-badge--success">
+              <i className="fa-solid fa-server" aria-hidden /> API Active
+            </span>
+            <button type="button" className="admin-panel-btn admin-panel-btn--primary">
+              <i className="fa-solid fa-save" aria-hidden /> Sauvegarder
             </button>
-
-            {/* Lien vers le site principal */}
-            <a href="/" style={{
-              padding: '0.7rem 1.2rem',
-              background: 'linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%)',
-              border: '1px solid rgba(102,126,234,0.3)',
-              borderRadius: '12px',
-              color: 'white',
-              textDecoration: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(10px)',
-              fontSize: '0.9rem',
-              fontWeight: '600'
-            }}
-            onMouseOver={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, rgba(102,126,234,0.25) 0%, rgba(118,75,162,0.25) 100%)';
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 8px 25px rgba(102,126,234,0.3)';
-            }}
-            onMouseOut={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%)';
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = 'none';
-            }}>
-              <i className="fa-solid fa-external-link-alt"></i> 
-              Site Web
+            <a href="/" target="_blank" rel="noreferrer" className="admin-panel-btn admin-panel-btn--secondary">
+              <i className="fa-solid fa-external-link-alt" aria-hidden /> Site Web
             </a>
-
-            {/* Menu utilisateur */}
-            <div style={{
-              position: 'relative',
-              display: 'inline-block'
-            }}>
-              <button style={{
-                padding: '0.7rem',
-                background: 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.15) 100%)',
-                border: '1px solid rgba(239,68,68,0.3)',
-                borderRadius: '12px',
-                color: '#f87171',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.3s ease',
-                backdropFilter: 'blur(10px)',
-                fontSize: '1.1rem',
-                fontWeight: '600',
-                minWidth: '44px',
-                height: '44px'
-              }}
+            <button
+              type="button"
+              className="admin-panel-btn admin-panel-btn--danger"
               onClick={() => { logout(); navigate('/'); }}
-              onMouseOver={(e) => {
-                e.target.style.background = 'linear-gradient(135deg, rgba(239,68,68,0.25) 0%, rgba(220,38,38,0.25) 100%)';
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 8px 25px rgba(239,68,68,0.3)';
-              }}
-              onMouseOut={(e) => {
-                e.target.style.background = 'linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.15) 100%)';
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = 'none';
-              }}
               title="Déconnexion"
-              >
-                <i className="fa-solid fa-sign-out-alt"></i>
-              </button>
-            </div>
+            >
+              <i className="fa-solid fa-right-from-bracket" aria-hidden />
+            </button>
           </div>
         </div>
       </header>
 
-      <div style={{ 
-        display: 'flex', 
-        maxWidth: '1200px', 
-        margin: '0 auto',
-        flexDirection: window.innerWidth <= 768 ? 'column' : 'row'
-      }}>
-        {/* Sidebar */}
-        <nav style={{ 
-          width: window.innerWidth <= 768 ? '100%' : '280px', 
-          background: 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)', 
-          minHeight: window.innerWidth <= 768 ? 'auto' : 'calc(100vh - 100px)',
-          padding: window.innerWidth <= 768 ? '1rem' : '2rem 1.5rem',
-          borderRight: window.innerWidth <= 768 ? 'none' : '1px solid rgba(255,255,255,0.1)',
-          borderBottom: window.innerWidth <= 768 ? '1px solid rgba(255,255,255,0.1)' : 'none',
-          backdropFilter: 'blur(15px)',
-          boxShadow: window.innerWidth <= 768 ? 'none' : 'inset -1px 0 0 rgba(255,255,255,0.1)'
-        }}>
-          <h3 style={{ 
-            marginBottom: window.innerWidth <= 768 ? '1rem' : '2rem', 
-            color: '#667eea',
-            fontSize: window.innerWidth <= 480 ? '1.1rem' : '1.3rem',
-            fontWeight: '600',
-            display: window.innerWidth <= 480 ? 'none' : 'flex',
-            alignItems: 'center',
-            gap: '0.8rem',
-            paddingBottom: window.innerWidth <= 768 ? '0.5rem' : '1rem',
-            borderBottom: '2px solid rgba(102,126,234,0.2)'
-          }}>
-            <i className="fa-solid fa-cogs" style={{fontSize: '1.2rem'}}></i> Configuration
+      <div className="admin-panel-body">
+        <nav className="admin-panel-nav">
+          <h3 className="admin-panel-nav-title">
+            <i className="fa-solid fa-sliders" aria-hidden /> Configuration
           </h3>
-          {tabs.map(tab => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveTab(tab.id)}
-              style={{
-                width: '100%',
-                padding: window.innerWidth <= 768 ? '0.75rem 1rem' : '1rem 1.25rem',
-                margin: window.innerWidth <= 768 ? '0.2rem 0' : '0.4rem 0',
-                background: activeTab === tab.id 
-                  ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' 
-                  : 'rgba(255,255,255,0.03)',
-                color: activeTab === tab.id ? 'white' : 'rgba(255,255,255,0.85)',
-                border: activeTab === tab.id 
-                  ? '1px solid rgba(102,126,234,0.5)' 
-                  : '1px solid rgba(255,255,255,0.1)',
-                borderRadius: window.innerWidth <= 768 ? '8px' : '12px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: window.innerWidth <= 768 ? '0.5rem' : '0.75rem',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                fontSize: window.innerWidth <= 480 ? '0.85rem' : '0.95rem',
-                fontWeight: activeTab === tab.id ? '600' : '500',
-                boxShadow: activeTab === tab.id 
-                  ? '0 8px 25px rgba(102,126,234,0.25)' 
-                  : '0 2px 10px rgba(0,0,0,0.1)',
-                backdropFilter: 'blur(10px)'
-              }}
-              onMouseOver={(e) => {
-                if (activeTab !== tab.id) {
-                  e.target.style.background = 'rgba(255,255,255,0.08)';
-                  e.target.style.transform = 'translateX(4px)';
-                  e.target.style.borderColor = 'rgba(102,126,234,0.3)';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (activeTab !== tab.id) {
-                  e.target.style.background = 'rgba(255,255,255,0.03)';
-                  e.target.style.transform = 'translateX(0)';
-                  e.target.style.borderColor = 'rgba(255,255,255,0.1)';
-                }
-              }}
+              className={`admin-panel-nav-btn ${activeTab === tab.id ? "admin-panel-nav-btn--active" : ""}`}
             >
-              <i className={`fa-solid ${tab.icon}`} style={{
-                fontSize: '1.1rem',
-                width: '20px',
-                textAlign: 'center'
-              }}></i>
+              <i className={`fa-solid ${tab.icon}`} aria-hidden />
               {tab.name}
             </button>
           ))}
         </nav>
 
-        {/* Main Content */}
-        <main style={{ 
-          flex: 1, 
-          padding: window.innerWidth <= 768 ? '1rem' : window.innerWidth <= 1024 ? '1.5rem' : '2rem 2.5rem',
-          background: 'rgba(255,255,255,0.02)',
-          backdropFilter: 'blur(10px)'
-        }}>
+        <main className="admin-panel-main">
           {activeTab === 'news' && (
             <BannerManager 
               onSave={(newConfig) => handleSaveConfig('news', newConfig)}
@@ -536,40 +275,34 @@ const AdminPanel = () => {
           )}
 
           {activeTab === 'logs' && (
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
-              borderRadius: '15px',
-              padding: '1.5rem',
-              border: '1px solid rgba(255,255,255,0.1)',
-              overflow: 'auto'
-            }}>
-              <h2 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <i className="fa-solid fa-list-alt"></i> Logs de connexion
+            <div className="admin-panel-card">
+              <h2 className="admin-panel-card-title">
+                <i className="fa-solid fa-list-alt" aria-hidden /> Logs de connexion
               </h2>
               {logsLoading ? (
-                <p><i className="fa-solid fa-spinner fa-spin"></i> Chargement...</p>
+                <p className="admin-panel-loading"><i className="fa-solid fa-spinner fa-spin" aria-hidden /> Chargement...</p>
               ) : (
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                <div className="admin-panel-table-wrap">
+                  <table className="admin-panel-table">
                     <thead>
-                      <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.2)' }}>
-                        <th style={{ textAlign: 'left', padding: '0.75rem' }}>Date</th>
-                        <th style={{ textAlign: 'left', padding: '0.75rem' }}>Email</th>
-                        <th style={{ textAlign: 'left', padding: '0.75rem' }}>IP</th>
-                        <th style={{ textAlign: 'left', padding: '0.75rem' }}>Succès</th>
+                      <tr>
+                        <th>Date</th>
+                        <th>Email</th>
+                        <th>IP</th>
+                        <th>Succès</th>
                       </tr>
                     </thead>
                     <tbody>
                       {logs.length === 0 ? (
-                        <tr><td colSpan="4" style={{ padding: '1rem', opacity: 0.7 }}>Aucun log pour le moment.</td></tr>
+                        <tr><td colSpan="4" className="admin-panel-table-empty">Aucun log pour le moment.</td></tr>
                       ) : (
                         logs.map((log) => (
-                          <tr key={log.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                            <td style={{ padding: '0.75rem' }}>{new Date(log.created_at).toLocaleString('fr-FR')}</td>
-                            <td style={{ padding: '0.75rem' }}>{log.email}</td>
-                            <td style={{ padding: '0.75rem' }}>{log.ip || '—'}</td>
-                            <td style={{ padding: '0.75rem' }}>
-                              {log.success ? <span style={{ color: '#4ade80' }}>✓ Oui</span> : <span style={{ color: '#f87171' }}>✗ Non</span>}
+                          <tr key={log.id}>
+                            <td>{new Date(log.created_at).toLocaleString('fr-FR')}</td>
+                            <td>{log.email}</td>
+                            <td>{log.ip || '—'}</td>
+                            <td>
+                              {log.success ? <span className="admin-panel-log-ok">✓ Oui</span> : <span className="admin-panel-log-fail">✗ Non</span>}
                             </td>
                           </tr>
                         ))
@@ -584,98 +317,22 @@ const AdminPanel = () => {
           {activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
            activeTab !== 'pokedex' && activeTab !== 'site' && activeTab !== 'patreon' && 
            activeTab !== 'footer' && activeTab !== 'external' && activeTab !== 'logs' && (
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
-              borderRadius: window.innerWidth <= 768 ? '15px' : '20px',
-              padding: window.innerWidth <= 480 ? '1.5rem' : window.innerWidth <= 768 ? '2rem' : '2.5rem',
-              border: '1px solid rgba(255,255,255,0.1)',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-            }}>
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                marginBottom: '2rem'
-              }}>
-                <h2 style={{
-                  fontSize: '2rem',
-                  fontWeight: '700',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  margin: '0 0 1rem 0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.8rem'
-                }}>
-                  <i className={`fa-solid ${tabs.find(t => t.id === activeTab)?.icon}`} style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    fontSize: '1.8rem'
-                  }}></i>
-                  {tabs.find(t => t.id === activeTab)?.name}
+            <div className="admin-panel-card">
+              <div className="admin-panel-card-head">
+                <h2 className="admin-panel-card-title">
+                  <i className={`fa-solid ${tabs.find(t => t.id === activeTab)?.icon}`} aria-hidden /> {tabs.find(t => t.id === activeTab)?.name}
                 </h2>
-                <div style={{
-                  background: 'linear-gradient(135deg, rgba(255, 165, 0, 0.15) 0%, rgba(255, 140, 0, 0.15) 100%)',
-                  border: '1px solid rgba(255, 165, 0, 0.3)',
-                  color: '#ffb347',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '12px',
-                  fontSize: '0.95rem',
-                  fontWeight: '500',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.6rem',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <i className="fa-solid fa-tools" style={{fontSize: '1rem'}}></i> Interface en développement
-                </div>
+                <span className="admin-panel-badge admin-panel-badge--wip">
+                  <i className="fa-solid fa-tools" aria-hidden /> Interface en développement
+                </span>
               </div>
 
-              {/* Preview temporaire du contenu */}
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%)',
-                borderRadius: '15px',
-                padding: '1.5rem',
-                maxHeight: '60vh',
-                overflow: 'auto',
-                border: '1px solid rgba(255,255,255,0.1)',
-                backdropFilter: 'blur(10px)'
-              }}>
-                <pre style={{ 
-                  margin: 0, 
-                  fontFamily: 'monospace', 
-                  fontSize: '12px',
-                  lineHeight: '1.4',
-                  whiteSpace: 'pre-wrap'
-                }}>
-                  {JSON.stringify(configs[activeTab], null, 2)}
-                </pre>
+              <div className="admin-panel-preview">
+                <pre>{JSON.stringify(configs[activeTab], null, 2)}</pre>
               </div>
 
-              {/* Instructions spécifiques par section */}
-              <div style={{ 
-                marginTop: '2rem', 
-                padding: '1.5rem',
-                background: 'linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%)',
-                borderRadius: '15px',
-                border: '1px solid rgba(102,126,234,0.2)',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 8px 25px rgba(102,126,234,0.1)'
-              }}>
-                <h4 style={{
-                  color: '#667eea',
-                  fontSize: '1.2rem',
-                  fontWeight: '600',
-                  margin: '0 0 1rem 0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.6rem'
-                }}><i className="fa-solid fa-info-circle" style={{fontSize: '1.1rem'}}></i> Instructions</h4>
+              <div className="admin-panel-info">
+                <h4><i className="fa-solid fa-circle-info" aria-hidden /> Instructions</h4>
                 {activeTab === 'downloads' && (
                   <p>Interface graphique en développement. Cette section permettra de modifier facilement les liens de téléchargement du jeu et des patchs avec des formulaires simples.</p>
                 )}
