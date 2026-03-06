@@ -130,6 +130,7 @@ dist
 .pnp.*
 
 # Config JSON modifiés par l'admin (chaque env garde sa config)
+src/config/guide.json
 src/config/pokedex.json
 src/config/extradex.json
 src/config/downloads.json

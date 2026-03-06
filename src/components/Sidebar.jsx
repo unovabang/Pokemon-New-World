@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const SIDEBAR_ITEMS = [
   { id: "accueil", label: "Accueil", icon: "fa-house", to: "/" },
   { id: "pokedex", label: "Pokedex", icon: "fa-book", to: "/pokedex" },
-  { id: "guide", label: "Guide", icon: "fa-book-open", to: "#guide" },
+  { id: "guide", label: "Guide", icon: "fa-book-open", to: "/guide" },
   { id: "patchnotes", label: "PatchNotes", icon: "fa-file-lines", to: "#patchnotes" },
   { id: "items", label: "Items locations", icon: "fa-location-dot", to: "#items" },
   { id: "evs", label: "EVs locations", icon: "fa-location-dot", to: "#evs" },

@@ -33,6 +33,152 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 /* Sur la page Pokédex on utilise un élément réel pour le fond, pas les pseudo-éléments */
 .pokedex-page.page::before,
 .pokedex-page.page::after{display:none}
+
+/* ===== PAGE GUIDE (style Pokémon) ===== */
+.guide-page.page::before,
+.guide-page.page::after{display:none}
+.guide-page-bg{
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  background:linear-gradient(165deg, #0a0f1e 0%, #0d1528 50%, #080e1c 100%);
+  background-image:linear-gradient(165deg, rgba(8,14,28,.95) 0%, rgba(5,9,20,.98) 100%);
+}
+.guide-page-overlay{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background:linear-gradient(170deg, rgba(5,9,20,.4) 0%, rgba(8,14,28,.5) 50%, rgba(5,9,20,.55) 100%);
+  pointer-events:none;
+}
+.guide-wrap{min-height:100vh; padding-bottom:4rem}
+.guide-hero{
+  position:relative;
+  padding:2rem 0 1.75rem;
+}
+.guide-hero-content{
+  display:flex;
+  flex-direction:column;
+  gap:1.25rem;
+}
+.guide-back{
+  display:inline-flex; align-items:center; gap:.5rem;
+  color:var(--muted); text-decoration:none; font-weight:600; font-size:.95rem;
+  transition:color .2s;
+}
+.guide-back:hover{color:var(--primary-2)}
+.guide-title-block{
+  padding:1.5rem 1.75rem;
+  background:linear-gradient(145deg, rgba(126,205,242,.15), rgba(167,139,250,.1));
+  border:1px solid rgba(126,205,242,.25);
+  border-radius:22px;
+  box-shadow:0 8px 32px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.04) inset;
+}
+.guide-title{
+  margin:0 0 .35rem 0;
+  font-size:clamp(1.75rem, 4vw, 2.5rem);
+  font-weight:800;
+  background:linear-gradient(135deg, var(--primary-2), var(--accent));
+  background-clip:text;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:-0.02em;
+}
+.guide-subtitle{
+  margin:0 0 1rem 0;
+  color:var(--muted);
+  font-size:1.05rem;
+}
+.guide-disclaimer{
+  display:flex;
+  align-items:flex-start;
+  gap:.6rem;
+  padding:.85rem 1rem;
+  background:rgba(251,191,36,.12);
+  border:1px solid rgba(251,191,36,.3);
+  border-radius:12px;
+  color:#fde047;
+  font-size:.9rem;
+  line-height:1.5;
+}
+.guide-disclaimer i{
+  flex-shrink:0;
+  margin-top:.15em;
+}
+.guide-content{margin-top:2rem}
+.guide-steps{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem;
+}
+.guide-step-item{counter-increment:guide-step}
+.guide-step{
+  padding:1.5rem 1.75rem;
+  border:1px solid rgba(126,205,242,.2);
+  border-radius:20px;
+  transition:border-color .25s, box-shadow .25s;
+}
+.guide-step:hover{
+  border-color:rgba(126,205,242,.35);
+  box-shadow:0 12px 40px rgba(0,0,0,.3), 0 0 24px var(--glow-blue);
+}
+.guide-step-header{
+  margin-bottom:1rem;
+}
+.guide-step-badge{
+  display:inline-flex;
+  align-items:center;
+  padding:.45rem 1rem;
+  background:linear-gradient(135deg, var(--primary), var(--primary-2));
+  color:#001228;
+  font-weight:800;
+  font-size:.9rem;
+  border-radius:12px;
+  box-shadow:0 4px 16px rgba(46,89,198,.35);
+}
+.guide-step-text{
+  margin:0 0 1rem 0;
+  color:var(--text);
+  line-height:1.65;
+  font-size:1rem;
+}
+.guide-step-highlight{
+  color:var(--primary-2);
+  font-weight:700;
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+.guide-step-image-wrap{
+  margin-top:1rem;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(126,205,242,.2);
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.guide-step-image{
+  width:100%;
+  max-width:480px;
+  height:auto;
+  display:block;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+}
+.guide-empty{
+  text-align:center;
+  padding:3rem 2rem;
+  color:var(--muted);
+  font-size:1rem;
+}
+.guide-empty i{margin-right:.5rem; opacity:.8}
+.guide-empty code{
+  padding:.2rem .5rem;
+  background:rgba(255,255,255,.08);
+  border-radius:6px;
+  font-size:.9em;
+}
 /* Fond Pokédex en élément réel (img) pour affichage fiable */
 .pokedex-page-bg{
   position:fixed;

@@ -12,6 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const configDir = path.join(__dirname, "..", "src", "config");
 
 const configFiles = [
+  "guide",
   "pokedex",
   "extradex",
   "downloads",
