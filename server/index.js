@@ -13,9 +13,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
+// Middleware (limite large pour PUT /api/pokedex et autres configs volumineuses — évolutif)
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 // Auth & logs (login, /me, /logs)
 app.use('/api/auth', authRoutes);
