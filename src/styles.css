@@ -3159,6 +3159,96 @@ a.dex-panel--active{cursor:default}
   box-shadow: 0 24px 48px rgba(0,0,0,.4);
 }
 
+/* ===== ADMIN BST EDITOR (grille) ===== */
+.admin-bst-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.admin-bst-empty {
+  grid-column: 1 / -1;
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255,255,255,.7);
+  margin: 0;
+}
+.admin-bst-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem;
+  background: linear-gradient(165deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  border: 1px solid rgba(126,205,242,.2);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform .2s, border-color .2s, box-shadow .2s;
+  text-align: left;
+}
+.admin-bst-card:hover {
+  border-color: rgba(126,205,242,.4);
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  transform: translateY(-2px);
+}
+.admin-bst-card-main {
+  flex: 1;
+  min-width: 0;
+}
+.admin-bst-card-name {
+  display: block;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #fff;
+  margin-bottom: 0.35rem;
+}
+.admin-bst-card-type {
+  display: block;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,.75);
+  margin-bottom: 0.5rem;
+}
+.admin-bst-card-total {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--primary-2);
+  background: rgba(126,205,242,.15);
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(126,205,242,.3);
+}
+.admin-bst-card-ability {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,.6);
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.admin-bst-card-delete {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  background: rgba(239,68,68,.15);
+  color: #f87171;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.admin-bst-card-delete:hover {
+  background: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+
 /* ===== ADMIN GUIDE EDITOR ===== */
 .admin-guide {
   max-width: 100%;

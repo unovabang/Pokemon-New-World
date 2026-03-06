@@ -188,59 +188,48 @@ export default function BSTEditor({ initialData, onSave }) {
           </div>
         </div>
 
-        <div className="admin-pokedex-table-wrap">
-          <table className="admin-pokedex-table">
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Type</th>
-                <th>PV</th>
-                <th>ATK</th>
-                <th>DEF</th>
-                <th>ATK SPE</th>
-                <th>DEF SPE</th>
-                <th>SPE</th>
-                <th>Total</th>
-                <th>Talent</th>
-                <th style={{ textAlign: "center" }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredEntries.length === 0 ? (
-                <tr>
-                  <td colSpan={11} style={{ padding: "2rem", textAlign: "center", opacity: 0.7 }}>
-                    Aucune entrée. Cliquez sur &quot;Ajouter&quot;.
-                  </td>
-                </tr>
-              ) : (
-                filteredEntries.map((e) => {
-                  const globalIndex = entries.indexOf(e);
-                  return (
-                    <tr key={`${e.name}-${globalIndex}`}>
-                      <td style={{ fontWeight: "600" }}>{e.name}</td>
-                      <td>{e.type || "—"}</td>
-                      <td>{e.hp}</td>
-                      <td>{e.atk}</td>
-                      <td>{e.def}</td>
-                      <td>{e.spa}</td>
-                      <td>{e.spd}</td>
-                      <td>{e.spe}</td>
-                      <td><strong>{e.total}</strong></td>
-                      <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }} title={e.ability}>{e.ability || "—"}</td>
-                      <td style={{ textAlign: "center" }}>
-                        <button type="button" onClick={() => openEdit(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.45rem 0.85rem", marginRight: "0.35rem" }} title="Modifier">
-                          <i className="fa-solid fa-pen" aria-hidden />
-                        </button>
-                        <button type="button" onClick={() => setDeleteConfirm(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-danger" style={{ padding: "0.45rem 0.85rem" }} title="Supprimer">
-                          <i className="fa-solid fa-trash" aria-hidden />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+        <div className="admin-bst-grid">
+          {filteredEntries.length === 0 ? (
+            <p className="admin-bst-empty">
+              Aucune entrée. Cliquez sur &quot;Ajouter&quot; ou sur une carte pour modifier.
+            </p>
+          ) : (
+            filteredEntries.map((e) => {
+              const globalIndex = entries.indexOf(e);
+              return (
+                <div
+                  key={`${e.name}-${globalIndex}`}
+                  className="admin-bst-card"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => openEdit(globalIndex)}
+                  onKeyDown={(ev) => ev.key === "Enter" && openEdit(globalIndex)}
+                >
+                  <div className="admin-bst-card-main">
+                    <span className="admin-bst-card-name">{e.name}</span>
+                    <span className="admin-bst-card-type">{e.type || "—"}</span>
+                    <span className="admin-bst-card-total">
+                      <i className="fa-solid fa-calculator" aria-hidden /> {e.total}
+                    </span>
+                    {(e.ability || "").trim() && (
+                      <p className="admin-bst-card-ability" title={e.ability}>
+                        {(e.ability || "").slice(0, 60)}{(e.ability || "").length > 60 ? "…" : ""}
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className="admin-bst-card-delete"
+                    onClick={(ev) => { ev.stopPropagation(); setDeleteConfirm(globalIndex); }}
+                    title="Supprimer"
+                    aria-label="Supprimer"
+                  >
+                    <i className="fa-solid fa-trash" />
+                  </button>
+                </div>
+              );
+            })
+          )}
         </div>
       </section>
 
