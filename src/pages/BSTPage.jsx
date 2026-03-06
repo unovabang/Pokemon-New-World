@@ -5,6 +5,20 @@ import Sidebar from "../components/Sidebar";
 import bstData from "../config/bst.json";
 import pokedexData from "../config/pokedex.json";
 
+const STORAGE_BST = "admin_bst_data";
+
+function getBSTData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_BST);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && (Array.isArray(parsed.fakemon) || Array.isArray(parsed.megas) || Array.isArray(parsed.speciaux)))
+        return parsed;
+    }
+  } catch (_) {}
+  return bstData;
+}
+
 const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Crect fill='%23222' width='96' height='96' rx='12'/%3E%3Ctext x='48' y='56' fill='%23555' font-size='24' text-anchor='middle' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E";
 
 const FILTER_OPTIONS = [
@@ -329,7 +343,7 @@ export default function BSTPage() {
     ];
     if (filter === "all") return list;
     return list.filter((s) => s.id === filter);
-  }, [filter, search]);
+  }, [filter, search, bstSource]);
 
   const totalCount = useMemo(() => sections.reduce((acc, s) => acc + (s.data?.length || 0), 0), [sections]);
 

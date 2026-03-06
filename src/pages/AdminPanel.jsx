@@ -16,6 +16,7 @@ import SiteSettingsEditor from "../components/SiteSettingsEditor";
 import PokedexEditor from "../components/PokedexEditor";
 import ExtradexEditor from "../components/ExtradexEditor";
 import GuideEditor from "../components/GuideEditor";
+import BSTEditor from "../components/BSTEditor";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -28,6 +29,7 @@ import footerConfig from "../config/footer.json";
 import externalConfig from "../config/external.json";
 import extradexData from "../config/extradex.json";
 import guideData from "../config/guide.json";
+import bstData from "../config/bst.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   || (import.meta.env.DEV ? `${window.location.protocol}//${window.location.hostname}:3001` : window.location.origin);
@@ -83,6 +85,7 @@ const AdminPanel = () => {
   const tabs = [
     { id: 'news', name: 'Actualités', icon: 'fa-newspaper' },
     { id: 'pokedex', name: 'Pokédex', icon: 'fa-book-open' },
+    { id: 'bst', name: 'All BST + Abilities', icon: 'fa-chart-line' },
     { id: 'guide', name: 'Guide', icon: 'fa-route' },
     { id: 'downloads', name: 'Téléchargements', icon: 'fa-download' },
     { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-text' },
@@ -238,6 +241,13 @@ const AdminPanel = () => {
             />
           )}
 
+          {activeTab === 'bst' && (
+            <BSTEditor
+              initialData={bstData || { fakemon: [], megas: [], speciaux: [] }}
+              onSave={() => {}}
+            />
+          )}
+
           {activeTab === 'pokedex' && (
             <>
               <div className="admin-pokedex-subnav" style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
@@ -328,7 +338,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
-           activeTab !== 'pokedex' && activeTab !== 'guide' && activeTab !== 'settings' && activeTab !== 'logs' && (
+           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'settings' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">
                 <h2 className="admin-panel-card-title">
