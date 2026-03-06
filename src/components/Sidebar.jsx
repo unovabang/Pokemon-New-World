@@ -9,7 +9,7 @@ const SIDEBAR_ITEMS = [
   { id: "patchnotes", label: "PatchNotes", icon: "fa-file-lines", to: "#patchnotes" },
   { id: "items", label: "Items locations", icon: "fa-location-dot", to: "#items" },
   { id: "evs", label: "EVs locations", icon: "fa-location-dot", to: "#evs" },
-  { id: "bst", label: "All BST + new Abilities", icon: "fa-table", to: "#bst" },
+  { id: "bst", label: "All BST + new Abilities", icon: "fa-table", to: "/bst" },
   { id: "nerfs", label: "Nerfs and buffs", icon: "fa-scale-balanced", to: "#nerfs" },
 ];
 
