@@ -1778,12 +1778,13 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 
 .admin-pokedex-card {
-  background: linear-gradient(145deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.02) 100%);
-  border-radius: 20px;
+  background: rgba(8,12,24,.92);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
   padding: 1.75rem;
   margin-bottom: 1.5rem;
-  border: 1px solid rgba(102,126,234,.18);
-  box-shadow: 0 8px 32px rgba(0,0,0,.2);
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: 0 4px 24px rgba(0,0,0,.35);
 }
 
 .admin-pokedex-card h3 {
@@ -2183,8 +2184,9 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   z-index: 10;
   padding: 1rem 1.5rem;
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,.08);
-  background: rgba(12,18,35,.6);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  background: rgba(8,12,24,.88);
+  box-shadow: 0 1px 0 rgba(255,255,255,.04);
 }
 .admin-panel-header-inner {
   max-width: 1400px;
@@ -2330,7 +2332,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   width: 260px;
   flex-shrink: 0;
   padding: 1.5rem 1rem;
-  background: rgba(12,18,35,.5);
+  background: rgba(8,12,24,.85);
   backdrop-filter: blur(16px);
   border-right: 1px solid rgba(255,255,255,.06);
   display: flex;
@@ -2394,15 +2396,26 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   padding: 1.5rem 2rem;
   overflow-y: auto;
 }
+/* Support sombre pour tout le contenu des onglets (lisibilité du texte) */
+.admin-panel-main > div {
+  background: rgba(8,12,24,.92);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,.35);
+}
 @media (max-width: 768px) {
   .admin-panel-main { padding: 1rem; }
+  .admin-panel-main > div { padding: 1.25rem; }
 }
 .admin-panel-card {
-  background: rgba(12,18,35,.65);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(8,12,24,.92);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.06);
   border-radius: 16px;
   padding: 1.5rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,.35);
 }
 .admin-panel-card-title {
   margin: 0 0 1rem;
@@ -2422,7 +2435,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   margin-bottom: 1.5rem;
 }
 .admin-panel-preview {
-  background: rgba(0,0,0,.25);
+  background: rgba(0,0,0,.4);
   border-radius: 12px;
   padding: 1rem;
   max-height: 50vh;
@@ -2440,8 +2453,8 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .admin-panel-info {
   margin-top: 1.5rem;
   padding: 1.25rem;
-  background: rgba(126,205,242,.06);
-  border: 1px solid rgba(126,205,242,.15);
+  background: rgba(8,12,24,.7);
+  border: 1px solid rgba(126,205,242,.12);
   border-radius: 12px;
 }
 .admin-panel-info h4 {
