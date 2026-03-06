@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import extradexData from "../config/extradex.json";
+import pokedexData from "../config/pokedex.json";
 import extradexBgImg from "../assets/extradex-background.jpg";
 
 const TYPE_COLORS = {
@@ -157,26 +158,33 @@ export default function ExtradexPage() {
       <div className="pokedex-wrap">
         <header className="pokedex-hero">
           <div className="container pokedex-hero-content">
-            <div className="pokedex-hero-left">
-              <Link to="/pokedex" className="pokedex-back">
-                <i className="fa-solid fa-arrow-left" /> Retour
-              </Link>
-              <div className="pokedex-hero-inner">
-                <div className="pokedex-hero-icon">
-                  <i className="fa-solid fa-book-bookmark" aria-hidden />
+            <Link to="/pokedex" className="pokedex-back">
+              <i className="fa-solid fa-arrow-left" /> Retour
+            </Link>
+            <div className="dex-hero-tabs">
+              <Link to="/pokedex" className="dex-panel dex-panel--pokedex dex-panel--dimmed">
+                <div className="dex-panel-icon">
+                  <i className="fa-solid fa-book-open" aria-hidden />
                 </div>
-                <div className="pokedex-hero-text">
-                  <h1 className="pokedex-title">Extradex</h1>
-                  <p className="pokedex-subtitle">
-                    <i className="fa-solid fa-wand-magic-sparkles pokedex-subtitle-icon" aria-hidden />
+                <div className="dex-panel-text">
+                  <h1 className="dex-panel-title">Pokédex</h1>
+                  <p className="dex-panel-subtitle">
+                    Pokémon New World — {Array.isArray(pokedexData?.entries) ? pokedexData.entries.length : 519} créatures
+                  </p>
+                </div>
+              </Link>
+              <div className="dex-panel dex-panel--extradex dex-panel--active">
+                <div className="dex-panel-icon">
+                  <i className="fa-solid fa-star" aria-hidden />
+                </div>
+                <div className="dex-panel-text">
+                  <h1 className="dex-panel-title">Extradex</h1>
+                  <p className="dex-panel-subtitle">
                     Pokémon New World — {entries.length} créatures
                   </p>
                 </div>
               </div>
             </div>
-            <Link to="/pokedex" className="pokedex-pokedex-link">
-              Pokédex
-            </Link>
           </div>
         </header>
 
