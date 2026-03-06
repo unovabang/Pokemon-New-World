@@ -128,3 +128,19 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Config JSON modifiés par l'admin (chaque env garde sa config)
+src/config/pokedex.json
+src/config/extradex.json
+src/config/downloads.json
+src/config/news.json
+src/config/patchnotes.json
+src/config/patchnotes-en.json
+src/config/patchnotesEN.json
+src/config/site.json
+src/config/patreon.json
+src/config/footer.json
+src/config/external.json
+src/config/sections.json
+src/config/sections-en.json
+src/config/translations.json
