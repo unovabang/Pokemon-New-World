@@ -166,16 +166,18 @@ export default function ExtradexPage() {
     setSelectedTypes((prev) => (key ? [prev[0], key].filter(Boolean) : (prev[0] ? [prev[0]] : [])));
   };
 
+  const sortByNum = (a, b) => (parseInt(String(a.num), 10) || 0) - (parseInt(String(b.num), 10) || 0);
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     const typeFilters = selectedTypes.map((x) => x.toLowerCase().trim()).filter(Boolean);
-    return entries.filter((e) => {
+    const list = entries.filter((e) => {
       const matchSearch = !q || (e.name && e.name.toLowerCase().includes(q)) || (e.num && String(e.num).includes(q));
       if (!matchSearch) return false;
       if (typeFilters.length === 0) return true;
       const types = (Array.isArray(e.types) ? e.types : []).map((x) => String(x).toLowerCase().trim());
       return typeFilters.every((tf) => types.includes(tf));
     });
+    return [...list].sort(sortByNum);
   }, [entries, search, selectedTypes]);
 
   return (

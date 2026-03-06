@@ -198,13 +198,15 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
     setDeleteConfirm(null);
   };
 
-  const filteredEntries = searchList.trim()
+  const sortByNum = (a, b) => (parseInt(String(a.num), 10) || 0) - (parseInt(String(b.num), 10) || 0);
+  const filteredEntries = (searchList.trim()
     ? entries.filter(
         (e) =>
           (e.name && e.name.toLowerCase().includes(searchList.toLowerCase())) ||
           (e.num && String(e.num).includes(searchList))
       )
-    : entries;
+    : entries
+  ).slice().sort(sortByNum);
 
   if (loading) {
     return (

@@ -212,10 +212,11 @@ export default function PokedexPage() {
     });
   };
 
+  const sortByNum = (a, b) => (parseInt(String(a.num), 10) || 0) - (parseInt(String(b.num), 10) || 0);
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     const typeFilters = selectedTypes.map((x) => x.toLowerCase().trim()).filter(Boolean);
-    return entries.filter((e) => {
+    const list = entries.filter((e) => {
       const matchSearch = !q || (e.name && e.name.toLowerCase().includes(q)) || (e.num && String(e.num).includes(q));
       if (!matchSearch) return false;
       if (typeFilters.length === 0) return true;
@@ -223,6 +224,7 @@ export default function PokedexPage() {
       const hasAll = typeFilters.every((tf) => types.includes(tf));
       return hasAll;
     });
+    return [...list].sort(sortByNum);
   }, [entries, search, selectedTypes]);
 
   return (
