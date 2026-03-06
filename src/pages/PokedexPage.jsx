@@ -1,9 +1,15 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import pokedexData from "../config/pokedex.json";
 import content from "../config/index.js";
 import pokedexBgImg from "../assets/pokedex-background.jpg";
+
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
 
 const TYPE_COLORS = {
   plante: { bg: "rgba(126,200,80,.35)", border: "rgba(126,200,80,.6)", text: "#a6e88a" },
@@ -28,6 +34,18 @@ const TYPE_COLORS = {
   aspic: { bg: "rgba(160,128,96,.35)", border: "rgba(160,128,96,.6)", text: "#d4b896" },
 };
 
+/** Noms complets des types (sans abréviation) pour l’affichage */
+const TYPE_LABELS = {
+  acier: "Acier", aspic: "Aspic", combat: "Combat", dragon: "Dragon", eau: "Eau",
+  electr: "Électrik", fee: "Fée", feu: "Feu", glace: "Glace", insecte: "Insecte",
+  malice: "Malice", normal: "Normal", plante: "Plante", poison: "Poison",
+  psy: "Psy", roche: "Roche", sol: "Sol", spectre: "Spectre", tenebres: "Ténèbres", vol: "Vol",
+};
+function getTypeLabel(key) {
+  const k = (key || "").toLowerCase().trim();
+  return TYPE_LABELS[k] || (k.charAt(0).toUpperCase() + k.slice(1));
+}
+
 const defaultTypeStyle = { bg: "rgba(255,255,255,.1)", border: "rgba(255,255,255,.25)", text: "var(--text)" };
 
 function getTypeStyle(type) {
@@ -40,28 +58,90 @@ function getTypeStyle(type) {
   };
 }
 
+function getStoredEntries() {
+  try {
+    const raw = localStorage.getItem("admin_pokedex_entries");
+    const parsed = raw ? JSON.parse(raw) : null;
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function getStoredBackground() {
+  const bg = localStorage.getItem("admin_pokedex_background");
+  return bg && bg.trim() ? bg.trim() : null;
+}
+
+function getStoredCustomTypes() {
+  try {
+    const raw = localStorage.getItem("admin_pokedex_custom_types");
+    const parsed = raw ? JSON.parse(raw) : null;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function PokedexPage() {
   const [search, setSearch] = useState("");
-  const [selectedTypes, setSelectedTypes] = useState([]); // max 2 types pour filtre double
+  const [selectedTypes, setSelectedTypes] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [entries, setEntries] = useState(() => Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
+  const [pokedexBgSrc, setPokedexBgSrc] = useState(pokedexBgImg);
+  const [customTypes, setCustomTypes] = useState([]);
 
-  const entries = Array.isArray(pokedexData?.entries) ? pokedexData.entries : [];
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE}/pokedex`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        if (data.success && data.pokedex) {
+          setEntries(Array.isArray(data.pokedex.entries) ? data.pokedex.entries : []);
+          setPokedexBgSrc(data.pokedex.background && data.pokedex.background.trim() ? data.pokedex.background.trim() : pokedexBgImg);
+          setCustomTypes(Array.isArray(data.pokedex.customTypes) ? data.pokedex.customTypes : []);
+        } else {
+          const stored = getStoredEntries();
+          const bg = getStoredBackground();
+          const ct = getStoredCustomTypes();
+          if (stored && stored.length) setEntries(stored);
+          if (bg) setPokedexBgSrc(bg);
+          if (ct.length) setCustomTypes(ct);
+        }
+      })
+      .catch(() => {
+        if (cancelled) return;
+        const stored = getStoredEntries();
+        const bg = getStoredBackground();
+        const ct = getStoredCustomTypes();
+        if (stored && stored.length) setEntries(stored);
+        if (bg) setPokedexBgSrc(bg);
+        if (ct.length) setCustomTypes(ct);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   const allTypes = useMemo(() => {
     const set = new Set();
     entries.forEach((e) => {
       if (Array.isArray(e.types)) e.types.forEach((t) => set.add(String(t).trim()));
     });
+    customTypes.forEach((t) => set.add(String(t).trim()));
     return Array.from(set).filter(Boolean).sort((a, b) => a.localeCompare(b));
-  }, [entries]);
+  }, [entries, customTypes]);
 
-  const toggleType = (t) => {
+  const setType1 = (key) => {
     setSelectedTypes((prev) => {
-      const has = prev.includes(t);
-      if (has) return prev.filter((x) => x !== t);
-      if (prev.length >= 2) return [prev[1], t];
-      return [...prev, t];
+      const next = key ? [key, prev[1]].filter(Boolean) : (prev[1] ? [prev[1]] : []);
+      return next;
+    });
+  };
+  const setType2 = (key) => {
+    setSelectedTypes((prev) => {
+      const next = key ? [prev[0], key].filter(Boolean) : (prev[0] ? [prev[0]] : []);
+      return next;
     });
   };
 
@@ -77,8 +157,6 @@ export default function PokedexPage() {
       return hasAll;
     });
   }, [entries, search, selectedTypes]);
-
-  const pokedexBgSrc = pokedexBgImg;
 
   return (
     <main className="page page-with-sidebar pokedex-page">
@@ -143,40 +221,45 @@ export default function PokedexPage() {
               </button>
             </div>
           </div>
-          <div className="pokedex-filter-panel">
+          <div className="pokedex-filter-panel pokedex-filter-panel-dropdown">
             <span className="pokedex-filter-label">
               <i className="fa-solid fa-filter" aria-hidden /> Filtrer par type (1 ou 2 types)
             </span>
-            <div className="pokedex-filters">
-              <button
-                type="button"
-                className={`pokedex-filter-pill pokedex-filter-all ${selectedTypes.length === 0 ? "active" : ""}`}
-                onClick={() => setSelectedTypes([])}
-              >
-                <i className="fa-solid fa-layer-group" aria-hidden /> Tous
-              </button>
-              {selectedTypes.length > 0 && (
-                <button type="button" className="pokedex-filter-pill pokedex-filter-clear" onClick={() => setSelectedTypes([])}>
-                  <i className="fa-solid fa-eraser" aria-hidden /> Effacer
-                </button>
-              )}
-              <span className="pokedex-filter-sep" aria-hidden />
-              {allTypes.map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  className={`pokedex-filter-pill pokedex-filter-type ${selectedTypes.includes(t) ? "active" : ""}`}
-                  style={getTypeStyle(t)}
-                  onClick={() => toggleType(t)}
-                  title={selectedTypes.includes(t) ? "Désélectionner" : selectedTypes.length >= 2 ? "Remplacer un type" : "Ajouter ce type"}
+            <div className="pokedex-filter-dropdown-wrap">
+              <label className="pokedex-filter-select-label">
+                Type 1
+                <select
+                  className="pokedex-filter-select"
+                  value={selectedTypes[0] ?? ""}
+                  onChange={(e) => setType1(e.target.value || null)}
+                  aria-label="Premier type"
                 >
-                  {t}
-                </button>
-              ))}
+                  <option value="">— Aucun —</option>
+                  {allTypes.map((t) => (
+                    <option key={t} value={t}>{getTypeLabel(t)}</option>
+                  ))}
+                </select>
+              </label>
+              <span className="pokedex-filter-plus" aria-hidden>+</span>
+              <label className="pokedex-filter-select-label">
+                Type 2
+                <select
+                  className="pokedex-filter-select"
+                  value={selectedTypes[1] ?? ""}
+                  onChange={(e) => setType2(e.target.value || null)}
+                  aria-label="Deuxième type"
+                >
+                  <option value="">— Aucun —</option>
+                  {allTypes.map((t) => (
+                    <option key={t} value={t}>{getTypeLabel(t)}</option>
+                  ))}
+                </select>
+              </label>
             </div>
             {selectedTypes.length > 0 && (
               <p className="pokedex-filter-hint">
-                <i className="fa-solid fa-circle-info" aria-hidden /> Sélection : {selectedTypes.join(" + ")} — affiche les Pokémon ayant {selectedTypes.length === 1 ? "ce type" : "ces 2 types"}.
+                <i className="fa-solid fa-circle-info" aria-hidden />
+                Sélection : {selectedTypes.map(getTypeLabel).join(" + ")} — affiche les Pokémon ayant {selectedTypes.length === 1 ? "ce type" : "ces 2 types"}.
               </p>
             )}
           </div>
