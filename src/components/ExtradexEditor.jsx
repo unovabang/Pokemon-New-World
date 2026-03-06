@@ -9,6 +9,8 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 const STORAGE_ENTRIES = "admin_extradex_entries";
 const STORAGE_TITLE = "admin_extradex_title";
+const STORAGE_BACKGROUND = "admin_extradex_background";
+const STORAGE_CUSTOM_TYPES = "admin_extradex_custom_types";
 
 const KNOWN_TYPES = [
   "acier", "aspic", "combat", "dragon", "eau", "electr", "fee", "feu", "glace",
@@ -19,6 +21,9 @@ const KNOWN_TYPES = [
 export default function ExtradexEditor({ initialData = {}, onSave }) {
   const [title, setTitle] = useState(initialData.title || "Extradex");
   const [entries, setEntries] = useState([]);
+  const [backgroundUrl, setBackgroundUrl] = useState("");
+  const [customTypes, setCustomTypes] = useState([]);
+  const [newTypeName, setNewTypeName] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -39,6 +44,8 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
         if (data.success && data.extradex) {
           setTitle(data.extradex.title || "Extradex");
           setEntries(Array.isArray(data.extradex.entries) ? data.extradex.entries : []);
+          setBackgroundUrl(data.extradex.background || "");
+          setCustomTypes(Array.isArray(data.extradex.customTypes) ? data.extradex.customTypes : []);
           setLoading(false);
           return;
         }
@@ -48,6 +55,8 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
       try {
         const raw = localStorage.getItem(STORAGE_ENTRIES);
         const t = localStorage.getItem(STORAGE_TITLE);
+        const bg = localStorage.getItem(STORAGE_BACKGROUND);
+        const ct = localStorage.getItem(STORAGE_CUSTOM_TYPES);
         if (raw) {
           const parsed = JSON.parse(raw);
           setEntries(Array.isArray(parsed) ? parsed : []);
@@ -56,6 +65,10 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
         }
         if (t) setTitle(t);
         else if (initialData?.title) setTitle(initialData.title);
+        if (bg) setBackgroundUrl(bg);
+        else if (initialData?.background) setBackgroundUrl(initialData.background);
+        if (ct) setCustomTypes(JSON.parse(ct));
+        else if (Array.isArray(initialData?.customTypes)) setCustomTypes(initialData.customTypes);
       } catch {
         setEntries(Array.isArray(initialData?.entries) ? initialData.entries : []);
       }
@@ -65,14 +78,38 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
     return () => { cancelled = true; };
   }, [initialData?.entries, initialData?.title]);
 
-  const allTypes = [...KNOWN_TYPES].sort((a, b) => a.localeCompare(b));
+  const allTypes = [...new Set([...KNOWN_TYPES, ...customTypes].sort((a, b) => a.localeCompare(b)))];
 
-  const saveToStorage = (newEntries, newTitle) => {
+  const saveToStorage = (newEntries, newTitle, newBg, newCustomTypes) => {
     const ents = newEntries ?? entries;
     const t = newTitle !== undefined ? newTitle : title;
+    const bg = newBg !== undefined ? newBg : backgroundUrl;
+    const ct = newCustomTypes !== undefined ? newCustomTypes : customTypes;
     localStorage.setItem(STORAGE_ENTRIES, JSON.stringify(ents));
     localStorage.setItem(STORAGE_TITLE, t);
-    onSave?.({ title: t, entries: ents });
+    if (bg) localStorage.setItem(STORAGE_BACKGROUND, bg); else localStorage.removeItem(STORAGE_BACKGROUND);
+    localStorage.setItem(STORAGE_CUSTOM_TYPES, JSON.stringify(ct));
+    onSave?.({ title: t, entries: ents, background: bg || null, customTypes: ct });
+  };
+
+  const handleBackgroundChange = (url) => {
+    setBackgroundUrl(url);
+    localStorage.setItem(STORAGE_BACKGROUND, url || "");
+  };
+
+  const addCustomType = () => {
+    const t = newTypeName.trim().toLowerCase();
+    if (!t || customTypes.includes(t)) return;
+    const next = [...customTypes, t].sort((a, b) => a.localeCompare(b));
+    setCustomTypes(next);
+    setNewTypeName("");
+    saveToStorage(undefined, undefined, undefined, next);
+  };
+
+  const removeCustomType = (t) => {
+    const next = customTypes.filter((x) => x !== t);
+    setCustomTypes(next);
+    saveToStorage(undefined, undefined, undefined, next);
   };
 
   const handleSaveAll = async () => {
@@ -86,6 +123,8 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
         body: JSON.stringify({
           title,
           entries,
+          background: backgroundUrl || null,
+          customTypes,
         }),
       });
       const data = await res.json();
@@ -143,11 +182,11 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
       const next = [...entries];
       next[editingIndex] = entry;
       setEntries(next);
-      saveToStorage(next, undefined);
+      saveToStorage(next, undefined, undefined, undefined);
     } else {
       const next = [...entries, entry];
       setEntries(next);
-      saveToStorage(next, undefined);
+      saveToStorage(next, undefined, undefined, undefined);
     }
     setShowAddModal(false);
   };
@@ -155,7 +194,7 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
   const confirmDelete = (index) => {
     const next = entries.filter((_, i) => i !== index);
     setEntries(next);
-    saveToStorage(next, undefined);
+    saveToStorage(next, undefined, undefined, undefined);
     setDeleteConfirm(null);
   };
 
@@ -189,10 +228,60 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
             onChange={(e) => {
               const v = e.target.value;
               setTitle(v);
-              saveToStorage(undefined, v);
+              saveToStorage(undefined, v, undefined, undefined);
             }}
             placeholder="Extradex"
           />
+        </div>
+      </section>
+
+      <section className="admin-pokedex-card">
+        <h3><i className="fa-solid fa-image" aria-hidden /> Fond de la page Extradex</h3>
+        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "flex-end" }}>
+          <div style={{ flex: "1", minWidth: "200px" }}>
+            <label className="admin-pokedex-label">URL de l&apos;image de fond</label>
+            <input
+              type="url"
+              className="admin-pokedex-input"
+              value={backgroundUrl}
+              onChange={(e) => handleBackgroundChange(e.target.value)}
+              placeholder="https://... ou laisser vide pour l'image par défaut"
+            />
+          </div>
+          {backgroundUrl && (
+            <div style={{ width: "120px", height: "70px", borderRadius: "12px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.2)" }}>
+              <img src={backgroundUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={(e) => (e.target.style.display = "none")} />
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="admin-pokedex-card">
+        <h3><i className="fa-solid fa-bolt" aria-hidden /> Types personnalisés (filtre)</h3>
+        <p style={{ margin: "0 0 1rem 0", opacity: 0.85, fontSize: "0.9rem" }}>Ajoutez des types qui apparaîtront dans le filtre en plus de ceux des créatures.</p>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.75rem" }}>
+          {customTypes.map((t) => (
+            <span key={t} className="admin-pokedex-type-chip" style={{ paddingRight: "0.5rem" }}>
+              {t}
+              <button type="button" onClick={() => removeCustomType(t)} style={{ background: "none", border: "none", color: "#f87171", cursor: "pointer", padding: "0 0.2rem", marginLeft: "0.25rem" }} aria-label="Supprimer">
+                <i className="fa-solid fa-times" />
+              </button>
+            </span>
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <input
+            type="text"
+            className="admin-pokedex-input"
+            value={newTypeName}
+            onChange={(e) => setNewTypeName(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addCustomType()}
+            placeholder="Nom du nouveau type (ex: custom)"
+            style={{ maxWidth: "220px" }}
+          />
+          <button type="button" onClick={addCustomType} className="admin-pokedex-btn admin-pokedex-btn-primary">
+            <i className="fa-solid fa-plus" /> Ajouter le type
+          </button>
         </div>
       </section>
 

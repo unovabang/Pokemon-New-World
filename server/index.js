@@ -660,7 +660,7 @@ app.put('/api/pokedex', (req, res) => {
 });
 
 // === EXTRADEX API ===
-// GET /api/extradex - Lire l'Extradex (title + entries)
+// GET /api/extradex - Lire l'Extradex (title + entries + background + customTypes)
 app.get('/api/extradex', (req, res) => {
   try {
     const extradexData = getConfig('extradex');
@@ -671,7 +671,9 @@ app.get('/api/extradex', (req, res) => {
       success: true,
       extradex: {
         title: extradexData.title || 'Extradex',
-        entries: Array.isArray(extradexData.entries) ? extradexData.entries : []
+        entries: Array.isArray(extradexData.entries) ? extradexData.entries : [],
+        background: extradexData.background || null,
+        customTypes: Array.isArray(extradexData.customTypes) ? extradexData.customTypes : []
       }
     });
   } catch (error) {
@@ -683,21 +685,28 @@ app.get('/api/extradex', (req, res) => {
 // PUT /api/extradex - Sauvegarder l'Extradex (écrit dans extradex.json)
 app.put('/api/extradex', (req, res) => {
   try {
-    const { title, entries } = req.body;
+    const { title, entries, background, customTypes } = req.body;
     const extradexPath = path.join(CONFIG_DIR, 'extradex.json');
 
-    let current = { title: 'Extradex', entries: [] };
+    let current = { title: 'Extradex', entries: [], background: null, customTypes: [] };
     if (fs.existsSync(extradexPath)) {
       current = fs.readJsonSync(extradexPath);
     }
     if (!Array.isArray(current.entries)) {
       current.entries = [];
     }
+    if (!Array.isArray(current.customTypes)) {
+      current.customTypes = [];
+    }
 
     const updated = {
       title: typeof title === 'string' ? title : (current.title || 'Extradex'),
-      entries: Array.isArray(entries) ? entries : current.entries
+      entries: Array.isArray(entries) ? entries : current.entries,
+      ...(background !== undefined && { background: background || null }),
+      ...(customTypes !== undefined && { customTypes: Array.isArray(customTypes) ? customTypes : [] })
     };
+    if (background === undefined && current.background !== undefined) updated.background = current.background;
+    if (customTypes === undefined && current.customTypes !== undefined) updated.customTypes = current.customTypes;
 
     fs.writeJsonSync(extradexPath, updated, { spaces: 2 });
 

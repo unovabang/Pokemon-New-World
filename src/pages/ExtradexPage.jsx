@@ -121,6 +121,7 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
 
 export default function ExtradexPage() {
   const [extradexData, setExtradexData] = useState(extradexDataFallback);
+  const [extradexBgSrc, setExtradexBgSrc] = useState(extradexBgImg);
   const [search, setSearch] = useState("");
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
@@ -133,7 +134,13 @@ export default function ExtradexPage() {
       .then((d) => {
         if (cancelled) return;
         if (d.success && d.extradex) {
-          setExtradexData({ title: d.extradex.title || "Extradex", entries: d.extradex.entries || [] });
+          setExtradexData({
+            title: d.extradex.title || "Extradex",
+            entries: d.extradex.entries || [],
+            customTypes: d.extradex.customTypes || [],
+          });
+          const bg = d.extradex.background && d.extradex.background.trim();
+          setExtradexBgSrc(bg ? bg.trim() : extradexBgImg);
         }
       })
       .catch(() => {});
@@ -141,14 +148,16 @@ export default function ExtradexPage() {
   }, []);
 
   const entries = Array.isArray(extradexData?.entries) ? extradexData.entries : [];
+  const customTypes = Array.isArray(extradexData?.customTypes) ? extradexData.customTypes : [];
 
   const allTypes = useMemo(() => {
     const set = new Set();
     entries.forEach((e) => {
       if (Array.isArray(e.types)) e.types.forEach((t) => set.add(String(t).trim()));
     });
+    customTypes.forEach((t) => set.add(String(t).trim()));
     return Array.from(set).filter(Boolean).sort((a, b) => a.localeCompare(b));
-  }, [entries]);
+  }, [entries, customTypes]);
 
   const setType1 = (key) => {
     setSelectedTypes((prev) => (key ? [key, prev[1]].filter(Boolean) : (prev[1] ? [prev[1]] : [])));
@@ -172,7 +181,7 @@ export default function ExtradexPage() {
   return (
     <main className="page page-with-sidebar pokedex-page extradex-page">
       <div className="pokedex-page-bg" aria-hidden>
-        <img src={extradexBgImg} alt="" />
+        <img src={extradexBgSrc} alt="" />
       </div>
       <div className="pokedex-page-overlay" aria-hidden />
       <Sidebar />
