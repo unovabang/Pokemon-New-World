@@ -45,7 +45,6 @@ function CharacterBubble({ character, onClick }) {
           loading="lazy"
         />
       </div>
-      <span className="guide-character-bubble-name">{character.name}</span>
     </button>
   );
 }

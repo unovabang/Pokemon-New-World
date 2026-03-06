@@ -44,7 +44,6 @@ function StepPreview({ step }) {
                     onError={(e) => (e.target.src = "/guide-sprites/sprite-test.gif")}
                   />
                 </div>
-                <span className="guide-character-bubble-name">{c.name || "?"}</span>
               </div>
             ))}
           </div>
