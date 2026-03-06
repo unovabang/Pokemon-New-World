@@ -2783,8 +2783,10 @@ a.dex-panel--active{cursor:default}
   display: flex;
   gap: 0.35rem;
 }
-.admin-guide-preview-header .guide-character-bubble {
+.admin-guide-preview-header div.guide-character-bubble {
   cursor: default;
+}
+.admin-guide-preview-header .guide-character-bubble {
   --bubble-size: 40px;
 }
 .admin-guide-preview-badge {

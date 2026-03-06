@@ -23,10 +23,40 @@ function splitByHighlights(text, highlight = []) {
   }));
 }
 
-function StepPreview({ step }) {
+function CharacterModal({ character, onClose }) {
+  if (!character) return null;
+  const imgSrc = character.imageUrl?.trim() || "/guide-sprites/sprite-test.gif";
+  return (
+    <div
+      className="guide-character-modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="guide-character-modal-title"
+    >
+      <div className="guide-character-modal" onClick={(e) => e.stopPropagation()}>
+        <button type="button" className="guide-character-modal-close" onClick={onClose} aria-label="Fermer">
+          <i className="fa-solid fa-xmark" />
+        </button>
+        <h3 id="guide-character-modal-title" className="guide-character-modal-title">
+          {character.name || "Personnage"}
+        </h3>
+        <div className="guide-character-modal-content">
+          <div className="guide-character-modal-sprite">
+            <img src={imgSrc} alt={character.name || ""} />
+          </div>
+          <p className="guide-character-modal-desc">{character.description || "Aucune description."}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StepPreview({ step, onCharacterClick }) {
   const parts = splitByHighlights(step.text || "", step.highlight || []);
   const imgSrc = step.imageUrl?.trim() || DEFAULT_IMAGE;
   const characters = step.characters || [];
+  const isClickable = typeof onCharacterClick === "function";
 
   return (
     <div className="admin-guide-preview">
@@ -34,18 +64,38 @@ function StepPreview({ step }) {
         <div className="admin-guide-preview-badge">Étape {step.num}</div>
         {characters.length > 0 && (
           <div className="guide-step-characters">
-            {characters.map((c, i) => (
-              <div key={i} className="guide-character-bubble" title={c.name || "Personnage"}>
-                <div className="guide-character-bubble-inner">
-                  <img
-                    src={c.imageUrl || "/guide-sprites/sprite-test.gif"}
-                    alt={c.name || ""}
-                    className="guide-character-bubble-img"
-                    onError={(e) => (e.target.src = "/guide-sprites/sprite-test.gif")}
-                  />
+            {characters.map((c, i) =>
+              isClickable ? (
+                <button
+                  key={i}
+                  type="button"
+                  className="guide-character-bubble"
+                  onClick={() => onCharacterClick(c)}
+                  title={c.name || "Personnage"}
+                  aria-label={`Voir ${c.name || "personnage"}`}
+                >
+                  <div className="guide-character-bubble-inner">
+                    <img
+                      src={c.imageUrl || "/guide-sprites/sprite-test.gif"}
+                      alt={c.name || ""}
+                      className="guide-character-bubble-img"
+                      onError={(e) => (e.target.src = "/guide-sprites/sprite-test.gif")}
+                    />
+                  </div>
+                </button>
+              ) : (
+                <div key={i} className="guide-character-bubble" title={c.name || "Personnage"}>
+                  <div className="guide-character-bubble-inner">
+                    <img
+                      src={c.imageUrl || "/guide-sprites/sprite-test.gif"}
+                      alt={c.name || ""}
+                      className="guide-character-bubble-img"
+                      onError={(e) => (e.target.src = "/guide-sprites/sprite-test.gif")}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
         )}
       </div>
@@ -78,6 +128,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
   const [insertAfterIndex, setInsertAfterIndex] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [form, setForm] = useState({
     num: "",
     text: "",
@@ -372,7 +423,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
                 <div key={`${s.num}-${globalIndex}`} className="admin-guide-step-card">
                   <div className="admin-guide-step-card-main">
                     <div className="admin-guide-step-card-preview">
-                      <StepPreview step={s} />
+                      <StepPreview step={s} onCharacterClick={setSelectedCharacter} />
                     </div>
                     <div className="admin-guide-step-card-actions">
                       <div className="admin-guide-step-card-buttons">
@@ -582,6 +633,13 @@ export default function GuideEditor({ initialData = null, onSave }) {
               </div>
             </div>
           </div>,
+          document.body
+        )}
+
+      {/* Modal personnage (aperçu comme sur le guide public) */}
+      {selectedCharacter &&
+        createPortal(
+          <CharacterModal character={selectedCharacter} onClose={() => setSelectedCharacter(null)} />,
           document.body
         )}
     </div>
