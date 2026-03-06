@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import pokedexData from "../config/pokedex.json";
@@ -56,6 +56,72 @@ function getTypeStyle(type) {
     border: `1px solid ${s.border}`,
     color: s.text,
   };
+}
+
+/** Menu déroulant personnalisé avec options colorées par type */
+function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [open]);
+
+  const displayLabel = value ? getTypeLabel(value) : "— Aucun —";
+  const displayStyle = value ? getTypeStyle(value) : { background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.2)", color: "var(--text)" };
+
+  return (
+    <label className="pokedex-filter-select-label" ref={ref}>
+      {label}
+      <div className="pokedex-type-dropdown">
+        <button
+          type="button"
+          className="pokedex-type-dropdown-trigger"
+          onClick={() => setOpen((o) => !o)}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-label={ariaLabel}
+          style={displayStyle}
+        >
+          <span className="pokedex-type-dropdown-value">{displayLabel}</span>
+          <i className={`fa-solid fa-chevron-down pokedex-type-dropdown-chevron ${open ? "open" : ""}`} aria-hidden />
+        </button>
+        {open && (
+          <ul
+            className="pokedex-type-dropdown-list"
+            role="listbox"
+            aria-label={ariaLabel}
+          >
+            <li
+              role="option"
+              aria-selected={!value}
+              className="pokedex-type-dropdown-option pokedex-type-dropdown-option-none"
+              onClick={() => { onChange(null); setOpen(false); }}
+            >
+              — Aucun —
+            </li>
+            {options.map((t) => (
+              <li
+                key={t}
+                role="option"
+                aria-selected={value === t}
+                className="pokedex-type-dropdown-option"
+                style={getTypeStyle(t)}
+                onClick={() => { onChange(t); setOpen(false); }}
+              >
+                {getTypeLabel(t)}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </label>
+  );
 }
 
 function getStoredEntries() {
@@ -226,35 +292,21 @@ export default function PokedexPage() {
               <i className="fa-solid fa-filter" aria-hidden /> Filtrer par type (1 ou 2 types)
             </span>
             <div className="pokedex-filter-dropdown-wrap">
-              <label className="pokedex-filter-select-label">
-                Type 1
-                <select
-                  className="pokedex-filter-select"
-                  value={selectedTypes[0] ?? ""}
-                  onChange={(e) => setType1(e.target.value || null)}
-                  aria-label="Premier type"
-                >
-                  <option value="">— Aucun —</option>
-                  {allTypes.map((t) => (
-                    <option key={t} value={t}>{getTypeLabel(t)}</option>
-                  ))}
-                </select>
-              </label>
+              <TypeDropdown
+                label="Type 1"
+                value={selectedTypes[0] ?? null}
+                options={allTypes}
+                onChange={(v) => setType1(v)}
+                ariaLabel="Premier type"
+              />
               <span className="pokedex-filter-plus" aria-hidden>+</span>
-              <label className="pokedex-filter-select-label">
-                Type 2
-                <select
-                  className="pokedex-filter-select"
-                  value={selectedTypes[1] ?? ""}
-                  onChange={(e) => setType2(e.target.value || null)}
-                  aria-label="Deuxième type"
-                >
-                  <option value="">— Aucun —</option>
-                  {allTypes.map((t) => (
-                    <option key={t} value={t}>{getTypeLabel(t)}</option>
-                  ))}
-                </select>
-              </label>
+              <TypeDropdown
+                label="Type 2"
+                value={selectedTypes[1] ?? null}
+                options={allTypes}
+                onChange={(v) => setType2(v)}
+                ariaLabel="Deuxième type"
+              />
             </div>
             {selectedTypes.length > 0 && (
               <p className="pokedex-filter-hint">
