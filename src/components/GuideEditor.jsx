@@ -8,6 +8,43 @@ const API_BASE = import.meta.env.VITE_API_URL
     : `${window.location.origin}/api`;
 
 const STORAGE_GUIDE = "admin_guide_data";
+const DEFAULT_IMAGE = "/guide-map.png";
+
+function splitByHighlights(text, highlight = []) {
+  if (!text || !Array.isArray(highlight) || highlight.length === 0) {
+    return [{ type: "text", value: text }];
+  }
+  const escaped = highlight.map((h) => h.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const regex = new RegExp(`(${escaped.join("|")})`, "gi");
+  const parts = text.split(regex).filter(Boolean);
+  return parts.map((p) => ({
+    type: highlight.some((h) => p.toLowerCase() === h.toLowerCase()) ? "highlight" : "text",
+    value: p,
+  }));
+}
+
+function StepPreview({ step }) {
+  const parts = splitByHighlights(step.text || "", step.highlight || []);
+  const imgSrc = step.imageUrl?.trim() || DEFAULT_IMAGE;
+
+  return (
+    <div className="admin-guide-preview">
+      <div className="admin-guide-preview-badge">Étape {step.num}</div>
+      <p className="admin-guide-preview-text">
+        {parts.map((p, i) =>
+          p.type === "highlight" ? (
+            <strong key={i} className="admin-guide-preview-highlight">{p.value}</strong>
+          ) : (
+            <span key={i}>{p.value}</span>
+          )
+        )}
+      </p>
+      <div className="admin-guide-preview-img-wrap">
+        <img src={imgSrc} alt="" onError={(e) => (e.target.src = DEFAULT_IMAGE)} />
+      </div>
+    </div>
+  );
+}
 
 export default function GuideEditor({ initialData = null, onSave }) {
   const [title, setTitle] = useState("");
@@ -19,7 +56,9 @@ export default function GuideEditor({ initialData = null, onSave }) {
   const [saveMessage, setSaveMessage] = useState(null);
   const [showStepModal, setShowStepModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
+  const [insertAfterIndex, setInsertAfterIndex] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [form, setForm] = useState({
     num: "",
     text: "",
@@ -92,7 +131,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
       });
       const data = await res.json();
       if (data.success) {
-        setSaveMessage({ type: "success", text: "Guide enregistré dans le fichier JSON." });
+        setSaveMessage({ type: "success", text: "Guide enregistré avec succès." });
         setTimeout(() => setSaveMessage(null), 4000);
       } else {
         setSaveMessage({ type: "error", text: data.error || "Erreur lors de la sauvegarde." });
@@ -104,10 +143,18 @@ export default function GuideEditor({ initialData = null, onSave }) {
     }
   };
 
-  const openAdd = () => {
-    const nextNum = steps.length ? Math.max(...steps.map((s) => parseInt(s.num, 10) || 0)) + 1 : 1;
+  const openAdd = (afterIndex = null) => {
+    let nextNum = 1;
+    if (steps.length) {
+      if (afterIndex !== null && steps[afterIndex]) {
+        nextNum = (parseInt(steps[afterIndex].num, 10) || 0) + 1;
+      } else {
+        nextNum = Math.max(...steps.map((s) => parseInt(s.num, 10) || 0)) + 1;
+      }
+    }
     setForm({ num: String(nextNum), text: "", imageUrl: "", highlightStr: "" });
     setEditingIndex(null);
+    setInsertAfterIndex(afterIndex);
     setShowStepModal(true);
   };
 
@@ -120,6 +167,21 @@ export default function GuideEditor({ initialData = null, onSave }) {
       highlightStr: Array.isArray(s.highlight) ? s.highlight.join(", ") : "",
     });
     setEditingIndex(index);
+    setInsertAfterIndex(null);
+    setShowStepModal(true);
+  };
+
+  const openDuplicate = (index) => {
+    const s = steps[index];
+    const nextNum = Math.max(...steps.map((x) => parseInt(x.num, 10) || 0), 0) + 1;
+    setForm({
+      num: String(nextNum),
+      text: s.text || "",
+      imageUrl: s.imageUrl || "",
+      highlightStr: Array.isArray(s.highlight) ? s.highlight.join(", ") : "",
+    });
+    setEditingIndex(null);
+    setInsertAfterIndex(index);
     setShowStepModal(true);
   };
 
@@ -138,10 +200,15 @@ export default function GuideEditor({ initialData = null, onSave }) {
       const next = [...steps];
       next[editingIndex] = step;
       setSteps(next);
+    } else if (insertAfterIndex !== null) {
+      const next = [...steps];
+      next.splice(insertAfterIndex + 1, 0, step);
+      setSteps(next);
     } else {
       setSteps([...steps, step].sort((a, b) => (a.num || 0) - (b.num || 0)));
     }
     setShowStepModal(false);
+    setInsertAfterIndex(null);
     saveToStorage();
   };
 
@@ -164,45 +231,60 @@ export default function GuideEditor({ initialData = null, onSave }) {
     saveToStorage();
   };
 
+  const sortedSteps = [...steps].sort((a, b) => (parseInt(a.num, 10) || 0) - (parseInt(b.num, 10) || 0));
+  const filteredSteps = searchQuery.trim()
+    ? sortedSteps.filter(
+        (s) =>
+          (s.text || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (s.highlight || []).some((h) => h.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          String(s.num).includes(searchQuery)
+      )
+    : sortedSteps;
+
   if (loading) {
     return (
-      <div className="admin-pokedex" style={{ padding: "2rem", textAlign: "center", color: "rgba(255,255,255,0.85)" }}>
-        <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: "0.5rem" }} />
-        Chargement du guide…
+      <div className="admin-guide admin-guide-loading">
+        <div className="admin-guide-loading-spinner">
+          <i className="fa-solid fa-route fa-spin" />
+        </div>
+        <p>Chargement du guide…</p>
       </div>
     );
   }
 
   return (
-    <div className="admin-pokedex">
-      <section className="admin-pokedex-card">
-        <h3><i className="fa-solid fa-heading" aria-hidden /> Titre et sous-titre</h3>
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div>
-            <label className="admin-pokedex-label">Titre du guide</label>
+    <div className="admin-guide">
+      {/* En-tête + infos générales */}
+      <section className="admin-guide-card admin-guide-header">
+        <div className="admin-guide-header-top">
+          <h3><i className="fa-solid fa-book-open" /> Guide — Paramètres généraux</h3>
+          <a href="/guide" target="_blank" rel="noreferrer" className="admin-guide-preview-link">
+            <i className="fa-solid fa-external-link-alt" /> Voir le guide
+          </a>
+        </div>
+        <div className="admin-guide-fields">
+          <div className="admin-guide-field">
+            <label>Titre du guide</label>
             <input
               type="text"
-              className="admin-pokedex-input"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Guide Pokémon New World"
             />
           </div>
-          <div>
-            <label className="admin-pokedex-label">Sous-titre</label>
+          <div className="admin-guide-field">
+            <label>Sous-titre</label>
             <input
               type="text"
-              className="admin-pokedex-input"
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
               placeholder="Walkthrough de l'histoire principale"
             />
           </div>
-          <div>
-            <label className="admin-pokedex-label">Avertissement (disclaimer)</label>
+          <div className="admin-guide-field">
+            <label>Avertissement (disclaimer)</label>
             <input
               type="text"
-              className="admin-pokedex-input"
               value={disclaimer}
               onChange={(e) => setDisclaimer(e.target.value)}
               placeholder="Ce guide suit la trame principale, les quêtes annexes ne sont pas indiquées."
@@ -211,153 +293,174 @@ export default function GuideEditor({ initialData = null, onSave }) {
         </div>
       </section>
 
-      <section className="admin-pokedex-card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
-          <h3 style={{ margin: 0 }}><i className="fa-solid fa-list-ol" aria-hidden /> Étapes du guide ({steps.length})</h3>
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+      {/* Liste des étapes */}
+      <section className="admin-guide-card admin-guide-steps">
+        <div className="admin-guide-steps-header">
+          <h3><i className="fa-solid fa-list-ol" /> Étapes ({steps.length})</h3>
+          <div className="admin-guide-steps-actions">
+            <div className="admin-guide-search">
+              <i className="fa-solid fa-magnifying-glass" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Rechercher dans les étapes…"
+              />
+            </div>
             {saveMessage && (
-              <span style={{ color: saveMessage.type === "success" ? "#86efac" : "#fca5a5", fontSize: "0.9rem", display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                {saveMessage.type === "success" ? <i className="fa-solid fa-check" /> : <i className="fa-solid fa-exclamation-triangle" />}
+              <span className={`admin-guide-toast admin-guide-toast--${saveMessage.type}`}>
+                <i className={saveMessage.type === "success" ? "fa-solid fa-check-circle" : "fa-solid fa-exclamation-triangle"} />
                 {saveMessage.text}
               </span>
             )}
-            <button type="button" onClick={openAdd} className="admin-pokedex-btn admin-pokedex-btn-primary">
+            <button type="button" onClick={() => openAdd()} className="admin-guide-btn admin-guide-btn-primary">
               <i className="fa-solid fa-plus" /> Ajouter une étape
             </button>
-            <button type="button" onClick={handleSaveAll} disabled={saving} className="admin-pokedex-btn admin-pokedex-btn-ghost">
-              <i className="fa-solid fa-save" /> {saving ? "Enregistrement…" : "Sauvegarder dans le JSON"}
+            <button type="button" onClick={handleSaveAll} disabled={saving} className="admin-guide-btn admin-guide-btn-ghost">
+              <i className="fa-solid fa-save" /> {saving ? "Enregistrement…" : "Sauvegarder"}
             </button>
           </div>
         </div>
 
-        <div className="admin-pokedex-table-wrap">
-          <table className="admin-pokedex-table">
-            <thead>
-              <tr>
-                <th style={{ width: "4rem" }}>N°</th>
-                <th>Texte</th>
-                <th style={{ width: "6rem" }}>Image</th>
-                <th style={{ width: "10rem", textAlign: "center" }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {steps.length === 0 ? (
-                <tr>
-                  <td colSpan={4} style={{ padding: "2rem", textAlign: "center", opacity: 0.7 }}>
-                    Aucune étape. Cliquez sur &quot;Ajouter une étape&quot;.
-                  </td>
-                </tr>
-              ) : (
-                [...steps]
-                  .sort((a, b) => (parseInt(a.num, 10) || 0) - (parseInt(b.num, 10) || 0))
-                  .map((s, sortedIdx) => {
-                    const globalIndex = steps.indexOf(s);
-                    return (
-                      <tr key={`${s.num}-${globalIndex}`}>
-                        <td>{s.num}</td>
-                        <td style={{ maxWidth: "400px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                          {(s.text || "").slice(0, 80)}
-                          {(s.text || "").length > 80 ? "…" : ""}
-                        </td>
-                        <td>
-                          {s.imageUrl ? (
-                            <img src={s.imageUrl} alt="" style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "8px" }} onError={(ev) => (ev.target.style.display = "none")} />
-                          ) : (
-                            <span style={{ opacity: 0.5 }}>—</span>
-                          )}
-                        </td>
-                        <td style={{ textAlign: "center" }}>
-                          <button type="button" onClick={() => moveStep(sortedIdx, "up")} disabled={sortedIdx === 0} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.35rem 0.6rem", marginRight: "0.25rem" }} title="Monter">
-                            <i className="fa-solid fa-chevron-up" />
-                          </button>
-                          <button type="button" onClick={() => moveStep(sortedIdx, "down")} disabled={sortedIdx === steps.length - 1} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.35rem 0.6rem", marginRight: "0.25rem" }} title="Descendre">
-                            <i className="fa-solid fa-chevron-down" />
-                          </button>
-                          <button type="button" onClick={() => openEdit(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.35rem 0.6rem", marginRight: "0.25rem" }} title="Modifier">
-                            <i className="fa-solid fa-pen" />
-                          </button>
-                          <button type="button" onClick={() => setDeleteConfirm(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-danger" style={{ padding: "0.35rem 0.6rem" }} title="Supprimer">
-                            <i className="fa-solid fa-trash" />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-              )}
-            </tbody>
-          </table>
-        </div>
+        {steps.length === 0 ? (
+          <div className="admin-guide-empty">
+            <div className="admin-guide-empty-icon">
+              <i className="fa-solid fa-route" />
+            </div>
+            <p>Aucune étape pour le moment.</p>
+            <p className="admin-guide-empty-hint">Cliquez sur &quot;Ajouter une étape&quot; pour commencer le guide.</p>
+            <button type="button" onClick={() => openAdd()} className="admin-guide-btn admin-guide-btn-primary">
+              <i className="fa-solid fa-plus" /> Ajouter la première étape
+            </button>
+          </div>
+        ) : (
+          <div className="admin-guide-list">
+            {filteredSteps.map((s, sortedIdx) => {
+              const globalIndex = steps.indexOf(s);
+              return (
+                <div key={`${s.num}-${globalIndex}`} className="admin-guide-step-card">
+                  <div className="admin-guide-step-card-main">
+                    <div className="admin-guide-step-card-preview">
+                      <StepPreview step={s} />
+                    </div>
+                    <div className="admin-guide-step-card-actions">
+                      <div className="admin-guide-step-card-buttons">
+                        <button type="button" onClick={() => moveStep(sortedIdx, "up")} disabled={sortedIdx === 0} title="Monter">
+                          <i className="fa-solid fa-chevron-up" />
+                        </button>
+                        <button type="button" onClick={() => moveStep(sortedIdx, "down")} disabled={sortedIdx === sortedSteps.length - 1} title="Descendre">
+                          <i className="fa-solid fa-chevron-down" />
+                        </button>
+                        <button type="button" onClick={() => openAdd(globalIndex)} title="Insérer après">
+                          <i className="fa-solid fa-plus" />
+                        </button>
+                        <button type="button" onClick={() => openEdit(globalIndex)} title="Modifier">
+                          <i className="fa-solid fa-pen" />
+                        </button>
+                        <button type="button" onClick={() => openDuplicate(globalIndex)} title="Dupliquer">
+                          <i className="fa-solid fa-copy" />
+                        </button>
+                        <button type="button" onClick={() => setDeleteConfirm(globalIndex)} className="admin-guide-btn-danger" title="Supprimer">
+                          <i className="fa-solid fa-trash" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            {filteredSteps.length === 0 && searchQuery && (
+              <p className="admin-guide-no-results">Aucune étape ne correspond à &quot;{searchQuery}&quot;.</p>
+            )}
+          </div>
+        )}
       </section>
 
-      {/* Modal Ajout / Édition étape */}
+      {/* Modal Ajout / Édition */}
       {showStepModal &&
         createPortal(
           <div
-            className="admin-pokedex-modal-overlay"
+            className="admin-guide-modal-overlay"
             onClick={() => setShowStepModal(false)}
             role="dialog"
             aria-modal="true"
-            aria-labelledby="guide-step-modal-title"
+            aria-labelledby="guide-modal-title"
           >
-            <div
-              className="admin-pokedex-modal"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="admin-pokedex-modal-header">
-                <h3 id="guide-step-modal-title" className="admin-pokedex-modal-title">
-                  {editingIndex !== null ? "Modifier l'étape" : "Ajouter une étape"}
+            <div className="admin-guide-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="admin-guide-modal-header">
+                <h3 id="guide-modal-title">
+                  {editingIndex !== null ? "Modifier l'étape" : insertAfterIndex !== null ? "Insérer une étape" : "Ajouter une étape"}
                 </h3>
-                <button type="button" className="admin-pokedex-modal-close" onClick={() => setShowStepModal(false)} aria-label="Fermer">
+                <button type="button" className="admin-guide-modal-close" onClick={() => setShowStepModal(false)} aria-label="Fermer">
                   <i className="fa-solid fa-xmark" />
                 </button>
               </div>
-              <div className="admin-pokedex-modal-body">
-                <div>
-                  <label className="admin-pokedex-label">Numéro d'étape</label>
-                  <input
-                    type="number"
-                    className="admin-pokedex-input"
-                    value={form.num}
-                    onChange={(e) => setForm((f) => ({ ...f, num: e.target.value }))}
-                    min={1}
-                  />
+              <div className="admin-guide-modal-body">
+                <div className="admin-guide-modal-form">
+                  <div className="admin-guide-field">
+                    <label>Numéro d'étape</label>
+                    <input
+                      type="number"
+                      value={form.num}
+                      onChange={(e) => setForm((f) => ({ ...f, num: e.target.value }))}
+                      min={1}
+                    />
+                  </div>
+                  <div className="admin-guide-field">
+                    <label>Texte de l'étape</label>
+                    <textarea
+                      value={form.text}
+                      onChange={(e) => setForm((f) => ({ ...f, text: e.target.value }))}
+                      placeholder="Description de l'étape..."
+                      rows={5}
+                    />
+                  </div>
+                  <div className="admin-guide-field">
+                    <label>URL de l'image</label>
+                    <div className="admin-guide-field-with-preset">
+                      <input
+                        type="url"
+                        value={form.imageUrl}
+                        onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
+                        placeholder="/guide-map.png ou https://..."
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setForm((f) => ({ ...f, imageUrl: DEFAULT_IMAGE }))}
+                        className="admin-guide-btn admin-guide-btn-ghost"
+                        title="Utiliser la carte par défaut"
+                      >
+                        Carte
+                      </button>
+                    </div>
+                  </div>
+                  <div className="admin-guide-field">
+                    <label>Termes à mettre en évidence <span className="admin-guide-hint">(séparés par des virgules)</span></label>
+                    <input
+                      type="text"
+                      value={form.highlightStr}
+                      onChange={(e) => setForm((f) => ({ ...f, highlightStr: e.target.value }))}
+                      placeholder="Kéen, Liora, Rose, Sentier Bifröst"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="admin-pokedex-label">Texte de l'étape</label>
-                  <textarea
-                    className="admin-pokedex-textarea"
-                    value={form.text}
-                    onChange={(e) => setForm((f) => ({ ...f, text: e.target.value }))}
-                    placeholder="Description de l'étape..."
-                    rows={4}
-                  />
-                </div>
-                <div>
-                  <label className="admin-pokedex-label">URL de l'image (optionnel)</label>
-                  <input
-                    type="url"
-                    className="admin-pokedex-input"
-                    value={form.imageUrl}
-                    onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
-                    placeholder="https://..."
-                  />
-                </div>
-                <div>
-                  <label className="admin-pokedex-label">Termes à mettre en évidence (séparés par des virgules)</label>
-                  <input
-                    type="text"
-                    className="admin-pokedex-input"
-                    value={form.highlightStr}
-                    onChange={(e) => setForm((f) => ({ ...f, highlightStr: e.target.value }))}
-                    placeholder="Kéen, Liora, Rose, Sentier Bifröst"
+                <div className="admin-guide-modal-preview">
+                  <label>Aperçu</label>
+                  <StepPreview
+                    step={{
+                      num: form.num || "?",
+                      text: form.text || "Aperçu du texte…",
+                      imageUrl: form.imageUrl.trim() || DEFAULT_IMAGE,
+                      highlight: form.highlightStr.split(",").map((h) => h.trim()).filter(Boolean),
+                    }}
                   />
                 </div>
               </div>
-              <div className="admin-pokedex-modal-footer">
-                <button type="button" className="admin-pokedex-btn admin-pokedex-btn-ghost" onClick={() => setShowStepModal(false)}>
+              <div className="admin-guide-modal-footer">
+                <button type="button" className="admin-guide-btn admin-guide-btn-ghost" onClick={() => setShowStepModal(false)}>
                   Annuler
                 </button>
-                <button type="button" className="admin-pokedex-btn admin-pokedex-btn-primary" onClick={saveStep}>
+                <button type="button" className="admin-guide-btn admin-guide-btn-primary" onClick={saveStep}>
                   <i className="fa-solid fa-check" /> Enregistrer
                 </button>
               </div>
@@ -369,17 +472,15 @@ export default function GuideEditor({ initialData = null, onSave }) {
       {/* Modal confirmation suppression */}
       {deleteConfirm !== null &&
         createPortal(
-          <div className="admin-pokedex-confirm-overlay" onClick={() => setDeleteConfirm(null)}>
-            <div className="admin-pokedex-confirm-box" onClick={(e) => e.stopPropagation()}>
-              <h3 style={{ margin: "0 0 1rem 0", color: "#fca5a5" }}>Supprimer cette étape ?</h3>
-              <p style={{ margin: "0 0 1rem 0", color: "rgba(255,255,255,0.85)" }}>
-                L'étape &quot;{(steps[deleteConfirm]?.text || "").slice(0, 60)}…&quot; sera définitivement supprimée.
-              </p>
-              <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
-                <button type="button" className="admin-pokedex-btn admin-pokedex-btn-ghost" onClick={() => setDeleteConfirm(null)}>
+          <div className="admin-guide-confirm-overlay" onClick={() => setDeleteConfirm(null)}>
+            <div className="admin-guide-confirm-box" onClick={(e) => e.stopPropagation()}>
+              <h3><i className="fa-solid fa-triangle-exclamation" /> Supprimer cette étape ?</h3>
+              <p>L'étape &quot;{(steps[deleteConfirm]?.text || "").slice(0, 80)}{(steps[deleteConfirm]?.text || "").length > 80 ? "…" : ""}&quot; sera définitivement supprimée.</p>
+              <div className="admin-guide-confirm-actions">
+                <button type="button" className="admin-guide-btn admin-guide-btn-ghost" onClick={() => setDeleteConfirm(null)}>
                   Annuler
                 </button>
-                <button type="button" className="admin-pokedex-btn admin-pokedex-btn-danger" onClick={() => handleDelete(deleteConfirm)}>
+                <button type="button" className="admin-guide-btn admin-guide-btn-danger" onClick={() => handleDelete(deleteConfirm)}>
                   <i className="fa-solid fa-trash" /> Supprimer
                 </button>
               </div>
