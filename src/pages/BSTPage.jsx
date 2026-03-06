@@ -169,13 +169,13 @@ function BSTModal({ pokemon, pokedexEntries, onClose }) {
           <TypeBadges types={types} />
         </div>
         <div className="bst-modal-stats">
-          <div className="bst-modal-stat"><span className="bst-modal-stat-label">PV</span><span>{pokemon.hp}</span></div>
-          <div className="bst-modal-stat"><span className="bst-modal-stat-label">ATK</span><span>{pokemon.atk}</span></div>
-          <div className="bst-modal-stat"><span className="bst-modal-stat-label">DEF</span><span>{pokemon.def}</span></div>
-          <div className="bst-modal-stat"><span className="bst-modal-stat-label">ATK SPE</span><span>{pokemon.spa}</span></div>
-          <div className="bst-modal-stat"><span className="bst-modal-stat-label">DEF SPE</span><span>{pokemon.spd}</span></div>
-          <div className="bst-modal-stat"><span className="bst-modal-stat-label">SPE</span><span>{pokemon.spe}</span></div>
-          <div className="bst-modal-stat bst-modal-stat-total"><span className="bst-modal-stat-label">Total</span><span>{pokemon.total}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-heart-pulse" aria-hidden /> PV</span><span>{pokemon.hp}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-sword" aria-hidden /> ATK</span><span>{pokemon.atk}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-shield" aria-hidden /> DEF</span><span>{pokemon.def}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> ATK SPE</span><span>{pokemon.spa}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-gem" aria-hidden /> DEF SPE</span><span>{pokemon.spd}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-gauge-high" aria-hidden /> SPE</span><span>{pokemon.spe}</span></div>
+          <div className="bst-modal-stat bst-modal-stat-total"><span className="bst-modal-stat-label"><i className="fa-solid fa-calculator" aria-hidden /> Total</span><span>{pokemon.total}</span></div>
         </div>
         {pokemon.ability && (
           <div className="bst-modal-ability">
@@ -211,9 +211,9 @@ function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode })
     return (
       <section className="bst-section" data-accent={id}>
         <div className="bst-section-header">
-          <i className={`fa-solid ${icon} bst-section-icon`} />
+          <i className={`fa-solid ${icon} bst-section-icon`} aria-hidden />
           <h2 className="bst-section-title">{title}</h2>
-          <span className="bst-section-count">{rows.length} Pokémon</span>
+          <span className="bst-section-count"><i className="fa-solid fa-paw" aria-hidden /> {rows.length} Pokémon</span>
         </div>
         <div className="bst-grid">
           {rows.map((row, i) => (
@@ -236,7 +236,7 @@ function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode })
               <div className="bst-card-types">
                 <TypeBadges types={row.types} />
               </div>
-              <span className="bst-card-total">{row.total}</span>
+              <span className="bst-card-total"><i className="fa-solid fa-calculator" aria-hidden /> {row.total}</span>
             </button>
           ))}
         </div>
@@ -255,18 +255,18 @@ function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode })
         <table className="bst-table">
           <thead>
             <tr>
-              <th className="bst-th-sprite">Sprite</th>
-              <th>Nom</th>
-              <th>Type</th>
-              <th className="bst-th-stat">PV</th>
-              <th className="bst-th-stat">ATK</th>
-              <th className="bst-th-stat">DEF</th>
-              <th className="bst-th-stat">ATK SPE</th>
-              <th className="bst-th-stat">DEF SPE</th>
-              <th className="bst-th-stat">SPE</th>
-              <th className="bst-th-total">Total</th>
-              <th>Talent</th>
-              <th className="bst-th-desc">Description</th>
+              <th className="bst-th-sprite"><i className="fa-solid fa-image" aria-hidden /> Sprite</th>
+              <th><i className="fa-solid fa-tag" aria-hidden /> Nom</th>
+              <th><i className="fa-solid fa-shield-halved" aria-hidden /> Type</th>
+              <th className="bst-th-stat"><i className="fa-solid fa-heart-pulse" aria-hidden /> PV</th>
+              <th className="bst-th-stat"><i className="fa-solid fa-sword" aria-hidden /> ATK</th>
+              <th className="bst-th-stat"><i className="fa-solid fa-shield" aria-hidden /> DEF</th>
+              <th className="bst-th-stat"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> ATK SPE</th>
+              <th className="bst-th-stat"><i className="fa-solid fa-gem" aria-hidden /> DEF SPE</th>
+              <th className="bst-th-stat"><i className="fa-solid fa-gauge-high" aria-hidden /> SPE</th>
+              <th className="bst-th-total"><i className="fa-solid fa-calculator" aria-hidden /> Total</th>
+              <th><i className="fa-solid fa-sparkles" aria-hidden /> Talent</th>
+              <th className="bst-th-desc"><i className="fa-solid fa-book-open" aria-hidden /> Description</th>
             </tr>
           </thead>
           <tbody>
@@ -313,19 +313,25 @@ function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode })
 
 export default function BSTPage() {
   const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const pokedexEntries = pokedexData?.entries || [];
 
   const sections = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const filterData = (arr) =>
+      !q ? arr : (arr || []).filter((r) => normalizeName(r.name || "").includes(q));
     const list = [
-      { id: "fakemon", title: "Fakemon + Formes Régionales", icon: "fa-leaf", accent: "plante", data: bstData.fakemon },
-      { id: "megas", title: "Nouvelles Mégas", icon: "fa-bolt", accent: "electrik", data: bstData.megas },
-      { id: "speciaux", title: "Pokémons Spéciaux", icon: "fa-star", accent: "fee", data: bstData.speciaux },
+      { id: "fakemon", title: "Fakemon + Formes Régionales", icon: "fa-leaf", accent: "plante", data: filterData(bstData.fakemon) },
+      { id: "megas", title: "Nouvelles Mégas", icon: "fa-bolt", accent: "electrik", data: filterData(bstData.megas) },
+      { id: "speciaux", title: "Pokémons Spéciaux", icon: "fa-star", accent: "fee", data: filterData(bstData.speciaux) },
     ];
     if (filter === "all") return list;
     return list.filter((s) => s.id === filter);
-  }, [filter]);
+  }, [filter, search]);
+
+  const totalCount = useMemo(() => sections.reduce((acc, s) => acc + (s.data?.length || 0), 0), [sections]);
 
   return (
     <div className="page bst-page">
@@ -338,55 +344,79 @@ export default function BSTPage() {
       <main className="bst-main">
         <header className="bst-header">
           <Link to="/" className="bst-back">
-            <i className="fa-solid fa-arrow-left" />
+            <i className="fa-solid fa-arrow-left" aria-hidden />
             Retour
           </Link>
           <div className="bst-title-block">
             <h1 className="bst-title">
-              <i className="fa-solid fa-chart-line" />
+              <i className="fa-solid fa-chart-line" aria-hidden />
               All BST + new Abilities
             </h1>
             <p className="bst-subtitle">
+              <i className="fa-solid fa-database" aria-hidden />
               Statistiques de base et talents des Fakemon, Mégas et Pokémon spéciaux
             </p>
           </div>
 
-          <div className="bst-toolbar">
-            <div className="bst-filter">
-              {FILTER_OPTIONS.map((opt) => (
+          <section className="bst-toolbar container">
+            <div className="bst-toolbar-row">
+              <div className="bst-search-wrap">
+                <i className="fa-solid fa-magnifying-glass bst-search-icon" aria-hidden />
+                <input
+                  type="search"
+                  className="bst-search"
+                  placeholder="Rechercher un Pokémon..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Recherche"
+                />
+              </div>
+              <div className="bst-view-toggle" role="group" aria-label="Mode d'affichage">
                 <button
-                  key={opt.id}
                   type="button"
-                  className={`bst-filter-btn ${filter === opt.id ? "bst-filter-btn--active" : ""}`}
-                  onClick={() => setFilter(opt.id)}
+                  className={`bst-view-btn ${viewMode === "grid" ? "active" : ""}`}
+                  onClick={() => setViewMode("grid")}
+                  title="Vue grille"
+                  aria-pressed={viewMode === "grid"}
                 >
-                  <i className={`fa-solid ${opt.icon}`} />
-                  <span>{opt.label}</span>
+                  <i className="fa-solid fa-grip" aria-hidden /> Grille
                 </button>
-              ))}
+                <button
+                  type="button"
+                  className={`bst-view-btn ${viewMode === "table" ? "active" : ""}`}
+                  onClick={() => setViewMode("table")}
+                  title="Vue tableau"
+                  aria-pressed={viewMode === "table"}
+                >
+                  <i className="fa-solid fa-table-list" aria-hidden /> Tableau
+                </button>
+              </div>
             </div>
-            <div className="bst-view-toggle">
-              <button
-                type="button"
-                className={`bst-view-btn ${viewMode === "grid" ? "bst-view-btn--active" : ""}`}
-                onClick={() => setViewMode("grid")}
-                title="Vue grille"
-                aria-pressed={viewMode === "grid"}
-              >
-                <i className="fa-solid fa-grip" /> Grille
-              </button>
-              <button
-                type="button"
-                className={`bst-view-btn ${viewMode === "table" ? "bst-view-btn--active" : ""}`}
-                onClick={() => setViewMode("table")}
-                title="Vue tableau"
-                aria-pressed={viewMode === "table"}
-              >
-                <i className="fa-solid fa-table-list" /> Tableau
-              </button>
+            <div className="bst-filter-panel">
+              <span className="bst-filter-label">
+                <i className="fa-solid fa-filter" aria-hidden /> Filtrer par catégorie
+              </span>
+              <div className="bst-filter-pills">
+                {FILTER_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    className={`bst-filter-pill ${filter === opt.id ? "active" : ""}`}
+                    onClick={() => setFilter(opt.id)}
+                  >
+                    <i className={`fa-solid ${opt.icon}`} aria-hidden />
+                    <span>{opt.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        </header>
+          </section>
+
+          <div className="bst-content-wrap container">
+            <p className="bst-count">
+              <i className="fa-solid fa-list-check" aria-hidden />
+              {totalCount} résultat{totalCount !== 1 ? "s" : ""}
+            </p>
 
         <div className="bst-content">
           {sections.map((s) => (
@@ -402,6 +432,7 @@ export default function BSTPage() {
             />
           ))}
         </div>
+          </div>
       </main>
 
       {selectedPokemon && (
