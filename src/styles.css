@@ -2061,3 +2061,104 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   border: 1px solid rgba(239,68,68,.25);
   box-shadow: 0 24px 48px rgba(0,0,0,.4);
 }
+
+/* ===== PAGE LOGIN ADMIN ===== */
+.login-admin-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  background-image:
+    linear-gradient(180deg, rgba(8,14,28,.75) 0%, rgba(5,9,20,.88) 100%),
+    url(./assets/background-login-admin.jpg);
+  background-size: cover;
+  background-position: center;
+}
+.login-admin-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem;
+  border-radius: 20px;
+  background: rgba(12,18,35,.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(126,205,242,.15);
+  box-shadow: 0 24px 64px rgba(0,0,0,.5);
+}
+.login-admin-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.login-admin-icon {
+  font-size: 2.5rem;
+  color: var(--primary-2);
+  margin-bottom: 1rem;
+  opacity: .95;
+}
+.login-admin-header h1 {
+  margin: 0 0 .5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.login-admin-header p {
+  margin: 0;
+  font-size: .9rem;
+  color: var(--muted);
+}
+.login-admin-form .login-admin-error {
+  margin-bottom: 1rem;
+  padding: .75rem 1rem;
+  background: rgba(239,68,68,.15);
+  border: 1px solid rgba(239,68,68,.3);
+  border-radius: 10px;
+  color: #fca5a5;
+  font-size: .9rem;
+}
+.login-admin-form label {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: 600;
+  font-size: .9rem;
+  color: var(--text);
+}
+.login-admin-form input {
+  width: 100%;
+  padding: .9rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  font-size: 1rem;
+  transition: border-color .2s, background .2s;
+}
+.login-admin-form input::placeholder {
+  color: var(--muted);
+}
+.login-admin-form input:focus {
+  outline: none;
+  border-color: rgba(126,205,242,.4);
+  background: rgba(255,255,255,.08);
+}
+.login-admin-field {
+  margin-bottom: 1.25rem;
+}
+.login-admin-submit-wrap {
+  margin-top: 1.75rem;
+}
+.login-admin-submit-wrap .btn {
+  width: 100%;
+  padding: .95rem;
+  font-size: 1rem;
+}
+.login-admin-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,.1);
+  text-align: center;
+}
+.login-admin-footer .btn-ghost {
+  padding: .6rem 1.2rem;
+  font-size: .9rem;
+}

@@ -25,93 +25,62 @@ const LoginAdmin = () => {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      background: 'var(--bg-dark)',
-      color: 'white'
-    }}>
-      <div style={{
-        background: 'rgba(255,255,255,0.1)',
-        padding: '3rem',
-        borderRadius: '15px',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255,255,255,0.2)',
-        maxWidth: '500px',
-        width: '100%'
-      }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <i className="fa-solid fa-shield-halved" style={{ fontSize: '3rem', color: 'var(--accent)', marginBottom: '1rem' }}></i>
-          <h1 style={{ marginBottom: '0.5rem' }}>Connexion Administrateur</h1>
-          <p style={{ opacity: 0.8 }}>Pokémon New World - Panneau d'Administration</p>
+    <div className="login-admin-page">
+      <div className="login-admin-card">
+        <div className="login-admin-header">
+          <i className="fa-solid fa-shield-halved login-admin-icon" aria-hidden />
+          <h1>Connexion Administrateur</h1>
+          <p>Pokémon New World — Panneau d'Administration</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="login-admin-form">
           {error && (
-            <div style={{
-              marginBottom: '1rem',
-              padding: '0.75rem',
-              background: 'rgba(239,68,68,0.2)',
-              borderRadius: '8px',
-              color: '#fca5a5',
-              fontSize: '0.95rem'
-            }}>
+            <div className="login-admin-error" role="alert">
               {error}
             </div>
           )}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Email</label>
+          <div className="login-admin-field">
+            <label htmlFor="login-email">Email</label>
             <input
+              id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              style={{
-                width: '100%',
-                padding: '1rem',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.3)',
-                background: 'rgba(255,255,255,0.1)',
-                color: 'white',
-                fontSize: '1rem'
-              }}
               placeholder="admin@pokemonnewworld.com"
+              autoComplete="email"
             />
           </div>
-          <div style={{ marginBottom: '2rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Mot de passe</label>
+          <div className="login-admin-field">
+            <label htmlFor="login-password">Mot de passe</label>
             <input
+              id="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={{
-                width: '100%',
-                padding: '1rem',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.3)',
-                background: 'rgba(255,255,255,0.1)',
-                color: 'white',
-                fontSize: '1rem'
-              }}
               placeholder="••••••••••"
+              autoComplete="current-password"
             />
           </div>
-          <button
-            type="submit"
-            className="btn btn-primary"
-            style={{ width: '100%', padding: '1rem' }}
-            disabled={submitting}
-          >
-            {submitting ? <><i className="fa-solid fa-spinner fa-spin"></i> Connexion...</> : <><i className="fa-solid fa-sign-in-alt"></i> Se connecter</>}
-          </button>
+          <div className="login-admin-submit-wrap">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={submitting}
+            >
+              {submitting ? (
+                <><i className="fa-solid fa-spinner fa-spin" aria-hidden /> Connexion...</>
+              ) : (
+                <><i className="fa-solid fa-right-to-bracket" aria-hidden /> Se connecter</>
+              )}
+            </button>
+          </div>
         </form>
 
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '1.5rem', marginTop: '2rem', textAlign: 'center' }}>
+        <div className="login-admin-footer">
           <a href="/" className="btn btn-ghost">
-            <i className="fa-solid fa-home"></i> Retour à l'accueil
+            <i className="fa-solid fa-house" aria-hidden /> Retour à l'accueil
           </a>
         </div>
       </div>
