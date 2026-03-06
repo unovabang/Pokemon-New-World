@@ -1,0 +1,12 @@
+{
+  "title": "Extradex",
+  "entries": [
+    {
+      "num": "1",
+      "name": "Broussatif",
+      "imageUrl": "https://media.discordapp.net/attachments/1412015491026784327/1479279913767796827/1014.gif",
+      "types": ["plante"],
+      "obtention": "Donné par Vice dans son laboratoire"
+    }
+  ]
+}

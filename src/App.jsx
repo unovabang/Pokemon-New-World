@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPanel from "./pages/AdminPanel";
 import HomePage from "./pages/HomePage";
 import PokedexPage from "./pages/PokedexPage";
+import ExtradexPage from "./pages/ExtradexPage";
 import LoginAdmin from "./pages/LoginAdmin";
 import Page404 from "./pages/Page404";
 import { useLanguage } from "./contexts/LanguageContext";
@@ -23,6 +24,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/pokedex" element={<PokedexPage />} />
+        <Route path="/extradex" element={<ExtradexPage />} />
         <Route path="/admin-login" element={<LoginAdmin />} />
         <Route path="/admin" element={
           <ProtectedRoute>

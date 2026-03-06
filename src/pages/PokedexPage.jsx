@@ -235,21 +235,26 @@ export default function PokedexPage() {
       <div className="pokedex-wrap">
         <header className="pokedex-hero">
           <div className="container pokedex-hero-content">
-            <Link to="/" className="pokedex-back">
-              <i className="fa-solid fa-arrow-left" /> Retour
-            </Link>
-            <div className="pokedex-hero-inner">
-              <div className="pokedex-hero-icon">
-                <i className="fa-solid fa-book-open" />
-              </div>
-              <div className="pokedex-hero-text">
-                <h1 className="pokedex-title">Pokédex</h1>
-                <p className="pokedex-subtitle">
-                  <i className="fa-solid fa-wand-magic-sparkles pokedex-subtitle-icon" aria-hidden />
-                  Pokémon New World — {entries.length} créatures
-                </p>
+            <div className="pokedex-hero-left">
+              <Link to="/" className="pokedex-back">
+                <i className="fa-solid fa-arrow-left" /> Retour
+              </Link>
+              <div className="pokedex-hero-inner">
+                <div className="pokedex-hero-icon">
+                  <i className="fa-solid fa-book-open" />
+                </div>
+                <div className="pokedex-hero-text">
+                  <h1 className="pokedex-title">Pokédex</h1>
+                  <p className="pokedex-subtitle">
+                    <i className="fa-solid fa-wand-magic-sparkles pokedex-subtitle-icon" aria-hidden />
+                    Pokémon New World — {entries.length} créatures
+                  </p>
+                </div>
               </div>
             </div>
+            <Link to="/extradex" className="pokedex-extradex-link">
+              Extradex
+            </Link>
           </div>
         </header>
 
