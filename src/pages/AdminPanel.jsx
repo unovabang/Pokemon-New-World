@@ -17,6 +17,7 @@ import PatreonEditor from "../components/PatreonEditor";
 import ExternalLinksEditor from "../components/ExternalLinksEditor";
 import FooterEditor from "../components/FooterEditor";
 import PokedexEditor from "../components/PokedexEditor";
+import ExtradexEditor from "../components/ExtradexEditor";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -27,6 +28,7 @@ import patchnotesConfig from "../config/patchnotes.json";
 import patreonConfig from "../config/patreon.json";
 import footerConfig from "../config/footer.json";
 import externalConfig from "../config/external.json";
+import extradexData from "../config/extradex.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   || (import.meta.env.DEV ? `${window.location.protocol}//${window.location.hostname}:3001` : window.location.origin);
@@ -35,6 +37,7 @@ const AdminPanel = () => {
   const { admin, logout, token } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('news');
+  const [pokedexSubTab, setPokedexSubTab] = useState('pokedex'); // 'pokedex' | 'extradex'
   const [logs, setLogs] = useState([]);
   const [logsLoading, setLogsLoading] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
@@ -239,10 +242,38 @@ const AdminPanel = () => {
           )}
 
           {activeTab === 'pokedex' && (
-            <PokedexEditor
-              initialEntries={pokedexData?.entries ?? []}
-              onSave={() => {}}
-            />
+            <>
+              <div className="admin-pokedex-subnav" style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  onClick={() => setPokedexSubTab("pokedex")}
+                  className={`admin-panel-nav-btn ${pokedexSubTab === "pokedex" ? "admin-panel-nav-btn--active" : ""}`}
+                  style={{ padding: "0.5rem 1rem", fontSize: "0.9rem" }}
+                >
+                  <i className="fa-solid fa-book-open" aria-hidden /> Pokédex
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPokedexSubTab("extradex")}
+                  className={`admin-panel-nav-btn ${pokedexSubTab === "extradex" ? "admin-panel-nav-btn--active" : ""}`}
+                  style={{ padding: "0.5rem 1rem", fontSize: "0.9rem" }}
+                >
+                  <i className="fa-solid fa-star" aria-hidden /> Extradex
+                </button>
+              </div>
+              {pokedexSubTab === "pokedex" && (
+                <PokedexEditor
+                  initialEntries={pokedexData?.entries ?? []}
+                  onSave={() => {}}
+                />
+              )}
+              {pokedexSubTab === "extradex" && (
+                <ExtradexEditor
+                  initialData={extradexData || { title: "Extradex", entries: [] }}
+                  onSave={() => {}}
+                />
+              )}
+            </>
           )}
           
           {/* Configuration générale pour Site */}

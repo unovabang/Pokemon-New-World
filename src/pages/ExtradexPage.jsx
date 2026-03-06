@@ -1,9 +1,15 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import extradexData from "../config/extradex.json";
+import extradexDataFallback from "../config/extradex.json";
 import pokedexData from "../config/pokedex.json";
 import extradexBgImg from "../assets/extradex-background.jpg";
+
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
 
 const TYPE_COLORS = {
   plante: { bg: "rgba(126,200,80,.35)", border: "rgba(126,200,80,.6)", text: "#a6e88a" },
@@ -114,11 +120,27 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
 }
 
 export default function ExtradexPage() {
-  const entries = Array.isArray(extradexData?.entries) ? extradexData.entries : [];
+  const [extradexData, setExtradexData] = useState(extradexDataFallback);
   const [search, setSearch] = useState("");
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE}/extradex?t=${Date.now()}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelled) return;
+        if (d.success && d.extradex) {
+          setExtradexData({ title: d.extradex.title || "Extradex", entries: d.extradex.entries || [] });
+        }
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  const entries = Array.isArray(extradexData?.entries) ? extradexData.entries : [];
 
   const allTypes = useMemo(() => {
     const set = new Set();

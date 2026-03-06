@@ -659,6 +659,59 @@ app.put('/api/pokedex', (req, res) => {
   }
 });
 
+// === EXTRADEX API ===
+// GET /api/extradex - Lire l'Extradex (title + entries)
+app.get('/api/extradex', (req, res) => {
+  try {
+    const extradexData = getConfig('extradex');
+    if (!extradexData) {
+      return res.status(404).json({ success: false, error: 'Fichier Extradex non trouvé' });
+    }
+    res.json({
+      success: true,
+      extradex: {
+        title: extradexData.title || 'Extradex',
+        entries: Array.isArray(extradexData.entries) ? extradexData.entries : []
+      }
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/extradex:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/extradex - Sauvegarder l'Extradex (écrit dans extradex.json)
+app.put('/api/extradex', (req, res) => {
+  try {
+    const { title, entries } = req.body;
+    const extradexPath = path.join(CONFIG_DIR, 'extradex.json');
+
+    let current = { title: 'Extradex', entries: [] };
+    if (fs.existsSync(extradexPath)) {
+      current = fs.readJsonSync(extradexPath);
+    }
+    if (!Array.isArray(current.entries)) {
+      current.entries = [];
+    }
+
+    const updated = {
+      title: typeof title === 'string' ? title : (current.title || 'Extradex'),
+      entries: Array.isArray(entries) ? entries : current.entries
+    };
+
+    fs.writeJsonSync(extradexPath, updated, { spaces: 2 });
+
+    res.json({
+      success: true,
+      message: 'Extradex sauvegardé dans le fichier JSON.',
+      extradex: updated
+    });
+  } catch (error) {
+    console.error('❌ Erreur API PUT /api/extradex:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Servir le frontend React (build Vite) en production — doit être en dernier
 const DIST_DIR = path.join(__dirname, '../dist');
 if (fs.existsSync(DIST_DIR)) {
