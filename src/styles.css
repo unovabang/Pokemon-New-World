@@ -35,32 +35,14 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .pokedex-page.page::after{display:none}
 
 /* ===== PAGE GUIDE (style Pokémon — walkthrough carte) ===== */
-.guide-page.page::before,
-.guide-page.page::after{display:none}
 .guide-page-bg{
-  position:fixed;
-  inset:0;
-  z-index:-2;
-  background:
-    radial-gradient(ellipse 120% 80% at 50% 0%, rgba(46,89,198,.08) 0%, transparent 50%),
-    linear-gradient(165deg, #0a0f1e 0%, #0d1528 40%, #080e1c 100%);
-}
-.guide-page-bg::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:url(/guide-map.png) center/cover;
-  opacity:.04;
-  filter:grayscale(1);
-  pointer-events:none;
+  display:none;
 }
 .guide-page-overlay{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  background:linear-gradient(180deg, rgba(5,9,20,.3) 0%, rgba(8,14,28,.5) 30%, rgba(5,9,20,.6) 100%);
-  pointer-events:none;
+  display:none;
 }
+.guide-page.page::before,
+.guide-page.page::after{display:block}
 .guide-wrap{min-height:100vh; padding-bottom:4rem}
 .guide-hero{
   position:relative;
@@ -103,16 +85,6 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   height:4px;
   background:linear-gradient(90deg, var(--primary-2), var(--accent), var(--primary-2));
   opacity:.9;
-}
-.guide-title-block::after{
-  content:"";
-  position:absolute;
-  bottom:1rem; right:1rem;
-  width:120px; height:80px;
-  background:url(/guide-map.png) center/contain no-repeat;
-  opacity:.15;
-  border-radius:12px;
-  pointer-events:none;
 }
 .guide-title{
   margin:0 0 .5rem 0;
