@@ -1,0 +1,31 @@
+{
+  "title": "Obtiens les nouveautés en avance !",
+  "icon": "/patreonlogo.png",
+  "image": "/patreon.png",
+  "content": {
+    "heading": "Soutenez le projet !!!! ",
+    "description": "Accédez aux nouveautés en avant-première et aidez-nous à développer le jeu !!!!!!!!!!!!!",
+    "buttonText": "Soutenir sur Patreon",
+    "button": "Soutenir sur Patreon",
+    "url": "https://www.patreon.com/c/unovabang"
+  },
+  "goal": {
+    "amount": "",
+    "current": "",
+    "description": ""
+  },
+  "translations": {
+    "en": {
+      "title": "Get the latest news first!",
+      "content": {
+        "heading": "Support the project !!!!",
+        "description": "Get early access to new content and help us develop the game!!!!!!!!!!!!!",
+        "buttonText": "Support on Patreon",
+        "button": "Support on Patreon"
+      },
+      "goal": {
+        "description": ""
+      }
+    }
+  }
+}

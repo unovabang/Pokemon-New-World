@@ -1,0 +1,36 @@
+
+{
+  "version": "0.6",
+  "date": "January 2025",
+  "content": {
+    "title": "Patch Notes 0.6",
+    "sections": [
+      {
+        "title": "🆕 New Features",
+        "items": [
+          "Added game continuation (approximately 5 hours of gameplay)",
+          "Mega Evolution arrival",
+          "Shiny Pokémon animations",
+          "Proper logo for Shiny Pokémon in battle",
+          "Added Fresque-Haute Breeding (location allowing reset of Alternative Shiny Pokémon)",
+          "Many new Pokémon make their appearance"
+        ]
+      },
+      {
+        "title": "🔧 Fixes",
+        "items": [
+          "Fixed crash related to Moon Ball",
+          "Fixed crash related to Fmod (during evolution)",
+          "Fixed the following abilities: Salt Cure, Cruelty, Cursed Body, Illusion",
+          "Fixed Baton Pass move",
+          "Fixed Pokédex numbering",
+          "Fixed some missing collisions"
+        ]
+      },
+      {
+        "title": "⚖️ Balance",
+        "items": ["Nerf to Encornus", "Buff to Aligatueur"]
+      }
+    ]
+  }
+}
