@@ -9,6 +9,15 @@ const SECTIONS = [
   { id: "speciaux", label: "Pokémons Spéciaux", icon: "fa-star" },
 ];
 
+const STAT_ICONS = {
+  hp: "fa-heart-pulse",
+  atk: "fa-sword",
+  def: "fa-shield",
+  spa: "fa-wand-magic-sparkles",
+  spd: "fa-gem",
+  spe: "fa-gauge-high",
+};
+
 const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect fill='%23333' width='64' height='64' rx='8'/%3E%3Ctext x='32' y='38' fill='%23666' font-size='20' text-anchor='middle' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E";
 
 const emptyEntry = () => ({
@@ -309,7 +318,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem" }}>
                 {["hp", "atk", "def", "spa", "spd", "spe"].map((key) => (
                   <div key={key}>
-                    <label className="admin-pokedex-label">{key.toUpperCase()}</label>
+                    <label className="admin-pokedex-label"><i className={`fa-solid ${STAT_ICONS[key] || "fa-circle"}`} aria-hidden /> {key.toUpperCase()}</label>
                     <input
                       type="number"
                       min="0"
@@ -325,11 +334,11 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                 <input type="text" className="admin-pokedex-input" value={form.total} readOnly style={{ opacity: 0.9 }} />
               </div>
               <div>
-                <label className="admin-pokedex-label">Talent</label>
+                <label className="admin-pokedex-label"><i className="fa-solid fa-sparkles" aria-hidden /> Talent</label>
                 <input type="text" className="admin-pokedex-input" value={form.ability} onChange={(e) => setForm((f) => ({ ...f, ability: e.target.value }))} placeholder="Nom du talent" />
               </div>
               <div>
-                <label className="admin-pokedex-label">Description talent</label>
+                <label className="admin-pokedex-label"><i className="fa-solid fa-book" aria-hidden /> Description talent</label>
                 <textarea className="admin-pokedex-textarea" value={form.abilityDesc} onChange={(e) => setForm((f) => ({ ...f, abilityDesc: e.target.value }))} placeholder="Description ou variante" rows={2} />
               </div>
               <div>

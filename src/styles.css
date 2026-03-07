@@ -2900,6 +2900,7 @@ a.dex-panel--active{cursor:default}
   color: rgba(255,255,255,.92);
   font-size: 0.9rem;
 }
+.admin-pokedex-label i { margin-right: 0.35rem; opacity: 0.9; }
 
 .admin-pokedex-input,
 .admin-pokedex-textarea {

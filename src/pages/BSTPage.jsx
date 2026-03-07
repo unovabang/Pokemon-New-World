@@ -186,7 +186,7 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
         </div>
         <div className="bst-modal-stats">
           <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-heart-pulse" aria-hidden /> PV</span><span>{pokemon.hp}</span></div>
-          <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-sword" aria-hidden /> ATK FA</span><span>{pokemon.atk}</span></div>
+          <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-sword" aria-hidden /> ATK</span><span>{pokemon.atk}</span></div>
           <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-shield" aria-hidden /> DEF</span><span>{pokemon.def}</span></div>
           <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> ATK SPE</span><span>{pokemon.spa}</span></div>
           <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-gem" aria-hidden /> DEF SPE</span><span>{pokemon.spd}</span></div>
@@ -277,13 +277,13 @@ function BSTTable({ id, title, icon, data, pokedexList = [], onSelect, viewMode 
               <th><i className="fa-solid fa-tag" aria-hidden /> Nom</th>
               <th><i className="fa-solid fa-shield-halved" aria-hidden /> Type</th>
               <th className="bst-th-stat"><i className="fa-solid fa-heart-pulse" aria-hidden /> PV</th>
-              <th className="bst-th-stat"><i className="fa-solid fa-sword" aria-hidden /> ATK FA</th>
+              <th className="bst-th-stat"><i className="fa-solid fa-sword" aria-hidden /> ATK</th>
               <th className="bst-th-stat"><i className="fa-solid fa-shield" aria-hidden /> DEF</th>
               <th className="bst-th-stat"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> ATK SPE</th>
               <th className="bst-th-stat"><i className="fa-solid fa-gem" aria-hidden /> DEF SPE</th>
               <th className="bst-th-stat"><i className="fa-solid fa-gauge-high" aria-hidden /> SPE</th>
               <th className="bst-th-total"><i className="fa-solid fa-calculator" aria-hidden /> Total</th>
-              <th><i className="fa-solid fa-sparkles" aria-hidden /> Talent FA</th>
+              <th><i className="fa-solid fa-sparkles" aria-hidden /> Talent</th>
               <th className="bst-th-desc"><i className="fa-solid fa-book-open" aria-hidden /> Description</th>
             </tr>
           </thead>
