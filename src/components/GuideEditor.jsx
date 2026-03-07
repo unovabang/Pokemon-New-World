@@ -184,34 +184,39 @@ export default function GuideEditor({ initialData = null, onSave }) {
     return () => { cancelled = true; };
   }, [initialData]);
 
-  const saveToStorage = () => {
-    const data = { title, subtitle, disclaimer, steps };
+  const saveToStorage = (dataToStore) => {
+    const data = dataToStore ?? { title, subtitle, disclaimer, steps };
     localStorage.setItem(STORAGE_GUIDE, JSON.stringify(data));
     onSave?.(data);
   };
 
-  const handleSaveAll = async () => {
+  const saveToApiNow = async (payload) => {
+    const pl = payload ?? { title, subtitle, disclaimer, steps };
     setSaveMessage(null);
     setSaving(true);
-    saveToStorage();
     try {
       const res = await fetch(`${API_BASE}/guide`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, subtitle, disclaimer, steps }),
+        body: JSON.stringify(pl),
       });
       const data = await res.json();
       if (data.success) {
-        setSaveMessage({ type: "success", text: "Guide enregistré avec succès." });
-        setTimeout(() => setSaveMessage(null), 4000);
+        setSaveMessage({ type: "success", text: "Sauvegardé." });
+        setTimeout(() => setSaveMessage(null), 2500);
       } else {
         setSaveMessage({ type: "error", text: data.error || "Erreur lors de la sauvegarde." });
       }
     } catch (err) {
-      setSaveMessage({ type: "error", text: "Impossible de contacter le serveur. Vérifiez que le serveur tourne (npm run dev)." });
+      setSaveMessage({ type: "error", text: "Impossible de contacter le serveur." });
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleSaveAll = async () => {
+    saveToStorage();
+    await saveToApiNow();
   };
 
   const openAdd = (afterIndex = null) => {
@@ -278,27 +283,31 @@ export default function GuideEditor({ initialData = null, onSave }) {
             }))
         : [],
     };
+    let newSteps;
     if (editingIndex !== null) {
-      const next = [...steps];
-      next[editingIndex] = step;
-      setSteps(next);
+      newSteps = [...steps];
+      newSteps[editingIndex] = step;
+      setSteps(newSteps);
     } else if (insertAfterIndex !== null) {
-      const next = [...steps];
-      next.splice(insertAfterIndex + 1, 0, step);
-      setSteps(next);
+      newSteps = [...steps];
+      newSteps.splice(insertAfterIndex + 1, 0, step);
+      setSteps(newSteps);
     } else {
-      setSteps([...steps, step].sort((a, b) => (a.num || 0) - (b.num || 0)));
+      newSteps = [...steps, step].sort((a, b) => (a.num || 0) - (b.num || 0));
+      setSteps(newSteps);
     }
     setShowStepModal(false);
     setInsertAfterIndex(null);
-    saveToStorage();
+    saveToStorage({ title, subtitle, disclaimer, steps: newSteps });
+    saveToApiNow({ title, subtitle, disclaimer, steps: newSteps });
   };
 
   const handleDelete = (index) => {
     const next = steps.filter((_, i) => i !== index);
     setSteps(next);
     setDeleteConfirm(null);
-    saveToStorage();
+    saveToStorage({ title, subtitle, disclaimer, steps: next });
+    saveToApiNow({ title, subtitle, disclaimer, steps: next });
   };
 
   const moveStep = (index, direction) => {
@@ -310,7 +319,8 @@ export default function GuideEditor({ initialData = null, onSave }) {
     next[index] = { ...next[index], num: next[targetIdx].num };
     next[targetIdx] = { ...next[targetIdx], num: tempNum };
     setSteps(next);
-    saveToStorage();
+    saveToStorage({ title, subtitle, disclaimer, steps: next });
+    saveToApiNow({ title, subtitle, disclaimer, steps: next });
   };
 
   const sortedSteps = [...steps].sort((a, b) => (parseInt(a.num, 10) || 0) - (parseInt(b.num, 10) || 0));

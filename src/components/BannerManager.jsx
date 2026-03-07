@@ -51,8 +51,10 @@ const BannerManager = ({ onSave }) => {
       return;
     }
     const nextPos = banners.length ? Math.max(...banners.map(b => b.position), 0) + 1 : 1;
-    setBanners(prev => [...prev, { url, position: nextPos }]);
+    const next = [...banners, { url, position: nextPos }];
+    setBanners(next);
     setNewUrl('');
+    saveConfig({ banners: next, intervalMs });
   };
 
   const removeBanner = (index) => {
@@ -60,8 +62,10 @@ const BannerManager = ({ onSave }) => {
       'Supprimer la bannière',
       'Retirer cette bannière de la rotation ?',
       () => {
-        setBanners(prev => prev.filter((_, i) => i !== index).map((b, i) => ({ ...b, position: i + 1 })));
+        const next = banners.filter((_, i) => i !== index).map((b, i) => ({ ...b, position: i + 1 }));
+        setBanners(next);
         showMessage('Succès', 'Bannière supprimée.', 'success');
+        saveConfig({ banners: next, intervalMs });
       }
     );
   };
@@ -72,10 +76,14 @@ const BannerManager = ({ onSave }) => {
     const next = [...banners];
     const swap = direction === 'up' ? index - 1 : index + 1;
     [next[index], next[swap]] = [next[swap], next[index]];
-    setBanners(next.map((b, i) => ({ ...b, position: i + 1 })));
+    const reordered = next.map((b, i) => ({ ...b, position: i + 1 }));
+    setBanners(reordered);
+    saveConfig({ banners: reordered, intervalMs });
   };
 
-  const saveConfig = async () => {
+  const saveConfig = async (payload) => {
+    const list = payload?.banners ?? banners;
+    const interval = payload?.intervalMs ?? intervalMs;
     setSaving(true);
     try {
       const res = await fetch(`${API_BASE}/config/news`, {
@@ -83,8 +91,8 @@ const BannerManager = ({ onSave }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           config: {
-            banners: banners.map((b, i) => ({ url: b.url, position: i + 1 })),
-            interval: intervalMs
+            banners: (Array.isArray(list) ? list : banners).map((b, i) => ({ url: b.url, position: i + 1 })),
+            interval: interval
           }
         })
       });
@@ -166,7 +174,11 @@ const BannerManager = ({ onSave }) => {
           max={30000}
           step={1000}
           value={intervalMs}
-          onChange={e => setIntervalMs(Number(e.target.value) || 5000)}
+          onChange={e => {
+          const v = Number(e.target.value) || 5000;
+          setIntervalMs(v);
+          saveConfig({ banners, intervalMs: v });
+        }}
         />
       </div>
 
