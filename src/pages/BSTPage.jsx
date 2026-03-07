@@ -209,7 +209,7 @@ function BSTModal({ pokemon, pokedexEntries, onClose }) {
   );
 }
 
-function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode }) {
+function BSTTable({ id, title, icon, data, pokedexEntries = [], onSelect, viewMode }) {
   const rows = useMemo(() => {
     return (data || []).map((row) => {
       const entry = findPokedexEntry(row.name, pokedexEntries);
@@ -340,9 +340,11 @@ export default function BSTPage() {
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [bstSource, setBstSource] = useState(() => getBSTData());
   const [pokedexEntries, setPokedexEntries] = useState(() => getPokedexEntriesForBST());
 
   useEffect(() => {
+    setBstSource(getBSTData());
     setPokedexEntries(getPokedexEntriesForBST());
   }, []);
 
@@ -351,9 +353,9 @@ export default function BSTPage() {
     const filterData = (arr) =>
       !q ? arr : (arr || []).filter((r) => normalizeName(r.name || "").includes(q));
     const list = [
-      { id: "fakemon", title: "Fakemon + Formes Régionales", icon: "fa-leaf", accent: "plante", data: filterData(bstData.fakemon) },
-      { id: "megas", title: "Nouvelles Mégas", icon: "fa-bolt", accent: "electrik", data: filterData(bstData.megas) },
-      { id: "speciaux", title: "Pokémons Spéciaux", icon: "fa-star", accent: "fee", data: filterData(bstData.speciaux) },
+      { id: "fakemon", title: "Fakemon + Formes Régionales", icon: "fa-leaf", accent: "plante", data: filterData(bstSource.fakemon) },
+      { id: "megas", title: "Nouvelles Mégas", icon: "fa-bolt", accent: "electrik", data: filterData(bstSource.megas) },
+      { id: "speciaux", title: "Pokémons Spéciaux", icon: "fa-star", accent: "fee", data: filterData(bstSource.speciaux) },
     ];
     if (filter === "all") return list;
     return list.filter((s) => s.id === filter);
