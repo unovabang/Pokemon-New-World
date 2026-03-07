@@ -17,26 +17,23 @@ function normalizeSearch(str) {
     .trim();
 }
 
-/** Groupe les entrées par zone (ordre d'apparition conservé) */
+/** Groupe les entrées par zone : même nom de zone = une seule carte (ordre des zones = première apparition, ordre des items conservé) */
 function groupByZone(entries) {
   if (!Array.isArray(entries) || entries.length === 0) return [];
-  const groups = [];
-  let currentZone = null;
-  let currentItems = [];
+  const zoneOrder = [];
+  const zoneToItems = {};
   for (const e of entries) {
     const zone = (e.zone || "").trim() || "—";
-    if (zone !== currentZone) {
-      if (currentZone !== null) groups.push({ zone: currentZone, items: currentItems });
-      currentZone = zone;
-      currentItems = [];
+    if (!zoneToItems[zone]) {
+      zoneOrder.push(zone);
+      zoneToItems[zone] = [];
     }
-    currentItems.push({
+    zoneToItems[zone].push({
       item: (e.item || "").trim() || "—",
       obtention: (e.obtention || "").trim() || "—"
     });
   }
-  if (currentZone !== null) groups.push({ zone: currentZone, items: currentItems });
-  return groups;
+  return zoneOrder.map((zone) => ({ zone, items: zoneToItems[zone] }));
 }
 
 export default function ItemLocationPage() {
