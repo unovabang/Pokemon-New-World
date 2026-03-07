@@ -128,11 +128,11 @@ const ItemLocationEditor = ({ onSave }) => {
           <table className="item-location-editor-table">
             <thead>
               <tr>
-                <th style={{ width: '80px' }}>Ordre</th>
-                <th>Zone</th>
-                <th>Objet</th>
-                <th>Obtention</th>
-                <th style={{ width: '100px' }}>Actions</th>
+                <th className="th-ordre" style={{ width: '90px' }}>Ordre</th>
+                <th style={{ width: '18%' }}>Zone</th>
+                <th style={{ width: '22%' }}>Objet</th>
+                <th style={{ width: '32%' }}>Obtention</th>
+                <th className="th-actions" style={{ width: '90px' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -145,7 +145,7 @@ const ItemLocationEditor = ({ onSave }) => {
               ) : (
                 entries.map((row, index) => (
                   <tr key={index}>
-                    <td>
+                    <td className="td-ordre">
                       <div className="item-location-editor-order">
                         <button type="button" onClick={() => moveRow(index, 'up')} disabled={index === 0} title="Monter"><i className="fa-solid fa-chevron-up" /></button>
                         <span>{index + 1}</span>
@@ -179,7 +179,7 @@ const ItemLocationEditor = ({ onSave }) => {
                         className="item-location-editor-input"
                       />
                     </td>
-                    <td>
+                    <td className="td-actions">
                       <button type="button" className="item-location-editor-delete" onClick={() => removeRow(index)} title="Supprimer">
                         <i className="fa-solid fa-trash" />
                       </button>
