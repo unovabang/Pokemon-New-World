@@ -244,20 +244,28 @@ export default function ItemLocationPage() {
                         </colgroup>
                         <thead>
                           <tr>
-                            <th scope="col"><i className="fa-solid fa-cube" aria-hidden /> Objet</th>
-                            <th scope="col"><i className="fa-solid fa-hand-holding" aria-hidden /> Obtention</th>
+                            <th scope="col" className="item-location-th-objet">
+                              <span className="item-location-th-inner"><i className="fa-solid fa-cube" aria-hidden /> Objet</span>
+                            </th>
+                            <th scope="col" className="item-location-th-obtention">
+                              <span className="item-location-th-inner"><i className="fa-solid fa-hand-holding" aria-hidden /> Obtention</span>
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           {g.items.map((row, i) => (
                             <tr key={`${g.zone}-${i}`}>
                               <td className="item-location-cell-item">
-                                <i className="fa-solid fa-gift item-location-cell-fa" aria-hidden />
-                                <span>{row.item}</span>
+                                <span className="item-location-cell-inner">
+                                  <i className="fa-solid fa-gift item-location-cell-fa" aria-hidden />
+                                  <span>{row.item}</span>
+                                </span>
                               </td>
                               <td className="item-location-cell-obtention">
-                                <i className="fa-solid fa-route item-location-cell-fa" aria-hidden />
-                                <span>{row.obtention}</span>
+                                <span className="item-location-cell-inner item-location-cell-inner--right">
+                                  <i className="fa-solid fa-route item-location-cell-fa" aria-hidden />
+                                  <span>{row.obtention}</span>
+                                </span>
                               </td>
                             </tr>
                           ))}
