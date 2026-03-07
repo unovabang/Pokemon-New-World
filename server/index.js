@@ -583,8 +583,12 @@ const getConfig = (configName) => {
 const saveConfig = (configName, data) => {
   fs.ensureDirSync(CONFIG_DIR);
   const configPath = path.join(CONFIG_DIR, `${configName}.json`);
+  const repoConfigPath = path.join(SOURCE_CONFIG_DIR, `${configName}.json`);
+  const opts = { spaces: 2 };
   try {
-    fs.writeJsonSync(configPath, data, { spaces: 2 });
+    fs.writeJsonSync(configPath, data, opts);
+    fs.ensureDirSync(SOURCE_CONFIG_DIR);
+    fs.writeJsonSync(repoConfigPath, data, opts);
     return true;
   } catch (error) {
     console.error(`❌ Erreur sauvegarde ${configName}:`, error);
