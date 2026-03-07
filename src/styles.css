@@ -1056,15 +1056,18 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .item-location-zone{padding:1.5rem 1.75rem}
 .item-location-zone-title{margin:0 0 1rem; font-size:1.1rem; font-weight:600; color:var(--text); padding-bottom:.6rem; border-bottom:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:.5rem}
 .item-location-table-wrap{overflow-x:auto; border-radius:10px; border:1px solid rgba(255,255,255,.08)}
-.item-location-table{width:100%; border-collapse:collapse; font-size:.95rem}
+.item-location-table{width:100%; border-collapse:collapse; font-size:.95rem; table-layout:fixed}
+.item-location-col-item{width:38%}
+.item-location-col-obtention{width:62%}
 .item-location-table th{text-align:left; padding:.65rem 1rem; background:rgba(255,255,255,.06); color:var(--muted); font-weight:600; border-bottom:1px solid rgba(255,255,255,.1)}
-.item-location-table td{padding:.6rem 1rem; border-bottom:1px solid rgba(255,255,255,.05); color:var(--text)}
+.item-location-table td{padding:.6rem 1rem; border-bottom:1px solid rgba(255,255,255,.05); color:var(--text); vertical-align:middle}
 .item-location-table tbody tr:last-child td{border-bottom:none}
 .item-location-table tbody tr:hover td{background:rgba(255,255,255,.03)}
-.item-location-cell-item{color:var(--text); display:flex; align-items:center; gap:.5rem}
-.item-location-cell-obtention{color:var(--muted); font-size:.9em; display:flex; align-items:center; gap:.5rem}
+.item-location-cell-item{color:var(--text); display:flex; align-items:center; gap:.5rem; min-width:0}
+.item-location-cell-item span,.item-location-cell-obtention span{min-width:0; overflow-wrap:break-word}
+.item-location-cell-obtention{color:var(--muted); font-size:.9em; display:flex; align-items:center; gap:.5rem; min-width:0}
 .item-location-cell-fa{opacity:.7; color:var(--primary-2); font-size:.85em; flex-shrink:0}
-.item-location-toolbar{display:flex; flex-wrap:wrap; gap:1rem; align-items:center; padding:1rem 1.25rem; margin-bottom:1.5rem}
+.item-location-toolbar{display:flex; flex-wrap:wrap; gap:1rem; align-items:flex-end; padding:1rem 1.25rem; margin-bottom:1.5rem}
 .item-location-search-wrap{flex:1; min-width:200px; position:relative; display:flex; align-items:center}
 .item-location-search-icon{position:absolute; left:1rem; color:var(--muted); font-size:.95rem; pointer-events:none}
 .item-location-search-input{width:100%; padding:.65rem 1rem .65rem 2.75rem; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:var(--text); font-size:.95rem}
@@ -1072,9 +1075,20 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .item-location-search-input:focus{outline:none; border-color:rgba(126,205,242,.35)}
 .item-location-search-clear{position:absolute; right:.75rem; padding:.35rem; border:none; border-radius:6px; background:rgba(255,255,255,.1); color:var(--muted); cursor:pointer}
 .item-location-search-clear:hover{background:rgba(255,255,255,.15); color:var(--text)}
-.item-location-filter-wrap{display:flex; align-items:center; gap:.5rem}
-.item-location-filter-icon{color:var(--muted); font-size:.9rem}
-.item-location-filter-select{padding:.65rem 2rem .65rem 1rem; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:var(--text); font-size:.95rem; cursor:pointer}
+.item-location-dropdown-wrap{display:flex; flex-direction:column; gap:.35rem}
+.item-location-dropdown-label{font-size:.75rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; display:flex; align-items:center; gap:.4rem}
+.item-location-dropdown-label i{opacity:.9; color:var(--primary-2)}
+.item-location-dropdown{position:relative}
+.item-location-dropdown-trigger{display:flex; align-items:center; justify-content:space-between; gap:.5rem; min-width:180px; padding:.6rem 1rem; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:var(--text); font-size:.9rem; cursor:pointer; text-align:left}
+.item-location-dropdown-trigger:hover{border-color:rgba(255,255,255,.2); background:rgba(255,255,255,.08)}
+.item-location-dropdown-trigger span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.item-location-dropdown-chevron{font-size:.7rem; opacity:.8; transition:transform .2s}
+.item-location-dropdown-chevron.open{transform:rotate(180deg)}
+.item-location-dropdown-list{position:absolute; top:100%; left:0; margin:.35rem 0 0; padding:.35rem 0; min-width:100%; max-height:280px; overflow-y:auto; list-style:none; background:rgba(12,18,32,.98); border:1px solid rgba(255,255,255,.12); border-radius:10px; box-shadow:0 12px 32px rgba(0,0,0,.4); z-index:50}
+.item-location-dropdown-list li{margin:0}
+.item-location-dropdown-option{display:block; width:100%; padding:.5rem 1rem; border:none; background:transparent; color:var(--text); font-size:.9rem; text-align:left; cursor:pointer; transition:background .15s}
+.item-location-dropdown-option:hover{background:rgba(255,255,255,.08)}
+.item-location-dropdown-option.selected{background:rgba(126,205,242,.2); color:var(--primary-2)}
 .item-location-zone-title .fa-map-pin{color:var(--primary-2); opacity:.9; font-size:.95rem}
 .item-location-table th .fa-cube,.item-location-table th .fa-hand-holding{opacity:.85; margin-right:.35rem; color:var(--primary-2)}
 .item-location-no-results .fa-magnifying-glass{font-size:2rem; margin-bottom:1rem; opacity:.6}

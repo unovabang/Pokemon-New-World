@@ -44,6 +44,18 @@ export default function ItemLocationPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterZone, setFilterZone] = useState("");
+  const [filterItem, setFilterItem] = useState("");
+  const [openZoneDropdown, setOpenZoneDropdown] = useState(false);
+  const [openItemDropdown, setOpenItemDropdown] = useState(false);
+
+  useEffect(() => {
+    const close = () => { setOpenZoneDropdown(false); setOpenItemDropdown(false); };
+    const onDocClick = (e) => {
+      if (!e.target.closest(".item-location-dropdown")) close();
+    };
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,11 +78,25 @@ export default function ItemLocationPage() {
     return zones;
   }, [groups]);
 
+  const itemOptions = useMemo(() => {
+    const items = new Set();
+    groups.forEach((g) => g.items.forEach((row) => row.item && items.add(row.item)));
+    return [...items].sort((a, b) => a.localeCompare(b));
+  }, [groups]);
+
   const filteredGroups = useMemo(() => {
     const q = normalizeSearch(searchQuery);
-    const byZone = filterZone
+    let byZone = filterZone
       ? groups.filter((g) => g.zone === filterZone)
       : groups;
+    if (filterItem) {
+      byZone = byZone
+        .map((g) => ({
+          zone: g.zone,
+          items: g.items.filter((row) => row.item === filterItem)
+        }))
+        .filter((g) => g.items.length > 0);
+    }
     if (!q) return byZone;
     return byZone
       .map((g) => ({
@@ -83,7 +109,7 @@ export default function ItemLocationPage() {
         )
       }))
       .filter((g) => g.items.length > 0);
-  }, [groups, searchQuery, filterZone]);
+  }, [groups, searchQuery, filterZone, filterItem]);
 
   return (
     <main className="page page-with-nav item-location-page">
@@ -133,19 +159,67 @@ export default function ItemLocationPage() {
                   </button>
                 )}
               </div>
-              <div className="item-location-filter-wrap">
-                <i className="fa-solid fa-filter item-location-filter-icon" aria-hidden />
-                <select
-                  value={filterZone}
-                  onChange={(e) => setFilterZone(e.target.value)}
-                  className="item-location-filter-select"
-                  aria-label="Filtrer par zone"
-                >
-                  <option value="">Toutes les zones</option>
-                  {zoneOptions.map((z) => (
-                    <option key={z} value={z}>{z}</option>
-                  ))}
-                </select>
+              <div className="item-location-dropdown-wrap">
+                <span className="item-location-dropdown-label"><i className="fa-solid fa-map-pin" aria-hidden /> Zone</span>
+                <div className="item-location-dropdown">
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setOpenZoneDropdown((v) => !v); setOpenItemDropdown(false); }}
+                    className="item-location-dropdown-trigger"
+                    aria-expanded={openZoneDropdown}
+                    aria-haspopup="listbox"
+                  >
+                    <span>{filterZone || "Toutes les zones"}</span>
+                    <i className={`fa-solid fa-chevron-down item-location-dropdown-chevron ${openZoneDropdown ? "open" : ""}`} aria-hidden />
+                  </button>
+                  {openZoneDropdown && (
+                    <ul className="item-location-dropdown-list" role="listbox" onClick={(e) => e.stopPropagation()}>
+                      <li>
+                        <button type="button" role="option" onClick={() => { setFilterZone(""); setOpenZoneDropdown(false); }} className="item-location-dropdown-option">
+                          Toutes les zones
+                        </button>
+                      </li>
+                      {zoneOptions.map((z) => (
+                        <li key={z}>
+                          <button type="button" role="option" onClick={() => { setFilterZone(z); setOpenZoneDropdown(false); }} className={`item-location-dropdown-option ${filterZone === z ? "selected" : ""}`}>
+                            {z}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+              <div className="item-location-dropdown-wrap">
+                <span className="item-location-dropdown-label"><i className="fa-solid fa-cube" aria-hidden /> Objet</span>
+                <div className="item-location-dropdown">
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setOpenItemDropdown((v) => !v); setOpenZoneDropdown(false); }}
+                    className="item-location-dropdown-trigger"
+                    aria-expanded={openItemDropdown}
+                    aria-haspopup="listbox"
+                  >
+                    <span>{filterItem || "Tous les objets"}</span>
+                    <i className={`fa-solid fa-chevron-down item-location-dropdown-chevron ${openItemDropdown ? "open" : ""}`} aria-hidden />
+                  </button>
+                  {openItemDropdown && (
+                    <ul className="item-location-dropdown-list" role="listbox" onClick={(e) => e.stopPropagation()}>
+                      <li>
+                        <button type="button" role="option" onClick={() => { setFilterItem(""); setOpenItemDropdown(false); }} className="item-location-dropdown-option">
+                          Tous les objets
+                        </button>
+                      </li>
+                      {itemOptions.map((it) => (
+                        <li key={it}>
+                          <button type="button" role="option" onClick={() => { setFilterItem(it); setOpenItemDropdown(false); }} className={`item-location-dropdown-option ${filterItem === it ? "selected" : ""}`}>
+                            {it}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -164,10 +238,14 @@ export default function ItemLocationPage() {
                     </h2>
                     <div className="item-location-table-wrap">
                       <table className="item-location-table">
+                        <colgroup>
+                          <col className="item-location-col-item" />
+                          <col className="item-location-col-obtention" />
+                        </colgroup>
                         <thead>
                           <tr>
-                            <th><i className="fa-solid fa-cube" aria-hidden /> Objet</th>
-                            <th><i className="fa-solid fa-hand-holding" aria-hidden /> Obtention</th>
+                            <th scope="col"><i className="fa-solid fa-cube" aria-hidden /> Objet</th>
+                            <th scope="col"><i className="fa-solid fa-hand-holding" aria-hidden /> Obtention</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -175,11 +253,11 @@ export default function ItemLocationPage() {
                             <tr key={`${g.zone}-${i}`}>
                               <td className="item-location-cell-item">
                                 <i className="fa-solid fa-gift item-location-cell-fa" aria-hidden />
-                                {row.item}
+                                <span>{row.item}</span>
                               </td>
                               <td className="item-location-cell-obtention">
                                 <i className="fa-solid fa-route item-location-cell-fa" aria-hidden />
-                                {row.obtention}
+                                <span>{row.obtention}</span>
                               </td>
                             </tr>
                           ))}
