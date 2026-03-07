@@ -98,12 +98,30 @@ const ItemLocationEditor = ({ onSave }) => {
     if (!searchLower) return entries.map((row, index) => ({ row, index }));
     return entries
       .map((row, index) => ({ row, index }))
-      .filter(({ row }) =>
-        (row.zone || '').toLowerCase().includes(searchLower) ||
-        (row.item || '').toLowerCase().includes(searchLower) ||
-        (row.obtention || '').toLowerCase().includes(searchLower)
-      );
+      .filter(({ row, index }) => {
+        const ordreStr = (index + 1).toString();
+        return (
+          (row.zone || '').toLowerCase().includes(searchLower) ||
+          (row.item || '').toLowerCase().includes(searchLower) ||
+          (row.obtention || '').toLowerCase().includes(searchLower) ||
+          ordreStr.includes(searchLower)
+        );
+      });
   }, [entries, searchLower]);
+
+  const groupedByZone = useMemo(() => {
+    const zoneOrder = [];
+    const groupMap = {};
+    for (const item of filteredForDisplay) {
+      const z = (item.row.zone || '').trim() || '(Sans zone)';
+      if (!groupMap[z]) {
+        zoneOrder.push(z);
+        groupMap[z] = [];
+      }
+      groupMap[z].push(item);
+    }
+    return zoneOrder.map((zone) => ({ zone, rows: groupMap[zone] }));
+  }, [filteredForDisplay]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -153,7 +171,7 @@ const ItemLocationEditor = ({ onSave }) => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Rechercher (zone, objet, obtention…)"
+            placeholder="Rechercher (ordre, zone, objet, obtention…)"
             className="item-location-editor-search-input"
           />
           {searchQuery && (
@@ -180,65 +198,76 @@ const ItemLocationEditor = ({ onSave }) => {
                 <th className="th-actions" style={{ width: '90px' }}>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {entries.length === 0 ? (
+            {entries.length === 0 ? (
+              <tbody>
                 <tr>
                   <td colSpan="5" className="item-location-editor-empty">
                     Aucune entrée. Cliquez sur « Ajouter une ligne ».
                   </td>
                 </tr>
+              </tbody>
               ) : filteredForDisplay.length === 0 ? (
+              <tbody>
                 <tr>
                   <td colSpan="5" className="item-location-editor-empty">
                     Aucun résultat pour « {searchQuery} ».
                   </td>
                 </tr>
+              </tbody>
               ) : (
-                filteredForDisplay.map(({ row, index }) => (
-                  <tr key={index}>
-                    <td className="td-ordre">
-                      <div className="item-location-editor-order">
-                        <button type="button" onClick={() => moveRow(index, 'up')} disabled={index === 0} title="Monter"><i className="fa-solid fa-chevron-up" /></button>
-                        <span>{index + 1}</span>
-                        <button type="button" onClick={() => moveRow(index, 'down')} disabled={index === entries.length - 1} title="Descendre"><i className="fa-solid fa-chevron-down" /></button>
-                      </div>
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.zone}
-                        onChange={(e) => updateRow(index, 'zone', e.target.value)}
-                        placeholder="ex. Liora"
-                        className="item-location-editor-input"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.item}
-                        onChange={(e) => updateRow(index, 'item', e.target.value)}
-                        placeholder="ex. Pokéball x5"
-                        className="item-location-editor-input"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        value={row.obtention}
-                        onChange={(e) => updateRow(index, 'obtention', e.target.value)}
-                        placeholder="ex. Item au sol"
-                        className="item-location-editor-input"
-                      />
-                    </td>
-                    <td className="td-actions">
-                      <button type="button" className="item-location-editor-delete" onClick={() => removeRow(index)} title="Supprimer">
-                        <i className="fa-solid fa-trash" />
-                      </button>
-                    </td>
-                  </tr>
+                groupedByZone.map(({ zone, rows }) => (
+                  <tbody key={zone} className="item-location-editor-zone-tbody">
+                    <tr className="item-location-editor-zone-header">
+                      <td colSpan="5">
+                        <span className="item-location-editor-zone-title"><i className="fa-solid fa-map-pin" /> {zone}</span>
+                      </td>
+                    </tr>
+                    {rows.map(({ row, index }) => (
+                      <tr key={index}>
+                        <td className="td-ordre">
+                          <div className="item-location-editor-order">
+                            <button type="button" onClick={() => moveRow(index, 'up')} disabled={index === 0} title="Monter"><i className="fa-solid fa-chevron-up" /></button>
+                            <span>{index + 1}</span>
+                            <button type="button" onClick={() => moveRow(index, 'down')} disabled={index === entries.length - 1} title="Descendre"><i className="fa-solid fa-chevron-down" /></button>
+                          </div>
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            value={row.zone}
+                            onChange={(e) => updateRow(index, 'zone', e.target.value)}
+                            placeholder="ex. Liora"
+                            className="item-location-editor-input"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            value={row.item}
+                            onChange={(e) => updateRow(index, 'item', e.target.value)}
+                            placeholder="ex. Pokéball x5"
+                            className="item-location-editor-input"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            value={row.obtention}
+                            onChange={(e) => updateRow(index, 'obtention', e.target.value)}
+                            placeholder="ex. Item au sol"
+                            className="item-location-editor-input"
+                          />
+                        </td>
+                        <td className="td-actions">
+                          <button type="button" className="item-location-editor-delete" onClick={() => removeRow(index)} title="Supprimer">
+                            <i className="fa-solid fa-trash" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
                 ))
               )}
-            </tbody>
           </table>
         </div>
       )}
@@ -252,7 +281,7 @@ const ItemLocationEditor = ({ onSave }) => {
             </div>
             <div className="admin-pokedex-modal-body">
               <label className="item-location-add-modal-label">
-                <span>Zone</span>
+                <span><i className="fa-solid fa-map-pin" /> Zone</span>
                 <input
                   type="text"
                   value={addForm.zone}
@@ -262,7 +291,7 @@ const ItemLocationEditor = ({ onSave }) => {
                 />
               </label>
               <label className="item-location-add-modal-label">
-                <span>Objet</span>
+                <span><i className="fa-solid fa-cube" /> Objet</span>
                 <input
                   type="text"
                   value={addForm.item}
@@ -272,7 +301,7 @@ const ItemLocationEditor = ({ onSave }) => {
                 />
               </label>
               <label className="item-location-add-modal-label">
-                <span>Obtention</span>
+                <span><i className="fa-solid fa-hand-holding" /> Obtention</span>
                 <input
                   type="text"
                   value={addForm.obtention}
