@@ -604,6 +604,18 @@ app.get('/api/config/:name', (req, res) => {
     if (!configData && name === 'news') {
       configData = { banners: [], interval: 5000 };
     }
+    if (!configData && name === 'item-location') {
+      const seedPath = path.join(__dirname, '../src/config/item-location.json');
+      if (fs.existsSync(seedPath)) {
+        try {
+          configData = fs.readJsonSync(seedPath);
+        } catch (e) {
+          configData = { entries: [] };
+        }
+      } else {
+        configData = { entries: [] };
+      }
+    }
     if (!configData) {
       return res.status(404).json({ success: false, error: `Configuration ${name} non trouvée` });
     }

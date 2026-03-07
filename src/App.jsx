@@ -15,6 +15,7 @@ import PokedexPage from "./pages/PokedexPage";
 import ExtradexPage from "./pages/ExtradexPage";
 import GuidePage from "./pages/GuidePage";
 import BSTPage from "./pages/BSTPage";
+import ItemLocationPage from "./pages/ItemLocationPage";
 import LoginAdmin from "./pages/LoginAdmin";
 import Page404 from "./pages/Page404";
 import { useLanguage } from "./contexts/LanguageContext";
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/extradex" element={<ExtradexPage />} />
         <Route path="/guide" element={<GuidePage />} />
         <Route path="/bst" element={<BSTPage />} />
+        <Route path="/item-location" element={<ItemLocationPage />} />
         <Route path="/admin-login" element={<LoginAdmin />} />
         <Route path="/admin" element={
           <ProtectedRoute>

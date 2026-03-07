@@ -18,6 +18,7 @@ import ExtradexEditor from "../components/ExtradexEditor";
 import GuideEditor from "../components/GuideEditor";
 import BSTEditor from "../components/BSTEditor";
 import AdminTips from "../components/AdminTips";
+import ItemLocationEditor from "../components/ItemLocationEditor";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -95,6 +96,7 @@ const AdminPanel = () => {
         { id: 'pokedex', name: 'Pokédex', icon: 'fa-book-open', description: 'Pokédex & Extradex' },
         { id: 'bst', name: 'All BST + Abilities', icon: 'fa-chart-line', description: 'Stats & capacités' },
         { id: 'guide', name: 'Guide', icon: 'fa-route', description: 'Walkthrough' },
+        { id: 'itemlocation', name: 'Item Location', icon: 'fa-location-dot', description: 'Localisation des objets' },
         { id: 'downloads', name: 'Téléchargements', icon: 'fa-download', description: 'Liens de téléchargement' },
         { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-lines', description: 'Patch notes' }
       ]
@@ -364,6 +366,10 @@ const AdminPanel = () => {
             />
           )}
 
+          {activeTab === 'itemlocation' && (
+            <ItemLocationEditor onSave={(config) => handleSaveConfig('item-location', config)} />
+          )}
+
           {activeTab === 'tips' && <AdminTips />}
 
           {activeTab === 'logs' && (
@@ -407,7 +413,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'dashboard' && activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
-           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'settings' && activeTab !== 'tips' && activeTab !== 'logs' && (
+           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'itemlocation' && activeTab !== 'settings' && activeTab !== 'tips' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">
                 <h2 className="admin-panel-card-title">

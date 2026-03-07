@@ -1042,6 +1042,28 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   .bst-grid{grid-template-columns:repeat(auto-fill, minmax(130px, 1fr))}
 }
 
+/* ===== PAGE ITEM LOCATION ===== */
+.item-location-page{min-height:100vh; padding-bottom:4rem}
+.item-location-container{max-width:900px; margin:0 auto; padding-top:1.5rem}
+.item-location-header{margin-bottom:2rem; text-align:center}
+.item-location-title{margin:0 0 .5rem; font-size:1.6rem; font-weight:700; color:var(--text); display:flex; align-items:center; justify-content:center; gap:.5rem}
+.item-location-title i{color:var(--primary-2); opacity:.95}
+.item-location-desc{margin:0; font-size:1rem; color:var(--muted); line-height:1.5}
+.item-location-loading{text-align:center; padding:3rem; color:var(--muted); display:flex; align-items:center; justify-content:center; gap:.75rem}
+.item-location-empty{text-align:center; padding:3rem; color:var(--muted)}
+.item-location-empty i{font-size:2rem; display:block; margin-bottom:1rem; opacity:.6}
+.item-location-sections{display:flex; flex-direction:column; gap:1.5rem}
+.item-location-zone{padding:1.5rem 1.75rem}
+.item-location-zone-title{margin:0 0 1rem; font-size:1.1rem; font-weight:600; color:var(--text); padding-bottom:.6rem; border-bottom:1px solid rgba(255,255,255,.1)}
+.item-location-table-wrap{overflow-x:auto; border-radius:10px; border:1px solid rgba(255,255,255,.08)}
+.item-location-table{width:100%; border-collapse:collapse; font-size:.95rem}
+.item-location-table th{text-align:left; padding:.65rem 1rem; background:rgba(255,255,255,.06); color:var(--muted); font-weight:600; border-bottom:1px solid rgba(255,255,255,.1)}
+.item-location-table td{padding:.6rem 1rem; border-bottom:1px solid rgba(255,255,255,.05); color:var(--text)}
+.item-location-table tbody tr:last-child td{border-bottom:none}
+.item-location-table tbody tr:hover td{background:rgba(255,255,255,.03)}
+.item-location-cell-item{color:var(--text)}
+.item-location-cell-obtention{color:var(--muted); font-size:.9em}
+
 /* Fond Pokédex en élément réel (img) pour affichage fiable */
 .pokedex-page-bg{
   position:fixed;
@@ -4404,6 +4426,27 @@ a.dex-panel--active{cursor:default}
   outline: none;
   border-color: rgba(126,205,242,.35);
 }
+
+/* ===== ADMIN ITEM LOCATION EDITOR ===== */
+.item-location-editor-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.item-location-editor-head h2 { margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: .5rem; color: var(--text); }
+.item-location-editor-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+.item-location-editor-desc { margin: 0 0 1.25rem; font-size: .9rem; color: var(--muted); line-height: 1.5; }
+.item-location-editor-loading { text-align: center; padding: 2rem; color: var(--muted); }
+.item-location-editor-table-wrap { overflow-x: auto; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; }
+.item-location-editor-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.item-location-editor-table th { text-align: left; padding: .65rem 1rem; background: rgba(255,255,255,.06); color: var(--muted); font-weight: 600; border-bottom: 1px solid rgba(255,255,255,.1); }
+.item-location-editor-table td { padding: .5rem 1rem; border-bottom: 1px solid rgba(255,255,255,.06); vertical-align: middle; }
+.item-location-editor-table tbody tr:hover td { background: rgba(255,255,255,.02); }
+.item-location-editor-order { display: flex; align-items: center; gap: .25rem; }
+.item-location-editor-order button { padding: .3rem .5rem; border: none; border-radius: 6px; background: rgba(59,130,246,.25); color: #fff; cursor: pointer; }
+.item-location-editor-order button:disabled { opacity: .4; cursor: not-allowed; }
+.item-location-editor-order span { font-size: .85rem; font-weight: 600; min-width: 1.5rem; text-align: center; }
+.item-location-editor-input { width: 100%; padding: .5rem .75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.06); color: var(--text); font-size: .9rem; }
+.item-location-editor-input::placeholder { color: rgba(255,255,255,.4); }
+.item-location-editor-delete { padding: .4rem .6rem; border: 1px solid rgba(239,68,68,.35); background: rgba(239,68,68,.15); color: #f87171; border-radius: 8px; cursor: pointer; }
+.item-location-editor-delete:hover { background: rgba(239,68,68,.25); }
+.item-location-editor-empty { padding: 1.5rem !important; text-align: center; color: var(--muted); }
 
 /* ===== ADMIN DASHBOARD (page d'accueil admin) ===== */
 .admin-dashboard {
