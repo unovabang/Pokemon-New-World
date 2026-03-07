@@ -32,10 +32,16 @@ const TIPS = [
     content: "Chaque étape peut avoir une image (carte) et une liste de personnages avec nom, description et image (sprite). Utilisez des URLs d’images pour éviter de gérer des fichiers. Pensez à sauvegarder le Guide après vos modifications.",
   },
   {
+    id: "extradex",
+    icon: "fa-star",
+    title: "Extradex",
+    content: "Comme le Pokédex et le BST, l’Extradex est sauvegardé automatiquement environ 1,5 seconde après chaque modification (titre, fond, types personnalisés, ajout/édition/suppression d’entrées). Le bouton « Sauvegarder maintenant » permet de forcer une sauvegarde immédiate.",
+  },
+  {
     id: "bst-fakemon",
     icon: "fa-chart-line",
     title: "BST et Abilities",
-    content: "L’éditeur BST permet de gérer les Fakemon, Mégas et Pokémon spéciaux avec leurs stats et capacités. Les données sont sauvegardées dans bst.json. Pensez à cliquer sur « Sauvegarder » après vos changements.",
+    content: "L’éditeur BST permet de gérer les Fakemon, Mégas et Pokémon spéciaux avec leurs stats et capacités. Les modifications sont enregistrées automatiquement environ 1,5 seconde après un ajout, une modification ou une suppression. Un message « Sauvegardé automatiquement » confirme l’enregistrement. Le bouton « Sauvegarder maintenant » permet de forcer une sauvegarde immédiate.",
   },
   {
     id: "logs",

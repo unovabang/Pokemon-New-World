@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+
+const AUTO_SAVE_DELAY_MS = 1500;
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -85,6 +87,10 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
   const [form, setForm] = useState(emptyEntry());
   const [searchQuery, setSearchQuery] = useState("");
   const [saveMessage, setSaveMessage] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const initialLoadDone = useRef(false);
+  const skipNextAutoSave = useRef(true);
+  const dataRef = useRef({ fakemon: [], megas: [], speciaux: [] });
 
   useEffect(() => {
     let cancelled = false;
@@ -101,6 +107,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
             megas: Array.isArray(bstRes.bst.megas) ? bstRes.bst.megas : [],
             speciaux: Array.isArray(bstRes.bst.speciaux) ? bstRes.bst.speciaux : [],
           });
+          initialLoadDone.current = true;
         } else {
           try {
             const raw = localStorage.getItem(STORAGE_BST);
@@ -121,6 +128,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
           } catch {
             if (initialData) setData(initialData);
           }
+          initialLoadDone.current = true;
         }
         if (pokedexRes.success && pokedexRes.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
           setPokedexEntries(pokedexRes.pokedex.entries);
@@ -146,11 +154,69 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
         } catch {
           if (initialData) setData(initialData);
         }
+        initialLoadDone.current = true;
       }
     }
     load();
     return () => { cancelled = true; };
   }, [initialData]);
+
+  dataRef.current = data;
+
+  useEffect(() => {
+    if (!initialLoadDone.current) return;
+    if (skipNextAutoSave.current) {
+      skipNextAutoSave.current = false;
+      return;
+    }
+    const timer = setTimeout(async () => {
+      const payload = dataRef.current;
+      setSaving(true);
+      setSaveMessage(null);
+      try {
+        const res = await fetch(`${API_BASE}/bst`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const json = await res.json();
+        if (json.success) {
+          setSaveMessage({ type: "success", text: "Sauvegardé automatiquement." });
+          setTimeout(() => setSaveMessage(null), 2500);
+        } else {
+          setSaveMessage({ type: "error", text: json.error || "Erreur serveur." });
+        }
+      } catch {
+        setSaveMessage({ type: "error", text: "Serveur indisponible." });
+      } finally {
+        setSaving(false);
+      }
+    }, AUTO_SAVE_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [data]);
+
+  const saveToApiNow = () => {
+    setSaving(true);
+    setSaveMessage(null);
+    fetch(`${API_BASE}/bst`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success) {
+          setSaveMessage({ type: "success", text: "BST enregistré." });
+          setTimeout(() => setSaveMessage(null), 2500);
+        } else {
+          setSaveMessage({ type: "error", text: json.error || "Erreur serveur." });
+        }
+      })
+      .catch(() => {
+        setSaveMessage({ type: "error", text: "Serveur indisponible." });
+      })
+      .finally(() => setSaving(false));
+  };
 
   const pokedexListForLookup = Array.isArray(pokedexEntries) ? pokedexEntries : [];
 
@@ -159,24 +225,6 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
     setData(next);
     localStorage.setItem(STORAGE_BST, JSON.stringify(next));
     onSave?.(next);
-    fetch(`${API_BASE}/bst`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(next),
-    })
-      .then((r) => r.json())
-      .then((json) => {
-        if (json.success) {
-          setSaveMessage({ type: "success", text: "BST enregistré dans le fichier JSON." });
-          setTimeout(() => setSaveMessage(null), 3000);
-        } else {
-          setSaveMessage({ type: "error", text: json.error || "Erreur serveur." });
-        }
-      })
-      .catch(() => {
-        setSaveMessage({ type: "error", text: "Serveur indisponible. Les données sont enregistrées en local." });
-        setTimeout(() => setSaveMessage(null), 4000);
-      });
   };
 
   const entries = data[activeSection] || [];
@@ -296,6 +344,9 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                 {saveMessage.text}
               </span>
             )}
+            <button type="button" onClick={saveToApiNow} disabled={saving} className="admin-pokedex-btn admin-pokedex-btn-ghost">
+              <i className="fa-solid fa-save" /> {saving ? "Enregistrement…" : "Sauvegarder maintenant"}
+            </button>
           </div>
         </div>
 
