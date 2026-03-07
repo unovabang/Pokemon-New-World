@@ -77,6 +77,7 @@ function findPokedexEntry(name, entries) {
 
 export default function BSTEditor({ initialData, initialPokedexEntries = [], onSave }) {
   const [data, setData] = useState({ fakemon: [], megas: [], speciaux: [] });
+  const [pokedexEntries, setPokedexEntries] = useState(() => (Array.isArray(initialPokedexEntries) ? initialPokedexEntries : []));
   const [activeSection, setActiveSection] = useState("fakemon");
   const [showModal, setShowModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -89,42 +90,69 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
     let cancelled = false;
     async function load() {
       try {
-        const res = await fetch(`${API_BASE}/bst?t=${Date.now()}`);
-        const json = await res.json();
+        const [bstRes, pokedexRes] = await Promise.all([
+          fetch(`${API_BASE}/bst?t=${Date.now()}`).then((r) => r.json()),
+          fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
+        ]);
         if (cancelled) return;
-        if (json.success && json.bst) {
+        if (bstRes.success && bstRes.bst) {
           setData({
-            fakemon: Array.isArray(json.bst.fakemon) ? json.bst.fakemon : [],
-            megas: Array.isArray(json.bst.megas) ? json.bst.megas : [],
-            speciaux: Array.isArray(json.bst.speciaux) ? json.bst.speciaux : [],
+            fakemon: Array.isArray(bstRes.bst.fakemon) ? bstRes.bst.fakemon : [],
+            megas: Array.isArray(bstRes.bst.megas) ? bstRes.bst.megas : [],
+            speciaux: Array.isArray(bstRes.bst.speciaux) ? bstRes.bst.speciaux : [],
           });
-          return;
+        } else {
+          try {
+            const raw = localStorage.getItem(STORAGE_BST);
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              setData({
+                fakemon: Array.isArray(parsed.fakemon) ? parsed.fakemon : [],
+                megas: Array.isArray(parsed.megas) ? parsed.megas : [],
+                speciaux: Array.isArray(parsed.speciaux) ? parsed.speciaux : [],
+              });
+            } else if (initialData) {
+              setData({
+                fakemon: Array.isArray(initialData.fakemon) ? initialData.fakemon : [],
+                megas: Array.isArray(initialData.megas) ? initialData.megas : [],
+                speciaux: Array.isArray(initialData.speciaux) ? initialData.speciaux : [],
+              });
+            }
+          } catch {
+            if (initialData) setData(initialData);
+          }
         }
-      } catch (_) {}
-      if (cancelled) return;
-      try {
-        const raw = localStorage.getItem(STORAGE_BST);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          setData({
-            fakemon: Array.isArray(parsed.fakemon) ? parsed.fakemon : [],
-            megas: Array.isArray(parsed.megas) ? parsed.megas : [],
-            speciaux: Array.isArray(parsed.speciaux) ? parsed.speciaux : [],
-          });
-        } else if (initialData) {
-          setData({
-            fakemon: Array.isArray(initialData.fakemon) ? initialData.fakemon : [],
-            megas: Array.isArray(initialData.megas) ? initialData.megas : [],
-            speciaux: Array.isArray(initialData.speciaux) ? initialData.speciaux : [],
-          });
+        if (pokedexRes.success && pokedexRes.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
+          setPokedexEntries(pokedexRes.pokedex.entries);
         }
-      } catch {
-        if (initialData) setData(initialData);
+      } catch (_) {
+        if (cancelled) return;
+        try {
+          const raw = localStorage.getItem(STORAGE_BST);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            setData({
+              fakemon: Array.isArray(parsed.fakemon) ? parsed.fakemon : [],
+              megas: Array.isArray(parsed.megas) ? parsed.megas : [],
+              speciaux: Array.isArray(parsed.speciaux) ? parsed.speciaux : [],
+            });
+          } else if (initialData) {
+            setData({
+              fakemon: Array.isArray(initialData.fakemon) ? initialData.fakemon : [],
+              megas: Array.isArray(initialData.megas) ? initialData.megas : [],
+              speciaux: Array.isArray(initialData.speciaux) ? initialData.speciaux : [],
+            });
+          }
+        } catch {
+          if (initialData) setData(initialData);
+        }
       }
     }
     load();
     return () => { cancelled = true; };
   }, [initialData]);
+
+  const pokedexListForLookup = Array.isArray(pokedexEntries) ? pokedexEntries : [];
 
   const saveToStorage = (newData) => {
     const next = newData ?? data;
@@ -157,8 +185,6 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
         (e.name || "").toLowerCase().includes(searchQuery.trim().toLowerCase())
       )
     : entries;
-  const pokedexListForLookup = Array.isArray(initialPokedexEntries) ? initialPokedexEntries : [];
-
   const openAdd = () => {
     setForm(emptyEntry());
     setEditingIndex(null);
