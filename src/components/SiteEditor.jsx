@@ -563,7 +563,7 @@ const SiteEditor = ({ onSave }) => {
                 <i className="fa-solid fa-mountain-city"></i> Image de fond :
               </label>
               <p style={{ marginBottom: '0.5rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
-                Chemin local (/image.jpg) ou URL complète (https://…) pour une image hébergée en ligne.
+                Chemin local (/image.jpg) ou URL complète (https://…). Si l’image ne s’affiche pas, le site source peut bloquer l’affichage externe (hotlink) — essayez un hébergeur d’images qui l’autorise (ex. postimg.cc, imgur).
               </p>
               <input
                 type="url"

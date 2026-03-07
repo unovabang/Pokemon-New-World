@@ -24,6 +24,22 @@ const HomePage = () => {
     ? { ...content, ...siteConfigFromApi }
     : content;
   const { backgrounds, heroVideo, game, carousel, discord, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = effectiveContent;
+
+  // Logo/favicon : "public/logo.png" en admin doit devenir "/logo.png" en prod (fichiers publics à la racine)
+  const toPublicUrl = (v) => {
+    if (!v || typeof v !== "string") return null;
+    const s = v.trim();
+    if (s.startsWith("public/")) return "/" + s.slice(7);
+    return s;
+  };
+  const logoUrl = toPublicUrl(effectiveContent.branding?.logo) || "/logo.png";
+
+  // Image de fond : URL valide + fallback si l'image externe ne charge pas (CORS, 404, etc.)
+  const bgHome = backgrounds?.home && String(backgrounds.home).trim();
+  const defaultBg = content.backgrounds?.home || "/logo.png";
+  const pageBgValue = bgHome
+    ? `url(${bgHome}), url(${defaultBg})`
+    : `url(${defaultBg})`;
   const { t, language } = useLanguage();
   
   // Fonction pour obtenir le contenu Patreon traduit
@@ -95,9 +111,9 @@ const HomePage = () => {
         id="top"
         className="page page-with-nav"
         style={{
-          "--page-bg": `url(${backgrounds.home})`,
-          "--bg-blur": `${backgrounds.blur}px`,
-          "--bg-dim": backgrounds.dim,
+          "--page-bg": pageBgValue,
+          "--bg-blur": `${backgrounds.blur ?? 12}px`,
+          "--bg-dim": backgrounds.dim ?? 0.4,
         }}
       >
         <Sidebar />
@@ -122,7 +138,7 @@ const HomePage = () => {
               <div>
                 <img
                   className="hero-logo"
-                  src={effectiveContent.branding?.logo || "/logo.png"}
+                  src={logoUrl}
                   alt="Logo Pokémon New World"
                 />
                 {/* Titre texte retiré */}
@@ -258,7 +274,7 @@ const HomePage = () => {
           <div className="container footer-grid">
             <div className="footer-col">
               <div className="footer-brand">
-                <img src={effectiveContent.branding?.logo || "/logo.png"} alt="Logo Pokémon New World" />
+                <img src={logoUrl} alt="Logo Pokémon New World" />
                 <strong>Pokémon New World</strong>
               </div>
               <p style={{ marginTop: 8, color: "var(--muted)" }}>
