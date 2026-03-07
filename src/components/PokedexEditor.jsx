@@ -33,6 +33,7 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
   const [loading, setLoading] = useState(true);
   const [saveMessage, setSaveMessage] = useState(null);
   const [searchList, setSearchList] = useState("");
+  const [viewMode, setViewMode] = useState("grid");
   const initialLoadDone = useRef(false);
   const skipNextAutoSave = useRef(true);
   const dataRef = useRef({ entries: [], backgroundUrl: "", customTypes: [] });
@@ -304,6 +305,26 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
           <h3 style={{ margin: 0 }}><i className="fa-solid fa-list" aria-hidden /> Liste des Pokémon ({entries.length})</h3>
           <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: "0.25rem" }} role="group" aria-label="Affichage">
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                className={`admin-pokedex-btn ${viewMode === "grid" ? "admin-pokedex-btn-primary" : "admin-pokedex-btn-ghost"}`}
+                style={{ padding: "0.45rem 0.75rem" }}
+                title="Grille"
+              >
+                <i className="fa-solid fa-grip" aria-hidden />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("table")}
+                className={`admin-pokedex-btn ${viewMode === "table" ? "admin-pokedex-btn-primary" : "admin-pokedex-btn-ghost"}`}
+                style={{ padding: "0.45rem 0.75rem" }}
+                title="Tableau"
+              >
+                <i className="fa-solid fa-table-list" aria-hidden />
+              </button>
+            </div>
             <input
               type="search"
               className="admin-pokedex-input"
@@ -327,58 +348,100 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
           </div>
         </div>
 
-        <div className="admin-pokedex-table-wrap">
-          <table className="admin-pokedex-table">
-            <thead>
-              <tr>
-                <th>N°</th>
-                <th>Nom</th>
-                <th>Image</th>
-                <th>Types</th>
-                <th>Rareté</th>
-                <th>Obtention</th>
-                <th style={{ textAlign: "center" }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredEntries.length === 0 ? (
+        {viewMode === "grid" ? (
+          <div className="admin-dex-grid">
+            {filteredEntries.length === 0 ? (
+              <p className="admin-dex-grid-empty">Aucun Pokémon. Cliquez sur &quot;Ajouter un Pokémon&quot;.</p>
+            ) : (
+              filteredEntries.map((e) => {
+                const globalIndex = entries.indexOf(e);
+                return (
+                  <div
+                    key={`${e.num}-${e.name}-${globalIndex}`}
+                    className="admin-dex-card"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => openEdit(globalIndex)}
+                    onKeyDown={(ev) => ev.key === "Enter" && openEdit(globalIndex)}
+                  >
+                    <button
+                      type="button"
+                      className="admin-dex-card-delete"
+                      onClick={(ev) => { ev.stopPropagation(); setDeleteConfirm(globalIndex); }}
+                      title="Supprimer"
+                      aria-label="Supprimer"
+                    >
+                      <i className="fa-solid fa-trash" />
+                    </button>
+                    <div className="admin-dex-card-sprite">
+                      {e.imageUrl ? (
+                        <img src={e.imageUrl} alt="" onError={(ev) => (ev.target.style.display = "none")} />
+                      ) : (
+                        <span style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "rgba(255,255,255,.3)", fontSize: "1.5rem" }}>?</span>
+                      )}
+                    </div>
+                    <span className="admin-dex-card-num">#{e.num}</span>
+                    <span className="admin-dex-card-name">{e.name}</span>
+                    <span className="admin-dex-card-types">{(e.types || []).join(", ") || "—"}</span>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        ) : (
+          <div className="admin-pokedex-table-wrap">
+            <table className="admin-pokedex-table">
+              <thead>
                 <tr>
-                  <td colSpan={7} style={{ padding: "2rem", textAlign: "center", opacity: 0.7 }}>
-                    Aucun Pokémon. Cliquez sur &quot;Ajouter un Pokémon&quot;.
-                  </td>
+                  <th>N°</th>
+                  <th>Nom</th>
+                  <th>Image</th>
+                  <th>Types</th>
+                  <th>Rareté</th>
+                  <th>Obtention</th>
+                  <th style={{ textAlign: "center" }}>Actions</th>
                 </tr>
-              ) : (
-                filteredEntries.map((e) => {
-                  const globalIndex = entries.indexOf(e);
-                  return (
-                    <tr key={`${e.num}-${e.name}-${globalIndex}`}>
-                      <td>{e.num}</td>
-                      <td style={{ fontWeight: "600" }}>{e.name}</td>
-                      <td>
-                        {e.imageUrl ? (
-                          <img src={e.imageUrl} alt="" onError={(ev) => (ev.target.style.display = "none")} />
-                        ) : (
-                          <span style={{ opacity: 0.5 }}>—</span>
-                        )}
-                      </td>
-                      <td>{(e.types || []).join(", ") || "—"}</td>
-                      <td style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis" }}>{e.rarity || "—"}</td>
-                      <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }}>{e.obtention || "—"}</td>
-                      <td style={{ textAlign: "center" }}>
-                        <button type="button" onClick={() => openEdit(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.45rem 0.85rem", marginRight: "0.35rem" }}>
-                          <i className="fa-solid fa-pen" aria-hidden />
-                        </button>
-                        <button type="button" onClick={() => setDeleteConfirm(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-danger" style={{ padding: "0.45rem 0.85rem" }}>
-                          <i className="fa-solid fa-trash" aria-hidden />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filteredEntries.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} style={{ padding: "2rem", textAlign: "center", opacity: 0.7 }}>
+                      Aucun Pokémon. Cliquez sur &quot;Ajouter un Pokémon&quot;.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredEntries.map((e) => {
+                    const globalIndex = entries.indexOf(e);
+                    return (
+                      <tr key={`${e.num}-${e.name}-${globalIndex}`}>
+                        <td>{e.num}</td>
+                        <td style={{ fontWeight: "600" }}>{e.name}</td>
+                        <td>
+                          {e.imageUrl ? (
+                            <img src={e.imageUrl} alt="" onError={(ev) => (ev.target.style.display = "none")} />
+                          ) : (
+                            <span style={{ opacity: 0.5 }}>—</span>
+                          )}
+                        </td>
+                        <td>{(e.types || []).join(", ") || "—"}</td>
+                        <td style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis" }}>{e.rarity || "—"}</td>
+                        <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }}>{e.obtention || "—"}</td>
+                        <td style={{ textAlign: "center" }}>
+                          <button type="button" onClick={() => openEdit(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.45rem 0.85rem", marginRight: "0.35rem" }}>
+                            <i className="fa-solid fa-pen" aria-hidden />
+                          </button>
+                          <button type="button" onClick={() => setDeleteConfirm(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-danger" style={{ padding: "0.45rem 0.85rem" }}>
+                            <i className="fa-solid fa-trash" aria-hidden />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
       {/* Modal Ajout / Édition — rendu en portail pour rester au-dessus et centrée */}

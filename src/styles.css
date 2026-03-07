@@ -3162,6 +3162,89 @@ a.dex-panel--active{cursor:default}
   box-shadow: 0 24px 48px rgba(0,0,0,.4);
 }
 
+/* Grille Pokédex / Extradex (vue cartes) */
+.admin-dex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+.admin-dex-grid-empty {
+  grid-column: 1 / -1;
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255,255,255,.6);
+  margin: 0;
+}
+.admin-dex-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: linear-gradient(165deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  border: 1px solid rgba(102,126,234,.25);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform .2s, border-color .2s, box-shadow .2s;
+  text-align: center;
+}
+.admin-dex-card:hover {
+  border-color: rgba(102,126,234,.45);
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  transform: translateY(-2px);
+}
+.admin-dex-card-sprite {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(255,255,255,.1);
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+}
+.admin-dex-card-sprite img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.admin-dex-card-num {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.6);
+  margin-bottom: 0.2rem;
+}
+.admin-dex-card-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  margin-bottom: 0.35rem;
+  line-height: 1.2;
+}
+.admin-dex-card-types {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.75);
+}
+.admin-dex-card-delete {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: rgba(239,68,68,.2);
+  color: #f87171;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.admin-dex-card-delete:hover {
+  background: rgba(239,68,68,.35);
+  color: #fca5a5;
+}
+
 /* ===== ADMIN BST EDITOR (grille) ===== */
 .admin-bst-grid {
   display: grid;
