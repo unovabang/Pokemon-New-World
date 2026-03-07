@@ -99,6 +99,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
         (e.name || "").toLowerCase().includes(searchQuery.trim().toLowerCase())
       )
     : entries;
+  const pokedexListForLookup = Array.isArray(initialPokedexEntries) ? initialPokedexEntries : [];
 
   const openAdd = () => {
     setForm(emptyEntry());
@@ -222,7 +223,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
           ) : (
             filteredEntries.map((e) => {
               const globalIndex = entries.indexOf(e);
-              const pokedexEntry = findPokedexEntry(e.name, pokedexEntries);
+              const pokedexEntry = findPokedexEntry(e.name, pokedexListForLookup);
               const spriteUrl = e.imageUrl || pokedexEntry?.imageUrl || PLACEHOLDER_SPRITE;
               return (
                 <div
