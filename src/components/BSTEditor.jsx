@@ -11,7 +11,7 @@ const SECTIONS = [
 
 const STAT_ICONS = {
   hp: "fa-heart-pulse",
-  atk: "fa-sword",
+  atk: "fa-hand-fist",
   def: "fa-shield",
   spa: "fa-wand-magic-sparkles",
   spd: "fa-gem",
@@ -334,7 +334,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                 <input type="text" className="admin-pokedex-input" value={form.total} readOnly style={{ opacity: 0.9 }} />
               </div>
               <div>
-                <label className="admin-pokedex-label"><i className="fa-solid fa-sparkles" aria-hidden /> Talent</label>
+                <label className="admin-pokedex-label"><i className="fa-solid fa-star" aria-hidden /> Talent</label>
                 <input type="text" className="admin-pokedex-input" value={form.ability} onChange={(e) => setForm((f) => ({ ...f, ability: e.target.value }))} placeholder="Nom du talent" />
               </div>
               <div>
