@@ -4523,9 +4523,28 @@ a.dex-panel--active{cursor:default}
 .item-location-add-modal-label .fa-map-pin { color: var(--primary-2); opacity: .85; font-size: .8rem; }
 .item-location-add-modal-label .fa-cube { color: var(--primary-2); opacity: .85; font-size: .8rem; }
 .item-location-add-modal-label .fa-hand-holding { color: var(--primary-2); opacity: .85; font-size: .8rem; }
-.item-location-add-modal .item-location-editor-input { padding: .7rem 1rem; border-radius: 12px; }
-.item-location-add-modal .admin-pokedex-modal-footer { padding: 1rem 1.75rem 1.5rem; gap: .75rem; border-top: 1px solid rgba(255,255,255,.06); }
-.item-location-add-modal .admin-pokedex-modal-footer .btn { padding: .6rem 1.1rem; border-radius: 12px; font-weight: 600; }
+.item-location-add-modal .item-location-editor-input {
+  padding: .75rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.22) !important;
+  background: rgba(255,255,255,.09) !important;
+  color: #fff;
+  font-size: .95rem;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.item-location-add-modal .item-location-editor-input::placeholder { color: rgba(255,255,255,.5); }
+.item-location-add-modal .item-location-editor-input:hover {
+  border-color: rgba(255,255,255,.3) !important;
+  background: rgba(255,255,255,.12) !important;
+}
+.item-location-add-modal .item-location-editor-input:focus {
+  outline: none;
+  border-color: rgba(126,205,242,.6) !important;
+  box-shadow: 0 0 0 3px rgba(126,205,242,.2);
+  background: rgba(255,255,255,.11) !important;
+}
+.item-location-add-modal .admin-pokedex-modal-footer { padding: 1rem 1.75rem 1.5rem; gap: .75rem; border-top: 1px solid rgba(255,255,255,.1); }
+.item-location-add-modal .admin-pokedex-modal-footer .btn { padding: .65rem 1.2rem; border-radius: 12px; font-weight: 600; }
 
 /* ===== ADMIN DASHBOARD (page d'accueil admin) ===== */
 .admin-dashboard {
