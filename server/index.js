@@ -721,7 +721,10 @@ app.put('/api/pokedex', (req, res) => {
     if (background === undefined && current.background !== undefined) updated.background = current.background;
     if (customTypes === undefined && current.customTypes !== undefined) updated.customTypes = current.customTypes;
 
-    fs.writeJsonSync(pokedexPath, updated, { spaces: 2 });
+    const opts = { spaces: 2 };
+    fs.writeJsonSync(pokedexPath, updated, opts);
+    fs.ensureDirSync(SOURCE_CONFIG_DIR);
+    fs.writeJsonSync(path.join(SOURCE_CONFIG_DIR, 'pokedex.json'), updated, opts);
     autoCommitConfig('pokedex.json');
 
     res.json({
@@ -826,7 +829,10 @@ app.put('/api/guide', (req, res) => {
       steps: Array.isArray(steps) ? steps : current.steps
     };
 
-    fs.writeJsonSync(guidePath, updated, { spaces: 2 });
+    const opts = { spaces: 2 };
+    fs.writeJsonSync(guidePath, updated, opts);
+    fs.ensureDirSync(SOURCE_CONFIG_DIR);
+    fs.writeJsonSync(path.join(SOURCE_CONFIG_DIR, 'guide.json'), updated, opts);
     autoCommitConfig('guide.json');
 
     res.json({
@@ -866,7 +872,10 @@ app.put('/api/extradex', (req, res) => {
     if (background === undefined && current.background !== undefined) updated.background = current.background;
     if (customTypes === undefined && current.customTypes !== undefined) updated.customTypes = current.customTypes;
 
-    fs.writeJsonSync(extradexPath, updated, { spaces: 2 });
+    const opts = { spaces: 2 };
+    fs.writeJsonSync(extradexPath, updated, opts);
+    fs.ensureDirSync(SOURCE_CONFIG_DIR);
+    fs.writeJsonSync(path.join(SOURCE_CONFIG_DIR, 'extradex.json'), updated, opts);
     autoCommitConfig('extradex.json');
 
     res.json({
