@@ -30,6 +30,39 @@ const DATA_DIR = '/app/data';
 const NEWS_IMAGES_DIR = path.join(DATA_DIR, 'news-images');
 const CONFIG_DIR = path.join(DATA_DIR, 'config');
 const PROJECT_ROOT = path.join(__dirname, '..');
+const SOURCE_CONFIG_DIR = path.join(PROJECT_ROOT, 'src/config');
+const SOURCE_NEWS_IMAGES_DIR = path.join(PROJECT_ROOT, 'public/news-images');
+
+/** Au premier démarrage avec un volume vide : copie les JSON (et images news) du repo vers le volume. */
+function seedDataFromRepo() {
+  fs.ensureDirSync(CONFIG_DIR);
+  fs.ensureDirSync(NEWS_IMAGES_DIR);
+  let copied = 0;
+  if (fs.existsSync(SOURCE_CONFIG_DIR)) {
+    const files = fs.readdirSync(SOURCE_CONFIG_DIR);
+    for (const name of files) {
+      if (!name.endsWith('.json')) continue;
+      const src = path.join(SOURCE_CONFIG_DIR, name);
+      const dest = path.join(CONFIG_DIR, name);
+      if (!fs.existsSync(dest) && fs.statSync(src).isFile()) {
+        fs.copyFileSync(src, dest);
+        copied++;
+      }
+    }
+  }
+  if (fs.existsSync(SOURCE_NEWS_IMAGES_DIR)) {
+    const files = fs.readdirSync(SOURCE_NEWS_IMAGES_DIR);
+    for (const name of files) {
+      const src = path.join(SOURCE_NEWS_IMAGES_DIR, name);
+      const dest = path.join(NEWS_IMAGES_DIR, name);
+      if (!fs.existsSync(dest) && fs.statSync(src).isFile()) {
+        fs.copyFileSync(src, dest);
+        copied++;
+      }
+    }
+  }
+  if (copied > 0) console.log(`📋 Volume initialisé : ${copied} fichier(s) copié(s) depuis le repo.`);
+}
 
 /** Commit + push automatique du JSON modifié (local ou production si env configurées). */
 function autoCommitConfig(filename) {
@@ -914,6 +947,7 @@ app.listen(port, '0.0.0.0', async () => {
   
   fs.ensureDirSync(NEWS_IMAGES_DIR);
   fs.ensureDirSync(CONFIG_DIR);
+  seedDataFromRepo();
 
   try {
     await initDb();
