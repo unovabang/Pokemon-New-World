@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+
+const AUTO_SAVE_DELAY_MS = 1500;
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -31,6 +33,9 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
   const [loading, setLoading] = useState(true);
   const [saveMessage, setSaveMessage] = useState(null);
   const [searchList, setSearchList] = useState("");
+  const initialLoadDone = useRef(false);
+  const skipNextAutoSave = useRef(true);
+  const dataRef = useRef({ entries: [], backgroundUrl: "", customTypes: [] });
 
   useEffect(() => {
     let cancelled = false;
@@ -45,6 +50,7 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
           setBackgroundUrl(data.pokedex.background || "");
           setCustomTypes(Array.isArray(data.pokedex.customTypes) ? data.pokedex.customTypes : []);
           setLoading(false);
+          initialLoadDone.current = true;
           return;
         }
       } catch (_) {
@@ -66,10 +72,45 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
         setEntries(Array.isArray(initialEntries) ? initialEntries : []);
       }
       setLoading(false);
+      initialLoadDone.current = true;
     }
     load();
     return () => { cancelled = true; };
   }, [initialEntries]);
+
+  dataRef.current = { entries, backgroundUrl, customTypes };
+
+  useEffect(() => {
+    if (!initialLoadDone.current || loading) return;
+    if (skipNextAutoSave.current) {
+      skipNextAutoSave.current = false;
+      return;
+    }
+    const timer = setTimeout(async () => {
+      const { entries: e, backgroundUrl: bg, customTypes: ct } = dataRef.current;
+      setSaving(true);
+      setSaveMessage(null);
+      try {
+        const res = await fetch(`${API_BASE}/pokedex`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ entries: e, background: bg || null, customTypes: ct }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setSaveMessage({ type: "success", text: "Sauvegardé automatiquement." });
+          setTimeout(() => setSaveMessage(null), 2500);
+        } else {
+          setSaveMessage({ type: "error", text: data.error || "Erreur lors de la sauvegarde." });
+        }
+      } catch {
+        setSaveMessage({ type: "error", text: "Impossible de contacter le serveur." });
+      } finally {
+        setSaving(false);
+      }
+    }, AUTO_SAVE_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [entries, backgroundUrl, customTypes, loading]);
 
   const allTypes = [...new Set([...KNOWN_TYPES, ...customTypes].sort((a, b) => a.localeCompare(b)))];
 
@@ -281,7 +322,7 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
               </span>
             )}
             <button type="button" onClick={handleSaveAll} disabled={saving} className="admin-pokedex-btn admin-pokedex-btn-ghost">
-              <i className="fa-solid fa-save" /> {saving ? "Enregistrement…" : "Sauvegarder dans le JSON"}
+              <i className="fa-solid fa-save" /> {saving ? "Enregistrement…" : "Sauvegarder maintenant"}
             </button>
           </div>
         </div>

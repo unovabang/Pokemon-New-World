@@ -17,6 +17,7 @@ import PokedexEditor from "../components/PokedexEditor";
 import ExtradexEditor from "../components/ExtradexEditor";
 import GuideEditor from "../components/GuideEditor";
 import BSTEditor from "../components/BSTEditor";
+import AdminTips from "../components/AdminTips";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -90,6 +91,7 @@ const AdminPanel = () => {
     { id: 'downloads', name: 'Téléchargements', icon: 'fa-download' },
     { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-text' },
     { id: 'settings', name: 'Paramètres', icon: 'fa-sliders' },
+    { id: 'tips', name: 'Conseils admin', icon: 'fa-lightbulb' },
     { id: 'logs', name: 'Logs de connexion', icon: 'fa-list-alt' }
   ];
 
@@ -298,6 +300,8 @@ const AdminPanel = () => {
             />
           )}
 
+          {activeTab === 'tips' && <AdminTips />}
+
           {activeTab === 'logs' && (
             <div className="admin-panel-card">
               <h2 className="admin-panel-card-title">
@@ -339,7 +343,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
-           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'settings' && activeTab !== 'logs' && (
+           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'settings' && activeTab !== 'tips' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">
                 <h2 className="admin-panel-card-title">
