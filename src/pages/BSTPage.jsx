@@ -149,7 +149,8 @@ function BSTModal({ pokemon, pokedexEntries, onClose }) {
   }, [onClose]);
 
   if (!pokemon) return null;
-  const types = pokemon.types || getTypes(pokemon, findPokedexEntry(pokemon.name, pokedexEntries || []));
+  const entriesList = Array.isArray(pokedexEntries) ? pokedexEntries : [];
+  const types = pokemon.types || getTypes(pokemon, findPokedexEntry(pokemon.name, entriesList));
 
   return createPortal(
     <div
@@ -209,10 +210,11 @@ function BSTModal({ pokemon, pokedexEntries, onClose }) {
   );
 }
 
-function BSTTable({ id, title, icon, data, pokedexEntries = [], onSelect, viewMode }) {
+function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode }) {
+  const entriesList = Array.isArray(pokedexEntries) ? pokedexEntries : [];
   const rows = useMemo(() => {
     return (data || []).map((row) => {
-      const entry = findPokedexEntry(row.name, pokedexEntries);
+      const entry = findPokedexEntry(row.name, entriesList);
       const sprite = row.imageUrl || entry?.imageUrl || PLACEHOLDER_SPRITE;
       return {
         ...row,
@@ -220,7 +222,7 @@ function BSTTable({ id, title, icon, data, pokedexEntries = [], onSelect, viewMo
         types: getTypes(row, entry),
       };
     });
-  }, [data, pokedexEntries]);
+  }, [data, entriesList]);
 
   if (viewMode === "grid") {
     return (
@@ -342,6 +344,7 @@ export default function BSTPage() {
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [bstSource, setBstSource] = useState(() => getBSTData());
   const [pokedexEntries, setPokedexEntries] = useState(() => getPokedexEntriesForBST());
+  const pokedexEntriesSafe = Array.isArray(pokedexEntries) ? pokedexEntries : [];
 
   useEffect(() => {
     setBstSource(getBSTData());
@@ -456,7 +459,7 @@ export default function BSTPage() {
               title={s.title}
               icon={s.icon}
               data={s.data}
-              pokedexEntries={pokedexEntries}
+              pokedexEntries={pokedexEntriesSafe}
               onSelect={setSelectedPokemon}
               viewMode={viewMode}
             />
@@ -469,7 +472,7 @@ export default function BSTPage() {
       {selectedPokemon && (
         <BSTModal
           pokemon={selectedPokemon}
-          pokedexEntries={pokedexEntries}
+          pokedexEntries={pokedexEntriesSafe}
           onClose={() => setSelectedPokemon(null)}
         />
       )}
