@@ -25,10 +25,10 @@ function splitByHighlights(text, highlight = []) {
   }));
 }
 
-const EXAMPLE_MAP = "/guide-map.png";
+const PLACEHOLDER_IMG = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
 function CharacterBubble({ character, onClick }) {
-  const imgSrc = character.imageUrl?.trim() || "/guide-sprites/sprite-test.gif";
+  const imgSrc = character.imageUrl?.trim() || PLACEHOLDER_IMG;
   return (
     <button
       type="button"
@@ -51,7 +51,7 @@ function CharacterBubble({ character, onClick }) {
 
 function CharacterModal({ character, onClose }) {
   if (!character) return null;
-  const imgSrc = character.imageUrl?.trim() || "/guide-sprites/sprite-test.gif";
+  const imgSrc = character.imageUrl?.trim() || PLACEHOLDER_IMG;
   return (
     <div
       className="guide-character-modal-overlay"
@@ -85,7 +85,7 @@ function CharacterModal({ character, onClose }) {
 
 function StepCard({ step, onCharacterClick }) {
   const parts = splitByHighlights(step.text, step.highlight);
-  const imageSrc = step.imageUrl?.trim() || EXAMPLE_MAP;
+  const imageSrc = step.imageUrl?.trim() || PLACEHOLDER_IMG;
   const characters = Array.isArray(step.characters) ? step.characters : [];
 
   return (
@@ -120,6 +120,7 @@ function StepCard({ step, onCharacterClick }) {
             alt={`Carte — Étape ${step.num}`}
             className="guide-step-image"
             loading="lazy"
+            onError={(e) => (e.target.src = PLACEHOLDER_IMG)}
           />
         </div>
       </div>

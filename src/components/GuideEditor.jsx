@@ -8,7 +8,7 @@ const API_BASE = import.meta.env.VITE_API_URL
     : `${window.location.origin}/api`;
 
 const STORAGE_GUIDE = "admin_guide_data";
-const DEFAULT_IMAGE = "/guide-map.png";
+const PLACEHOLDER_IMG = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
 function splitByHighlights(text, highlight = []) {
   if (!text || !Array.isArray(highlight) || highlight.length === 0) {
@@ -25,7 +25,7 @@ function splitByHighlights(text, highlight = []) {
 
 function CharacterModal({ character, onClose }) {
   if (!character) return null;
-  const imgSrc = character.imageUrl?.trim() || "/guide-sprites/sprite-test.gif";
+  const imgSrc = character.imageUrl?.trim() || PLACEHOLDER_IMG;
   return (
     <div
       className="guide-character-modal-overlay"
@@ -54,7 +54,7 @@ function CharacterModal({ character, onClose }) {
 
 function StepPreview({ step, onCharacterClick }) {
   const parts = splitByHighlights(step.text || "", step.highlight || []);
-  const imgSrc = step.imageUrl?.trim() || DEFAULT_IMAGE;
+  const imgSrc = step.imageUrl?.trim() || PLACEHOLDER_IMG;
   const characters = step.characters || [];
   const isClickable = typeof onCharacterClick === "function";
 
@@ -76,10 +76,10 @@ function StepPreview({ step, onCharacterClick }) {
                 >
                   <div className="guide-character-bubble-inner">
                     <img
-                      src={c.imageUrl || "/guide-sprites/sprite-test.gif"}
+                      src={c.imageUrl || PLACEHOLDER_IMG}
                       alt={c.name || ""}
                       className="guide-character-bubble-img"
-                      onError={(e) => (e.target.src = "/guide-sprites/sprite-test.gif")}
+                      onError={(e) => (e.target.src = PLACEHOLDER_IMG)}
                     />
                   </div>
                 </button>
@@ -87,10 +87,10 @@ function StepPreview({ step, onCharacterClick }) {
                 <div key={i} className="guide-character-bubble" title={c.name || "Personnage"}>
                   <div className="guide-character-bubble-inner">
                     <img
-                      src={c.imageUrl || "/guide-sprites/sprite-test.gif"}
+                      src={c.imageUrl || PLACEHOLDER_IMG}
                       alt={c.name || ""}
                       className="guide-character-bubble-img"
-                      onError={(e) => (e.target.src = "/guide-sprites/sprite-test.gif")}
+                      onError={(e) => (e.target.src = PLACEHOLDER_IMG)}
                     />
                   </div>
                 </div>
@@ -504,7 +504,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
                         type="url"
                         value={form.imageUrl}
                         onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
-                        placeholder="/guide-map.png ou https://..."
+                        placeholder="https://exemple.com/image.png"
                       />
                       <button
                         type="button"
@@ -580,7 +580,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
                         onClick={() =>
                           setForm((f) => ({
                             ...f,
-                            characters: [...(f.characters || []), { name: "", description: "", imageUrl: "/guide-sprites/sprite-test.gif" }],
+                            characters: [...(f.characters || []), { name: "", description: "", imageUrl: "" }],
                           }))
                         }
                         className="admin-guide-btn admin-guide-btn-ghost"
