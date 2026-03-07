@@ -456,7 +456,7 @@
       "abilityDesc": "Insomnia"
     },
     {
-      "name": "Course- Ouragan",
+      "name": "Course-Ouragan",
       "type": "Dragon/Combat",
       "hp": "85",
       "atk": "125",
@@ -469,7 +469,7 @@
       "abilityDesc": "Boost Paranormal"
     },
     {
-      "name": "Mâchoire- Tyran",
+      "name": "Mâchoire-Tyran",
       "type": "Acier/Dragon",
       "hp": "88",
       "atk": "135",
@@ -495,7 +495,7 @@
       "abilityDesc": "Boost Paranormal"
     },
     {
-      "name": "Pantin-de-  Fer",
+      "name": "Pantin-de-Fer",
       "type": "Spectre/Psy",
       "hp": "101",
       "atk": "70",

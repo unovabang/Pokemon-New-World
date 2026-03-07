@@ -28,13 +28,14 @@ const FILTER_OPTIONS = [
   { id: "speciaux", label: "Pokémons Spéciaux", icon: "fa-star" },
 ];
 
-/** Normalise un nom pour la recherche */
+/** Normalise un nom pour la recherche (accents, espaces, tirets) */
 function normalizeName(str) {
   if (!str) return "";
   return str
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s*-\s*/g, "-")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -351,13 +352,14 @@ export default function BSTPage() {
   }, []);
 
   const sections = useMemo(() => {
+    const source = bstSource && typeof bstSource === "object" ? bstSource : { fakemon: [], megas: [], speciaux: [] };
     const q = search.trim().toLowerCase();
     const filterData = (arr) =>
-      !q ? arr : (arr || []).filter((r) => normalizeName(r.name || "").includes(q));
+      !q ? (arr || []) : (arr || []).filter((r) => normalizeName(r.name || "").includes(q));
     const list = [
-      { id: "fakemon", title: "Fakemon + Formes Régionales", icon: "fa-leaf", accent: "plante", data: filterData(bstSource.fakemon) },
-      { id: "megas", title: "Nouvelles Mégas", icon: "fa-bolt", accent: "electrik", data: filterData(bstSource.megas) },
-      { id: "speciaux", title: "Pokémons Spéciaux", icon: "fa-star", accent: "fee", data: filterData(bstSource.speciaux) },
+      { id: "fakemon", title: "Fakemon + Formes Régionales", icon: "fa-leaf", accent: "plante", data: filterData(source.fakemon) },
+      { id: "megas", title: "Nouvelles Mégas", icon: "fa-bolt", accent: "electrik", data: filterData(source.megas) },
+      { id: "speciaux", title: "Pokémons Spéciaux", icon: "fa-star", accent: "fee", data: filterData(source.speciaux) },
     ];
     if (filter === "all") return list;
     return list.filter((s) => s.id === filter);

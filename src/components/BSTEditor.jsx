@@ -32,10 +32,16 @@ function computeTotal(hp, atk, def, spa, spd, spe) {
   return String(n(hp) + n(atk) + n(def) + n(spa) + n(spd) + n(spe));
 }
 
-/** Normalise un nom pour la recherche */
+/** Normalise un nom pour la recherche (accents, espaces, tirets) */
 function normalizeName(str) {
   if (!str) return "";
-  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s*-\s*/g, "-")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /** Trouve l'entrée pokedex par nom (pour récupérer l'image en fallback) */
