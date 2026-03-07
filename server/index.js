@@ -802,6 +802,60 @@ app.put('/api/extradex', (req, res) => {
   }
 });
 
+// === BST API (All BST + Abilities) ===
+// GET /api/bst - Lire les données BST (fakemon, megas, speciaux)
+app.get('/api/bst', (req, res) => {
+  try {
+    const bstData = getConfig('bst');
+    if (!bstData) {
+      return res.status(404).json({ success: false, error: 'Fichier BST non trouvé' });
+    }
+    res.json({
+      success: true,
+      bst: {
+        fakemon: Array.isArray(bstData.fakemon) ? bstData.fakemon : [],
+        megas: Array.isArray(bstData.megas) ? bstData.megas : [],
+        speciaux: Array.isArray(bstData.speciaux) ? bstData.speciaux : [],
+      },
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/bst:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/bst - Sauvegarder le BST (écrit dans bst.json)
+app.put('/api/bst', (req, res) => {
+  try {
+    const { fakemon, megas, speciaux } = req.body;
+    const bstPath = path.join(CONFIG_DIR, 'bst.json');
+
+    let current = { fakemon: [], megas: [], speciaux: [] };
+    if (fs.existsSync(bstPath)) {
+      current = fs.readJsonSync(bstPath);
+    }
+
+    const updated = {
+      fakemon: Array.isArray(fakemon) ? fakemon : (current.fakemon || []),
+      megas: Array.isArray(megas) ? megas : (current.megas || []),
+      speciaux: Array.isArray(speciaux) ? speciaux : (current.speciaux || []),
+    };
+
+    if (!saveConfig('bst', updated)) {
+      return res.status(500).json({ success: false, error: 'Échec écriture bst.json' });
+    }
+
+    res.json({
+      success: true,
+      message: 'BST sauvegardé dans le fichier JSON.',
+      bst: updated,
+    });
+  } catch (error) {
+    console.error('❌ Erreur API PUT /api/bst:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // Servir le frontend React (build Vite) en production — doit être en dernier
 const DIST_DIR = path.join(__dirname, '../dist');
 if (fs.existsSync(DIST_DIR)) {

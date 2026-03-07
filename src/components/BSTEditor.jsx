@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
+
 const STORAGE_BST = "admin_bst_data";
 
 const SECTIONS = [
@@ -80,25 +86,44 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
   const [saveMessage, setSaveMessage] = useState(null);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_BST);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setData({
-          fakemon: Array.isArray(parsed.fakemon) ? parsed.fakemon : [],
-          megas: Array.isArray(parsed.megas) ? parsed.megas : [],
-          speciaux: Array.isArray(parsed.speciaux) ? parsed.speciaux : [],
-        });
-      } else if (initialData) {
-        setData({
-          fakemon: Array.isArray(initialData.fakemon) ? initialData.fakemon : [],
-          megas: Array.isArray(initialData.megas) ? initialData.megas : [],
-          speciaux: Array.isArray(initialData.speciaux) ? initialData.speciaux : [],
-        });
+    let cancelled = false;
+    async function load() {
+      try {
+        const res = await fetch(`${API_BASE}/bst?t=${Date.now()}`);
+        const json = await res.json();
+        if (cancelled) return;
+        if (json.success && json.bst) {
+          setData({
+            fakemon: Array.isArray(json.bst.fakemon) ? json.bst.fakemon : [],
+            megas: Array.isArray(json.bst.megas) ? json.bst.megas : [],
+            speciaux: Array.isArray(json.bst.speciaux) ? json.bst.speciaux : [],
+          });
+          return;
+        }
+      } catch (_) {}
+      if (cancelled) return;
+      try {
+        const raw = localStorage.getItem(STORAGE_BST);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          setData({
+            fakemon: Array.isArray(parsed.fakemon) ? parsed.fakemon : [],
+            megas: Array.isArray(parsed.megas) ? parsed.megas : [],
+            speciaux: Array.isArray(parsed.speciaux) ? parsed.speciaux : [],
+          });
+        } else if (initialData) {
+          setData({
+            fakemon: Array.isArray(initialData.fakemon) ? initialData.fakemon : [],
+            megas: Array.isArray(initialData.megas) ? initialData.megas : [],
+            speciaux: Array.isArray(initialData.speciaux) ? initialData.speciaux : [],
+          });
+        }
+      } catch {
+        if (initialData) setData(initialData);
       }
-    } catch {
-      if (initialData) setData(initialData);
     }
+    load();
+    return () => { cancelled = true; };
   }, [initialData]);
 
   const saveToStorage = (newData) => {
@@ -106,6 +131,24 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
     setData(next);
     localStorage.setItem(STORAGE_BST, JSON.stringify(next));
     onSave?.(next);
+    fetch(`${API_BASE}/bst`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(next),
+    })
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success) {
+          setSaveMessage({ type: "success", text: "BST enregistré dans le fichier JSON." });
+          setTimeout(() => setSaveMessage(null), 3000);
+        } else {
+          setSaveMessage({ type: "error", text: json.error || "Erreur serveur." });
+        }
+      })
+      .catch(() => {
+        setSaveMessage({ type: "error", text: "Serveur indisponible. Les données sont enregistrées en local." });
+        setTimeout(() => setSaveMessage(null), 4000);
+      });
   };
 
   const entries = data[activeSection] || [];

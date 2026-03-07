@@ -5,8 +5,14 @@ import Sidebar from "../components/Sidebar";
 import bstData from "../config/bst.json";
 import pokedexData from "../config/pokedex.json";
 
-/** Données BST : priorité aux JSON (source de vérité), pas au localStorage. */
-function getBSTData() {
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
+
+/** Données BST : API en priorité (modifs admin), puis JSON du build. */
+function getBSTDataFallback() {
   return bstData;
 }
 
@@ -320,8 +326,8 @@ function BSTTable({ id, title, icon, data, pokedexList = [], onSelect, viewMode 
   );
 }
 
-/** Entrées Pokédex pour les sprites BST : priorité au JSON (pokedex.json), pas au localStorage. */
-function getPokedexEntriesForBST() {
+/** Entrées Pokédex pour les sprites BST : API en priorité, puis JSON du build. */
+function getPokedexEntriesFallback() {
   return pokedexData?.entries || [];
 }
 
@@ -330,8 +336,29 @@ export default function BSTPage() {
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
-  const bstSource = getBSTData();
-  const pokedexList = getPokedexEntriesForBST();
+  const [bstSource, setBstSource] = useState(() => getBSTDataFallback());
+  const [pokedexList, setPokedexList] = useState(() => getPokedexEntriesFallback());
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      fetch(`${API_BASE}/bst?t=${Date.now()}`).then((r) => r.json()),
+      fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
+    ]).then(([bstRes, pokedexRes]) => {
+      if (cancelled) return;
+      if (bstRes.success && bstRes.bst) {
+        setBstSource({
+          fakemon: Array.isArray(bstRes.bst.fakemon) ? bstRes.bst.fakemon : [],
+          megas: Array.isArray(bstRes.bst.megas) ? bstRes.bst.megas : [],
+          speciaux: Array.isArray(bstRes.bst.speciaux) ? bstRes.bst.speciaux : [],
+        });
+      }
+      if (pokedexRes.success && pokedexRes.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
+        setPokedexList(pokedexRes.pokedex.entries);
+      }
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   const sections = useMemo(() => {
     const source = bstSource && typeof bstSource === "object" ? bstSource : { fakemon: [], megas: [], speciaux: [] };
