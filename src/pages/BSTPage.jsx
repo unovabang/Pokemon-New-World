@@ -326,12 +326,25 @@ function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode })
   );
 }
 
+function getPokedexEntriesForBST() {
+  try {
+    const raw = localStorage.getItem("admin_pokedex_entries");
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (Array.isArray(parsed) && parsed.length) return parsed;
+  } catch (_) {}
+  return pokedexData?.entries || [];
+}
+
 export default function BSTPage() {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
-  const pokedexEntries = pokedexData?.entries || [];
+  const [pokedexEntries, setPokedexEntries] = useState(() => getPokedexEntriesForBST());
+
+  useEffect(() => {
+    setPokedexEntries(getPokedexEntriesForBST());
+  }, []);
 
   const sections = useMemo(() => {
     const q = search.trim().toLowerCase();

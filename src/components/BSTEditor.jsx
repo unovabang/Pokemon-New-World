@@ -32,7 +32,29 @@ function computeTotal(hp, atk, def, spa, spd, spe) {
   return String(n(hp) + n(atk) + n(def) + n(spa) + n(spd) + n(spe));
 }
 
-export default function BSTEditor({ initialData, onSave }) {
+/** Normalise un nom pour la recherche */
+function normalizeName(str) {
+  if (!str) return "";
+  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
+}
+
+/** Trouve l'entrée pokedex par nom (pour récupérer l'image en fallback) */
+function findPokedexEntry(name, entries) {
+  if (!name || !entries?.length) return null;
+  const n = normalizeName(name);
+  let e = entries.find((x) => normalizeName(x.name) === n);
+  if (e) return e;
+  const nAlt = n.replace(/\s+/g, "-");
+  e = entries.find((x) => normalizeName(x.name) === nAlt || normalizeName(x.name).replace(/\s+/g, "-") === n);
+  if (e) return e;
+  const baseName = n.replace(/^mega\s*-?\s*/i, "").trim();
+  e = entries.find((x) => normalizeName(x.name) === baseName);
+  if (e) return e;
+  e = entries.find((x) => n.includes(normalizeName(x.name)) || normalizeName(x.name).includes(n));
+  return e || null;
+}
+
+export default function BSTEditor({ initialData, initialPokedexEntries = [], onSave }) {
   const [data, setData] = useState({ fakemon: [], megas: [], speciaux: [] });
   const [activeSection, setActiveSection] = useState("fakemon");
   const [showModal, setShowModal] = useState(false);
@@ -200,6 +222,8 @@ export default function BSTEditor({ initialData, onSave }) {
           ) : (
             filteredEntries.map((e) => {
               const globalIndex = entries.indexOf(e);
+              const pokedexEntry = findPokedexEntry(e.name, pokedexEntries);
+              const spriteUrl = e.imageUrl || pokedexEntry?.imageUrl || PLACEHOLDER_SPRITE;
               return (
                 <div
                   key={`${e.name}-${globalIndex}`}
@@ -210,11 +234,7 @@ export default function BSTEditor({ initialData, onSave }) {
                   onKeyDown={(ev) => ev.key === "Enter" && openEdit(globalIndex)}
                 >
                   <div className="admin-bst-card-sprite">
-                    {e.imageUrl ? (
-                      <img src={e.imageUrl} alt="" onError={(ev) => { ev.target.src = PLACEHOLDER_SPRITE; }} />
-                    ) : (
-                      <img src={PLACEHOLDER_SPRITE} alt="" />
-                    )}
+                    <img src={spriteUrl} alt="" onError={(ev) => { ev.target.src = PLACEHOLDER_SPRITE; }} />
                   </div>
                   <div className="admin-bst-card-main">
                     <span className="admin-bst-card-name">{e.name}</span>

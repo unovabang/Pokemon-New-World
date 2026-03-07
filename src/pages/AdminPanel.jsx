@@ -244,6 +244,7 @@ const AdminPanel = () => {
           {activeTab === 'bst' && (
             <BSTEditor
               initialData={bstData || { fakemon: [], megas: [], speciaux: [] }}
+              initialPokedexEntries={pokedexData?.entries ?? []}
               onSave={() => {}}
             />
           )}
