@@ -70,9 +70,12 @@ const ItemLocationEditor = ({ onSave }) => {
     setAddForm({ zone: '', item: '', obtention: '' });
   };
 
-  const submitAddRow = () => {
-    setEntries((prev) => [...prev, { zone: addForm.zone.trim(), item: addForm.item.trim(), obtention: addForm.obtention.trim() }]);
+  const submitAddRow = async () => {
+    const newEntry = { zone: addForm.zone.trim(), item: addForm.item.trim(), obtention: addForm.obtention.trim() };
+    const newEntries = [...entries, newEntry];
+    setEntries(newEntries);
     closeAddModal();
+    await saveConfig(newEntries);
   };
 
   const removeRow = (index) => {
@@ -123,10 +126,10 @@ const ItemLocationEditor = ({ onSave }) => {
     return zoneOrder.map((zone) => ({ zone, rows: groupMap[zone] }));
   }, [filteredForDisplay]);
 
-  const handleSave = async () => {
+  const saveConfig = async (entriesToSave = entries) => {
     setSaving(true);
     try {
-      const config = { entries: entries.map((e) => ({ zone: e.zone.trim(), item: e.item.trim(), obtention: e.obtention.trim() })) };
+      const config = { entries: entriesToSave.map((e) => ({ zone: (e.zone || '').trim(), item: (e.item || '').trim(), obtention: (e.obtention || '').trim() })) };
       const res = await fetch(`${API_BASE}/config/item-location`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -135,7 +138,7 @@ const ItemLocationEditor = ({ onSave }) => {
       const data = await res.json();
       if (data?.success) {
         onSave?.(config);
-        showMessage('Sauvegardé', 'Item Location mis à jour.', 'success');
+        showMessage('Sauvegardé', 'Item Location mis à jour (visible sur la page publique).', 'success');
       } else {
         throw new Error(data?.error || 'Erreur');
       }
@@ -145,6 +148,8 @@ const ItemLocationEditor = ({ onSave }) => {
       setSaving(false);
     }
   };
+
+  const handleSave = () => saveConfig();
 
   return (
     <div className="item-location-editor">
