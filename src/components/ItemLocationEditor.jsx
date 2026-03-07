@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -14,6 +15,7 @@ const ItemLocationEditor = ({ onSave }) => {
   const [modalConfig, setModalConfig] = useState({ title: '', message: '', type: 'info', onConfirm: null });
   const [showAddModal, setShowAddModal] = useState(false);
   const [addForm, setAddForm] = useState({ zone: '', item: '', obtention: '' });
+  const [searchQuery, setSearchQuery] = useState('');
 
   const load = async () => {
     try {
@@ -91,6 +93,18 @@ const ItemLocationEditor = ({ onSave }) => {
     });
   };
 
+  const searchLower = searchQuery.trim().toLowerCase();
+  const filteredForDisplay = useMemo(() => {
+    if (!searchLower) return entries.map((row, index) => ({ row, index }));
+    return entries
+      .map((row, index) => ({ row, index }))
+      .filter(({ row }) =>
+        (row.zone || '').toLowerCase().includes(searchLower) ||
+        (row.item || '').toLowerCase().includes(searchLower) ||
+        (row.obtention || '').toLowerCase().includes(searchLower)
+      );
+  }, [entries, searchLower]);
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -132,6 +146,24 @@ const ItemLocationEditor = ({ onSave }) => {
         Les entrées sont affichées sur la page publique par zone. Même zone = même bloc ; l’ordre des lignes est conservé.
       </p>
 
+      {!loading && entries.length > 0 && (
+        <div className="item-location-editor-search-wrap">
+          <i className="fa-solid fa-magnifying-glass item-location-editor-search-icon" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher (zone, objet, obtention…)"
+            className="item-location-editor-search-input"
+          />
+          {searchQuery && (
+            <button type="button" className="item-location-editor-search-clear" onClick={() => setSearchQuery('')} title="Effacer">
+              <i className="fa-solid fa-times" />
+            </button>
+          )}
+        </div>
+      )}
+
       {loading ? (
         <div className="item-location-editor-loading">
           <i className="fa-solid fa-spinner fa-spin" /> Chargement…
@@ -155,8 +187,14 @@ const ItemLocationEditor = ({ onSave }) => {
                     Aucune entrée. Cliquez sur « Ajouter une ligne ».
                   </td>
                 </tr>
+              ) : filteredForDisplay.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="item-location-editor-empty">
+                    Aucun résultat pour « {searchQuery} ».
+                  </td>
+                </tr>
               ) : (
-                entries.map((row, index) => (
+                filteredForDisplay.map(({ row, index }) => (
                   <tr key={index}>
                     <td className="td-ordre">
                       <div className="item-location-editor-order">
@@ -205,7 +243,7 @@ const ItemLocationEditor = ({ onSave }) => {
         </div>
       )}
 
-      {showAddModal && (
+      {showAddModal && createPortal(
         <div className="admin-pokedex-modal-overlay" onClick={closeAddModal}>
           <div className="admin-pokedex-modal item-location-add-modal" onClick={(e) => e.stopPropagation()}>
             <div className="admin-pokedex-modal-header">
@@ -249,10 +287,11 @@ const ItemLocationEditor = ({ onSave }) => {
               <button type="button" className="btn btn-primary" onClick={submitAddRow}><i className="fa-solid fa-plus" /> Ajouter</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {showModal && (
+      {showModal && createPortal(
         <div className="admin-pokedex-modal-overlay" onClick={closeModal}>
           <div className="admin-pokedex-modal" onClick={(e) => e.stopPropagation()} style={{ padding: '2rem', textAlign: 'center' }}>
             <h3 style={{ margin: '0 0 1rem', color: '#fff' }}>{modalConfig.title}</h3>
@@ -268,7 +307,8 @@ const ItemLocationEditor = ({ onSave }) => {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
