@@ -25,11 +25,11 @@ app.use('/api/auth', authRoutes);
 // Health check (pour Railway / load balancers)
 app.get('/health', (req, res) => res.status(200).json({ ok: true }));
 
-// Chemins vers les dossiers (volume persistant en prod ; en local, optionnellement DATA_DIR=. dans .env)
-const PROJECT_ROOT = path.join(__dirname, '..');
-const DATA_DIR = process.env.DATA_DIR ? path.resolve(PROJECT_ROOT, process.env.DATA_DIR) : '/app/data';
+// Chemins vers les dossiers (volume persistant monté sur /app/data)
+const DATA_DIR = '/app/data';
 const NEWS_IMAGES_DIR = path.join(DATA_DIR, 'news-images');
 const CONFIG_DIR = path.join(DATA_DIR, 'config');
+const PROJECT_ROOT = path.join(__dirname, '..');
 
 /** Commit + push automatique du JSON modifié (local ou production si env configurées). */
 function autoCommitConfig(filename) {
