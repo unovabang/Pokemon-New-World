@@ -19,11 +19,19 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 const HomePage = () => {
   const [siteConfigFromApi, setSiteConfigFromApi] = useState(null);
+  const [newsConfigFromApi, setNewsConfigFromApi] = useState(null);
 
-  const effectiveContent = siteConfigFromApi
-    ? { ...content, ...siteConfigFromApi }
-    : content;
+  const baseContent = siteConfigFromApi ? { ...content, ...siteConfigFromApi } : content;
+  const effectiveContent = newsConfigFromApi
+    ? { ...baseContent, news: { ...(baseContent.news || {}), ...newsConfigFromApi } }
+    : baseContent;
   const { backgrounds, heroVideo, game, carousel, discord, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = effectiveContent;
+
+  // Bannières news : config API = liste d’URLs (tri par position) pour le carousel
+  const newsBanners = (effectiveContent.news?.banners || [])
+    .slice()
+    .sort((a, b) => (a.position || 0) - (b.position || 0))
+    .map((b) => ({ image: b.url || b.image }));
 
   // Logo/favicon : "public/logo.png" en admin doit devenir "/logo.png" en prod (fichiers publics à la racine)
   const toPublicUrl = (v) => {
@@ -70,15 +78,16 @@ const HomePage = () => {
   const [openDownload, setOpenDownload] = useState(false);
   const [openPatchNotes, setOpenPatchNotes] = useState(false);
 
-  // Charger la config site depuis l'API (background, logo, hero, audio modifiables dans Paramètres)
+  // Charger les configs site et news depuis l'API
   useEffect(() => {
     let cancelled = false;
-    fetch(`${API_BASE}/config/site?t=${Date.now()}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!cancelled && data?.success && data?.config) setSiteConfigFromApi(data.config);
-      })
-      .catch(() => {});
+    Promise.all([
+      fetch(`${API_BASE}/config/site?t=${Date.now()}`).then((r) => r.json()),
+      fetch(`${API_BASE}/config/news?t=${Date.now()}`).then((r) => r.json())
+    ]).then(([siteData, newsData]) => {
+      if (!cancelled && siteData?.success && siteData?.config) setSiteConfigFromApi(siteData.config);
+      if (!cancelled && newsData?.success && newsData?.config) setNewsConfigFromApi(newsData.config);
+    }).catch(() => {});
     return () => { cancelled = true; };
   }, []);
 
@@ -169,9 +178,9 @@ const HomePage = () => {
               {t('sections.news.title')}
             </h2>
             <NewsBanner 
-              banners={effectiveContent.news?.banners || []}
+              banners={newsBanners}
               interval={effectiveContent.news?.interval || 5000}
-              autoLoad={true}
+              autoLoad={newsBanners.length === 0}
             />
           </section>
 

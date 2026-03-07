@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 
-// Utiliser le domaine Replit pour l'API
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
   : import.meta.env.DEV
@@ -8,198 +7,108 @@ const API_BASE = import.meta.env.VITE_API_URL
     : `${window.location.origin}/api`;
 
 const BannerManager = ({ onSave }) => {
-  const [bannerImages, setBannerImages] = useState([]);
-  const [uploading, setUploading] = useState(false);
+  const [banners, setBanners] = useState([]);
+  const [intervalMs, setIntervalMs] = useState(5000);
+  const [newUrl, setNewUrl] = useState('');
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
     title: '',
     message: '',
-    type: 'info', // 'info', 'success', 'error', 'confirm'
+    type: 'info',
     onConfirm: null
   });
 
-  useEffect(() => {
-    loadBannerImages();
-  }, []);
-
-  const loadBannerImages = async () => {
+  const loadNewsConfig = async () => {
     try {
       setLoading(true);
-      // Ajouter un timestamp pour éviter le cache
-      const response = await fetch(`${API_BASE}/banners?t=${Date.now()}`);
-      const data = await response.json();
-      
-      if (data.success) {
-        setBannerImages(data.banners);
-      } else {
-        console.error('Erreur lors du chargement:', data.error);
-        // Fallback vers les images par défaut
-        setBannerImages([
-          { name: 'banniere1.png', position: 1 },
-          { name: 'banniere2.png', position: 2 },
-          { name: 'banniere3.png', position: 3 }
-        ]);
+      const res = await fetch(`${API_BASE}/config/news?t=${Date.now()}`);
+      const data = await res.json();
+      if (data?.success && data?.config) {
+        const cfg = data.config;
+        const list = Array.isArray(cfg.banners) ? cfg.banners : [];
+        setBanners(list.map(b => ({ url: b.url || b.image || '', position: b.position ?? list.indexOf(b) + 1 })));
+        setIntervalMs(typeof cfg.interval === 'number' ? cfg.interval : 5000);
       }
-    } catch (error) {
-      console.error('Erreur de connexion à l\'API:', error);
-      // Fallback vers les images par défaut
-      setBannerImages([
-        { name: 'banniere1.png', position: 1 },
-        { name: 'banniere2.png', position: 2 },
-        { name: 'banniere3.png', position: 3 }
-      ]);
+    } catch (e) {
+      console.error('Erreur chargement config news:', e);
+      setBanners([]);
+      setIntervalMs(5000);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleImageUpload = async (event) => {
-    const files = Array.from(event.target.files);
-    if (files.length === 0) return;
+  useEffect(() => {
+    loadNewsConfig();
+  }, []);
 
-    setUploading(true);
-    
-    try {
-      for (const file of files) {
-        const formData = new FormData();
-        formData.append('banner', file);
-        
-        const response = await fetch(`${API_BASE}/banners/upload`, {
-          method: 'POST',
-          body: formData
-        });
-        
-        const data = await response.json();
-        
-        if (!data.success) {
-          throw new Error(data.error);
-        }
-      }
-      
-      // Recharger la liste des bannières
-      await loadBannerImages();
-      showMessage('Succès !', `${files.length} bannière(s) uploadée(s) avec succès !`, 'success');
-    } catch (error) {
-      console.error('Erreur lors du téléchargement:', error);
-      showMessage('Erreur', `Erreur lors du téléchargement: ${error.message}`, 'error');
-    } finally {
-      setUploading(false);
+  const addBanner = () => {
+    const url = (newUrl || '').trim();
+    if (!url) {
+      showMessage('URL requise', 'Indiquez une URL d’image (https://…).', 'info');
+      return;
     }
+    const nextPos = banners.length ? Math.max(...banners.map(b => b.position), 0) + 1 : 1;
+    setBanners(prev => [...prev, { url, position: nextPos }]);
+    setNewUrl('');
   };
 
-  const getNextAvailablePosition = () => {
-    const usedPositions = bannerImages.map(img => img.position);
-    for (let i = 1; i <= 10; i++) {
-      if (!usedPositions.includes(i)) {
-        return i;
-      }
-    }
-    return usedPositions.length + 1;
-  };
-
-  const deleteBannerImage = (imageName) => {
+  const removeBanner = (index) => {
     showConfirm(
       'Supprimer la bannière',
-      `Êtes-vous sûr de vouloir supprimer définitivement l'image "${imageName}" ?`,
-      async () => {
-        try {
-          const response = await fetch(`${API_BASE}/banners/${imageName}`, {
-            method: 'DELETE'
-          });
-          
-          const data = await response.json();
-          
-          if (data.success) {
-            await loadBannerImages();
-            showMessage('Succès !', 'Image supprimée avec succès !', 'success');
-          } else {
-            throw new Error(data.error);
-          }
-        } catch (error) {
-          console.error('Erreur lors de la suppression:', error);
-          showMessage('Erreur', `Erreur lors de la suppression: ${error.message}`, 'error');
-        }
+      'Retirer cette bannière de la rotation ?',
+      () => {
+        setBanners(prev => prev.filter((_, i) => i !== index).map((b, i) => ({ ...b, position: i + 1 })));
+        showMessage('Succès', 'Bannière supprimée.', 'success');
       }
     );
   };
 
-  const moveUp = async (imageName) => {
-    const currentIndex = bannerImages.findIndex(img => img.name === imageName);
-    if (currentIndex <= 0) return; // Déjà en première position
-    
-    const previousImage = bannerImages[currentIndex - 1];
-    
+  const moveBanner = (index, direction) => {
+    if (direction === 'up' && index <= 0) return;
+    if (direction === 'down' && index >= banners.length - 1) return;
+    const next = [...banners];
+    const swap = direction === 'up' ? index - 1 : index + 1;
+    [next[index], next[swap]] = [next[swap], next[index]];
+    setBanners(next.map((b, i) => ({ ...b, position: i + 1 })));
+  };
+
+  const saveConfig = async () => {
+    setSaving(true);
     try {
-      const response = await fetch(`${API_BASE}/banners/${imageName}/position`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ position: previousImage.position })
+      const res = await fetch(`${API_BASE}/config/news`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          config: {
+            banners: banners.map((b, i) => ({ url: b.url, position: i + 1 })),
+            interval: intervalMs
+          }
+        })
       });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        // Actualiser directement la page
-        window.location.reload();
+      const data = await res.json();
+      if (data?.success) {
+        onSave?.();
+        showMessage('Sauvegardé', 'Les bannières ont été enregistrées.', 'success');
       } else {
-        throw new Error(data.error);
+        throw new Error(data?.error || 'Erreur sauvegarde');
       }
-    } catch (error) {
-      console.error('Erreur lors du déplacement:', error);
-      showMessage('Erreur', `Erreur lors du déplacement: ${error.message}`, 'error');
+    } catch (e) {
+      showMessage('Erreur', e.message || 'Impossible de sauvegarder.', 'error');
+    } finally {
+      setSaving(false);
     }
   };
 
-  const moveDown = async (imageName) => {
-    const currentIndex = bannerImages.findIndex(img => img.name === imageName);
-    if (currentIndex >= bannerImages.length - 1) return; // Déjà en dernière position
-    
-    const nextImage = bannerImages[currentIndex + 1];
-    
-    try {
-      const response = await fetch(`${API_BASE}/banners/${imageName}/position`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ position: nextImage.position })
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        // Actualiser directement la page
-        window.location.reload();
-      } else {
-        throw new Error(data.error);
-      }
-    } catch (error) {
-      console.error('Erreur lors du déplacement:', error);
-      showMessage('Erreur', `Erreur lors du déplacement: ${error.message}`, 'error');
-    }
-  };
-
-  // Fonctions pour les modals
   const showMessage = (title, message, type = 'info') => {
-    setModalConfig({
-      title,
-      message,
-      type,
-      onConfirm: null
-    });
+    setModalConfig({ title, message, type, onConfirm: null });
     setShowModal(true);
   };
 
   const showConfirm = (title, message, onConfirm) => {
-    setModalConfig({
-      title,
-      message,
-      type: 'confirm',
-      onConfirm
-    });
+    setModalConfig({ title, message, type: 'confirm', onConfirm });
     setShowModal(true);
   };
 
@@ -208,449 +117,151 @@ const BannerManager = ({ onSave }) => {
     setModalConfig({ title: '', message: '', type: 'info', onConfirm: null });
   };
 
-  const handleSave = () => {
-    const newsConfig = {
-      autoLoad: {
-        enabled: true,
-        folder: "/news-images/",
-        description: "Chargement automatique des images depuis le dossier public/news-images/"
-      },
-      banners: [],
-      interval: 5000
-    };
-    onSave(newsConfig);
-    showMessage('Succès !', 'Configuration des bannières sauvegardée !', 'success');
-  };
+  const sortedBanners = [...banners].sort((a, b) => (a.position || 0) - (b.position || 0));
 
   return (
-    <div>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '2rem' 
-      }}>
-        <h2>
-          <i className="fa-solid fa-images"></i> Gestion des Bannières d'Actualités
-        </h2>
-        <button onClick={handleSave} className="btn btn-primary">
-          <i className="fa-solid fa-save"></i> Sauvegarder
+    <div className="banner-manager">
+      <header className="banner-manager-header">
+        <h2><i className="fa-solid fa-images"></i> Bannières d’actualités</h2>
+        <button type="button" onClick={saveConfig} disabled={saving} className="btn btn-primary">
+          {saving ? <><i className="fa-solid fa-spinner fa-spin"></i> Enregistrement…</> : <><i className="fa-solid fa-save"></i> Sauvegarder</>}
         </button>
-      </div>
+      </header>
 
-      {/* Instructions */}
-      <div style={{ 
-        background: 'rgba(40, 167, 69, 0.1)', 
-        borderRadius: '10px', 
-        padding: '1.5rem',
-        marginBottom: '2rem',
-        border: '1px solid rgba(40, 167, 69, 0.3)'
-      }}>
-        <h3 style={{ 
-          marginBottom: '1rem',
-          color: '#28a745',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem'
-        }}>
-          <i className="fa-solid fa-check-circle"></i>
-          Gestionnaire Automatique Activé
-        </h3>
-        <div style={{ 
-          background: 'rgba(255,255,255,0.1)', 
-          padding: '1rem', 
-          borderRadius: '5px',
-          marginBottom: '1rem'
-        }}>
-          <strong>✅ Gestion Automatique :</strong>
-          <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem' }}>
-            Toutes les modifications sont automatiquement appliquées aux fichiers du serveur. 
-            Aucune action manuelle requise !
-          </p>
+      <div className="banner-manager-info">
+        <div className="banner-manager-info-icon"><i className="fa-solid fa-link"></i></div>
+        <div>
+          <h3>Liens externes uniquement</h3>
+          <p>Ajoutez des bannières via des <strong>URLs d’images</strong> (hébergement externe). Aucun upload sur le serveur.</p>
+          <ul>
+            <li>Format recommandé : <strong>1200×300 px</strong>, PNG ou JPG</li>
+            <li>Utilisez des hébergeurs autorisant l’affichage externe (ex. postimg.cc, imgur)</li>
+            <li>Les bannières défilent en rotation sur la page d’accueil</li>
+          </ul>
         </div>
-        <ul style={{ margin: 0, paddingLeft: '1.5rem', fontSize: '0.9rem' }}>
-          <li>Les bannières sont des <strong>images uniquement</strong> (pas de texte)</li>
-          <li>Elles s'affichent en <strong>rotation automatique</strong> sur la page d'accueil</li>
-          <li>Les images sont nommées <strong>banniere1.png, banniere2.png, etc.</strong></li>
-          <li>Vous pouvez <strong>réorganiser l'ordre</strong> en changeant les positions</li>
-          <li>Format recommandé : <strong>1200x300 pixels, PNG ou JPG</strong></li>
-          <li><strong>Limite :</strong> 5MB par image</li>
-        </ul>
       </div>
 
-      {/* Upload */}
-      <div style={{ 
-        border: '2px dashed rgba(255,255,255,0.3)', 
-        borderRadius: '10px', 
-        padding: '2rem', 
-        textAlign: 'center',
-        marginBottom: '2rem',
-        background: 'rgba(255,255,255,0.02)'
-      }}>
+      <div className="banner-manager-add">
+        <label className="banner-manager-add-label">Nouvelle bannière (URL)</label>
+        <div className="banner-manager-add-row">
+          <input
+            type="url"
+            value={newUrl}
+            onChange={e => setNewUrl(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addBanner())}
+            placeholder="https://exemple.com/image.png"
+            className="banner-manager-add-input"
+          />
+          <button type="button" onClick={addBanner} className="btn btn-primary">
+            <i className="fa-solid fa-plus"></i> Ajouter
+          </button>
+        </div>
+      </div>
+
+      <div className="banner-manager-interval">
+        <label>Intervalle de rotation (ms)</label>
         <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleImageUpload}
-          disabled={uploading}
-          style={{ display: 'none' }}
-          id="upload-banners"
+          type="number"
+          min={2000}
+          max={30000}
+          step={1000}
+          value={intervalMs}
+          onChange={e => setIntervalMs(Number(e.target.value) || 5000)}
         />
-        <label 
-          htmlFor="upload-banners"
-          style={{
-            cursor: uploading ? 'not-allowed' : 'pointer',
-            display: 'inline-block'
-          }}
-        >
-          <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: uploading ? 0.5 : 1 }}>
-            {uploading ? (
-              <i className="fa-solid fa-spinner fa-spin"></i>
-            ) : (
-              <i className="fa-solid fa-cloud-upload-alt" style={{ color: 'var(--accent)' }}></i>
-            )}
-          </div>
-          <h3 style={{ margin: '0 0 0.5rem 0' }}>
-            {uploading ? 'Téléchargement en cours...' : 'Ajouter de nouvelles bannières'}
-          </h3>
-          <p style={{ margin: 0, opacity: 0.7 }}>
-            Cliquez ou glissez vos images ici (PNG, JPG, WebP)
-          </p>
-        </label>
       </div>
 
-      {/* Liste des bannières */}
-      <div style={{ 
-        background: 'rgba(255,255,255,0.05)', 
-        borderRadius: '10px', 
-        padding: '2rem' 
-      }}>
-        <h3 style={{ marginBottom: '1.5rem' }}>
-          <i className="fa-solid fa-list"></i> Bannières Actuelles ({bannerImages.length})
-        </h3>
+      <section className="banner-manager-list">
+        <h3><i className="fa-solid fa-list"></i> Bannières ({sortedBanners.length})</h3>
 
         {loading ? (
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '3rem', 
-            opacity: 0.6
-          }}>
-            <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '3rem', marginBottom: '1rem' }}></i>
-            <p>Chargement des bannières...</p>
+          <div className="banner-manager-loading">
+            <i className="fa-solid fa-spinner fa-spin"></i>
+            <span>Chargement…</span>
           </div>
-        ) : bannerImages.length === 0 ? (
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '3rem', 
-            opacity: 0.6,
-            fontStyle: 'italic'
-          }}>
-            <i className="fa-solid fa-image" style={{ fontSize: '3rem', marginBottom: '1rem' }}></i>
-            <p>Aucune bannière présente. Téléchargez vos premières images !</p>
+        ) : sortedBanners.length === 0 ? (
+          <div className="banner-manager-empty">
+            <i className="fa-solid fa-image"></i>
+            <p>Aucune bannière. Ajoutez une URL ci‑dessus.</p>
           </div>
         ) : (
-          <div style={{ 
-            display: 'grid', 
-            gap: '1.5rem'
-          }}>
-            {bannerImages
-              .sort((a, b) => a.position - b.position)
-              .map((banner, index) => (
-              <div 
-                key={banner.name}
-                style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  borderRadius: '10px',
-                  padding: '1.5rem',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  display: 'grid',
-                  gridTemplateColumns: '200px 1fr auto',
-                  gap: '1.5rem',
-                  alignItems: 'center'
-                }}
-              >
-                {/* Aperçu de l'image */}
-                <div style={{ 
-                  width: '200px', 
-                  height: '60px', 
-                  background: `url(${banner.url || `/news-images/${banner.name}`}) center/cover`,
-                  borderRadius: '8px',
-                  backgroundColor: 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.2)'
-                }}></div>
-
-                {/* Informations */}
-                <div>
-                  <h4 style={{ margin: '0 0 0.5rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <i className="fa-solid fa-image"></i>
-                    {banner.name}
-                    {banner.isNew && (
-                      <span style={{
-                        background: 'rgba(40, 167, 69, 0.2)',
-                        border: '1px solid rgba(40, 167, 69, 0.4)',
-                        color: '#28a745',
-                        padding: '0.2rem 0.5rem',
-                        borderRadius: '3px',
-                        fontSize: '0.7rem'
-                      }}>
-                        NOUVEAU
-                      </span>
-                    )}
-                  </h4>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <i className="fa-solid fa-arrows-alt-v" style={{ color: '#007bff' }}></i>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>Position {banner.position}:</span>
-                      <div style={{ display: 'flex', gap: '0.25rem' }}>
-                        <button 
-                          onClick={() => moveUp(banner.name)}
-                          disabled={bannerImages.findIndex(img => img.name === banner.name) === 0}
-                          style={{
-                            padding: '0.3rem 0.5rem',
-                            border: 'none',
-                            borderRadius: '3px',
-                            background: bannerImages.findIndex(img => img.name === banner.name) === 0 
-                              ? 'rgba(255,255,255,0.1)' 
-                              : 'rgba(0, 123, 255, 0.8)',
-                            color: bannerImages.findIndex(img => img.name === banner.name) === 0 
-                              ? 'rgba(255,255,255,0.5)' 
-                              : 'white',
-                            cursor: bannerImages.findIndex(img => img.name === banner.name) === 0 
-                              ? 'not-allowed' 
-                              : 'pointer',
-                            fontSize: '0.8rem'
-                          }}
-                          title="Déplacer vers le haut"
-                        >
-                          <i className="fa-solid fa-chevron-up"></i>
-                        </button>
-                        <button 
-                          onClick={() => moveDown(banner.name)}
-                          disabled={bannerImages.findIndex(img => img.name === banner.name) === bannerImages.length - 1}
-                          style={{
-                            padding: '0.3rem 0.5rem',
-                            border: 'none',
-                            borderRadius: '3px',
-                            background: bannerImages.findIndex(img => img.name === banner.name) === bannerImages.length - 1 
-                              ? 'rgba(255,255,255,0.1)' 
-                              : 'rgba(0, 123, 255, 0.8)',
-                            color: bannerImages.findIndex(img => img.name === banner.name) === bannerImages.length - 1 
-                              ? 'rgba(255,255,255,0.5)' 
-                              : 'white',
-                            cursor: bannerImages.findIndex(img => img.name === banner.name) === bannerImages.length - 1 
-                              ? 'not-allowed' 
-                              : 'pointer',
-                            fontSize: '0.8rem'
-                          }}
-                          title="Déplacer vers le bas"
-                        >
-                          <i className="fa-solid fa-chevron-down"></i>
-                        </button>
-                      </div>
+          <ul className="banner-manager-cards">
+            {sortedBanners.map((banner, index) => (
+              <li key={`${banner.url}-${index}`} className="banner-manager-card">
+                <div
+                  className="banner-manager-card-preview"
+                  style={{ backgroundImage: banner.url ? `url(${banner.url})` : undefined }}
+                />
+                <div className="banner-manager-card-body">
+                  <span className="banner-manager-card-url" title={banner.url}>{banner.url || '—'}</span>
+                  <div className="banner-manager-card-actions">
+                    <div className="banner-manager-card-order">
+                      <button
+                        type="button"
+                        onClick={() => moveBanner(index, 'up')}
+                        disabled={index === 0}
+                        title="Monter"
+                        aria-label="Monter"
+                      ><i className="fa-solid fa-chevron-up"></i></button>
+                      <span>#{index + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => moveBanner(index, 'down')}
+                        disabled={index === sortedBanners.length - 1}
+                        title="Descendre"
+                        aria-label="Descendre"
+                      ><i className="fa-solid fa-chevron-down"></i></button>
                     </div>
-                    <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>
-                      Ordre d'affichage dans la rotation
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeBanner(index)}
+                      className="banner-manager-card-delete"
+                      title="Supprimer"
+                    >
+                      <i className="fa-solid fa-trash"></i> Supprimer
+                    </button>
                   </div>
                 </div>
-
-                {/* Actions */}
-                <div style={{ textAlign: 'right' }}>
-                  <button
-                    onClick={() => deleteBannerImage(banner.name)}
-                    style={{
-                      background: 'rgba(220, 53, 69, 0.2)',
-                      border: '1px solid rgba(220, 53, 69, 0.4)',
-                      color: '#ff6b7a',
-                      borderRadius: '6px',
-                      padding: '0.5rem 1rem',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem'
-                    }}
-                  >
-                    <i className="fa-solid fa-trash"></i>
-                    Supprimer
-                  </button>
-                </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
 
-        {/* Aperçu de la rotation */}
-        {bannerImages.length > 0 && (
-          <div style={{ 
-            marginTop: '2rem',
-            padding: '1.5rem',
-            background: 'rgba(0, 123, 255, 0.1)',
-            borderRadius: '8px',
-            border: '1px solid rgba(0, 123, 255, 0.3)'
-          }}>
-            <h4 style={{ 
-              marginBottom: '1rem',
-              color: '#007bff',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem'
-            }}>
-              <i className="fa-solid fa-play-circle"></i>
-              Ordre de rotation
-            </h4>
-            <div style={{ 
-              display: 'flex', 
-              gap: '0.5rem', 
-              flexWrap: 'wrap',
-              alignItems: 'center'
-            }}>
-              {bannerImages
-                .sort((a, b) => a.position - b.position)
-                .map((banner, index) => (
-                <div key={banner.name} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{
-                    background: 'rgba(255,255,255,0.2)',
-                    padding: '0.3rem 0.8rem',
-                    borderRadius: '15px',
-                    fontSize: '0.8rem',
-                    fontWeight: 'bold'
-                  }}>
-                    {index + 1}. {banner.name}
-                  </span>
-                  {index < bannerImages.length - 1 && (
-                    <i className="fa-solid fa-arrow-right" style={{ opacity: 0.5 }}></i>
-                  )}
-                </div>
+        {sortedBanners.length > 0 && (
+          <div className="banner-manager-rotation-preview">
+            <span className="banner-manager-rotation-label">Ordre de rotation</span>
+            <div className="banner-manager-rotation-dots">
+              {sortedBanners.map((b, i) => (
+                <span key={i} className="banner-manager-rotation-dot">{i + 1}</span>
               ))}
-              <div style={{ 
-                opacity: 0.6, 
-                fontSize: '0.8rem',
-                marginLeft: '1rem'
-              }}>
-                <i className="fa-solid fa-repeat"></i> Puis recommence...
-              </div>
+              <span className="banner-manager-rotation-loop"><i className="fa-solid fa-repeat"></i></span>
             </div>
           </div>
         )}
-      </div>
+      </section>
 
-      {/* Modal */}
       {showModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 9999
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.2)',
-            borderRadius: '20px',
-            padding: '2rem',
-            maxWidth: '500px',
-            width: '90%',
-            color: 'white',
-            textAlign: 'center',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
-          }}>
-            <div style={{ marginBottom: '1.5rem' }}>
-              {modalConfig.type === 'success' && (
-                <i className="fa-solid fa-check-circle" style={{ 
-                  fontSize: '3rem', 
-                  color: '#28a745',
-                  marginBottom: '1rem',
-                  display: 'block'
-                }}></i>
-              )}
-              {modalConfig.type === 'error' && (
-                <i className="fa-solid fa-exclamation-triangle" style={{ 
-                  fontSize: '3rem', 
-                  color: '#dc3545',
-                  marginBottom: '1rem',
-                  display: 'block'
-                }}></i>
-              )}
-              {modalConfig.type === 'confirm' && (
-                <i className="fa-solid fa-question-circle" style={{ 
-                  fontSize: '3rem', 
-                  color: '#ffc107',
-                  marginBottom: '1rem',
-                  display: 'block'
-                }}></i>
-              )}
-              {modalConfig.type === 'info' && (
-                <i className="fa-solid fa-info-circle" style={{ 
-                  fontSize: '3rem', 
-                  color: '#17a2b8',
-                  marginBottom: '1rem',
-                  display: 'block'
-                }}></i>
-              )}
-              <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.5rem' }}>
-                {modalConfig.title}
-              </h3>
-              <p style={{ margin: '0', opacity: 0.9, lineHeight: '1.5' }}>
-                {modalConfig.message}
-              </p>
+        <div className="banner-manager-modal-overlay" onClick={closeModal}>
+          <div className="banner-manager-modal" onClick={e => e.stopPropagation()}>
+            <div className="banner-manager-modal-icon">
+              {modalConfig.type === 'success' && <i className="fa-solid fa-check-circle"></i>}
+              {modalConfig.type === 'error' && <i className="fa-solid fa-exclamation-triangle"></i>}
+              {modalConfig.type === 'confirm' && <i className="fa-solid fa-question-circle"></i>}
+              {modalConfig.type === 'info' && <i className="fa-solid fa-info-circle"></i>}
             </div>
-            
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <h3>{modalConfig.title}</h3>
+            <p>{modalConfig.message}</p>
+            <div className="banner-manager-modal-buttons">
               {modalConfig.type === 'confirm' ? (
                 <>
-                  <button
-                    onClick={() => {
-                      closeModal();
-                      if (modalConfig.onConfirm) modalConfig.onConfirm();
-                    }}
-                    style={{
-                      background: 'rgba(220, 53, 69, 0.8)',
-                      border: 'none',
-                      borderRadius: '10px',
-                      padding: '0.75rem 1.5rem',
-                      color: 'white',
-                      cursor: 'pointer',
-                      fontSize: '1rem',
-                      fontWeight: 'bold'
-                    }}
-                  >
+                  <button type="button" className="btn btn-danger" onClick={() => { closeModal(); modalConfig.onConfirm?.(); }}>
                     <i className="fa-solid fa-check"></i> Confirmer
                   </button>
-                  <button
-                    onClick={closeModal}
-                    style={{
-                      background: 'rgba(108, 117, 125, 0.8)',
-                      border: 'none',
-                      borderRadius: '10px',
-                      padding: '0.75rem 1.5rem',
-                      color: 'white',
-                      cursor: 'pointer',
-                      fontSize: '1rem'
-                    }}
-                  >
+                  <button type="button" className="btn btn-ghost" onClick={closeModal}>
                     <i className="fa-solid fa-times"></i> Annuler
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={closeModal}
-                  style={{
-                    background: 'rgba(0, 123, 255, 0.8)',
-                    border: 'none',
-                    borderRadius: '10px',
-                    padding: '0.75rem 2rem',
-                    color: 'white',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    fontWeight: 'bold'
-                  }}
-                >
+                <button type="button" className="btn btn-primary" onClick={closeModal}>
                   <i className="fa-solid fa-check"></i> OK
                 </button>
               )}
@@ -658,6 +269,56 @@ const BannerManager = ({ onSave }) => {
           </div>
         </div>
       )}
+
+      <style>{`
+        .banner-manager { --bm-accent: #3b82f6; --bm-bg: rgba(255,255,255,0.05); --bm-border: rgba(255,255,255,0.12); }
+        .banner-manager-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .banner-manager-header h2 { margin: 0; font-size: 1.35rem; display: flex; align-items: center; gap: 0.5rem; color: #fff; }
+        .banner-manager-info { display: flex; gap: 1rem; padding: 1.25rem 1.5rem; background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(59,130,246,0.06)); border: 1px solid rgba(59,130,246,0.25); border-radius: 12px; margin-bottom: 1.5rem; }
+        .banner-manager-info-icon { width: 48px; height: 48px; border-radius: 10px; background: rgba(59,130,246,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--bm-accent); flex-shrink: 0; }
+        .banner-manager-info h3 { margin: 0 0 0.35rem 0; font-size: 1rem; color: #e2e8f0; }
+        .banner-manager-info p { margin: 0 0 0.5rem 0; font-size: 0.9rem; color: rgba(255,255,255,0.8); line-height: 1.4; }
+        .banner-manager-info ul { margin: 0; padding-left: 1.25rem; font-size: 0.85rem; color: rgba(255,255,255,0.75); }
+        .banner-manager-add { margin-bottom: 1.5rem; }
+        .banner-manager-add-label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: #e2e8f0; }
+        .banner-manager-add-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .banner-manager-add-input { flex: 1; min-width: 200px; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--bm-border); background: rgba(255,255,255,0.08); color: #fff; font-size: 0.95rem; }
+        .banner-manager-add-input::placeholder { color: rgba(255,255,255,0.4); }
+        .banner-manager-interval { margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+        .banner-manager-interval label { font-size: 0.9rem; color: rgba(255,255,255,0.85); }
+        .banner-manager-interval input { width: 100px; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--bm-border); background: rgba(255,255,255,0.08); color: #fff; }
+        .banner-manager-list { background: var(--bm-bg); border: 1px solid var(--bm-border); border-radius: 12px; padding: 1.5rem; }
+        .banner-manager-list h3 { margin: 0 0 1rem 0; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; color: #e2e8f0; }
+        .banner-manager-loading, .banner-manager-empty { text-align: center; padding: 2.5rem; color: rgba(255,255,255,0.6); }
+        .banner-manager-loading i, .banner-manager-empty i { font-size: 2rem; display: block; margin-bottom: 0.75rem; opacity: 0.7; }
+        .banner-manager-cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+        .banner-manager-card { display: grid; grid-template-columns: 180px 1fr auto; gap: 1rem; align-items: center; background: rgba(255,255,255,0.06); border: 1px solid var(--bm-border); border-radius: 10px; padding: 1rem; }
+        .banner-manager-card-preview { width: 180px; height: 52px; border-radius: 8px; background: rgba(255,255,255,0.1); background-size: cover; background-position: center; }
+        .banner-manager-card-body { min-width: 0; }
+        .banner-manager-card-url { display: block; font-size: 0.8rem; color: rgba(255,255,255,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .banner-manager-card-actions { display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .banner-manager-card-order { display: flex; align-items: center; gap: 0.35rem; }
+        .banner-manager-card-order button { padding: 0.35rem 0.5rem; border: none; border-radius: 6px; background: rgba(59,130,246,0.25); color: #fff; cursor: pointer; }
+        .banner-manager-card-order button:disabled { opacity: 0.4; cursor: not-allowed; }
+        .banner-manager-card-order span { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.8); margin: 0 0.25rem; }
+        .banner-manager-card-delete { padding: 0.4rem 0.75rem; border: 1px solid rgba(239,68,68,0.4); background: rgba(239,68,68,0.15); color: #f87171; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+        .banner-manager-card-delete:hover { background: rgba(239,68,68,0.25); }
+        .banner-manager-rotation-preview { margin-top: 1.25rem; padding: 1rem; background: rgba(59,130,246,0.08); border-radius: 8px; border: 1px solid rgba(59,130,246,0.2); }
+        .banner-manager-rotation-label { font-size: 0.85rem; color: rgba(255,255,255,0.8); margin-right: 0.75rem; }
+        .banner-manager-rotation-dots { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .banner-manager-rotation-dot { background: rgba(255,255,255,0.2); padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+        .banner-manager-rotation-loop { margin-left: 0.5rem; opacity: 0.6; font-size: 0.9rem; }
+        .banner-manager-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .banner-manager-modal { background: linear-gradient(135deg, rgba(30,41,59,0.98), rgba(15,23,42,0.98)); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 2rem; max-width: 420px; width: 90%; text-align: center; }
+        .banner-manager-modal-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .banner-manager-modal-icon .fa-check-circle { color: #22c55e; }
+        .banner-manager-modal-icon .fa-exclamation-triangle { color: #ef4444; }
+        .banner-manager-modal-icon .fa-question-circle { color: #eab308; }
+        .banner-manager-modal-icon .fa-info-circle { color: #3b82f6; }
+        .banner-manager-modal h3 { margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #fff; }
+        .banner-manager-modal p { margin: 0 0 1.25rem 0; color: rgba(255,255,255,0.85); font-size: 0.95rem; }
+        .banner-manager-modal-buttons { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+      `}</style>
     </div>
   );
 };

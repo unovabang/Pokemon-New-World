@@ -600,12 +600,13 @@ const saveConfig = (configName, data) => {
 app.get('/api/config/:name', (req, res) => {
   try {
     const { name } = req.params;
-    const configData = getConfig(name);
-    
+    let configData = getConfig(name);
+    if (!configData && name === 'news') {
+      configData = { banners: [], interval: 5000 };
+    }
     if (!configData) {
       return res.status(404).json({ success: false, error: `Configuration ${name} non trouvée` });
     }
-    
     res.json({ success: true, config: configData });
   } catch (error) {
     console.error(`❌ Erreur API /api/config/${req.params.name}:`, error);

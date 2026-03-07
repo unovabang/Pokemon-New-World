@@ -126,12 +126,13 @@ export default function NewsBanner({ banners = [], interval = 5000, autoLoad = t
   if (total === 0) return null;
 
   const currentBanner = allBanners[currentIndex];
+  const imageSrc = currentBanner.image || currentBanner.url;
 
   return (
     <div className="news-banner-container">
       <div className="news-banner">
         <img
-          src={currentBanner.image}
+          src={imageSrc}
           alt={currentBanner.title || "Bannière actualité"}
           className="news-banner-image"
         />
