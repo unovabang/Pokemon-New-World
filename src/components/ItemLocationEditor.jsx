@@ -12,6 +12,8 @@ const ItemLocationEditor = ({ onSave }) => {
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({ title: '', message: '', type: 'info', onConfirm: null });
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addForm, setAddForm] = useState({ zone: '', item: '', obtention: '' });
 
   const load = async () => {
     try {
@@ -56,8 +58,19 @@ const ItemLocationEditor = ({ onSave }) => {
     });
   };
 
-  const addRow = () => {
-    setEntries((prev) => [...prev, { zone: '', item: '', obtention: '' }]);
+  const openAddModal = () => {
+    setAddForm({ zone: '', item: '', obtention: '' });
+    setShowAddModal(true);
+  };
+
+  const closeAddModal = () => {
+    setShowAddModal(false);
+    setAddForm({ zone: '', item: '', obtention: '' });
+  };
+
+  const submitAddRow = () => {
+    setEntries((prev) => [...prev, { zone: addForm.zone.trim(), item: addForm.item.trim(), obtention: addForm.obtention.trim() }]);
+    closeAddModal();
   };
 
   const removeRow = (index) => {
@@ -106,7 +119,7 @@ const ItemLocationEditor = ({ onSave }) => {
       <div className="item-location-editor-head">
         <h2><i className="fa-solid fa-location-dot" /> Item Location</h2>
         <div className="item-location-editor-actions">
-          <button type="button" className="btn btn-primary" onClick={addRow}>
+          <button type="button" className="btn btn-primary" onClick={openAddModal}>
             <i className="fa-solid fa-plus" /> Ajouter une ligne
           </button>
           <button type="button" className="btn btn-primary" onClick={handleSave} disabled={saving}>
@@ -189,6 +202,53 @@ const ItemLocationEditor = ({ onSave }) => {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {showAddModal && (
+        <div className="admin-pokedex-modal-overlay" onClick={closeAddModal}>
+          <div className="admin-pokedex-modal item-location-add-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-pokedex-modal-header">
+              <h3 className="admin-pokedex-modal-title"><i className="fa-solid fa-plus" style={{ marginRight: '.5rem' }} /> Ajouter une ligne</h3>
+              <button type="button" className="admin-pokedex-modal-close" onClick={closeAddModal} title="Fermer"><i className="fa-solid fa-times" /></button>
+            </div>
+            <div className="admin-pokedex-modal-body">
+              <label className="item-location-add-modal-label">
+                <span>Zone</span>
+                <input
+                  type="text"
+                  value={addForm.zone}
+                  onChange={(e) => setAddForm((f) => ({ ...f, zone: e.target.value }))}
+                  placeholder="ex. Liora"
+                  className="item-location-editor-input"
+                />
+              </label>
+              <label className="item-location-add-modal-label">
+                <span>Objet</span>
+                <input
+                  type="text"
+                  value={addForm.item}
+                  onChange={(e) => setAddForm((f) => ({ ...f, item: e.target.value }))}
+                  placeholder="ex. Pokéball x5"
+                  className="item-location-editor-input"
+                />
+              </label>
+              <label className="item-location-add-modal-label">
+                <span>Obtention</span>
+                <input
+                  type="text"
+                  value={addForm.obtention}
+                  onChange={(e) => setAddForm((f) => ({ ...f, obtention: e.target.value }))}
+                  placeholder="ex. Item au sol"
+                  className="item-location-editor-input"
+                />
+              </label>
+            </div>
+            <div className="admin-pokedex-modal-footer">
+              <button type="button" className="btn btn-ghost" onClick={closeAddModal}>Annuler</button>
+              <button type="button" className="btn btn-primary" onClick={submitAddRow}><i className="fa-solid fa-plus" /> Ajouter</button>
+            </div>
+          </div>
         </div>
       )}
 
