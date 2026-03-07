@@ -562,6 +562,9 @@ const SiteEditor = ({ onSave }) => {
               }}>
                 <i className="fa-solid fa-mountain-city"></i> Image de fond :
               </label>
+              <p style={{ marginBottom: '0.5rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
+                Chemin local (/image.jpg) ou URL complète (https://…) pour une image hébergée en ligne.
+              </p>
               <input
                 type="url"
                 value={backgroundUrl}

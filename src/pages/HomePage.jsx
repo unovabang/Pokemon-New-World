@@ -11,8 +11,19 @@ import LanguageSelector from "../components/LanguageSelector";
 import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
 
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
+
 const HomePage = () => {
-  const { backgrounds, heroVideo, game, carousel, discord, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = content;
+  const [siteConfigFromApi, setSiteConfigFromApi] = useState(null);
+
+  const effectiveContent = siteConfigFromApi
+    ? { ...content, ...siteConfigFromApi }
+    : content;
+  const { backgrounds, heroVideo, game, carousel, discord, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = effectiveContent;
   const { t, language } = useLanguage();
   
   // Fonction pour obtenir le contenu Patreon traduit
@@ -42,6 +53,18 @@ const HomePage = () => {
   const [openExplanations, setOpenExplanations] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
   const [openPatchNotes, setOpenPatchNotes] = useState(false);
+
+  // Charger la config site depuis l'API (background, logo, hero, audio modifiables dans Paramètres)
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE}/config/site?t=${Date.now()}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled && data?.success && data?.config) setSiteConfigFromApi(data.config);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   // Mise à jour des métadonnées SEO
   useEffect(() => {
@@ -80,11 +103,11 @@ const HomePage = () => {
         <Sidebar />
 
         {/* Lecteur audio discret */}
-        {content.audio?.enabled && (
+        {effectiveContent.audio?.enabled && (
           <YouTubeAudio
-            videoId={content.audio.youtubeId}
-            autoplay={content.audio.autoplay}
-            startVolume={content.audio.startVolume}
+            videoId={effectiveContent.audio.youtubeId}
+            autoplay={effectiveContent.audio.autoplay}
+            startVolume={effectiveContent.audio.startVolume}
             show
           />
         )}
@@ -99,7 +122,7 @@ const HomePage = () => {
               <div>
                 <img
                   className="hero-logo"
-                  src="/logo.png"
+                  src={effectiveContent.branding?.logo || "/logo.png"}
                   alt="Logo Pokémon New World"
                 />
                 {/* Titre texte retiré */}
@@ -130,8 +153,8 @@ const HomePage = () => {
               {t('sections.news.title')}
             </h2>
             <NewsBanner 
-              banners={content.news?.banners || []} 
-              interval={content.news?.interval || 5000}
+              banners={effectiveContent.news?.banners || []}
+              interval={effectiveContent.news?.interval || 5000}
               autoLoad={true}
             />
           </section>
@@ -235,7 +258,7 @@ const HomePage = () => {
           <div className="container footer-grid">
             <div className="footer-col">
               <div className="footer-brand">
-                <img src="/logo.png" alt="Logo Pokémon New World" />
+                <img src={effectiveContent.branding?.logo || "/logo.png"} alt="Logo Pokémon New World" />
                 <strong>Pokémon New World</strong>
               </div>
               <p style={{ marginTop: 8, color: "var(--muted)" }}>
