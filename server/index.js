@@ -1,8 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
 import multer from 'multer';
 import cors from 'cors';
 import fs from 'fs-extra';
 import path from 'path';
+import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import { initDb } from './db.js';
 import authRoutes from './auth.js';
@@ -23,9 +25,43 @@ app.use('/api/auth', authRoutes);
 // Health check (pour Railway / load balancers)
 app.get('/health', (req, res) => res.status(200).json({ ok: true }));
 
-// Chemins vers les dossiers
-const NEWS_IMAGES_DIR = path.join(__dirname, '../public/news-images');
-const CONFIG_DIR = path.join(__dirname, '../src/config');
+// Chemins vers les dossiers (volume persistant en prod ; en local, optionnellement DATA_DIR=. dans .env)
+const PROJECT_ROOT = path.join(__dirname, '..');
+const DATA_DIR = process.env.DATA_DIR ? path.resolve(PROJECT_ROOT, process.env.DATA_DIR) : '/app/data';
+const NEWS_IMAGES_DIR = path.join(DATA_DIR, 'news-images');
+const CONFIG_DIR = path.join(DATA_DIR, 'config');
+
+/** Commit + push automatique du JSON modifié (local ou production si env configurées). */
+function autoCommitConfig(filename) {
+  if (process.env.AUTO_COMMIT_CONFIG !== 'true') return;
+  const relPath = `src/config/${filename}`;
+  const msg = `chore(admin): update ${filename}`;
+  const repo = process.env.GITHUB_REPO || 'Jiromk/Pokemon-New-World-2.0';
+  const branch = process.env.GITHUB_BRANCH || 'main';
+  const token = process.env.GITHUB_TOKEN;
+
+  function doCommit() {
+    exec(`git add "${relPath}" && git commit -m "${msg}"`, { cwd: PROJECT_ROOT }, (err, stdout, stderr) => {
+      if (err && !/nothing to commit/.test(stderr || '')) {
+        console.warn('⚠️ Auto-commit config:', stderr || err.message);
+      }
+      if (process.env.AUTO_PUSH_CONFIG === 'true' && !err) {
+        const pushCmd = token
+          ? `git push https://x-access-token:${token}@github.com/${repo}.git ${branch}`
+          : 'git push';
+        exec(pushCmd, { cwd: PROJECT_ROOT }, (pushErr, pushOut, pushErrOut) => {
+          if (pushErr) console.warn('⚠️ Auto-push config:', pushErrOut || pushErr.message);
+        });
+      }
+    });
+  }
+
+  if (token && process.env.NODE_ENV === 'production') {
+    exec('git config user.email "deploy@railway.app" && git config user.name "Railway Deploy"', { cwd: PROJECT_ROOT }, () => doCommit());
+  } else {
+    doCommit();
+  }
+}
 
 // Configuration multer pour l'upload
 const storage = multer.diskStorage({
@@ -498,6 +534,7 @@ app.post('/api/patchnotes/version/:version/section', (req, res) => {
 // === CONFIGURATIONS GÉNÉRALES API ===
 // Fonction générique pour gérer les configurations JSON
 const getConfig = (configName) => {
+  fs.ensureDirSync(CONFIG_DIR);
   const configPath = path.join(CONFIG_DIR, `${configName}.json`);
   if (!fs.existsSync(configPath)) {
     return null;
@@ -511,6 +548,7 @@ const getConfig = (configName) => {
 };
 
 const saveConfig = (configName, data) => {
+  fs.ensureDirSync(CONFIG_DIR);
   const configPath = path.join(CONFIG_DIR, `${configName}.json`);
   try {
     fs.writeJsonSync(configPath, data, { spaces: 2 });
@@ -647,6 +685,7 @@ app.put('/api/pokedex', (req, res) => {
     if (customTypes === undefined && current.customTypes !== undefined) updated.customTypes = current.customTypes;
 
     fs.writeJsonSync(pokedexPath, updated, { spaces: 2 });
+    autoCommitConfig('pokedex.json');
 
     res.json({
       success: true,
@@ -751,6 +790,7 @@ app.put('/api/guide', (req, res) => {
     };
 
     fs.writeJsonSync(guidePath, updated, { spaces: 2 });
+    autoCommitConfig('guide.json');
 
     res.json({
       success: true,
@@ -790,6 +830,7 @@ app.put('/api/extradex', (req, res) => {
     if (customTypes === undefined && current.customTypes !== undefined) updated.customTypes = current.customTypes;
 
     fs.writeJsonSync(extradexPath, updated, { spaces: 2 });
+    autoCommitConfig('extradex.json');
 
     res.json({
       success: true,
@@ -844,6 +885,7 @@ app.put('/api/bst', (req, res) => {
     if (!saveConfig('bst', updated)) {
       return res.status(500).json({ success: false, error: 'Échec écriture bst.json' });
     }
+    autoCommitConfig('bst.json');
 
     res.json({
       success: true,
