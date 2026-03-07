@@ -5,17 +5,8 @@ import Sidebar from "../components/Sidebar";
 import bstData from "../config/bst.json";
 import pokedexData from "../config/pokedex.json";
 
-const STORAGE_BST = "admin_bst_data";
-
+/** Données BST : priorité aux JSON (source de vérité), pas au localStorage. */
 function getBSTData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_BST);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed && (Array.isArray(parsed.fakemon) || Array.isArray(parsed.megas) || Array.isArray(parsed.speciaux)))
-        return parsed;
-    }
-  } catch (_) {}
   return bstData;
 }
 
@@ -329,12 +320,8 @@ function BSTTable({ id, title, icon, data, pokedexList = [], onSelect, viewMode 
   );
 }
 
+/** Entrées Pokédex pour les sprites BST : priorité au JSON (pokedex.json), pas au localStorage. */
 function getPokedexEntriesForBST() {
-  try {
-    const raw = localStorage.getItem("admin_pokedex_entries");
-    const parsed = raw ? JSON.parse(raw) : null;
-    if (Array.isArray(parsed) && parsed.length) return parsed;
-  } catch (_) {}
   return pokedexData?.entries || [];
 }
 
@@ -343,13 +330,8 @@ export default function BSTPage() {
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
-  const [bstSource, setBstSource] = useState(() => getBSTData());
-  const [pokedexList, setPokedexList] = useState(() => getPokedexEntriesForBST());
-
-  useEffect(() => {
-    setBstSource(getBSTData());
-    setPokedexList(getPokedexEntriesForBST());
-  }, []);
+  const bstSource = getBSTData();
+  const pokedexList = getPokedexEntriesForBST();
 
   const sections = useMemo(() => {
     const source = bstSource && typeof bstSource === "object" ? bstSource : { fakemon: [], megas: [], speciaux: [] };

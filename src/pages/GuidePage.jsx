@@ -9,7 +9,7 @@ const API_BASE = import.meta.env.VITE_API_URL
     ? `${window.location.protocol}//${window.location.hostname}:3001/api`
     : `${window.location.origin}/api`;
 
-const STORAGE_GUIDE = "admin_guide_data";
+/** Priorité au JSON (guide.json) et à l’API ; pas de fallback localStorage. */
 
 /** Découpe le texte en segments (texte normal / termes à mettre en évidence) */
 function splitByHighlights(text, highlight = []) {
@@ -144,25 +144,10 @@ export default function GuidePage() {
             disclaimer: data.guide.disclaimer || "",
             steps: Array.isArray(data.guide.steps) ? data.guide.steps : [],
           });
-          return;
-        }
-        const stored = localStorage.getItem(STORAGE_GUIDE);
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored);
-            setGuideData(parsed);
-          } catch {}
         }
       })
       .catch(() => {
         if (cancelled) return;
-        const stored = localStorage.getItem(STORAGE_GUIDE);
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored);
-            setGuideData(parsed);
-          } catch {}
-        }
       });
     return () => { cancelled = true; };
   }, []);

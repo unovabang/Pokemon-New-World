@@ -125,30 +125,7 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
   );
 }
 
-function getStoredEntries() {
-  try {
-    const raw = localStorage.getItem("admin_pokedex_entries");
-    const parsed = raw ? JSON.parse(raw) : null;
-    return Array.isArray(parsed) ? parsed : null;
-  } catch {
-    return null;
-  }
-}
-
-function getStoredBackground() {
-  const bg = localStorage.getItem("admin_pokedex_background");
-  return bg && bg.trim() ? bg.trim() : null;
-}
-
-function getStoredCustomTypes() {
-  try {
-    const raw = localStorage.getItem("admin_pokedex_custom_types");
-    const parsed = raw ? JSON.parse(raw) : null;
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
+/** Pas de localStorage en priorité : on utilise les JSON (pokedex.json) en fallback. */
 
 export default function PokedexPage() {
   const [search, setSearch] = useState("");
@@ -170,22 +147,16 @@ export default function PokedexPage() {
           setPokedexBgSrc(data.pokedex.background && data.pokedex.background.trim() ? data.pokedex.background.trim() : pokedexBgImg);
           setCustomTypes(Array.isArray(data.pokedex.customTypes) ? data.pokedex.customTypes : []);
         } else {
-          const stored = getStoredEntries();
-          const bg = getStoredBackground();
-          const ct = getStoredCustomTypes();
-          if (stored && stored.length) setEntries(stored);
-          if (bg) setPokedexBgSrc(bg);
-          if (ct.length) setCustomTypes(ct);
+          setEntries(Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
+          setPokedexBgSrc(pokedexBgImg);
+          setCustomTypes([]);
         }
       })
       .catch(() => {
         if (cancelled) return;
-        const stored = getStoredEntries();
-        const bg = getStoredBackground();
-        const ct = getStoredCustomTypes();
-        if (stored && stored.length) setEntries(stored);
-        if (bg) setPokedexBgSrc(bg);
-        if (ct.length) setCustomTypes(ct);
+        setEntries(Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
+        setPokedexBgSrc(pokedexBgImg);
+        setCustomTypes([]);
       });
     return () => { cancelled = true; };
   }, []);
