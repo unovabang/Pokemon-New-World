@@ -139,7 +139,7 @@ function TypeBadges({ types }) {
   );
 }
 
-function BSTModal({ pokemon, pokedexEntries, onClose }) {
+function BSTModal({ pokemon, pokedexList = [], onClose }) {
   const overlayRef = useRef(null);
   useEffect(() => {
     const fn = (e) => e.key === "Escape" && onClose();
@@ -149,8 +149,8 @@ function BSTModal({ pokemon, pokedexEntries, onClose }) {
   }, [onClose]);
 
   if (!pokemon) return null;
-  const entriesList = Array.isArray(pokedexEntries) ? pokedexEntries : [];
-  const types = pokemon.types || getTypes(pokemon, findPokedexEntry(pokemon.name, entriesList));
+  const list = Array.isArray(pokedexList) ? pokedexList : [];
+  const types = pokemon.types || getTypes(pokemon, findPokedexEntry(pokemon.name, list));
 
   return createPortal(
     <div
@@ -210,11 +210,11 @@ function BSTModal({ pokemon, pokedexEntries, onClose }) {
   );
 }
 
-function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode }) {
-  const entriesList = Array.isArray(pokedexEntries) ? pokedexEntries : [];
+function BSTTable({ id, title, icon, data, pokedexList = [], onSelect, viewMode }) {
+  const list = Array.isArray(pokedexList) ? pokedexList : [];
   const rows = useMemo(() => {
     return (data || []).map((row) => {
-      const entry = findPokedexEntry(row.name, entriesList);
+      const entry = findPokedexEntry(row.name, list);
       const sprite = row.imageUrl || entry?.imageUrl || PLACEHOLDER_SPRITE;
       return {
         ...row,
@@ -222,7 +222,7 @@ function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode })
         types: getTypes(row, entry),
       };
     });
-  }, [data, entriesList]);
+  }, [data, list]);
 
   if (viewMode === "grid") {
     return (
@@ -343,12 +343,11 @@ export default function BSTPage() {
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [bstSource, setBstSource] = useState(() => getBSTData());
-  const [pokedexEntries, setPokedexEntries] = useState(() => getPokedexEntriesForBST());
-  const pokedexEntriesSafe = Array.isArray(pokedexEntries) ? pokedexEntries : [];
+  const [pokedexList, setPokedexList] = useState(() => getPokedexEntriesForBST());
 
   useEffect(() => {
     setBstSource(getBSTData());
-    setPokedexEntries(getPokedexEntriesForBST());
+    setPokedexList(getPokedexEntriesForBST());
   }, []);
 
   const sections = useMemo(() => {
@@ -459,7 +458,7 @@ export default function BSTPage() {
               title={s.title}
               icon={s.icon}
               data={s.data}
-              pokedexEntries={pokedexEntriesSafe}
+              pokedexList={pokedexList}
               onSelect={setSelectedPokemon}
               viewMode={viewMode}
             />
@@ -472,7 +471,7 @@ export default function BSTPage() {
       {selectedPokemon && (
         <BSTModal
           pokemon={selectedPokemon}
-          pokedexEntries={pokedexEntriesSafe}
+          pokedexList={pokedexList}
           onClose={() => setSelectedPokemon(null)}
         />
       )}
