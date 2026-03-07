@@ -38,7 +38,7 @@ const API_BASE = import.meta.env.VITE_API_URL
 const AdminPanel = () => {
   const { admin, logout, token } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('news');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [pokedexSubTab, setPokedexSubTab] = useState('pokedex'); // 'pokedex' | 'extradex'
   const [logs, setLogs] = useState([]);
   const [logsLoading, setLogsLoading] = useState(false);
@@ -83,17 +83,35 @@ const AdminPanel = () => {
     setEditContent('');
   };
 
-  const tabs = [
-    { id: 'news', name: 'Actualités', icon: 'fa-newspaper' },
-    { id: 'pokedex', name: 'Pokédex', icon: 'fa-book-open' },
-    { id: 'bst', name: 'All BST + Abilities', icon: 'fa-chart-line' },
-    { id: 'guide', name: 'Guide', icon: 'fa-route' },
-    { id: 'downloads', name: 'Téléchargements', icon: 'fa-download' },
-    { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-text' },
-    { id: 'settings', name: 'Paramètres', icon: 'fa-sliders' },
-    { id: 'tips', name: 'Conseils admin', icon: 'fa-lightbulb' },
-    { id: 'logs', name: 'Logs de connexion', icon: 'fa-list-alt' }
+  const navSections = [
+    {
+      title: null,
+      items: [{ id: 'dashboard', name: 'Accueil', icon: 'fa-house', description: 'Vue d\'ensemble' }]
+    },
+    {
+      title: 'Contenu',
+      items: [
+        { id: 'news', name: 'Actualités', icon: 'fa-newspaper', description: 'Bannières news' },
+        { id: 'pokedex', name: 'Pokédex', icon: 'fa-book-open', description: 'Pokédex & Extradex' },
+        { id: 'bst', name: 'All BST + Abilities', icon: 'fa-chart-line', description: 'Stats & capacités' },
+        { id: 'guide', name: 'Guide', icon: 'fa-route', description: 'Walkthrough' },
+        { id: 'downloads', name: 'Téléchargements', icon: 'fa-download', description: 'Liens de téléchargement' },
+        { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-lines', description: 'Patch notes' }
+      ]
+    },
+    {
+      title: 'Site',
+      items: [{ id: 'settings', name: 'Paramètres', icon: 'fa-sliders', description: 'Site, Patreon, pied de page' }]
+    },
+    {
+      title: 'Système',
+      items: [
+        { id: 'tips', name: 'Conseils admin', icon: 'fa-lightbulb', description: 'Aide & bonnes pratiques' },
+        { id: 'logs', name: 'Logs de connexion', icon: 'fa-list', description: 'Historique des connexions' }
+      ]
+    }
   ];
+  const tabs = navSections.flatMap(s => s.items);
 
   useEffect(() => {
     if (activeTab === 'logs' && token) {
@@ -207,23 +225,69 @@ const AdminPanel = () => {
 
       <div className="admin-panel-body">
         <nav className="admin-panel-nav">
-          <h3 className="admin-panel-nav-title">
-            <i className="fa-solid fa-sliders" aria-hidden /> Configuration
-          </h3>
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`admin-panel-nav-btn ${activeTab === tab.id ? "admin-panel-nav-btn--active" : ""}`}
-            >
-              <i className={`fa-solid ${tab.icon}`} aria-hidden />
-              {tab.name}
-            </button>
+          <div className="admin-panel-nav-brand">
+            <i className="fa-solid fa-shield-halved" aria-hidden />
+            <span>Administration</span>
+          </div>
+          {navSections.map((section) => (
+            <div key={section.title || 'home'} className="admin-panel-nav-section">
+              {section.title && (
+                <div className="admin-panel-nav-section-title">{section.title}</div>
+              )}
+              {section.items.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`admin-panel-nav-btn ${activeTab === tab.id ? "admin-panel-nav-btn--active" : ""}`}
+                  title={tab.description}
+                >
+                  <span className="admin-panel-nav-btn-icon">
+                    <i className={`fa-solid ${tab.icon}`} aria-hidden />
+                  </span>
+                  <span className="admin-panel-nav-btn-label">{tab.name}</span>
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
 
         <main className="admin-panel-main">
+          {activeTab === 'dashboard' && (
+            <div className="admin-dashboard">
+              <div className="admin-dashboard-hero">
+                <h2 className="admin-dashboard-welcome">
+                  Bonjour{admin?.name ? `, ${admin.name}` : ''}
+                </h2>
+                <p className="admin-dashboard-subtitle">
+                  Gérez le contenu du site Pokémon New World depuis ce panneau.
+                </p>
+              </div>
+              <div className="admin-dashboard-actions">
+                <a href="/" target="_blank" rel="noreferrer" className="admin-dashboard-card admin-dashboard-card--primary">
+                  <span className="admin-dashboard-card-icon"><i className="fa-solid fa-external-link" /></span>
+                  <span className="admin-dashboard-card-title">Voir le site</span>
+                  <span className="admin-dashboard-card-desc">Ouvrir le site public dans un nouvel onglet</span>
+                </a>
+              </div>
+              <h3 className="admin-dashboard-section-title">Accès rapide</h3>
+              <div className="admin-dashboard-grid">
+                {navSections.flatMap(s => s.items).filter(t => t.id !== 'dashboard').map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className="admin-dashboard-card"
+                  >
+                    <span className="admin-dashboard-card-icon"><i className={`fa-solid ${tab.icon}`} /></span>
+                    <span className="admin-dashboard-card-title">{tab.name}</span>
+                    <span className="admin-dashboard-card-desc">{tab.description}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {activeTab === 'news' && (
             <BannerManager 
               onSave={(newConfig) => handleSaveConfig('news', newConfig)}
@@ -342,7 +406,7 @@ const AdminPanel = () => {
             </div>
           )}
 
-          {activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
+          {activeTab !== 'dashboard' && activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
            activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'settings' && activeTab !== 'tips' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">

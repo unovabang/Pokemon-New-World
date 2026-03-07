@@ -4139,25 +4139,112 @@ a.dex-panel--active{cursor:default}
   .admin-panel-body { flex-direction: column; }
 }
 .admin-panel-nav {
-  width: 260px;
+  width: 280px;
   flex-shrink: 0;
-  padding: 1.5rem 1rem;
-  background: rgba(8,12,24,.85);
-  backdrop-filter: blur(16px);
-  border-right: 1px solid rgba(255,255,255,.06);
+  padding: 1.25rem 0;
+  background: rgba(8,14,28,.92);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255,255,255,.08);
   display: flex;
   flex-direction: column;
-  gap: .35rem;
+  gap: 0;
+  overflow-y: auto;
 }
 @media (max-width: 768px) {
   .admin-panel-nav {
     width: 100%;
     border-right: none;
-    border-bottom: 1px solid rgba(255,255,255,.06);
+    border-bottom: 1px solid rgba(255,255,255,.08);
     flex-direction: row;
     flex-wrap: wrap;
     padding: 1rem;
+    gap: .5rem;
   }
+}
+.admin-panel-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: 0 1.25rem 1.25rem;
+  margin-bottom: .5rem;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+}
+.admin-panel-nav-brand i {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .9rem;
+  color: #fff;
+}
+.admin-panel-nav-section {
+  padding: 0 .75rem;
+  margin-bottom: 1rem;
+}
+.admin-panel-nav-section:last-child { margin-bottom: 0; }
+.admin-panel-nav-section-title {
+  font-size: .7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+  padding: .5rem 1rem .35rem;
+  margin-bottom: .2rem;
+}
+.admin-panel-nav-btn {
+  width: 100%;
+  padding: .7rem 1rem;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font-size: .9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  transition: background .2s, color .2s;
+  text-align: left;
+  margin-bottom: .2rem;
+}
+.admin-panel-nav-btn:hover {
+  background: rgba(255,255,255,.06);
+  color: var(--primary-2);
+}
+.admin-panel-nav-btn--active {
+  background: linear-gradient(135deg, rgba(46,89,198,.4), rgba(126,205,242,.25));
+  color: #fff;
+  border: 1px solid rgba(126,205,242,.2);
+}
+.admin-panel-nav-btn--active:hover {
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  border-color: transparent;
+}
+.admin-panel-nav-btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: .95rem;
+}
+.admin-panel-nav-btn--active .admin-panel-nav-btn-icon {
+  background: rgba(255,255,255,.15);
+}
+.admin-panel-nav-btn-label {
+  flex: 1;
+  min-width: 0;
 }
 .admin-panel-nav-title {
   margin: 0 0 1rem;
@@ -4172,32 +4259,12 @@ a.dex-panel--active{cursor:default}
 }
 @media (max-width: 768px) {
   .admin-panel-nav-title { display: none; }
-}
-.admin-panel-nav-btn {
-  width: 100%;
-  padding: .75rem 1rem;
-  border: none;
-  border-radius: 10px;
-  background: rgba(255,255,255,.04);
-  color: var(--text);
-  font-size: .9rem;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: .65rem;
-  transition: background .2s, border-color .2s;
-  text-align: left;
-}
-.admin-panel-nav-btn:hover {
-  background: rgba(255,255,255,.08);
-}
-.admin-panel-nav-btn--active {
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  color: #fff;
+  .admin-panel-nav-brand { display: none; }
+  .admin-panel-nav-section-title { display: none; }
+  .admin-panel-nav-btn-icon { width: 32px; height: 32px; font-size: .85rem; }
 }
 .admin-panel-nav-btn i {
-  width: 1.1rem;
+  width: 1rem;
   text-align: center;
   opacity: .9;
 }
@@ -4336,4 +4403,98 @@ a.dex-panel--active{cursor:default}
 .admin-panel-json-edit:focus {
   outline: none;
   border-color: rgba(126,205,242,.35);
+}
+
+/* ===== ADMIN DASHBOARD (page d'accueil admin) ===== */
+.admin-dashboard {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.admin-dashboard-hero {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.admin-dashboard-welcome {
+  margin: 0 0 .5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.admin-dashboard-subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.admin-dashboard-actions {
+  margin-bottom: 2rem;
+}
+.admin-dashboard-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .35rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .2s, background .2s, transform .15s;
+  text-align: left;
+  width: 100%;
+}
+.admin-dashboard-card:hover {
+  border-color: rgba(126,205,242,.25);
+  background: rgba(126,205,242,.08);
+  transform: translateY(-2px);
+}
+.admin-dashboard-card--primary {
+  border-color: rgba(126,205,242,.2);
+  background: linear-gradient(135deg, rgba(46,89,198,.15), rgba(126,205,242,.1));
+}
+.admin-dashboard-card--primary:hover {
+  border-color: rgba(126,205,242,.35);
+  background: linear-gradient(135deg, rgba(46,89,198,.25), rgba(126,205,242,.15));
+}
+.admin-dashboard-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--primary-2);
+}
+.admin-dashboard-card--primary .admin-dashboard-card-icon {
+  background: rgba(126,205,242,.2);
+  color: #fff;
+}
+.admin-dashboard-card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.admin-dashboard-card-desc {
+  font-size: .85rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.admin-dashboard-section-title {
+  margin: 0 0 1rem;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.admin-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
 }
