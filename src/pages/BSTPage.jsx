@@ -213,9 +213,10 @@ function BSTTable({ id, title, icon, data, pokedexEntries, onSelect, viewMode })
   const rows = useMemo(() => {
     return (data || []).map((row) => {
       const entry = findPokedexEntry(row.name, pokedexEntries);
+      const sprite = row.imageUrl || entry?.imageUrl || PLACEHOLDER_SPRITE;
       return {
         ...row,
-        sprite: entry?.imageUrl || PLACEHOLDER_SPRITE,
+        sprite,
         types: getTypes(row, entry),
       };
     });

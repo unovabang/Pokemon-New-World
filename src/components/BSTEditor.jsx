@@ -9,9 +9,12 @@ const SECTIONS = [
   { id: "speciaux", label: "Pokémons Spéciaux", icon: "fa-star" },
 ];
 
+const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect fill='%23333' width='64' height='64' rx='8'/%3E%3Ctext x='32' y='38' fill='%23666' font-size='20' text-anchor='middle' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E";
+
 const emptyEntry = () => ({
   name: "",
   type: "",
+  imageUrl: "",
   hp: "0",
   atk: "0",
   def: "0",
@@ -86,6 +89,7 @@ export default function BSTEditor({ initialData, onSave }) {
     setForm({
       name: e.name || "",
       type: e.type || "",
+      imageUrl: e.imageUrl || "",
       hp: String(e.hp ?? 0),
       atk: String(e.atk ?? 0),
       def: String(e.def ?? 0),
@@ -205,6 +209,13 @@ export default function BSTEditor({ initialData, onSave }) {
                   onClick={() => openEdit(globalIndex)}
                   onKeyDown={(ev) => ev.key === "Enter" && openEdit(globalIndex)}
                 >
+                  <div className="admin-bst-card-sprite">
+                    {e.imageUrl ? (
+                      <img src={e.imageUrl} alt="" onError={(ev) => { ev.target.src = PLACEHOLDER_SPRITE; }} />
+                    ) : (
+                      <img src={PLACEHOLDER_SPRITE} alt="" />
+                    )}
+                  </div>
                   <div className="admin-bst-card-main">
                     <span className="admin-bst-card-name">{e.name}</span>
                     <span className="admin-bst-card-type">{e.type || "—"}</span>
@@ -254,6 +265,15 @@ export default function BSTEditor({ initialData, onSave }) {
               <div>
                 <label className="admin-pokedex-label">Nom *</label>
                 <input type="text" className="admin-pokedex-input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Noctulero" />
+              </div>
+              <div>
+                <label className="admin-pokedex-label">URL image (sprite)</label>
+                <input type="url" className="admin-pokedex-input" value={form.imageUrl} onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))} placeholder="https://... ou chemin vers le sprite" />
+                {form.imageUrl && (
+                  <div className="admin-bst-modal-preview">
+                    <img src={form.imageUrl} alt="" onError={(ev) => { ev.target.style.display = "none"; }} />
+                  </div>
+                )}
               </div>
               <div>
                 <label className="admin-pokedex-label">Type</label>
