@@ -80,8 +80,10 @@ const ItemLocationEditor = ({ onSave }) => {
 
   const removeRow = (index) => {
     showConfirm('Supprimer la ligne', 'Supprimer cette entrée ?', () => {
-      setEntries((prev) => prev.filter((_, i) => i !== index));
+      const nextEntries = entries.filter((_, i) => i !== index);
+      setEntries(nextEntries);
       showMessage('Succès', 'Entrée supprimée.', 'success');
+      saveConfig(nextEntries);
     });
   };
 
