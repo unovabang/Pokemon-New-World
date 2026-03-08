@@ -18,7 +18,9 @@ const PatchNotesEditor = ({ onSave }) => {
     onConfirm: null
   });
 
-  // États pour l'édition du patch actuel
+  const [allVersions, setAllVersions] = useState([]);
+  const [selectedVersion, setSelectedVersion] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [currentPatch, setCurrentPatch] = useState({
     version: '',
     date: '',
@@ -26,6 +28,18 @@ const PatchNotesEditor = ({ onSave }) => {
     sections: []
   });
   const [isEditing, setIsEditing] = useState(false);
+
+  const normalizeSection = (s) => ({
+    title: s?.title || '',
+    image: s?.image || '',
+    items: Array.isArray(s?.items) ? s.items : ['']
+  });
+  const normalizePatch = (v) => ({
+    version: v?.version || '',
+    date: v?.date || '',
+    image: v?.image || (v?.version ? `/PATCHNOTE${String(v.version).replace('.', '')}.png` : ''),
+    sections: (v?.sections || []).map(normalizeSection)
+  });
 
   useEffect(() => {
     loadPatchNotes();
@@ -36,23 +50,21 @@ const PatchNotesEditor = ({ onSave }) => {
       setLoading(true);
       const response = await fetch(`${API_BASE}/patchnotes/${currentLang}?t=${Date.now()}`);
       const data = await response.json();
-      
-      if (data.success) {
-        // Charger la première version (version actuelle) pour édition
-        if (data.patchnotes.versions && data.patchnotes.versions.length > 0) {
-          const currentVersion = data.patchnotes.versions[0];
-          setCurrentPatch({
-            version: currentVersion.version || '',
-            date: currentVersion.date || '',
-            image: currentVersion.image || `/PATCHNOTE${String(currentVersion.version || '').replace('.', '')}.png` || '',
-            sections: currentVersion.sections || []
-          });
+      if (data.success && data.patchnotes?.versions) {
+        setAllVersions(data.patchnotes.versions);
+        const versions = data.patchnotes.versions;
+        if (selectedVersion !== null) {
+          const v = versions.find(x => x.version === selectedVersion);
+          if (v) setCurrentPatch(normalizePatch(v));
+          else setSelectedVersion(versions[0]?.version ?? null);
         }
-      } else {
-        console.error('Erreur lors du chargement:', data.error);
+        if (versions.length > 0 && selectedVersion === null) {
+          setSelectedVersion(versions[0].version);
+          setCurrentPatch(normalizePatch(versions[0]));
+        }
       }
-    } catch (error) {
-      console.error('Erreur de connexion à l\'API:', error);
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -74,36 +86,55 @@ const PatchNotesEditor = ({ onSave }) => {
     setModalConfig({ title: '', message: '', type: 'info', onConfirm: null });
   };
 
-  // Sauvegarder le patch actuel
   const savePatch = async () => {
-    if (!currentPatch.version || !currentPatch.date) {
-      showMessage('Erreur', 'Veuillez remplir la version et la date', 'error');
+    if (!currentPatch.version?.trim() || !currentPatch.date?.trim()) {
+      showMessage('Erreur', 'Veuillez remplir la version et la date.', 'error');
       return;
     }
+    const sectionsToSave = currentPatch.sections.map(s => ({
+      title: s.title || '',
+      image: s.image || undefined,
+      items: (s.items || []).filter(Boolean)
+    }));
 
     try {
-      const response = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${currentPatch.version}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          version: currentPatch.version,
-          date: currentPatch.date,
-          image: currentPatch.image || undefined,
-          sections: currentPatch.sections
-        })
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        setIsEditing(false);
-        showMessage('Succès', 'Patch mis à jour avec succès!', 'success');
-        loadPatchNotes();
+      if (selectedVersion === null) {
+        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            version: currentPatch.version.trim(),
+            date: currentPatch.date.trim(),
+            image: currentPatch.image?.trim() || undefined,
+            sections: sectionsToSave
+          })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
+        setSelectedVersion(currentPatch.version.trim());
+        setAllVersions(data.patchnotes.versions);
+        showMessage('Succès', 'Nouveau patch créé.', 'success');
       } else {
-        throw new Error(data.error);
+        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${encodeURIComponent(selectedVersion)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            version: currentPatch.version.trim(),
+            date: currentPatch.date.trim(),
+            image: currentPatch.image?.trim() || undefined,
+            sections: sectionsToSave
+          })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
+        setAllVersions(data.patchnotes.versions);
+        if (selectedVersion !== currentPatch.version.trim()) setSelectedVersion(currentPatch.version.trim());
+        showMessage('Succès', 'Patch mis à jour.', 'success');
       }
+      setIsEditing(false);
+      loadPatchNotes();
     } catch (error) {
-      showMessage('Erreur', `Erreur lors de la sauvegarde: ${error.message}`, 'error');
+      showMessage('Erreur', error.message || 'Erreur lors de la sauvegarde.', 'error');
     }
   };
 
@@ -128,7 +159,13 @@ const PatchNotesEditor = ({ onSave }) => {
 
   // Ajouter une section
   const addSection = () => {
-    const newSections = [...currentPatch.sections, { title: '', items: [''] }];
+    setCurrentPatch(prev => ({ ...prev, sections: [...prev.sections, { title: '', image: '', items: [''] }] }));
+  };
+
+  const updateSectionImage = (sectionIndex, value) => {
+    const newSections = [...currentPatch.sections];
+    if (!newSections[sectionIndex]) return;
+    newSections[sectionIndex] = { ...newSections[sectionIndex], image: value };
     setCurrentPatch(prev => ({ ...prev, sections: newSections }));
   };
 
@@ -174,10 +211,62 @@ const PatchNotesEditor = ({ onSave }) => {
       'Supprimer la section',
       'Êtes-vous sûr de vouloir supprimer cette section ?',
       () => {
-        const newSections = currentPatch.sections.filter((_, i) => i !== sectionIndex);
-        setCurrentPatch(prev => ({ ...prev, sections: newSections }));
+        setCurrentPatch(prev => ({ ...prev, sections: prev.sections.filter((_, i) => i !== sectionIndex) }));
       }
     );
+  };
+
+  const openNewPatch = () => {
+    setSelectedVersion(null);
+    setCurrentPatch({ version: '', date: '', image: '', sections: [] });
+    setIsEditing(true);
+  };
+
+  const openEditPatch = (v) => {
+    setSelectedVersion(v.version);
+    setCurrentPatch(normalizePatch(v));
+    setIsEditing(true);
+  };
+
+  const deleteVersion = (version) => {
+    showConfirm('Supprimer cette version', `Supprimer la version ${version} ?`, async () => {
+      try {
+        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${version}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          setAllVersions(data.patchnotes.versions);
+          if (selectedVersion === version) {
+            const next = data.patchnotes.versions[0];
+            setSelectedVersion(next?.version ?? null);
+            setCurrentPatch(next ? normalizePatch(next) : { version: '', date: '', image: '', sections: [] });
+          }
+          showMessage('Succès', 'Version supprimée.', 'success');
+        } else throw new Error(data.error);
+      } catch (e) {
+        showMessage('Erreur', e.message || 'Impossible de supprimer.', 'error');
+      }
+    });
+  };
+
+  const moveVersion = async (index, dir) => {
+    const versions = allVersions.map(v => v.version);
+    const swap = dir === 'up' ? index - 1 : index + 1;
+    if (swap < 0 || swap >= versions.length) return;
+    [versions[index], versions[swap]] = [versions[swap], versions[index]];
+    try {
+      const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/reorder`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order: versions })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAllVersions(data.patchnotes.versions);
+        showMessage('Succès', 'Ordre mis à jour.', 'success');
+      } else throw new Error(data.error);
+    } catch (e) {
+      showMessage('Erreur', e.message || 'Impossible de réordonner.', 'error');
+    }
   };
 
   const commonSectionTitles = currentLang === 'fr' ? [
@@ -210,11 +299,18 @@ const PatchNotesEditor = ({ onSave }) => {
           </div>
         </div>
         <div className="patchnotes-editor-actions">
-          {!isEditing ? (
-            <button type="button" onClick={startEditing} className="btn btn-primary">
-              <i className="fa-solid fa-pen" /> Modifier le patch
-            </button>
-          ) : (
+          {!isEditing && (
+            selectedVersion ? (
+              <button type="button" onClick={() => openEditPatch(allVersions.find(v => v.version === selectedVersion) || currentPatch)} className="btn btn-primary">
+                <i className="fa-solid fa-pen" /> Modifier ce patch
+              </button>
+            ) : (
+              <button type="button" onClick={openNewPatch} className="btn btn-primary">
+                <i className="fa-solid fa-plus" /> Créer un patch
+              </button>
+            )
+          )}
+          {isEditing && (
             <>
               <button type="button" onClick={savePatch} className="btn btn-primary">
                 <i className="fa-solid fa-save" /> Sauvegarder
@@ -231,6 +327,40 @@ const PatchNotesEditor = ({ onSave }) => {
         Modifiez le patch actuel (version, date, image, sections). Les changements sont enregistrés sur le serveur et visibles sur l’accueil et la page PatchNotes.
       </p>
 
+      {allVersions.length > 0 && (
+        <div className="patchnotes-editor-list card">
+          <div className="patchnotes-editor-list-head">
+            <h3><i className="fa-solid fa-list" /> Versions ({allVersions.length})</h3>
+            <div className="patchnotes-editor-search-wrap">
+              <i className="fa-solid fa-magnifying-glass patchnotes-editor-search-icon" />
+              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Rechercher (version, date)…" className="patchnotes-editor-search-input" />
+            </div>
+            <button type="button" onClick={openNewPatch} className="btn btn-primary">
+              <i className="fa-solid fa-plus" /> Nouveau patch
+            </button>
+          </div>
+          <ul className="patchnotes-editor-version-list">
+            {allVersions
+              .filter(v => !searchQuery.trim() || `${v.version} ${v.date || ''}`.toLowerCase().includes(searchQuery.trim().toLowerCase()))
+              .map((v) => {
+                const realIndex = allVersions.findIndex(x => x.version === v.version);
+                return (
+                  <li key={v.version} className="patchnotes-editor-version-item">
+                    <span className="patchnotes-editor-version-num">{realIndex + 1}.</span>
+                    <span className="patchnotes-editor-version-label">Version {v.version} — {v.date || '—'}</span>
+                    <div className="patchnotes-editor-version-actions">
+                      <button type="button" onClick={() => moveVersion(realIndex, 'up')} disabled={realIndex === 0} className="btn btn-ghost patchnotes-editor-order-btn" title="Monter"><i className="fa-solid fa-chevron-up" /></button>
+                      <button type="button" onClick={() => moveVersion(realIndex, 'down')} disabled={realIndex === allVersions.length - 1} className="btn btn-ghost patchnotes-editor-order-btn" title="Descendre"><i className="fa-solid fa-chevron-down" /></button>
+                      <button type="button" onClick={() => openEditPatch(v)} className="btn btn-ghost" title="Modifier"><i className="fa-solid fa-pen" /></button>
+                      <button type="button" onClick={() => deleteVersion(v.version)} className="patchnotes-editor-delete-btn" title="Supprimer"><i className="fa-solid fa-trash" /></button>
+                    </div>
+                  </li>
+                );
+              })}
+          </ul>
+        </div>
+      )}
+
       <div className="patchnotes-editor-card card">
         {loading ? (
           <div className="patchnotes-editor-loading">
@@ -242,9 +372,9 @@ const PatchNotesEditor = ({ onSave }) => {
             <div className="patchnotes-editor-info card">
               <h3 className="patchnotes-editor-info-title"><i className="fa-solid fa-info-circle" /> Informations du patch</h3>
               <div className="patchnotes-editor-fields">
-                <label className="patchnotes-editor-field">
-                  <span>Version</span>
-                  <input type="text" value={currentPatch.version} onChange={(e) => updatePatchProperty('version', e.target.value)} placeholder="Ex: 0.6, 1.0" disabled={!isEditing} className="patchnotes-editor-input" />
+<label className="patchnotes-editor-field">
+                      <span>Version</span>
+                  <input type="text" value={currentPatch.version} onChange={(e) => updatePatchProperty('version', e.target.value)} placeholder="Ex: 0.6, 1.0" disabled={!!selectedVersion} className="patchnotes-editor-input" title={selectedVersion ? 'Clé de la version (non modifiable)' : ''} />
                 </label>
                 <label className="patchnotes-editor-field">
                   <span>Date</span>
@@ -270,7 +400,7 @@ const PatchNotesEditor = ({ onSave }) => {
                   <span>Sections rapides</span>
                   <div className="patchnotes-editor-quick-btns">
                     {commonSectionTitles.map((title, index) => (
-                      <button key={index} type="button" className="btn btn-ghost patchnotes-editor-quick-btn" onClick={() => setCurrentPatch(prev => ({ ...prev, sections: [...prev.sections, { title, items: [''] }] }))}>
+                      <button key={index} type="button" className="btn btn-ghost patchnotes-editor-quick-btn" onClick={() => setCurrentPatch(prev => ({ ...prev, sections: [...prev.sections, { title, image: '', items: [''] }] }))}>
                         {title}
                       </button>
                     ))}
@@ -291,6 +421,15 @@ const PatchNotesEditor = ({ onSave }) => {
                       <span>Titre</span>
                       <input type="text" value={section.title || ''} onChange={(e) => updateSectionTitle(sectionIndex, e.target.value)} placeholder="Ex: 🆕 Nouveautés" className="patchnotes-editor-input" />
                     </label>
+                    <label className="patchnotes-editor-field">
+                      <span>URL image (optionnel)</span>
+                      <input type="text" value={section.image || ''} onChange={(e) => updateSectionImage(sectionIndex, e.target.value)} placeholder="/image.png ou https://…" className="patchnotes-editor-input" />
+                    </label>
+                    {section.image && (
+                      <div className="patchnotes-editor-preview">
+                        <img src={section.image} alt="" className="patchnotes-editor-preview-img" onError={(e) => { e.target.style.display = 'none'; }} />
+                      </div>
+                    )}
                     <div className="patchnotes-editor-items">
                       <div className="patchnotes-editor-items-head">
                         <span>Éléments</span>

@@ -415,10 +415,10 @@ app.post('/api/patchnotes/:lang/version', (req, res) => {
   try {
     const lang = req.params.lang || 'fr';
     const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
-    const { version, date, sections } = req.body;
+    const { version, date, sections, image } = req.body;
     
-    if (!version || !date || !sections) {
-      return res.status(400).json({ success: false, error: 'Version, date et sections requis' });
+    if (!version || !date) {
+      return res.status(400).json({ success: false, error: 'Version et date requis' });
     }
     
     const patchnotesPath = path.join(CONFIG_DIR, filename);
@@ -434,14 +434,13 @@ app.post('/api/patchnotes/:lang/version', (req, res) => {
       return res.status(400).json({ success: false, error: 'Cette version existe déjà' });
     }
     
-    // Ajouter la nouvelle version
+    // Ajouter la nouvelle version (en premier = plus récent)
     const newVersion = {
       version,
       date,
-      sections: sections || []
+      image: image || null,
+      sections: Array.isArray(sections) ? sections : []
     };
-    
-    data.versions.unshift(newVersion); // Ajouter en premier (plus récent)
     
     fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
     
@@ -522,6 +521,33 @@ app.delete('/api/patchnotes/:lang/version/:version', (req, res) => {
       message: `Version ${version} supprimée`,
       patchnotes: data 
     });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/patchnotes/:lang/reorder - Réordonner les versions (ordre = [versionId, ...])
+app.put('/api/patchnotes/:lang/reorder', (req, res) => {
+  try {
+    const lang = req.params.lang || 'fr';
+    const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
+    const { order } = req.body;
+    if (!Array.isArray(order) || order.length === 0) {
+      return res.status(400).json({ success: false, error: 'order (tableau de versions) requis' });
+    }
+    const patchnotesPath = path.join(CONFIG_DIR, filename);
+    if (!fs.existsSync(patchnotesPath)) {
+      return res.status(404).json({ success: false, error: 'Fichier non trouvé' });
+    }
+    const data = fs.readJsonSync(patchnotesPath);
+    const byVersion = new Map(data.versions.map(v => [v.version, v]));
+    const reordered = order.map(ver => byVersion.get(ver)).filter(Boolean);
+    if (reordered.length !== order.length) {
+      return res.status(400).json({ success: false, error: 'Une ou plusieurs versions introuvables' });
+    }
+    data.versions = reordered;
+    fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
+    res.json({ success: true, patchnotes: data });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
