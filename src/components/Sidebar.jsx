@@ -8,9 +8,9 @@ const SIDEBAR_ITEMS = [
   { id: "guide", label: "Guide", icon: "fa-book-open", to: "/guide" },
   { id: "patchnotes", label: "PatchNotes", icon: "fa-file-lines", to: "/patchnotes" },
   { id: "items", label: "Items locations", icon: "fa-location-dot", to: "/item-location" },
-  { id: "evs", label: "EVs locations", icon: "fa-location-dot", to: "#evs" },
+  { id: "evs", label: "EVs locations", icon: "fa-location-dot", to: "/evs-location" },
   { id: "bst", label: "All BST + new Abilities", icon: "fa-table", to: "/bst" },
-  { id: "nerfs", label: "Nerfs and buffs", icon: "fa-scale-balanced", to: "#nerfs" },
+  { id: "nerfs", label: "Nerfs and buffs", icon: "fa-scale-balanced", to: "/nerfs-and-bugs" },
 ];
 
 const Sidebar = () => {
