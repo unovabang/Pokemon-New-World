@@ -2877,6 +2877,9 @@ a.dex-panel--active{cursor:default}
 
 .patch-image-wrap { margin-bottom: 1.5rem; text-align: center; }
 .patch-image { max-width: 100%; max-height: 280px; border-radius: 12px; border: 1px solid rgba(255,255,255,.1); }
+.patch-section-image-wrap { margin: .75rem 0 1rem; text-align: center; }
+.patch-section-image { max-width: 100%; max-height: 240px; border-radius: 10px; border: 1px solid rgba(255,255,255,.1); }
+.patch-modal-footer { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.1); }
 .patch-loading { margin: 0; color: var(--muted); text-align: center; padding: 2rem; }
 
 /* Page dédiée Notes de patch */
@@ -2908,7 +2911,9 @@ a.dex-panel--active{cursor:default}
 .patchnotes-container--with-sidebar { max-width: none; display: grid; grid-template-columns: 220px 1fr; gap: 2rem; padding-left: 1rem; padding-right: 1rem; }
 @media (max-width: 700px) { .patchnotes-container--with-sidebar { grid-template-columns: 1fr; } }
 .patchnotes-sidebar { position: sticky; top: 2rem; height: fit-content; }
-.patchnotes-sidebar-title { margin: 0 0 1rem; font-size: 1rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.patchnotes-sidebar-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1rem; }
+.patchnotes-sidebar-title { margin: 0; font-size: 1rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.patchnotes-lang-selector { flex-shrink: 0; }
 .patchnotes-sidebar-nav { display: flex; flex-direction: column; gap: .35rem; }
 .patchnotes-sidebar-item { display: flex; flex-direction: column; align-items: flex-start; gap: .15rem; width: 100%; padding: .75rem 1rem; border: none; border-radius: 10px; background: rgba(255,255,255,.05); color: var(--text); font-size: .9rem; text-align: left; cursor: pointer; transition: background .2s, border-color .2s; border: 1px solid transparent; }
 .patchnotes-sidebar-item:hover { background: rgba(255,255,255,.1); }

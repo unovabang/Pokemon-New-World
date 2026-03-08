@@ -471,7 +471,7 @@ const HomePage = () => {
             {patchNotesFromApi?.versions?.[0] ? (
               <>
                 <div className="patch-header">
-                  <h3>{t('patchNotes.title')} {patchNotesFromApi.versions[0].version}</h3>
+                  <h3>{t('modals.patchNotes.version')} {patchNotesFromApi.versions[0].version}</h3>
                   <p className="patch-date">{patchNotesFromApi.versions[0].date}</p>
                 </div>
                 {patchNotesFromApi.versions[0].image && (
@@ -482,6 +482,11 @@ const HomePage = () => {
                 {(patchNotesFromApi.versions[0].sections || []).map((section, index) => (
                   <div key={index} className="patch-section">
                     <h4>{section.title}</h4>
+                    {section.image && (
+                      <div className="patch-section-image-wrap">
+                        <img src={section.image} alt="" className="patch-section-image" />
+                      </div>
+                    )}
                     <ul>
                       {(section.items || []).map((item, itemIndex) => (
                         <li key={itemIndex}>{item}</li>
@@ -489,6 +494,15 @@ const HomePage = () => {
                     </ul>
                   </div>
                 ))}
+                <div className="patch-modal-footer">
+                  <a
+                    href="/patchnotes"
+                    className="btn btn-primary"
+                    onClick={() => setOpenPatchNotes(false)}
+                  >
+                    <i className="fa-solid fa-clock-rotate-left" /> {t('buttons.olderPatches')}
+                  </a>
+                </div>
               </>
             ) : (
               <p className="patch-loading">{patchNotesFromApi === null ? t('loading') || 'Chargement…' : t('patchNotes.empty') || 'Aucune note de patch.'}</p>

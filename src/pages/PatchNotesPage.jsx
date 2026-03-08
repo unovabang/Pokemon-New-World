@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
+import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const API_BASE = import.meta.env.VITE_API_URL
@@ -9,7 +10,7 @@ const API_BASE = import.meta.env.VITE_API_URL
     : `${window.location.origin}/api`;
 
 export default function PatchNotesPage() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -39,7 +40,10 @@ export default function PatchNotesPage() {
       <Sidebar />
       <div className="container patchnotes-container patchnotes-container--with-sidebar">
         <aside className="patchnotes-sidebar">
-          <h2 className="patchnotes-sidebar-title">Versions</h2>
+          <div className="patchnotes-sidebar-header">
+            <h2 className="patchnotes-sidebar-title">{t('patchNotesPage.versions')}</h2>
+            <LanguageSelector className="patchnotes-lang-selector" />
+          </div>
           <nav className="patchnotes-sidebar-nav" aria-label="Anciennes notes de patch">
             {versions.map((v, idx) => (
               <button
@@ -58,22 +62,22 @@ export default function PatchNotesPage() {
           <header className="patchnotes-header">
             <h1 className="patchnotes-title">
               <i className="fa-solid fa-file-lines" aria-hidden />
-              Notes de patch
+              {t('patchNotesPage.title')}
             </h1>
             <p className="patchnotes-desc">
-              Historique des mises à jour du jeu.
+              {t('patchNotesPage.description')}
             </p>
           </header>
 
           {loading ? (
             <div className="patchnotes-loading">
               <i className="fa-solid fa-spinner fa-spin" aria-hidden />
-              <span>Chargement…</span>
+              <span>{t('patchNotesPage.loading')}</span>
             </div>
           ) : versions.length === 0 ? (
             <div className="patchnotes-empty card">
               <i className="fa-solid fa-file-lines" aria-hidden />
-              <p>Aucune note de patch pour le moment.</p>
+              <p>{t('patchNotesPage.empty')}</p>
             </div>
           ) : selectedVersion ? (
             <section className="patchnotes-version card patchnotes-version--single">

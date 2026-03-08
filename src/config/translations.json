@@ -17,6 +17,7 @@
       "followUs": "Suivez-nous !",
       "viewOnTikTok": "Voir sur TikTok",
       "viewNotes": "Voir les notes",
+      "olderPatches": "Ancien patch",
       "supportOnPatreon": "Soutenir sur Patreon",
       "downloadGame": "Télécharger le jeu",
       "downloadPatch": "Télécharger le patch",
@@ -72,6 +73,13 @@
       "patchNotes": {
         "version": "Version"
       }
+    },
+    "patchNotesPage": {
+      "title": "Notes de patch",
+      "description": "Historique des mises à jour du jeu.",
+      "versions": "Versions",
+      "loading": "Chargement…",
+      "empty": "Aucune note de patch pour le moment."
     }
   },
   "en": {
@@ -92,6 +100,7 @@
       "followUs": "Follow us!",
       "viewOnTikTok": "View on TikTok",
       "viewNotes": "View notes",
+      "olderPatches": "Older patches",
       "supportOnPatreon": "Support on Patreon",
       "downloadGame": "Download game",
       "downloadPatch": "Download patch",
@@ -147,6 +156,13 @@
       "patchNotes": {
         "version": "Version"
       }
+    },
+    "patchNotesPage": {
+      "title": "Patch Notes",
+      "description": "Game update history.",
+      "versions": "Versions",
+      "loading": "Loading…",
+      "empty": "No patch notes yet."
     }
   }
 }
