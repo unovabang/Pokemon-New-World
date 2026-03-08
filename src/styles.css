@@ -4609,8 +4609,23 @@ a.dex-panel--active{cursor:default}
 .patchnotes-editor-section:last-child { margin-bottom: 0; }
 .patchnotes-editor-section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
 .patchnotes-editor-section-head h4 { margin: 0; font-size: 1rem; color: var(--text); }
-.patchnotes-editor-delete-btn { color: #f87171; }
-.patchnotes-editor-delete-btn:hover { background: rgba(239,68,68,.2); color: #fca5a5; }
+.patchnotes-editor-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  padding: .45rem .75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(248,113,113,.35);
+  background: rgba(239,68,68,.12);
+  color: #f87171;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.patchnotes-editor-delete-btn:hover { background: rgba(239,68,68,.22); border-color: rgba(248,113,113,.5); color: #fca5a5; }
+.patchnotes-editor-item-row .patchnotes-editor-delete-btn { padding: .5rem .65rem; flex-shrink: 0; }
+.patchnotes-editor-item-row .patchnotes-editor-delete-btn i { margin: 0; }
 .patchnotes-editor-items { margin-top: 1rem; }
 .patchnotes-editor-items-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
 .patchnotes-editor-items-head span { font-size: .85rem; font-weight: 600; color: var(--muted); }

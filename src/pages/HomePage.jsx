@@ -235,7 +235,7 @@ const HomePage = () => {
               <div className="dual-content">
                 <div className="dual-image-container">
                   <img 
-                    src={`/PATCHNOTE${patchNotesData.version ? patchNotesData.version.replace('.', '') : '06'}.png`}
+                    src={(patchNotesFromApi?.versions?.[0]?.image) || (patchNotesFromApi?.versions?.[0]?.version ? `/PATCHNOTE${String(patchNotesFromApi.versions[0].version).replace('.', '')}.png` : '/PATCHNOTE06.png')}
                     alt="Notes de patch" 
                     className="dual-image"
                   />
