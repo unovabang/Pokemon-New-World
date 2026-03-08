@@ -36,11 +36,7 @@ const SiteEditor = ({ onSave }) => {
   const [backgroundBlur, setBackgroundBlur] = useState(0.5);
   const [backgroundDim, setBackgroundDim] = useState(0.01);
   const [heroVideoUrl, setHeroVideoUrl] = useState('');
-  const [audioEnabled, setAudioEnabled] = useState(false);
-  const [audioVideoId, setAudioVideoId] = useState('');
-  const [audioAutoplay, setAudioAutoplay] = useState(true);
-  const [audioVolume, setAudioVolume] = useState(1);
-  
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -76,10 +72,6 @@ const SiteEditor = ({ onSave }) => {
         setBackgroundBlur(config.backgrounds?.blur || 0.5);
         setBackgroundDim(config.backgrounds?.dim || 0.01);
         setHeroVideoUrl(config.heroVideo?.youtubeId ? `https://www.youtube.com/watch?v=${config.heroVideo.youtubeId}` : '');
-        setAudioEnabled(config.audio?.enabled || false);
-        setAudioVideoId(config.audio?.youtubeId || '');
-        setAudioAutoplay(config.audio?.autoplay || true);
-        setAudioVolume(config.audio?.startVolume || 1);
       }
     } catch (error) {
       console.error('Erreur lors du chargement de la config site:', error);
@@ -136,12 +128,7 @@ const SiteEditor = ({ onSave }) => {
             heroVideo: {
               youtubeId: extractYoutubeId(heroVideoUrl)
             },
-            audio: {
-              enabled: audioEnabled,
-              youtubeId: audioVideoId,
-              autoplay: audioAutoplay,
-              startVolume: audioVolume
-            },
+            audio: { enabled: false },
             game: {
               title: "Pokémon New World",
               description: "Explorez la région de Bélamie"
@@ -714,120 +701,6 @@ const SiteEditor = ({ onSave }) => {
               <small style={{ color: 'rgba(255,255,255,0.6)' }}>
                 Collez le lien direct (sans son sur le site). Ex. <code>https://www.youtube.com/watch?v=jgclYWhhQak</code> ou <code>https://youtu.be/jgclYWhhQak</code>
               </small>
-            </div>
-
-            <div style={{
-              background: 'rgba(34, 197, 94, 0.1)',
-              border: '1px solid rgba(34, 197, 94, 0.3)',
-              borderRadius: '8px',
-              padding: '1.5rem'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                <input
-                  type="checkbox"
-                  id="audioEnabled"
-                  checked={audioEnabled}
-                  onChange={(e) => setAudioEnabled(e.target.checked)}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    accentColor: '#22c55e'
-                  }}
-                />
-                <label htmlFor="audioEnabled" style={{ fontWeight: 'bold', color: '#22c55e' }}>
-                  <i className="fa-solid fa-volume-up"></i> Activer l'audio automatique
-                </label>
-              </div>
-
-              {audioEnabled && (
-                <div style={{ display: 'grid', gap: '1rem' }}>
-                  <div>
-                    <label style={{ 
-                      display: 'block', 
-                      marginBottom: '0.5rem', 
-                      fontWeight: 'bold' 
-                    }}>
-                      <i className="fa-brands fa-youtube"></i> ID Vidéo YouTube (Audio) :
-                    </label>
-                    <input
-                      type="text"
-                      value={audioVideoId}
-                      onChange={(e) => setAudioVideoId(e.target.value)}
-                      placeholder="NdJQopRuH1E"
-                      style={{
-                        width: '100%',
-                        padding: '1rem',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255,255,255,0.3)',
-                        background: 'rgba(255,255,255,0.1)',
-                        color: 'white',
-                        fontSize: '1rem'
-                      }}
-                    />
-                    <small style={{ color: 'rgba(255,255,255,0.6)' }}>
-                      Extrait de l'URL: https://www.youtube.com/watch?v=<strong>NdJQopRuH1E</strong>
-                    </small>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <input
-                        type="checkbox"
-                        id="audioAutoplay"
-                        checked={audioAutoplay}
-                        onChange={(e) => setAudioAutoplay(e.target.checked)}
-                        style={{
-                          width: '20px',
-                          height: '20px',
-                          accentColor: '#22c55e'
-                        }}
-                      />
-                      <label htmlFor="audioAutoplay" style={{ fontWeight: 'bold' }}>
-                        <i className="fa-solid fa-play"></i> Lecture automatique
-                      </label>
-                    </div>
-
-                    <div>
-                      <label style={{ 
-                        display: 'block', 
-                        marginBottom: '0.5rem', 
-                        fontWeight: 'bold' 
-                      }}>
-                        <i className="fa-solid fa-volume-up"></i> Volume initial ({Math.round(audioVolume * 100)}%) :
-                      </label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.1"
-                        value={audioVolume}
-                        onChange={(e) => setAudioVolume(parseFloat(e.target.value))}
-                        style={{
-                          width: '100%',
-                          accentColor: '#22c55e'
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Aperçu des paramètres audio */}
-                  <div style={{
-                    background: 'rgba(34, 197, 94, 0.05)',
-                    border: '1px solid rgba(34, 197, 94, 0.2)',
-                    borderRadius: '8px',
-                    padding: '1rem'
-                  }}>
-                    <h5 style={{ margin: '0 0 0.5rem 0', color: '#22c55e' }}>
-                      <i className="fa-solid fa-info-circle"></i> Configuration actuelle :
-                    </h5>
-                    <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.8)' }}>
-                      <div>🎵 Vidéo: {audioVideoId || 'Non configurée'}</div>
-                      <div>🔄 Lecture auto: {audioAutoplay ? '✅ Activée' : '❌ Désactivée'}</div>
-                      <div>🔊 Volume: {Math.round(audioVolume * 100)}%</div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
