@@ -4667,6 +4667,13 @@ a.dex-panel--active{cursor:default}
 .patchnotes-editor-order-btn { padding: .4rem .5rem; }
 .patchnotes-editor-order-btn:disabled { opacity: .5; cursor: not-allowed; }
 
+.patchnotes-editor-webhook { margin-bottom: 1.5rem; padding: 1.25rem 1.5rem; }
+.patchnotes-editor-webhook-title { margin: 0 0 .5rem; font-size: 1rem; color: var(--text); display: flex; align-items: center; gap: .5rem; }
+.patchnotes-editor-webhook-title i { color: #5865F2; }
+.patchnotes-editor-webhook-desc { margin: 0 0 1rem; font-size: .9rem; color: var(--muted); line-height: 1.45; }
+.patchnotes-editor-webhook-row { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+.patchnotes-editor-webhook-input { flex: 1; min-width: 200px; }
+
 /* ===== ADMIN DASHBOARD (page d'accueil admin) ===== */
 .admin-dashboard {
   max-width: 900px;

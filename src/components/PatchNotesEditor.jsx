@@ -21,6 +21,8 @@ const PatchNotesEditor = ({ onSave }) => {
   const [allVersions, setAllVersions] = useState([]);
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [discordWebhookUrl, setDiscordWebhookUrl] = useState('');
+  const [discordWebhookSaving, setDiscordWebhookSaving] = useState(false);
   const [currentPatch, setCurrentPatch] = useState({
     version: '',
     date: '',
@@ -44,6 +46,38 @@ const PatchNotesEditor = ({ onSave }) => {
   useEffect(() => {
     loadPatchNotes();
   }, [currentLang]);
+
+  const loadDiscordWebhook = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/config/discord-webhook`);
+      const data = await res.json();
+      if (data.success && typeof data.webhookUrl === 'string') setDiscordWebhookUrl(data.webhookUrl);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    loadDiscordWebhook();
+  }, []);
+
+  const saveDiscordWebhook = async () => {
+    setDiscordWebhookSaving(true);
+    try {
+      const res = await fetch(`${API_BASE}/config/discord-webhook`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ webhookUrl: discordWebhookUrl.trim() })
+      });
+      const data = await res.json();
+      if (data.success) showMessage('Succès', data.webhookUrl === 'cleared' ? 'Webhook supprimé.' : 'Webhook Discord enregistré. Un message sera envoyé à chaque nouveau patch.', 'success');
+      else throw new Error(data.error);
+    } catch (e) {
+      showMessage('Erreur', e.message || 'Impossible d\'enregistrer le webhook.', 'error');
+    } finally {
+      setDiscordWebhookSaving(false);
+    }
+  };
 
   const loadPatchNotes = async () => {
     try {
@@ -326,6 +360,25 @@ const PatchNotesEditor = ({ onSave }) => {
       <p className="patchnotes-editor-desc">
         Modifiez le patch actuel (version, date, image, sections). Les changements sont enregistrés sur le serveur et visibles sur l’accueil et la page PatchNotes.
       </p>
+
+      <div className="patchnotes-editor-webhook card">
+        <h3 className="patchnotes-editor-webhook-title"><i className="fa-brands fa-discord" /> Webhook Discord</h3>
+        <p className="patchnotes-editor-webhook-desc">
+          À chaque <strong>nouveau</strong> patchnote créé, un message en embed sera envoyé sur ce webhook (titre, date, sections, lien vers le site).
+        </p>
+        <div className="patchnotes-editor-webhook-row">
+          <input
+            type="url"
+            value={discordWebhookUrl}
+            onChange={(e) => setDiscordWebhookUrl(e.target.value)}
+            placeholder="https://discord.com/api/webhooks/..."
+            className="patchnotes-editor-input patchnotes-editor-webhook-input"
+          />
+          <button type="button" onClick={saveDiscordWebhook} disabled={discordWebhookSaving} className="btn btn-primary">
+            {discordWebhookSaving ? <i className="fa-solid fa-spinner fa-spin" /> : <i className="fa-solid fa-save" />} Sauvegarder
+          </button>
+        </div>
+      </div>
 
       {allVersions.length > 0 && (
         <div className="patchnotes-editor-list card">

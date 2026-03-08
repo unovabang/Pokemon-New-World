@@ -410,6 +410,96 @@ function handlePatchnotesGet(req, res) {
   }
 }
 
+// Fichier de config pour le webhook Discord (URL uniquement, pas versionné)
+const DISCORD_WEBHOOK_PATH = path.join(CONFIG_DIR, 'discord-webhook.json');
+
+function getDiscordWebhookUrl() {
+  try {
+    if (fs.existsSync(DISCORD_WEBHOOK_PATH)) {
+      const data = fs.readJsonSync(DISCORD_WEBHOOK_PATH);
+      const url = data?.webhookUrl?.trim();
+      if (url && url.startsWith('https://discord.com/api/webhooks/')) return url;
+    }
+  } catch (e) {
+    console.warn('Discord webhook config read error:', e.message);
+  }
+  return null;
+}
+
+/** Envoie un embed Discord pour un nouveau patchnote (appelé après POST version) */
+async function sendPatchnoteToDiscord(patch) {
+  const webhookUrl = getDiscordWebhookUrl();
+  if (!webhookUrl) return;
+  const baseUrl = (process.env.SITE_PUBLIC_URL || '').replace(/\/$/, '');
+  const patchnotesLink = baseUrl ? `${baseUrl}/patchnotes` : null;
+
+  const fields = [];
+  const sections = Array.isArray(patch.sections) ? patch.sections : [];
+  const maxFieldValue = 1020;
+  for (const section of sections.slice(0, 25)) {
+    const title = section.title || 'Sans titre';
+    let value = (section.items || []).filter(Boolean).map((item) => `• ${item}`).join('\n');
+    if (value.length > maxFieldValue) value = value.slice(0, maxFieldValue - 3) + '…';
+    if (!value) value = '—';
+    fields.push({ name: title, value, inline: false });
+  }
+
+  const embed = {
+    title: `Version ${patch.version}`,
+    description: [
+      patch.date ? `📅 **${patch.date}**` : '',
+      patchnotesLink ? `\n🔗 [Voir toutes les notes de patch](${patchnotesLink})` : ''
+    ].filter(Boolean).join('\n') || 'Nouveau patch disponible.',
+    color: 0x7ECDF2,
+    url: patchnotesLink || undefined,
+    thumbnail: (() => {
+      if (!patch.image) return undefined;
+      const u = patch.image.trim();
+      if (u.startsWith('http')) return { url: u };
+      if (u.startsWith('/') && baseUrl) return { url: baseUrl + u };
+      return undefined;
+    })(),
+    fields
+  };
+
+  try {
+    const resp = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ embeds: [embed] })
+    });
+    if (!resp.ok) console.warn('Discord webhook error:', resp.status, await resp.text());
+  } catch (e) {
+    console.warn('Discord webhook send error:', e.message);
+  }
+}
+
+// GET /api/config/discord-webhook - Lire l’URL du webhook (masquée partiellement)
+app.get('/api/config/discord-webhook', (req, res) => {
+  try {
+    const url = getDiscordWebhookUrl();
+    res.json({ success: true, webhookUrl: url || '' });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// PUT /api/config/discord-webhook - Enregistrer l’URL du webhook
+app.put('/api/config/discord-webhook', (req, res) => {
+  try {
+    let { webhookUrl } = req.body || {};
+    webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
+    if (webhookUrl && !webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+      return res.status(400).json({ success: false, error: 'URL de webhook Discord invalide.' });
+    }
+    fs.ensureDirSync(CONFIG_DIR);
+    fs.writeJsonSync(DISCORD_WEBHOOK_PATH, { webhookUrl: webhookUrl || '' }, { spaces: 2 });
+    res.json({ success: true, webhookUrl: webhookUrl ? 'saved' : 'cleared' });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 // POST /api/patchnotes/:lang/version - Ajouter une nouvelle version
 app.post('/api/patchnotes/:lang/version', (req, res) => {
   try {
@@ -445,6 +535,9 @@ app.post('/api/patchnotes/:lang/version', (req, res) => {
     data.versions.unshift(newVersion);
 
     fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
+
+    // Notifier Discord (non bloquant)
+    sendPatchnoteToDiscord(newVersion).catch(() => {});
     
     res.json({ 
       success: true, 
