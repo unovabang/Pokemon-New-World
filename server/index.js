@@ -436,6 +436,10 @@ function resolvePatchImageUrl(patchImage, baseUrl) {
   return null;
 }
 
+// URLs fixes pour l’embed Discord (logo du site + avatar auteur)
+const DISCORD_LOGO_URL = 'https://pokemon-new-world-20-production.up.railway.app/logo.png';
+const DISCORD_AUTHOR_AVATAR_URL = 'https://media.discordapp.net/attachments/1412015491026784327/1480268790829678815/pp3.png?ex=69af0f3d&is=69adbdbd&hm=93ece592e96c036bc109f295eea70b9f9ab94f12bd0f9a457efc587dc51cf947&=&format=webp&quality=lossless';
+
 /** Envoie un embed Discord pour un nouveau patchnote (appelé après POST version) */
 async function sendPatchnoteToDiscord(patch) {
   const { webhookUrl, imageStyle } = getDiscordWebhookConfig();
@@ -444,7 +448,7 @@ async function sendPatchnoteToDiscord(patch) {
   const patchnotesLink = baseUrl ? `${baseUrl}/patchnotes` : null;
   const imageUrl = resolvePatchImageUrl(patch.image, baseUrl);
 
-  const logoUrl = baseUrl ? `${baseUrl}/logo.png` : null;
+  const logoUrl = DISCORD_LOGO_URL;
 
   const fields = [];
   const sections = Array.isArray(patch.sections) ? patch.sections : [];
@@ -459,7 +463,7 @@ async function sendPatchnoteToDiscord(patch) {
   }
 
   const embed = {
-    author: { name: 'Pokémon New World', icon_url: logoUrl || undefined },
+    author: { name: 'Pokémon New World', icon_url: DISCORD_AUTHOR_AVATAR_URL },
     title: `📌 Version ${patch.version}`,
     description: patch.date ? `**${patch.date}**\n\nNouveau patch disponible avec les détails ci‑dessous.` : 'Nouveau patch disponible.',
     color: 0x5865F2,
@@ -487,8 +491,13 @@ async function sendPatchnoteToDiscord(patch) {
     }];
   }
 
+  // Les webhooks Discord n’affichent les boutons que si on ajoute ?with_components=true à l’URL
+  const webhookUrlWithComponents = payload.components
+    ? webhookUrl + (webhookUrl.includes('?') ? '&' : '?') + 'with_components=true'
+    : webhookUrl;
+
   try {
-    const resp = await fetch(webhookUrl, {
+    const resp = await fetch(webhookUrlWithComponents, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
