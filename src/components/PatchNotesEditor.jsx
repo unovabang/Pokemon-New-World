@@ -22,6 +22,7 @@ const PatchNotesEditor = ({ onSave }) => {
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [discordWebhookUrl, setDiscordWebhookUrl] = useState('');
+  const [discordImageStyle, setDiscordImageStyle] = useState('thumbnail');
   const [discordWebhookSaving, setDiscordWebhookSaving] = useState(false);
   const [currentPatch, setCurrentPatch] = useState({
     version: '',
@@ -51,7 +52,10 @@ const PatchNotesEditor = ({ onSave }) => {
     try {
       const res = await fetch(`${API_BASE}/config/discord-webhook`);
       const data = await res.json();
-      if (data.success && typeof data.webhookUrl === 'string') setDiscordWebhookUrl(data.webhookUrl);
+      if (data.success) {
+        if (typeof data.webhookUrl === 'string') setDiscordWebhookUrl(data.webhookUrl);
+        if (data.imageStyle === 'banner' || data.imageStyle === 'thumbnail') setDiscordImageStyle(data.imageStyle);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -67,7 +71,7 @@ const PatchNotesEditor = ({ onSave }) => {
       const res = await fetch(`${API_BASE}/config/discord-webhook`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ webhookUrl: discordWebhookUrl.trim() })
+        body: JSON.stringify({ webhookUrl: discordWebhookUrl.trim(), imageStyle: discordImageStyle })
       });
       const data = await res.json();
       if (data.success) showMessage('Succès', data.webhookUrl === 'cleared' ? 'Webhook supprimé.' : 'Webhook Discord enregistré. Un message sera envoyé à chaque nouveau patch.', 'success');
@@ -377,6 +381,13 @@ const PatchNotesEditor = ({ onSave }) => {
           <button type="button" onClick={saveDiscordWebhook} disabled={discordWebhookSaving} className="btn btn-primary">
             {discordWebhookSaving ? <i className="fa-solid fa-spinner fa-spin" /> : <i className="fa-solid fa-save" />} Sauvegarder
           </button>
+        </div>
+        <div className="patchnotes-editor-webhook-image-option">
+          <span className="patchnotes-editor-webhook-image-label">Image du patch (si présente) :</span>
+          <select value={discordImageStyle} onChange={(e) => setDiscordImageStyle(e.target.value)} className="patchnotes-editor-select patchnotes-editor-webhook-select">
+            <option value="thumbnail">Thumbnail (petite, en coin)</option>
+            <option value="banner">Banner (grande image)</option>
+          </select>
         </div>
       </div>
 

@@ -4673,6 +4673,9 @@ a.dex-panel--active{cursor:default}
 .patchnotes-editor-webhook-desc { margin: 0 0 1rem; font-size: .9rem; color: var(--muted); line-height: 1.45; }
 .patchnotes-editor-webhook-row { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
 .patchnotes-editor-webhook-input { flex: 1; min-width: 200px; }
+.patchnotes-editor-webhook-image-option { margin-top: 1rem; display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.patchnotes-editor-webhook-image-label { font-size: .9rem; color: var(--muted); }
+.patchnotes-editor-webhook-select { min-width: 220px; }
 
 /* ===== ADMIN DASHBOARD (page d'accueil admin) ===== */
 .admin-dashboard {
