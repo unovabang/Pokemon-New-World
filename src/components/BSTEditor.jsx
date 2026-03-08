@@ -28,6 +28,24 @@ const STAT_ICONS = {
 
 const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect fill='%23333' width='64' height='64' rx='8'/%3E%3Ctext x='32' y='38' fill='%23666' font-size='20' text-anchor='middle' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E";
 
+const ABILITY_SLOTS = 3;
+
+/** Normalise les talents d'une entrée (legacy ability/abilityDesc ou arrays) vers [a1, a2, a3] et [d1, d2, d3]. */
+function normalizeAbilities(e) {
+  const abilities = Array.isArray(e?.abilities) ? [...e.abilities] : [];
+  const abilityDescs = Array.isArray(e?.abilityDescs) ? [...e.abilityDescs] : [];
+  if (abilities.length < ABILITY_SLOTS && (e?.ability != null && e.ability !== "")) {
+    abilities[0] = e.ability ?? "";
+    if (abilityDescs.length < 1) abilityDescs[0] = e?.abilityDesc ?? "";
+  }
+  while (abilities.length < ABILITY_SLOTS) abilities.push("");
+  while (abilityDescs.length < ABILITY_SLOTS) abilityDescs.push("");
+  return {
+    abilities: abilities.slice(0, ABILITY_SLOTS),
+    abilityDescs: abilityDescs.slice(0, ABILITY_SLOTS),
+  };
+}
+
 const emptyEntry = () => ({
   name: "",
   type: "",
@@ -39,8 +57,8 @@ const emptyEntry = () => ({
   spd: "0",
   spe: "0",
   total: "0",
-  ability: "",
-  abilityDesc: "",
+  abilities: ["", "", ""],
+  abilityDescs: ["", "", ""],
   attacks: "",
 });
 
@@ -241,6 +259,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
 
   const openEdit = (index) => {
     const e = entries[index];
+    const { abilities, abilityDescs } = normalizeAbilities(e);
     setForm({
       name: e.name || "",
       type: e.type || "",
@@ -252,8 +271,8 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
       spd: String(e.spd ?? 0),
       spe: String(e.spe ?? 0),
       total: String(e.total ?? 0),
-      ability: e.ability || "",
-      abilityDesc: e.abilityDesc || "",
+      abilities: [...abilities],
+      abilityDescs: [...abilityDescs],
       attacks: e.attacks || "",
     });
     setEditingIndex(index);
@@ -270,6 +289,8 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
 
   const saveForm = () => {
     if (!form.name.trim()) return;
+    const abs = Array.isArray(form.abilities) ? form.abilities : ["", "", ""];
+    const descs = Array.isArray(form.abilityDescs) ? form.abilityDescs : ["", "", ""];
     const entry = {
       name: form.name.trim(),
       type: (form.type || "").trim(),
@@ -280,8 +301,8 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
       spd: String(form.spd).trim() || "0",
       spe: String(form.spe).trim() || "0",
       total: form.total || computeTotal(form.hp, form.atk, form.def, form.spa, form.spd, form.spe),
-      ability: (form.ability || "").trim(),
-      abilityDesc: (form.abilityDesc || "").trim(),
+      abilities: abs.slice(0, ABILITY_SLOTS).map((a) => (a || "").trim()),
+      abilityDescs: descs.slice(0, ABILITY_SLOTS).map((d) => (d || "").trim()),
       attacks: (form.attacks || "").trim() || undefined,
     };
     const next = { ...data };
@@ -378,11 +399,17 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                     <span className="admin-bst-card-total">
                       <i className="fa-solid fa-calculator" aria-hidden /> {e.total}
                     </span>
-                    {(e.ability || "").trim() && (
-                      <p className="admin-bst-card-ability" title={e.ability}>
-                        {(e.ability || "").slice(0, 60)}{(e.ability || "").length > 60 ? "…" : ""}
+                    {(() => {
+                    const { abilities } = normalizeAbilities(e);
+                    const filled = abilities.filter((a) => (a || "").trim());
+                    if (filled.length === 0) return null;
+                    const text = filled.map((a) => (a || "").trim().slice(0, 25)).join(" · ");
+                    return (
+                      <p className="admin-bst-card-ability" title={filled.join(" — ")}>
+                        {text.length > 55 ? `${text.slice(0, 52)}…` : text}
                       </p>
-                    )}
+                    );
+                  })()}
                   </div>
                   <button
                     type="button"
@@ -453,13 +480,34 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                 <label className="admin-pokedex-label">Total (calculé)</label>
                 <input type="text" className="admin-pokedex-input" value={form.total} readOnly style={{ opacity: 0.9 }} />
               </div>
-              <div>
-                <label className="admin-pokedex-label"><i className="fa-solid fa-star" aria-hidden /> Talent</label>
-                <input type="text" className="admin-pokedex-input" value={form.ability} onChange={(e) => setForm((f) => ({ ...f, ability: e.target.value }))} placeholder="Nom du talent" />
-              </div>
-              <div>
-                <label className="admin-pokedex-label"><i className="fa-solid fa-book" aria-hidden /> Description talent</label>
-                <textarea className="admin-pokedex-textarea" value={form.abilityDesc} onChange={(e) => setForm((f) => ({ ...f, abilityDesc: e.target.value }))} placeholder="Description ou variante" rows={2} />
+              <div className="admin-bst-talents-block">
+                <span className="admin-bst-talents-title"><i className="fa-solid fa-star" aria-hidden /> Talents (jusqu’à 3)</span>
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="admin-bst-talent-slot">
+                    <label className="admin-pokedex-label">Talent {i + 1}</label>
+                    <input
+                      type="text"
+                      className="admin-pokedex-input"
+                      value={form.abilities?.[i] ?? ""}
+                      onChange={(e) => setForm((f) => ({
+                        ...f,
+                        abilities: [...(f.abilities || ["", "", ""])].map((a, j) => (j === i ? e.target.value : a)),
+                      }))}
+                      placeholder={`Nom du talent ${i + 1}`}
+                    />
+                    <label className="admin-pokedex-label admin-pokedex-label--sub">Description talent {i + 1}</label>
+                    <textarea
+                      className="admin-pokedex-textarea"
+                      value={form.abilityDescs?.[i] ?? ""}
+                      onChange={(e) => setForm((f) => ({
+                        ...f,
+                        abilityDescs: [...(f.abilityDescs || ["", "", ""])].map((d, j) => (j === i ? e.target.value : d)),
+                      }))}
+                      placeholder={`Description ou variante ${i + 1}`}
+                      rows={2}
+                    />
+                  </div>
+                ))}
               </div>
               <div>
                 <label className="admin-pokedex-label">Détails des attaques / notes</label>

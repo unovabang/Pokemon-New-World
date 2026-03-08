@@ -1037,6 +1037,12 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   color:rgba(255,255,255,.9);
   line-height:1.5;
 }
+.bst-modal-ability-block{
+  margin-top:1rem;
+  padding-top:1rem;
+  border-top:1px solid rgba(126,205,242,.1);
+}
+.bst-modal-ability-block:first-child{ margin-top:.75rem; padding-top:0; border-top:none }
 @media (max-width:520px){
   .bst-modal-stats{grid-template-columns:repeat(3, 1fr)}
   .bst-grid{grid-template-columns:repeat(auto-fill, minmax(130px, 1fr))}
@@ -3482,6 +3488,34 @@ a.dex-panel--active{cursor:default}
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
+
+/* Bloc 3 talents (admin) */
+.admin-bst-talents-block {
+  margin-top: 0.5rem;
+  padding: 1rem 1.25rem;
+  background: rgba(0,0,0,.2);
+  border-radius: 14px;
+  border: 1px solid rgba(126,205,242,.15);
+}
+.admin-bst-talents-title {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary-2);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(126,205,242,.2);
+}
+.admin-bst-talent-slot {
+  margin-bottom: 1.25rem;
+  padding: 0.9rem 1rem;
+  background: rgba(255,255,255,.04);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.admin-bst-talent-slot:last-child { margin-bottom: 0; }
+.admin-bst-talent-slot .admin-pokedex-label { font-size: 0.85rem; color: rgba(255,255,255,.85); }
+.admin-pokedex-label--sub { margin-top: 0.6rem; opacity: 0.9; }
 
 /* ===== ADMIN GUIDE EDITOR ===== */
 .admin-guide {

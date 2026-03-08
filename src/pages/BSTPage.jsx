@@ -37,6 +37,33 @@ function normalizeName(str) {
     .trim();
 }
 
+/** Normalise les talents (legacy ability/abilityDesc ou arrays). Retourne toujours 3 slots (peuvent être vides). */
+function normalizeAbilities(row) {
+  const abilities = Array.isArray(row?.abilities) ? [...row.abilities] : [];
+  const abilityDescs = Array.isArray(row?.abilityDescs) ? [...row.abilityDescs] : [];
+  if (abilities.length < 3 && row?.ability != null && String(row.ability).trim() !== "") {
+    abilities[0] = row.ability ?? "";
+    if (abilityDescs.length < 1) abilityDescs[0] = row?.abilityDesc ?? "";
+  }
+  while (abilities.length < 3) abilities.push("");
+  while (abilityDescs.length < 3) abilityDescs.push("");
+  return {
+    abilities: abilities.slice(0, 3).map((a) => (a || "").trim()),
+    abilityDescs: abilityDescs.slice(0, 3).map((d) => (d || "").trim()),
+  };
+}
+
+/** Retourne la liste des talents remplis (pour affichage compact). */
+function getFilledAbilities(row) {
+  const { abilities } = normalizeAbilities(row);
+  return abilities.filter(Boolean);
+}
+
+function getFilledAbilityDescs(row) {
+  const { abilityDescs } = normalizeAbilities(row);
+  return abilityDescs.filter(Boolean);
+}
+
 /** Trouve l'entrée pokedex (sprite + types) par nom */
 function findPokedexEntry(name, entries) {
   if (!name || !entries?.length) return null;
@@ -190,18 +217,31 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
           <div className="bst-modal-stat"><span className="bst-modal-stat-label"><i className="fa-solid fa-gauge-high" aria-hidden /> SPE</span><span>{pokemon.spe}</span></div>
           <div className="bst-modal-stat bst-modal-stat-total"><span className="bst-modal-stat-label"><i className="fa-solid fa-calculator" aria-hidden /> Total</span><span>{pokemon.total}</span></div>
         </div>
-        {pokemon.ability && (
-          <div className="bst-modal-ability">
-            <strong><i className="fa-solid fa-star" /> Talent</strong>
-            <p>{pokemon.ability}</p>
-          </div>
-        )}
-        {pokemon.abilityDesc && (
-          <div className="bst-modal-ability-desc">
-            <strong><i className="fa-solid fa-book" /> Description</strong>
-            <p>{pokemon.abilityDesc}</p>
-          </div>
-        )}
+        {(() => {
+          const { abilities, abilityDescs } = normalizeAbilities(pokemon);
+          const slots = abilities.map((name, i) => ({ name, desc: abilityDescs[i] || "" })).filter((s) => s.name.trim() || s.desc.trim());
+          if (slots.length === 0) return null;
+          return (
+            <>
+              {slots.map((slot, i) => (
+                <div key={i} className="bst-modal-ability-block">
+                  {slot.name && (
+                    <div className="bst-modal-ability">
+                      <strong><i className="fa-solid fa-star" aria-hidden /> Talent{slots.length > 1 ? ` ${i + 1}` : ""}</strong>
+                      <p>{slot.name}</p>
+                    </div>
+                  )}
+                  {slot.desc && (
+                    <div className="bst-modal-ability-desc">
+                      <strong><i className="fa-solid fa-book" aria-hidden /> Description{slots.length > 1 ? ` ${i + 1}` : ""}</strong>
+                      <p>{slot.desc}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </>
+          );
+        })()}
       </div>
     </div>,
     document.body
@@ -315,8 +355,20 @@ function BSTTable({ id, title, icon, data, pokedexList = [], onSelect, viewMode 
                 <td className="bst-td-total">
                   <span className="bst-total-value">{row.total}</span>
                 </td>
-                <td className="bst-td-ability">{row.ability}</td>
-                <td className="bst-td-desc">{row.abilityDesc}</td>
+                <td className="bst-td-ability">
+                  {(() => {
+                    const filled = getFilledAbilities(row);
+                    if (filled.length === 0) return "—";
+                    return filled.join(" · ");
+                  })()}
+                </td>
+                <td className="bst-td-desc">
+                  {(() => {
+                    const filled = getFilledAbilityDescs(row);
+                    if (filled.length === 0) return "—";
+                    return filled.map((d) => (d.length > 40 ? `${d.slice(0, 37)}…` : d)).join(" · ");
+                  })()}
+                </td>
               </tr>
             ))}
           </tbody>
