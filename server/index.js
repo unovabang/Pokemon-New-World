@@ -437,10 +437,11 @@ function resolvePatchImageUrl(patchImage, baseUrl) {
 }
 
 // URLs fixes pour l’embed Discord (logo du site + avatar auteur)
-const DISCORD_LOGO_URL = 'https://pokemon-new-world-20-production.up.railway.app/logo.png';
+const SITE_BASE = (process.env.SITE_PUBLIC_URL || 'https://www.pokemonnewworld.fr').replace(/\/$/, '');
+const DISCORD_LOGO_URL = `${SITE_BASE}/logo.png`;
 const DISCORD_AUTHOR_AVATAR_URL = 'https://media.discordapp.net/attachments/1412015491026784327/1480268790829678815/pp3.png?ex=69af0f3d&is=69adbdbd&hm=93ece592e96c036bc109f295eea70b9f9ab94f12bd0f9a457efc587dc51cf947&=&format=webp&quality=lossless';
-const DISCORD_PATCHNOTES_URL = 'https://pokemon-new-world-20-production.up.railway.app/patchnotes';
-const DISCORD_DOWNLOAD_URL = 'https://pokemon-new-world-20-production.up.railway.app/#';
+const DISCORD_PATCHNOTES_URL = `${SITE_BASE}/patchnotes`;
+const DISCORD_DOWNLOAD_URL = `${SITE_BASE}/#`;
 
 /** Envoie un embed Discord pour un nouveau patchnote (appelé après POST version) */
 async function sendPatchnoteToDiscord(patch) {
@@ -761,7 +762,7 @@ app.get('/api/config/:name', (req, res) => {
     const { name } = req.params;
     let configData = getConfig(name);
     if (!configData && name === 'news') {
-      configData = { banners: [], interval: 5000 };
+      configData = { banners: [], interval: 5000, bannerMaxHeight: 400 };
     }
     if (!configData && name === 'item-location') {
       const seedPath = path.join(__dirname, '../src/config/item-location.json');

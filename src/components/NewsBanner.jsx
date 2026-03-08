@@ -78,7 +78,10 @@ async function loadNewsImages() {
   return await loadingPromise;
 }
 
-export default function NewsBanner({ banners = [], interval = 5000, autoLoad = true }) {
+const DEFAULT_MAX_HEIGHT = 400;
+
+export default function NewsBanner({ banners = [], interval = 5000, autoLoad = true, maxHeight = DEFAULT_MAX_HEIGHT }) {
+  const height = typeof maxHeight === 'number' && maxHeight >= 150 ? Math.min(1200, maxHeight) : DEFAULT_MAX_HEIGHT;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadedImages, setLoadedImages] = useState([]);
   const [isLoading, setIsLoading] = useState(autoLoad);
@@ -116,8 +119,8 @@ export default function NewsBanner({ banners = [], interval = 5000, autoLoad = t
   if (isLoading) {
     return (
       <div className="news-banner-container">
-        <div className="news-banner" style={{minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <p style={{color: 'var(--muted)'}}>Chargement des actualités...</p>
+        <div className="news-banner" style={{ height: `${height}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <p style={{ color: 'var(--muted)' }}>Chargement des actualités...</p>
         </div>
       </div>
     );
@@ -130,11 +133,12 @@ export default function NewsBanner({ banners = [], interval = 5000, autoLoad = t
 
   return (
     <div className="news-banner-container">
-      <div className="news-banner">
+      <div className="news-banner" style={{ height: `${height}px`, overflow: 'hidden' }}>
         <img
           src={imageSrc}
           alt={currentBanner.title || "Bannière actualité"}
           className="news-banner-image"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
 
         {total > 1 && (

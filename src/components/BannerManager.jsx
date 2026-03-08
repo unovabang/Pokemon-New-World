@@ -9,6 +9,7 @@ const API_BASE = import.meta.env.VITE_API_URL
 const BannerManager = ({ onSave }) => {
   const [banners, setBanners] = useState([]);
   const [intervalMs, setIntervalMs] = useState(5000);
+  const [bannerMaxHeight, setBannerMaxHeight] = useState(400);
   const [newUrl, setNewUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -30,6 +31,7 @@ const BannerManager = ({ onSave }) => {
         const list = Array.isArray(cfg.banners) ? cfg.banners : [];
         setBanners(list.map(b => ({ url: b.url || b.image || '', position: b.position ?? list.indexOf(b) + 1 })));
         setIntervalMs(typeof cfg.interval === 'number' ? cfg.interval : 5000);
+        setBannerMaxHeight(typeof cfg.bannerMaxHeight === 'number' ? Math.max(150, Math.min(1200, cfg.bannerMaxHeight)) : 400);
       }
     } catch (e) {
       console.error('Erreur chargement config news:', e);
@@ -84,6 +86,7 @@ const BannerManager = ({ onSave }) => {
   const saveConfig = async (payload) => {
     const list = payload?.banners ?? banners;
     const interval = payload?.intervalMs ?? intervalMs;
+    const maxH = payload?.bannerMaxHeight ?? bannerMaxHeight;
     setSaving(true);
     try {
       const res = await fetch(`${API_BASE}/config/news`, {
@@ -92,7 +95,8 @@ const BannerManager = ({ onSave }) => {
         body: JSON.stringify({
           config: {
             banners: (Array.isArray(list) ? list : banners).map((b, i) => ({ url: b.url, position: i + 1 })),
-            interval: interval
+            interval: interval,
+            bannerMaxHeight: typeof maxH === 'number' ? Math.max(150, Math.min(1200, maxH)) : 400
           }
         })
       });
@@ -177,9 +181,26 @@ const BannerManager = ({ onSave }) => {
           onChange={e => {
           const v = Number(e.target.value) || 5000;
           setIntervalMs(v);
-          saveConfig({ banners, intervalMs: v });
+          saveConfig({ banners, intervalMs: v, bannerMaxHeight });
         }}
         />
+      </div>
+
+      <div className="banner-manager-max-height">
+        <label>Hauteur max des bannières (px)</label>
+        <input
+          type="number"
+          min={150}
+          max={1200}
+          step={50}
+          value={bannerMaxHeight}
+          onChange={e => {
+            const v = Math.max(150, Math.min(1200, Number(e.target.value) || 400));
+            setBannerMaxHeight(v);
+            saveConfig({ banners, intervalMs, bannerMaxHeight: v });
+          }}
+        />
+        <span className="banner-manager-max-height-hint">Les images seront rognées à cette hauteur sur le site.</span>
       </div>
 
       <section className="banner-manager-list">
@@ -299,6 +320,10 @@ const BannerManager = ({ onSave }) => {
         .banner-manager-interval { margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
         .banner-manager-interval label { font-size: 0.9rem; color: rgba(255,255,255,0.85); }
         .banner-manager-interval input { width: 100px; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--bm-border); background: rgba(255,255,255,0.08); color: #fff; }
+        .banner-manager-max-height { margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+        .banner-manager-max-height label { font-size: 0.9rem; color: rgba(255,255,255,0.85); }
+        .banner-manager-max-height input { width: 100px; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--bm-border); background: rgba(255,255,255,0.08); color: #fff; }
+        .banner-manager-max-height-hint { width: 100%; font-size: 0.8rem; color: rgba(255,255,255,0.55); margin-top: -0.25rem; }
         .banner-manager-list { background: var(--bm-bg); border: 1px solid var(--bm-border); border-radius: 12px; padding: 1.5rem; }
         .banner-manager-list h3 { margin: 0 0 1rem 0; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; color: #e2e8f0; }
         .banner-manager-loading, .banner-manager-empty { text-align: center; padding: 2.5rem; color: rgba(255,255,255,0.6); }

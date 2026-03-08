@@ -192,6 +192,7 @@ const HomePage = () => {
               banners={newsBanners}
               interval={effectiveContent.news?.interval || 5000}
               autoLoad={newsBanners.length === 0}
+              maxHeight={effectiveContent.news?.bannerMaxHeight ?? 400}
             />
           </section>
 
