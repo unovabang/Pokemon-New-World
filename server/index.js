@@ -441,7 +441,9 @@ app.post('/api/patchnotes/:lang/version', (req, res) => {
       image: image || null,
       sections: Array.isArray(sections) ? sections : []
     };
-    
+    data.versions = data.versions || [];
+    data.versions.unshift(newVersion);
+
     fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
     
     res.json({ 
