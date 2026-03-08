@@ -444,19 +444,22 @@ async function sendPatchnoteToDiscord(patch) {
   const patchnotesLink = baseUrl ? `${baseUrl}/patchnotes` : null;
   const imageUrl = resolvePatchImageUrl(patch.image, baseUrl);
 
+  const logoUrl = baseUrl ? `${baseUrl}/logo.png` : null;
+
   const fields = [];
   const sections = Array.isArray(patch.sections) ? patch.sections : [];
-  const maxFieldValue = 1020;
+  const maxFieldValue = 900;
   for (const section of sections.slice(0, 25)) {
-    const title = section.title || 'Sans titre';
-    let value = (section.items || []).filter(Boolean).map((item) => `• ${item}`).join('\n');
-    if (value.length > maxFieldValue) value = value.slice(0, maxFieldValue - 3) + '…';
-    if (!value) value = '—';
-    fields.push({ name: title, value, inline: false });
+    const title = (section.title || 'Sans titre').slice(0, 150);
+    let body = (section.items || []).filter(Boolean).map((item) => `• ${item}`).join('\n');
+    if (body.length > maxFieldValue) body = body.slice(0, maxFieldValue - 3) + '…';
+    if (!body) body = '—';
+    const value = `> ### **${title}**\n\n${body}`;
+    fields.push({ name: '\u200b', value, inline: false });
   }
 
   const embed = {
-    author: { name: 'Pokémon New World', icon_url: baseUrl ? `${baseUrl}/logo.png` : undefined },
+    author: { name: 'Pokémon New World', icon_url: logoUrl || undefined },
     title: `📌 Version ${patch.version}`,
     description: patch.date ? `**${patch.date}**\n\nNouveau patch disponible avec les détails ci‑dessous.` : 'Nouveau patch disponible.',
     color: 0x5865F2,
@@ -466,9 +469,14 @@ async function sendPatchnoteToDiscord(patch) {
     fields
   };
 
-  if (imageUrl) {
-    if (imageStyle === 'banner') embed.image = { url: imageUrl };
-    else embed.thumbnail = { url: imageUrl };
+  if (imageUrl && imageStyle === 'banner') {
+    embed.image = { url: imageUrl };
+  }
+  if (imageUrl && imageStyle === 'thumbnail') {
+    embed.thumbnail = { url: imageUrl };
+  }
+  if (!embed.thumbnail && logoUrl) {
+    embed.thumbnail = { url: logoUrl };
   }
 
   const payload = { embeds: [embed] };
