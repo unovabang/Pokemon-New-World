@@ -1,6 +1,20 @@
 import { useState, useEffect } from 'react';
 import AdvancedModal from './AdvancedModal';
 
+/** Extrait l'ID d'une vidéo YouTube depuis une URL (watch, youtu.be, embed) ou retourne la chaîne si c'est déjà un ID. */
+function extractYoutubeId(urlOrId) {
+  if (!urlOrId || typeof urlOrId !== 'string') return '';
+  const s = urlOrId.trim();
+  const watchMatch = s.match(/(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/);
+  if (watchMatch) return watchMatch[1];
+  const shortMatch = s.match(/(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (shortMatch) return shortMatch[1];
+  const embedMatch = s.match(/(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  if (embedMatch) return embedMatch[1];
+  if (/^[a-zA-Z0-9_-]{11}$/.test(s)) return s;
+  return '';
+}
+
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
   : import.meta.env.DEV
@@ -21,7 +35,7 @@ const SiteEditor = ({ onSave }) => {
   const [backgroundUrl, setBackgroundUrl] = useState('');
   const [backgroundBlur, setBackgroundBlur] = useState(0.5);
   const [backgroundDim, setBackgroundDim] = useState(0.01);
-  const [heroVideoId, setHeroVideoId] = useState('');
+  const [heroVideoUrl, setHeroVideoUrl] = useState('');
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [audioVideoId, setAudioVideoId] = useState('');
   const [audioAutoplay, setAudioAutoplay] = useState(true);
@@ -61,7 +75,7 @@ const SiteEditor = ({ onSave }) => {
         setBackgroundUrl(config.backgrounds?.home || '');
         setBackgroundBlur(config.backgrounds?.blur || 0.5);
         setBackgroundDim(config.backgrounds?.dim || 0.01);
-        setHeroVideoId(config.heroVideo?.youtubeId || '');
+        setHeroVideoUrl(config.heroVideo?.youtubeId ? `https://www.youtube.com/watch?v=${config.heroVideo.youtubeId}` : '');
         setAudioEnabled(config.audio?.enabled || false);
         setAudioVideoId(config.audio?.youtubeId || '');
         setAudioAutoplay(config.audio?.autoplay || true);
@@ -120,7 +134,7 @@ const SiteEditor = ({ onSave }) => {
               dim: backgroundDim
             },
             heroVideo: {
-              youtubeId: heroVideoId
+              youtubeId: extractYoutubeId(heroVideoUrl)
             },
             audio: {
               enabled: audioEnabled,
@@ -680,13 +694,13 @@ const SiteEditor = ({ onSave }) => {
                 marginBottom: '0.5rem', 
                 fontWeight: 'bold' 
               }}>
-                <i className="fa-brands fa-youtube"></i> ID Vidéo YouTube (Hero) :
+                <i className="fa-brands fa-youtube"></i> Lien vidéo YouTube (Hero)
               </label>
               <input
-                type="text"
-                value={heroVideoId}
-                onChange={(e) => setHeroVideoId(e.target.value)}
-                placeholder="uZTi9YUo0As"
+                type="url"
+                value={heroVideoUrl}
+                onChange={(e) => setHeroVideoUrl(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=... ou https://youtu.be/..."
                 style={{
                   width: '100%',
                   padding: '1rem',
@@ -698,7 +712,7 @@ const SiteEditor = ({ onSave }) => {
                 }}
               />
               <small style={{ color: 'rgba(255,255,255,0.6)' }}>
-                Extrait de l'URL: https://www.youtube.com/watch?v=<strong>uZTi9YUo0As</strong>
+                Collez le lien direct (sans son sur le site). Ex. <code>https://www.youtube.com/watch?v=jgclYWhhQak</code> ou <code>https://youtu.be/jgclYWhhQak</code>
               </small>
             </div>
 
