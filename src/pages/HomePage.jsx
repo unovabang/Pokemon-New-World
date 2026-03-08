@@ -19,12 +19,18 @@ const API_BASE = import.meta.env.VITE_API_URL
 const HomePage = () => {
   const [siteConfigFromApi, setSiteConfigFromApi] = useState(null);
   const [newsConfigFromApi, setNewsConfigFromApi] = useState(null);
+  const [externalConfigFromApi, setExternalConfigFromApi] = useState(null);
 
   const baseContent = siteConfigFromApi ? { ...content, ...siteConfigFromApi } : content;
+  const contentWithExternal = externalConfigFromApi ? { ...baseContent, ...externalConfigFromApi } : baseContent;
   const effectiveContent = newsConfigFromApi
-    ? { ...baseContent, news: { ...(baseContent.news || {}), ...newsConfigFromApi } }
-    : baseContent;
-  const { backgrounds, heroVideo, game, carousel, discord, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = effectiveContent;
+    ? { ...contentWithExternal, news: { ...(contentWithExternal.news || {}), ...newsConfigFromApi } }
+    : contentWithExternal;
+  const { backgrounds, heroVideo, game, carousel, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = effectiveContent;
+  // Lien Discord : peut être une string (config external) ou un objet legacy { invite } (config site)
+  const discord = typeof effectiveContent.discord === 'string'
+    ? effectiveContent.discord
+    : (effectiveContent.discord?.invite ?? effectiveContent.discord ?? '#');
 
   // Bannières news : config API = liste d’URLs (tri par position) pour le carousel
   const newsBanners = (effectiveContent.news?.banners || [])
@@ -78,15 +84,17 @@ const HomePage = () => {
   const [openPatchNotes, setOpenPatchNotes] = useState(false);
   const [patchNotesFromApi, setPatchNotesFromApi] = useState(null);
 
-  // Charger les configs site, news et patchnotes depuis l'API
+  // Charger les configs site, external (liens Discord, etc.), news et patchnotes depuis l'API
   useEffect(() => {
     let cancelled = false;
     Promise.all([
       fetch(`${API_BASE}/config/site?t=${Date.now()}`).then((r) => r.json()),
+      fetch(`${API_BASE}/config/external?t=${Date.now()}`).then((r) => r.json()),
       fetch(`${API_BASE}/config/news?t=${Date.now()}`).then((r) => r.json()),
       fetch(`${API_BASE}/patchnotes/${language}?t=${Date.now()}`).then((r) => r.json())
-    ]).then(([siteData, newsData, patchData]) => {
+    ]).then(([siteData, externalData, newsData, patchData]) => {
       if (!cancelled && siteData?.success && siteData?.config) setSiteConfigFromApi(siteData.config);
+      if (!cancelled && externalData?.success && externalData?.config) setExternalConfigFromApi(externalData.config);
       if (!cancelled && newsData?.success && newsData?.config) setNewsConfigFromApi(newsData.config);
       if (!cancelled && patchData?.success && patchData?.patchnotes) setPatchNotesFromApi(patchData.patchnotes);
     }).catch(() => {});
