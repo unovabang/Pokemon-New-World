@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -43,7 +44,7 @@ const PatchNotesEditor = ({ onSave }) => {
           setCurrentPatch({
             version: currentVersion.version || '',
             date: currentVersion.date || '',
-            image: `/PATCHNOTE${currentVersion.version?.replace('.', '')}.png` || '',
+            image: currentVersion.image || `/PATCHNOTE${String(currentVersion.version || '').replace('.', '')}.png` || '',
             sections: currentVersion.sections || []
           });
         }
@@ -87,6 +88,7 @@ const PatchNotesEditor = ({ onSave }) => {
         body: JSON.stringify({
           version: currentPatch.version,
           date: currentPatch.date,
+          image: currentPatch.image || undefined,
           sections: currentPatch.sections
         })
       });
@@ -195,335 +197,109 @@ const PatchNotesEditor = ({ onSave }) => {
   ];
 
   return (
-    <div>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '2rem' 
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <h2>
-            <i className="fa-solid fa-file-text"></i> Édition du Patch Actuel
-          </h2>
-          
-          {/* Sélecteur de langue */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>Langue:</span>
-            <select 
-              value={currentLang} 
-              onChange={(e) => setCurrentLang(e.target.value)}
-              style={{
-                padding: '0.5rem 1rem',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.3)',
-                background: 'rgba(255,255,255,0.1)',
-                color: 'white',
-                fontSize: '0.9rem',
-                cursor: 'pointer'
-              }}
-            >
-              <option value="fr" style={{ background: '#1a1a1a', color: 'white' }}>
-                🇫🇷 Français
-              </option>
-              <option value="en" style={{ background: '#1a1a1a', color: 'white' }}>
-                🇺🇸 English
-              </option>
+    <div className="patchnotes-editor">
+      <div className="patchnotes-editor-head">
+        <div className="patchnotes-editor-title-wrap">
+          <h2 className="patchnotes-editor-title"><i className="fa-solid fa-file-lines" /> Notes de patch</h2>
+          <div className="patchnotes-editor-lang">
+            <span className="patchnotes-editor-lang-label">Langue</span>
+            <select value={currentLang} onChange={(e) => setCurrentLang(e.target.value)} className="patchnotes-editor-select">
+              <option value="fr">🇫🇷 Français</option>
+              <option value="en">🇺🇸 English</option>
             </select>
           </div>
         </div>
-        
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div className="patchnotes-editor-actions">
           {!isEditing ? (
-            <button onClick={startEditing} className="btn btn-primary">
-              <i className="fa-solid fa-edit"></i> Modifier le Patch
+            <button type="button" onClick={startEditing} className="btn btn-primary">
+              <i className="fa-solid fa-pen" /> Modifier le patch
             </button>
           ) : (
             <>
-              <button onClick={savePatch} className="btn btn-success">
-                <i className="fa-solid fa-save"></i> Sauvegarder
+              <button type="button" onClick={savePatch} className="btn btn-primary">
+                <i className="fa-solid fa-save" /> Sauvegarder
               </button>
-              <button onClick={cancelEditing} className="btn btn-ghost">
-                <i className="fa-solid fa-times"></i> Annuler
+              <button type="button" onClick={cancelEditing} className="btn btn-ghost">
+                <i className="fa-solid fa-times" /> Annuler
               </button>
             </>
           )}
         </div>
       </div>
 
-      {/* Instructions */}
-      <div style={{ 
-        background: 'rgba(40, 167, 69, 0.1)', 
-        borderRadius: '10px', 
-        padding: '1.5rem',
-        marginBottom: '2rem',
-        border: '1px solid rgba(40, 167, 69, 0.3)'
-      }}>
-        <h3 style={{ 
-          marginBottom: '1rem',
-          color: '#28a745',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem'
-        }}>
-          <i className="fa-solid fa-check-circle"></i>
-          Édition des Notes de Patch
-        </h3>
-        <ul style={{ margin: 0, paddingLeft: '1.5rem', fontSize: '0.9rem' }}>
-          <li>Modifiez directement les informations du <strong>patch actuel</strong></li>
-          <li>Ajoutez l'URL de <strong>l'image du patch</strong> pour l'afficher sur le site</li>
-          <li>Créez des <strong>sections thématiques</strong> (Nouveautés, Corrections, etc.)</li>
-          <li>Les modifications sont <strong>sauvegardées automatiquement</strong> dans le fichier JSON</li>
-        </ul>
-      </div>
+      <p className="patchnotes-editor-desc">
+        Modifiez le patch actuel (version, date, image, sections). Les changements sont enregistrés sur le serveur et visibles sur l’accueil et la page PatchNotes.
+      </p>
 
-      {/* Éditeur du patch actuel */}
-      <div style={{ 
-        background: 'rgba(255,255,255,0.05)', 
-        borderRadius: '10px', 
-        padding: '2rem' 
-      }}>
+      <div className="patchnotes-editor-card card">
         {loading ? (
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '3rem', 
-            opacity: 0.6
-          }}>
-            <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '3rem', marginBottom: '1rem' }}></i>
-            <p>Chargement du patch...</p>
+          <div className="patchnotes-editor-loading">
+            <i className="fa-solid fa-spinner fa-spin" />
+            <span>Chargement du patch…</span>
           </div>
         ) : (
-          <div>
-            {/* Informations de base du patch */}
-            <div style={{ 
-              background: 'rgba(255,255,255,0.1)', 
-              borderRadius: '10px', 
-              padding: '1.5rem',
-              marginBottom: '2rem',
-              border: '1px solid rgba(255,255,255,0.2)'
-            }}>
-              <h3 style={{ marginBottom: '1.5rem' }}>
-                <i className="fa-solid fa-info-circle"></i> Informations du Patch
-              </h3>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-                    Version:
-                  </label>
-                  <input
-                    type="text"
-                    value={currentPatch.version}
-                    onChange={(e) => updatePatchProperty('version', e.target.value)}
-                    placeholder="Ex: 0.6, 1.0, 2.1"
-                    disabled={!isEditing}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      borderRadius: '5px',
-                      border: '1px solid rgba(255,255,255,0.3)',
-                      background: isEditing ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
-                      color: 'white',
-                      opacity: isEditing ? 1 : 0.7
-                    }}
-                  />
-                </div>
-                
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-                    Date:
-                  </label>
-                  <input
-                    type="text"
-                    value={currentPatch.date}
-                    onChange={(e) => updatePatchProperty('date', e.target.value)}
-                    placeholder="Ex: Janvier 2025"
-                    disabled={!isEditing}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      borderRadius: '5px',
-                      border: '1px solid rgba(255,255,255,0.3)',
-                      background: isEditing ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
-                      color: 'white',
-                      opacity: isEditing ? 1 : 0.7
-                    }}
-                  />
-                </div>
-                
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-                    URL Image:
-                  </label>
-                  <input
-                    type="text"
-                    value={currentPatch.image}
-                    onChange={(e) => updatePatchProperty('image', e.target.value)}
-                    placeholder="https://example.com/patch-image.png"
-                    disabled={!isEditing}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem',
-                      borderRadius: '5px',
-                      border: '1px solid rgba(255,255,255,0.3)',
-                      background: isEditing ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
-                      color: 'white',
-                      opacity: isEditing ? 1 : 0.7
-                    }}
-                  />
-                </div>
+          <div className="patchnotes-editor-body">
+            <div className="patchnotes-editor-info card">
+              <h3 className="patchnotes-editor-info-title"><i className="fa-solid fa-info-circle" /> Informations du patch</h3>
+              <div className="patchnotes-editor-fields">
+                <label className="patchnotes-editor-field">
+                  <span>Version</span>
+                  <input type="text" value={currentPatch.version} onChange={(e) => updatePatchProperty('version', e.target.value)} placeholder="Ex: 0.6, 1.0" disabled={!isEditing} className="patchnotes-editor-input" />
+                </label>
+                <label className="patchnotes-editor-field">
+                  <span>Date</span>
+                  <input type="text" value={currentPatch.date} onChange={(e) => updatePatchProperty('date', e.target.value)} placeholder="Ex: Janvier 2025" disabled={!isEditing} className="patchnotes-editor-input" />
+                </label>
+                <label className="patchnotes-editor-field">
+                  <span>URL image</span>
+                  <input type="text" value={currentPatch.image} onChange={(e) => updatePatchProperty('image', e.target.value)} placeholder="/PATCHNOTE06.png ou https://…" disabled={!isEditing} className="patchnotes-editor-input" />
+                </label>
               </div>
-              
-              {/* Aperçu de l'image */}
               {currentPatch.image && (
-                <div style={{ marginTop: '1rem' }}>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-                    Aperçu de l'image:
-                  </label>
-                  <img 
-                    src={currentPatch.image} 
-                    alt="Aperçu patch" 
-                    style={{ 
-                      maxWidth: '200px', 
-                      maxHeight: '120px', 
-                      borderRadius: '5px',
-                      border: '1px solid rgba(255,255,255,0.3)'
-                    }}
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
+                <div className="patchnotes-editor-preview">
+                  <span>Aperçu</span>
+                  <img src={currentPatch.image} alt="Aperçu patch" className="patchnotes-editor-preview-img" onError={(e) => { e.target.style.display = 'none'; }} />
                 </div>
               )}
             </div>
 
-            {/* Éditeur de sections */}
             {isEditing && (
-              <div style={{ 
-                background: 'rgba(255,255,255,0.1)', 
-                borderRadius: '10px', 
-                padding: '1.5rem',
-                border: '1px solid rgba(255,255,255,0.2)'
-              }}>
-                <h3 style={{ marginBottom: '1.5rem' }}>
-                  <i className="fa-solid fa-list"></i> Sections du Patch
-                </h3>
-                
-                {/* Boutons de sections rapides */}
-                <div style={{ marginBottom: '2rem' }}>
-                  <h4 style={{ marginBottom: '1rem', fontSize: '0.9rem', opacity: 0.8 }}>
-                    Sections rapides :
-                  </h4>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+              <div className="patchnotes-editor-sections card">
+                <h3 className="patchnotes-editor-sections-title"><i className="fa-solid fa-list" /> Sections</h3>
+                <div className="patchnotes-editor-quick">
+                  <span>Sections rapides</span>
+                  <div className="patchnotes-editor-quick-btns">
                     {commonSectionTitles.map((title, index) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          const newSections = [...currentPatch.sections, { title, items: [''] }];
-                          setCurrentPatch(prev => ({ ...prev, sections: newSections }));
-                        }}
-                        className="btn btn-ghost"
-                        style={{ fontSize: '0.8rem', padding: '0.25rem 0.75rem' }}
-                      >
+                      <button key={index} type="button" className="btn btn-ghost patchnotes-editor-quick-btn" onClick={() => setCurrentPatch(prev => ({ ...prev, sections: [...prev.sections, { title, items: [''] }] }))}>
                         {title}
                       </button>
                     ))}
                   </div>
-                  <button onClick={addSection} className="btn btn-primary" style={{ fontSize: '0.8rem' }}>
-                    <i className="fa-solid fa-plus"></i> Section personnalisée
+                  <button type="button" onClick={addSection} className="btn btn-primary">
+                    <i className="fa-solid fa-plus" /> Section personnalisée
                   </button>
                 </div>
-
-                {/* Liste des sections */}
                 {currentPatch.sections.map((section, sectionIndex) => (
-                  <div key={sectionIndex} style={{
-                    background: 'rgba(255,255,255,0.1)',
-                    borderRadius: '8px',
-                    padding: '1rem',
-                    marginBottom: '1rem',
-                    border: '1px solid rgba(255,255,255,0.2)'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                      <h4 style={{ margin: 0, fontSize: '1rem' }}>Section {sectionIndex + 1}</h4>
-                      <button
-                        onClick={() => deleteSection(sectionIndex)}
-                        style={{
-                          background: 'rgba(220, 53, 69, 0.2)',
-                          border: '1px solid rgba(220, 53, 69, 0.4)',
-                          color: '#ff6b7a',
-                          borderRadius: '4px',
-                          padding: '0.25rem 0.5rem',
-                          cursor: 'pointer',
-                          fontSize: '0.8rem'
-                        }}
-                      >
-                        <i className="fa-solid fa-trash"></i> Supprimer
+                  <div key={sectionIndex} className="patchnotes-editor-section card">
+                    <div className="patchnotes-editor-section-head">
+                      <h4>Section {sectionIndex + 1}</h4>
+                      <button type="button" onClick={() => deleteSection(sectionIndex)} className="btn btn-ghost patchnotes-editor-delete-btn">
+                        <i className="fa-solid fa-trash" /> Supprimer
                       </button>
                     </div>
-                    
-                    <div style={{ marginBottom: '1rem' }}>
-                      <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-                        Titre de la section:
-                      </label>
-                      <input
-                        type="text"
-                        value={section.title || ''}
-                        onChange={(e) => updateSectionTitle(sectionIndex, e.target.value)}
-                        placeholder="Ex: 🆕 Nouveautés, 🔧 Corrections"
-                        style={{
-                          width: '100%',
-                          padding: '0.75rem',
-                          borderRadius: '5px',
-                          border: '1px solid rgba(255,255,255,0.3)',
-                          background: 'rgba(255,255,255,0.1)',
-                          color: 'white'
-                        }}
-                      />
-                    </div>
-
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <label style={{ fontWeight: 'bold' }}>
-                          Éléments de la section:
-                        </label>
-                        <button
-                          onClick={() => addItem(sectionIndex)}
-                          className="btn btn-ghost"
-                          style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}
-                        >
-                          <i className="fa-solid fa-plus"></i> Ajouter
-                        </button>
+                    <label className="patchnotes-editor-field">
+                      <span>Titre</span>
+                      <input type="text" value={section.title || ''} onChange={(e) => updateSectionTitle(sectionIndex, e.target.value)} placeholder="Ex: 🆕 Nouveautés" className="patchnotes-editor-input" />
+                    </label>
+                    <div className="patchnotes-editor-items">
+                      <div className="patchnotes-editor-items-head">
+                        <span>Éléments</span>
+                        <button type="button" onClick={() => addItem(sectionIndex)} className="btn btn-ghost"><i className="fa-solid fa-plus" /> Ajouter</button>
                       </div>
-                      
                       {(section.items || []).map((item, itemIndex) => (
-                        <div key={itemIndex} style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                          <input
-                            type="text"
-                            value={item || ''}
-                            onChange={(e) => updateItem(sectionIndex, itemIndex, e.target.value)}
-                            placeholder="Décrivez la nouveauté, correction ou amélioration..."
-                            style={{
-                              flex: 1,
-                              padding: '0.5rem',
-                              borderRadius: '5px',
-                              border: '1px solid rgba(255,255,255,0.3)',
-                              background: 'rgba(255,255,255,0.1)',
-                              color: 'white'
-                            }}
-                          />
-                          <button
-                            onClick={() => deleteItem(sectionIndex, itemIndex)}
-                            style={{
-                              background: 'rgba(220, 53, 69, 0.2)',
-                              border: '1px solid rgba(220, 53, 69, 0.4)',
-                              color: '#ff6b7a',
-                              borderRadius: '4px',
-                              padding: '0.5rem',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <i className="fa-solid fa-trash"></i>
-                          </button>
+                        <div key={itemIndex} className="patchnotes-editor-item-row">
+                          <input type="text" value={item || ''} onChange={(e) => updateItem(sectionIndex, itemIndex, e.target.value)} placeholder="Description…" className="patchnotes-editor-input" />
+                          <button type="button" onClick={() => deleteItem(sectionIndex, itemIndex)} className="patchnotes-editor-delete-btn" title="Supprimer"><i className="fa-solid fa-trash" /></button>
                         </div>
                       ))}
                     </div>
@@ -535,58 +311,27 @@ const PatchNotesEditor = ({ onSave }) => {
         )}
       </div>
 
-      {/* Modal */}
-      {showModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 9999
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.2)',
-            borderRadius: '15px',
-            padding: '2rem',
-            maxWidth: '400px',
-            width: '90%',
-            textAlign: 'center',
-            color: 'white'
-          }}>
-            <h3 style={{ marginBottom: '1rem' }}>
-              <i className={`fa-solid ${modalConfig.type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'}`} 
-                 style={{ color: modalConfig.type === 'error' ? '#ff6b7a' : '#3b82f6' }}></i>
-              {' ' + modalConfig.title}
+      {showModal && createPortal(
+        <div className="admin-pokedex-modal-overlay" onClick={closeModal}>
+          <div className="admin-pokedex-modal" onClick={(e) => e.stopPropagation()} style={{ padding: '2rem', textAlign: 'center' }}>
+            <h3 style={{ margin: '0 0 1rem', color: '#fff' }}>
+              <i className={`fa-solid ${modalConfig.type === 'error' ? 'fa-exclamation-triangle' : 'fa-info-circle'}`} style={{ color: modalConfig.type === 'error' ? '#f87171' : 'var(--primary-2)', marginRight: '.5rem' }} />
+              {modalConfig.title}
             </h3>
-            <p style={{ marginBottom: '2rem', opacity: 0.9 }}>{modalConfig.message}</p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+            <p style={{ margin: '0 0 1.5rem', color: 'rgba(255,255,255,0.85)' }}>{modalConfig.message}</p>
+            <div style={{ display: 'flex', gap: '.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
               {modalConfig.type === 'confirm' && (
-                <button
-                  onClick={() => {
-                    modalConfig.onConfirm && modalConfig.onConfirm();
-                    closeModal();
-                  }}
-                  className="btn btn-primary"
-                >
-                  <i className="fa-solid fa-check"></i> Confirmer
+                <button type="button" className="btn btn-primary" onClick={() => { modalConfig.onConfirm?.(); closeModal(); }}>
+                  <i className="fa-solid fa-check" /> Confirmer
                 </button>
               )}
-              <button
-                onClick={closeModal}
-                className={modalConfig.type === 'confirm' ? 'btn btn-ghost' : 'btn btn-primary'}
-              >
-                <i className="fa-solid fa-times"></i> {modalConfig.type === 'confirm' ? 'Annuler' : 'OK'}
+              <button type="button" className="btn btn-ghost" onClick={closeModal}>
+                <i className="fa-solid fa-times" /> {modalConfig.type === 'confirm' ? 'Annuler' : 'OK'}
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

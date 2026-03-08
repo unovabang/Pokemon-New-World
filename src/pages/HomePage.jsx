@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import content from "../config/index.js";
-import patchNotesData from "../config/patchnotes.json";
 import patreonData from "../config/patreon.json";
 import HeroVideo from "../components/HeroVideo";
 import Carousel from "../components/Carousel";
@@ -77,19 +76,31 @@ const HomePage = () => {
   const [openExplanations, setOpenExplanations] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
   const [openPatchNotes, setOpenPatchNotes] = useState(false);
+  const [patchNotesFromApi, setPatchNotesFromApi] = useState(null);
 
-  // Charger les configs site et news depuis l'API
+  // Charger les configs site, news et patchnotes depuis l'API
   useEffect(() => {
     let cancelled = false;
     Promise.all([
       fetch(`${API_BASE}/config/site?t=${Date.now()}`).then((r) => r.json()),
-      fetch(`${API_BASE}/config/news?t=${Date.now()}`).then((r) => r.json())
-    ]).then(([siteData, newsData]) => {
+      fetch(`${API_BASE}/config/news?t=${Date.now()}`).then((r) => r.json()),
+      fetch(`${API_BASE}/patchnotes/${language}?t=${Date.now()}`).then((r) => r.json())
+    ]).then(([siteData, newsData, patchData]) => {
       if (!cancelled && siteData?.success && siteData?.config) setSiteConfigFromApi(siteData.config);
       if (!cancelled && newsData?.success && newsData?.config) setNewsConfigFromApi(newsData.config);
+      if (!cancelled && patchData?.success && patchData?.patchnotes) setPatchNotesFromApi(patchData.patchnotes);
     }).catch(() => {});
     return () => { cancelled = true; };
-  }, []);
+  }, [language]);
+
+  // Recharger les patchnotes à l'ouverture du modal (au cas où modif en admin)
+  useEffect(() => {
+    if (!openPatchNotes) return;
+    fetch(`${API_BASE}/patchnotes/${language}?t=${Date.now()}`)
+      .then((r) => r.json())
+      .then((data) => { if (data?.success && data?.patchnotes) setPatchNotesFromApi(data.patchnotes); })
+      .catch(() => {});
+  }, [openPatchNotes, language]);
 
   // Mise à jour des métadonnées SEO
   useEffect(() => {
@@ -450,28 +461,38 @@ const HomePage = () => {
           </div>
         </Modal>
 
-        {/* Modal notes de patch */}
+        {/* Modal notes de patch (données depuis l'API pour refléter les modifs admin) */}
         <Modal
           open={openPatchNotes}
           onClose={() => setOpenPatchNotes(false)}
-          title={`${t('modals.patchNotes.version')} ${t('patchNotes.version')}`}
+          title={patchNotesFromApi?.versions?.[0] ? `${t('modals.patchNotes.version')} ${patchNotesFromApi.versions[0].version}` : t('modals.patchNotes.version')}
         >
           <div className="patch-notes-content">
-            <div className="patch-header">
-              <h3>{t('patchNotes.title')}</h3>
-              <p className="patch-date">{t('modals.patchNotes.version')} {t('patchNotes.version')} - {t('patchNotes.date')}</p>
-            </div>
-            
-            {t('patchNotes.sections').map((section, index) => (
-              <div key={index} className="patch-section">
-                <h4>{section.title}</h4>
-                <ul>
-                  {section.items.map((item, itemIndex) => (
-                    <li key={itemIndex}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {patchNotesFromApi?.versions?.[0] ? (
+              <>
+                <div className="patch-header">
+                  <h3>{t('patchNotes.title')} {patchNotesFromApi.versions[0].version}</h3>
+                  <p className="patch-date">{patchNotesFromApi.versions[0].date}</p>
+                </div>
+                {patchNotesFromApi.versions[0].image && (
+                  <div className="patch-image-wrap">
+                    <img src={patchNotesFromApi.versions[0].image} alt="" className="patch-image" />
+                  </div>
+                )}
+                {(patchNotesFromApi.versions[0].sections || []).map((section, index) => (
+                  <div key={index} className="patch-section">
+                    <h4>{section.title}</h4>
+                    <ul>
+                      {(section.items || []).map((item, itemIndex) => (
+                        <li key={itemIndex}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <p className="patch-loading">{patchNotesFromApi === null ? t('loading') || 'Chargement…' : t('patchNotes.empty') || 'Aucune note de patch.'}</p>
+            )}
           </div>
         </Modal>
 

@@ -2875,6 +2875,33 @@ a.dex-panel--active{cursor:default}
   left: 0;
 }
 
+.patch-image-wrap { margin-bottom: 1.5rem; text-align: center; }
+.patch-image { max-width: 100%; max-height: 280px; border-radius: 12px; border: 1px solid rgba(255,255,255,.1); }
+.patch-loading { margin: 0; color: var(--muted); text-align: center; padding: 2rem; }
+
+/* Page dédiée Notes de patch */
+.patchnotes-page { min-height: 100vh; padding-bottom: 4rem; }
+.patchnotes-container { max-width: 800px; margin: 0 auto; padding-top: 1.5rem; }
+.patchnotes-header { margin-bottom: 2rem; text-align: center; }
+.patchnotes-title { margin: 0 0 .5rem; font-size: 1.6rem; font-weight: 700; color: var(--text); display: flex; align-items: center; justify-content: center; gap: .5rem; }
+.patchnotes-title i { color: var(--primary-2); opacity: .95; }
+.patchnotes-desc { margin: 0; font-size: 1rem; color: var(--muted); }
+.patchnotes-loading { text-align: center; padding: 3rem; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: .75rem; }
+.patchnotes-empty { text-align: center; padding: 3rem; color: var(--muted); }
+.patchnotes-empty i { font-size: 2rem; display: block; margin-bottom: 1rem; opacity: .6; }
+.patchnotes-list { display: flex; flex-direction: column; gap: 1.5rem; }
+.patchnotes-version { padding: 1.75rem 2rem; }
+.patchnotes-version-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; padding-bottom: .75rem; border-bottom: 1px solid rgba(255,255,255,.12); }
+.patchnotes-version-header h2 { margin: 0; font-size: 1.25rem; color: var(--text); }
+.patchnotes-version-date { color: var(--muted); font-size: .95rem; }
+.patchnotes-version-image-wrap { margin-bottom: 1.25rem; text-align: center; }
+.patchnotes-version-image { max-width: 100%; max-height: 320px; border-radius: 12px; border: 1px solid rgba(255,255,255,.1); }
+.patchnotes-version-sections { display: flex; flex-direction: column; gap: 1.25rem; }
+.patchnotes-section h3 { margin: 0 0 .75rem; font-size: 1rem; color: var(--primary-2); padding: .5rem .75rem; background: rgba(126,205,242,.1); border-radius: 8px; border-left: 3px solid var(--primary-2); }
+.patchnotes-section ul { margin: 0; padding-left: 1.25rem; list-style: none; }
+.patchnotes-section li { margin-bottom: .4rem; color: var(--text); line-height: 1.5; position: relative; padding-left: .5rem; }
+.patchnotes-section li::before { content: "•"; color: var(--primary-2); font-weight: bold; position: absolute; left: 0; }
+
 /* ===== ADMIN PANEL — PARAMÈTRES UNIFIÉS ===== */
 .admin-settings-unified {
   display: flex;
@@ -4545,6 +4572,50 @@ a.dex-panel--active{cursor:default}
 }
 .item-location-add-modal .admin-pokedex-modal-footer { padding: 1rem 1.75rem 1.5rem; gap: .75rem; border-top: 1px solid rgba(255,255,255,.1); }
 .item-location-add-modal .admin-pokedex-modal-footer .btn { padding: .65rem 1.2rem; border-radius: 12px; font-weight: 600; }
+
+/* ===== ADMIN PATCHNOTES EDITOR ===== */
+.patchnotes-editor { max-width: 900px; }
+.patchnotes-editor-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.patchnotes-editor-title-wrap { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.patchnotes-editor-title { margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: .5rem; color: var(--text); }
+.patchnotes-editor-title i { color: var(--primary-2); opacity: .9; }
+.patchnotes-editor-lang { display: flex; align-items: center; gap: .5rem; }
+.patchnotes-editor-lang-label { font-size: .9rem; color: var(--muted); }
+.patchnotes-editor-select { padding: .5rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.06); color: var(--text); font-size: .9rem; cursor: pointer; }
+.patchnotes-editor-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+.patchnotes-editor-desc { margin: 0 0 1.5rem; font-size: .9rem; color: var(--muted); line-height: 1.5; }
+.patchnotes-editor-card { padding: 1.5rem 1.75rem; }
+.patchnotes-editor-loading { text-align: center; padding: 2.5rem; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: .75rem; }
+.patchnotes-editor-body { display: flex; flex-direction: column; gap: 1.5rem; }
+.patchnotes-editor-info { padding: 1.25rem 1.5rem; }
+.patchnotes-editor-info-title { margin: 0 0 1.25rem; font-size: 1rem; color: var(--text); display: flex; align-items: center; gap: .5rem; }
+.patchnotes-editor-info-title i { color: var(--primary-2); opacity: .9; }
+.patchnotes-editor-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+.patchnotes-editor-field { display: flex; flex-direction: column; gap: .4rem; }
+.patchnotes-editor-field span { font-size: .8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.patchnotes-editor-input { width: 100%; padding: .6rem .9rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.06); color: var(--text); font-size: .9rem; box-sizing: border-box; }
+.patchnotes-editor-input:focus { outline: none; border-color: rgba(126,205,242,.4); }
+.patchnotes-editor-input:disabled { opacity: .8; cursor: not-allowed; }
+.patchnotes-editor-preview { margin-top: 1rem; }
+.patchnotes-editor-preview span { display: block; font-size: .8rem; font-weight: 600; color: var(--muted); margin-bottom: .5rem; }
+.patchnotes-editor-preview-img { max-width: 200px; max-height: 120px; border-radius: 10px; border: 1px solid rgba(255,255,255,.15); }
+.patchnotes-editor-sections { padding: 1.25rem 1.5rem; }
+.patchnotes-editor-sections-title { margin: 0 0 1.25rem; font-size: 1rem; color: var(--text); display: flex; align-items: center; gap: .5rem; }
+.patchnotes-editor-quick { margin-bottom: 1.5rem; }
+.patchnotes-editor-quick span { display: block; font-size: .85rem; color: var(--muted); margin-bottom: .5rem; }
+.patchnotes-editor-quick-btns { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .75rem; }
+.patchnotes-editor-quick-btn { font-size: .8rem; padding: .25rem .75rem; }
+.patchnotes-editor-section { padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.patchnotes-editor-section:last-child { margin-bottom: 0; }
+.patchnotes-editor-section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.patchnotes-editor-section-head h4 { margin: 0; font-size: 1rem; color: var(--text); }
+.patchnotes-editor-delete-btn { color: #f87171; }
+.patchnotes-editor-delete-btn:hover { background: rgba(239,68,68,.2); color: #fca5a5; }
+.patchnotes-editor-items { margin-top: 1rem; }
+.patchnotes-editor-items-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
+.patchnotes-editor-items-head span { font-size: .85rem; font-weight: 600; color: var(--muted); }
+.patchnotes-editor-item-row { display: flex; gap: .5rem; margin-bottom: .5rem; align-items: center; }
+.patchnotes-editor-item-row .patchnotes-editor-input { flex: 1; }
 
 /* ===== ADMIN DASHBOARD (page d'accueil admin) ===== */
 .admin-dashboard {

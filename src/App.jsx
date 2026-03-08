@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import content from "./config/index.js";
-import patchNotesData from "./config/patchnotes.json";
 import HeroVideo from "./components/HeroVideo";
 import Carousel from "./components/Carousel";
 import Modal from "./components/Modal";
@@ -11,6 +10,7 @@ import LanguageSelector from "./components/LanguageSelector";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPanel from "./pages/AdminPanel";
 import HomePage from "./pages/HomePage";
+import PatchNotesPage from "./pages/PatchNotesPage";
 import PokedexPage from "./pages/PokedexPage";
 import ExtradexPage from "./pages/ExtradexPage";
 import GuidePage from "./pages/GuidePage";
@@ -26,6 +26,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/patchnotes" element={<PatchNotesPage />} />
         <Route path="/pokedex" element={<PokedexPage />} />
         <Route path="/extradex" element={<ExtradexPage />} />
         <Route path="/guide" element={<GuidePage />} />

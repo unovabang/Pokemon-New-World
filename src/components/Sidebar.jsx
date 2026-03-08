@@ -6,7 +6,7 @@ const SIDEBAR_ITEMS = [
   { id: "accueil", label: "Accueil", icon: "fa-house", to: "/" },
   { id: "pokedex", label: "Pokedex", icon: "fa-book", to: "/pokedex" },
   { id: "guide", label: "Guide", icon: "fa-book-open", to: "/guide" },
-  { id: "patchnotes", label: "PatchNotes", icon: "fa-file-lines", to: "#patchnotes" },
+  { id: "patchnotes", label: "PatchNotes", icon: "fa-file-lines", to: "/patchnotes" },
   { id: "items", label: "Items locations", icon: "fa-location-dot", to: "/item-location" },
   { id: "evs", label: "EVs locations", icon: "fa-location-dot", to: "#evs" },
   { id: "bst", label: "All BST + new Abilities", icon: "fa-table", to: "/bst" },

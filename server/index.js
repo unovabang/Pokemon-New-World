@@ -461,7 +461,7 @@ app.put('/api/patchnotes/:lang/version/:version', (req, res) => {
     const lang = req.params.lang || 'fr';
     const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
     const { version } = req.params;
-    const { date, sections } = req.body;
+    const { date, sections, image } = req.body;
     
     const patchnotesPath = path.join(CONFIG_DIR, filename);
     
@@ -477,8 +477,9 @@ app.put('/api/patchnotes/:lang/version/:version', (req, res) => {
     }
     
     // Mettre à jour la version
-    if (date) data.versions[versionIndex].date = date;
-    if (sections) data.versions[versionIndex].sections = sections;
+    if (date !== undefined) data.versions[versionIndex].date = date;
+    if (sections !== undefined) data.versions[versionIndex].sections = sections;
+    if (image !== undefined) data.versions[versionIndex].image = image;
     
     fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
     
