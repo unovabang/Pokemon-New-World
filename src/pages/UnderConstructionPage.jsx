@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const CONSTRUCTION_BG = "https://media.discordapp.net/attachments/1480351076065480836/1480357413986242672/snorlax-sleeping-pokemon-minimalist-4k-wallpaper-uhdpaper.com-2615d.png?ex=69af61c7&is=69ae1047&hm=9a5732227af46ca51926bc4da60ad9b6765094843cf220d92db178572fc934ef&=&format=webp&quality=lossless&width=1522&height=856";
+const CONSTRUCTION_BG = "https://media.discordapp.net/attachments/1480351076065480836/1480360418160676884/snorlax-pikachu-charmander-squirtle-bulbasaur-pokemon-4k-wallpaper-uhdpaper.com-2665d.png?ex=69af6493&is=69ae1313&hm=5c95d2e4c2b3d0a1bae5a765f3a3570500355e16c1daf303607748ac0ac70fdc&=&format=webp&quality=lossless&width=550&height=309";
 
 const UnderConstructionPage = ({ title = "En construction", backLabel = "Retour à l'accueil", onBack, embedded = false }) => {
   const navigate = useNavigate();
