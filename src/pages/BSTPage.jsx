@@ -222,24 +222,17 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
           const slots = abilities.map((name, i) => ({ name, desc: abilityDescs[i] || "" })).filter((s) => s.name.trim() || s.desc.trim());
           if (slots.length === 0) return null;
           return (
-            <>
-              {slots.map((slot, i) => (
-                <div key={i} className="bst-modal-ability-block">
-                  {slot.name && (
-                    <div className="bst-modal-ability">
-                      <strong><i className="fa-solid fa-star" aria-hidden /> Talent{slots.length > 1 ? ` ${i + 1}` : ""}</strong>
-                      <p>{slot.name}</p>
-                    </div>
-                  )}
-                  {slot.desc && (
-                    <div className="bst-modal-ability-desc">
-                      <strong><i className="fa-solid fa-book" aria-hidden /> Description{slots.length > 1 ? ` ${i + 1}` : ""}</strong>
-                      <p>{slot.desc}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </>
+            <div className="bst-modal-talents-wrap">
+              <div className="bst-modal-talents-label"><i className="fa-solid fa-star" aria-hidden /> Talents</div>
+              <div className="bst-modal-talents-list">
+                {slots.map((slot, i) => (
+                  <div key={i} className="bst-modal-talent-slot">
+                    {slot.name && <div className="bst-modal-talent-name"><i className="fa-solid fa-sparkles" aria-hidden /> {slot.name}</div>}
+                    {slot.desc && <div className="bst-modal-talent-desc">{slot.desc}</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
           );
         })()}
       </div>

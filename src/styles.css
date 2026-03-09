@@ -1014,35 +1014,50 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 .bst-modal-stat-total .bst-modal-stat-label{color:var(--primary-2)}
 .bst-modal-stat-total span{font-weight:800; color:var(--primary-2); font-size:1.1rem}
-.bst-modal-ability,
-.bst-modal-ability-desc{
-  text-align:left;
-  padding:1rem 1.25rem;
-  background:rgba(0,0,0,.25);
-  border-radius:14px;
-  border:1px solid rgba(126,205,242,.12);
-  margin-top:.75rem;
+/* Section talents modale BST : compacte, une carte par talent */
+.bst-modal-talents-wrap {
+  margin-top: 0.85rem;
+  padding: 0.65rem 0 0;
+  border-top: 1px solid rgba(126,205,242,.12);
 }
-.bst-modal-ability strong,
-.bst-modal-ability-desc strong{
-  display:block;
-  margin-bottom:.5rem;
-  color:var(--primary-2);
-  font-size:.9rem;
+.bst-modal-talents-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary-2);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
-.bst-modal-ability p,
-.bst-modal-ability-desc p{
-  margin:0;
-  font-size:.9rem;
-  color:rgba(255,255,255,.9);
-  line-height:1.5;
+.bst-modal-talents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
-.bst-modal-ability-block{
-  margin-top:1rem;
-  padding-top:1rem;
-  border-top:1px solid rgba(126,205,242,.1);
+.bst-modal-talent-slot {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0,0,0,.22);
+  border-radius: 10px;
+  border: 1px solid rgba(126,205,242,.1);
 }
-.bst-modal-ability-block:first-child{ margin-top:.75rem; padding-top:0; border-top:none }
+.bst-modal-talent-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.95);
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.bst-modal-talent-name i { color: var(--primary-2); opacity: .9; font-size: .75rem; }
+.bst-modal-talent-desc {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.75);
+  line-height: 1.4;
+  padding-left: 1.1rem;
+}
+.bst-modal-talents-list .bst-modal-talent-slot:only-of-type .bst-modal-talent-desc { padding-left: 0; }
 @media (max-width:520px){
   .bst-modal-stats{grid-template-columns:repeat(3, 1fr)}
   .bst-grid{grid-template-columns:repeat(auto-fill, minmax(130px, 1fr))}
