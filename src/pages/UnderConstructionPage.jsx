@@ -1,37 +1,43 @@
 import { useNavigate } from "react-router-dom";
 
-const GENGAR_BG =
-  "https://media.discordapp.net/attachments/1480351076065480836/1480351127278059540/gengar-pokemon-4k-wallpaper-uhdpaper.com-2565d.png?ex=69af5bec&is=69ae0a6c&hm=ff5eefcaf29e14ecd64311240ac6133e83b7d303da7eccf5de139a2fc76c9c4a&=&format=webp&quality=lossless&width=550&height=309";
+const CONSTRUCTION_BG =
+  "https://media.discordapp.net/attachments/1480351076065480836/1480357413986242672/snorlax-sleeping-pokemon-minimalist-4k-wallpaper-uhdpaper.com-2615d.png?ex=69af61c7&is=69ae1047&hm=9a5732227af46ca51926bc4da60ad9b6765094843cf220d92db178572fc934ef&=&format=webp&quality=lossless&width=1522&height=856";
 
-const UnderConstructionPage = ({ title = "En construction" }) => {
+const UnderConstructionPage = ({ title = "En construction", backLabel = "Retour à l'accueil", onBack, embedded = false }) => {
   const navigate = useNavigate();
   const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+  const handleBack = onBack ?? (() => navigate("/"));
 
   return (
     <div
       style={{
-        minHeight: "100vh",
-        backgroundImage: `url(${GENGAR_BG})`,
+        position: embedded ? "relative" : undefined,
+        minHeight: embedded ? "min(80vh, 600px)" : "100vh",
+        backgroundImage: `url(${CONSTRUCTION_BG})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        backgroundAttachment: "fixed",
+        backgroundAttachment: embedded ? "scroll" : "fixed",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "2rem",
         fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        borderRadius: embedded ? "12px" : undefined,
+        overflow: "hidden",
       }}
     >
-      {/* Overlay sombre violet pour lisibilité et ambiance Gengar */}
+      {/* Overlay sombre pour lisibilité (ambiance Snorlax / bleu nuit) */}
       <div
         style={{
-          position: "fixed",
+          position: embedded ? "absolute" : "fixed",
           top: 0,
           left: 0,
-          width: "100%",
-          height: "100%",
-          background: "linear-gradient(135deg, rgba(88, 28, 135, 0.75) 0%, rgba(45, 0, 75, 0.85) 50%, rgba(0, 0, 0, 0.8) 100%)",
+          right: 0,
+          bottom: 0,
+          width: embedded ? "100%" : undefined,
+          height: embedded ? "100%" : undefined,
+          background: "linear-gradient(135deg, rgba(30, 58, 95, 0.72) 0%, rgba(15, 30, 55, 0.85) 50%, rgba(0, 0, 0, 0.82) 100%)",
           backdropFilter: "blur(2px)",
           pointerEvents: "none",
           zIndex: 1,
@@ -101,7 +107,7 @@ const UnderConstructionPage = ({ title = "En construction" }) => {
         </p>
 
         <button
-          onClick={() => navigate("/")}
+          onClick={handleBack}
           style={{
             padding: isMobile ? "0.8rem 2rem" : "1rem 2.5rem",
             background: "linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%)",
@@ -128,7 +134,7 @@ const UnderConstructionPage = ({ title = "En construction" }) => {
           }}
         >
           <span style={{ fontSize: "1.1rem" }}>🏠</span>
-          Retour à l&apos;accueil
+          {backLabel}
         </button>
       </div>
     </div>

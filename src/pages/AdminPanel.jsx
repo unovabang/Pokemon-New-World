@@ -19,6 +19,7 @@ import GuideEditor from "../components/GuideEditor";
 import BSTEditor from "../components/BSTEditor";
 import AdminTips from "../components/AdminTips";
 import ItemLocationEditor from "../components/ItemLocationEditor";
+import UnderConstructionPage from "./UnderConstructionPage";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -97,6 +98,8 @@ const AdminPanel = () => {
         { id: 'bst', name: 'All BST + Abilities', icon: 'fa-chart-line', description: 'Stats & capacités' },
         { id: 'guide', name: 'Guide', icon: 'fa-route', description: 'Walkthrough' },
         { id: 'itemlocation', name: 'Item Location', icon: 'fa-location-dot', description: 'Localisation des objets' },
+        { id: 'evs', name: 'EVs Location', icon: 'fa-map-location-dot', description: 'Emplacements des EVs' },
+        { id: 'nerfs', name: 'Nerfs and Buffs', icon: 'fa-balance-scale', description: 'Nerfs et buffs' },
         { id: 'downloads', name: 'Téléchargements', icon: 'fa-download', description: 'Liens de téléchargement' },
         { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-lines', description: 'Patch notes' }
       ]
@@ -356,6 +359,23 @@ const AdminPanel = () => {
             <GuideEditor
               initialData={guideData || { title: "", subtitle: "", disclaimer: "", steps: [] }}
               onSave={() => {}}
+            />
+          )}
+
+          {activeTab === 'evs' && (
+            <UnderConstructionPage
+              title="EVs Location"
+              backLabel="Retour à l'admin"
+              onBack={() => setActiveTab("dashboard")}
+              embedded
+            />
+          )}
+          {activeTab === 'nerfs' && (
+            <UnderConstructionPage
+              title="Nerfs and Buffs"
+              backLabel="Retour à l'admin"
+              onBack={() => setActiveTab("dashboard")}
+              embedded
             />
           )}
           
