@@ -3332,14 +3332,10 @@ a.dex-panel--active{cursor:default}
 .embed-help-icons li i { color: #94a3b8; width: 1rem; text-align: center; }
 
 .embed-editor-aside {
-  position: sticky;
-  top: 1rem;
   align-self: start;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
 }
 .embed-preview-card,
 .embed-webhook-card {
@@ -3347,6 +3343,12 @@ a.dex-panel--active{cursor:default}
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 12px;
   padding: 1.5rem;
+}
+.embed-webhook-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
 }
 .embed-preview-card-title {
   margin: 0 0 1rem 0;
@@ -3442,6 +3444,22 @@ a.dex-panel--active{cursor:default}
   font-family: monospace;
   font-size: 0.85em;
 }
+.embed-preview-code-block {
+  display: block;
+  background: rgba(0,0,0,.4);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #d4d4d4;
+  overflow-x: auto;
+}
+.embed-preview-description .embed-preview-code-block { margin: 0.5rem 0; }
 .embed-preview-link {
   color: #00a8fc;
   text-decoration: none;

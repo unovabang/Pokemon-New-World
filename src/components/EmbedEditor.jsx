@@ -2,7 +2,7 @@ import { useState, useMemo, useRef } from "react";
 
 const DEFAULT_COLOR_HEX = "#5865F2";
 
-/** Rend le texte en Markdown style Discord pour l'aperçu (gras, italique, souligné, barré, code, lien) */
+/** Rend le texte en Markdown style Discord pour l'aperçu (gras, italique, souligné, barré, code, bloc code, lien) */
 function renderDiscordMarkdown(text) {
   if (!text || typeof text !== "string") return null;
   const parts = [];
@@ -10,7 +10,16 @@ function renderDiscordMarkdown(text) {
   while (pos < text.length) {
     const rest = text.slice(pos);
     let matched = false;
-    if (rest.startsWith("**")) {
+    if (rest.startsWith("```")) {
+      const end = text.indexOf("```", pos + 3);
+      if (end !== -1) {
+        const inner = text.slice(pos + 3, end).replace(/^\n|\n$/g, "");
+        parts.push({ type: "codeblock", content: inner });
+        pos = end + 3;
+        matched = true;
+      }
+    }
+    if (!matched && rest.startsWith("**")) {
       const end = text.indexOf("**", pos + 2);
       if (end !== -1) {
         parts.push({ type: "bold", content: text.slice(pos + 2, end) });
@@ -73,7 +82,7 @@ function renderDiscordMarkdown(text) {
       }
     }
     if (!matched) {
-      const next = text.slice(pos).search(/\*\*|__|~~|`|\[|\*|_/);
+      const next = text.slice(pos).search(/\*\*|__|~~|```|`|\[|\*|_/);
       const until = next === -1 ? text.length : pos + next;
       if (until > pos) parts.push({ type: "text", content: text.slice(pos, until) });
       pos = next === -1 ? text.length : pos + next;
@@ -86,6 +95,7 @@ function renderDiscordMarkdown(text) {
     if (p.type === "underline") return <span key={i} style={{ textDecoration: "underline" }}>{p.content}</span>;
     if (p.type === "strikethrough") return <s key={i}>{p.content}</s>;
     if (p.type === "code") return <code key={i} className="embed-preview-inline-code">{p.content}</code>;
+    if (p.type === "codeblock") return <pre key={i} className="embed-preview-code-block"><code>{p.content}</code></pre>;
     if (p.type === "link") return <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" className="embed-preview-link">{p.content || p.url}</a>;
     return p.content;
   });
@@ -116,7 +126,7 @@ const MARKDOWN_BUTTONS = [
   { label: "Souligné", before: "__", after: "__", icon: "fa-underline", title: "Souligné (__texte__)" },
   { label: "Barré", before: "~~", after: "~~", icon: "fa-strikethrough", title: "Barré (~~texte~~)" },
   { label: "Code", before: "`", after: "`", icon: "fa-code", title: "Code (`texte`)" },
-  { label: "Bloc de code", before: "```\n", after: "\n```", icon: "fa-square-code", title: "Bloc de code" },
+  { label: "Bloc de code", before: "```\n", after: "\n```", icon: "fa-file-code", title: "Bloc de code (```)" },
   { label: "Lien", before: "[", after: "](https://)", icon: "fa-link", title: "Lien [texte](url)" },
 ];
 
@@ -127,6 +137,14 @@ export default function EmbedEditor() {
   const [showHelp, setShowHelp] = useState(false);
   const [jsonCopied, setJsonCopied] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState("");
+  const [webhookUsername, setWebhookUsername] = useState("");
+  const [webhookAvatarUrl, setWebhookAvatarUrl] = useState("");
+  const [savedWebhooks, setSavedWebhooks] = useState(() => {
+    try {
+      const raw = localStorage.getItem("embed_saved_webhooks");
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  });
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState(null);
   const descRef = useRef(null);
@@ -187,9 +205,11 @@ export default function EmbedEditor() {
     }
     const body = {};
     if (content.trim()) body.content = content.trim();
+    if (webhookUsername.trim()) body.username = webhookUsername.trim();
+    if (webhookAvatarUrl.trim()) body.avatar_url = webhookAvatarUrl.trim();
     if (Object.keys(e).length) body.embeds = [e];
     return body;
-  }, [embed, content]);
+  }, [embed, content, webhookUsername, webhookAvatarUrl]);
 
   const payloadJson = useMemo(() => JSON.stringify(payload, null, 2), [payload]);
   const copyJson = () => {
@@ -466,13 +486,57 @@ export default function EmbedEditor() {
 
           <div className="embed-webhook-card">
             <h3 className="embed-preview-card-title">Envoyer au webhook</h3>
+            {savedWebhooks.length > 0 && (
+              <div className="embed-field">
+                <label className="embed-label">Webhook enregistré</label>
+                <select
+                  className="embed-input"
+                  value=""
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    if (!id) return;
+                    const w = savedWebhooks.find((x) => x.id === id);
+                    if (w) {
+                      setWebhookUrl(w.url || "");
+                      setWebhookUsername(w.username || "");
+                      setWebhookAvatarUrl(w.avatar_url || "");
+                    }
+                  }}
+                >
+                  <option value="">— Choisir un webhook —</option>
+                  {savedWebhooks.map((w) => (
+                    <option key={w.id} value={w.id}>{w.name || w.url || w.id}</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="embed-field">
               <label className="embed-label">URL du webhook</label>
               <input type="url" className="embed-input" value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://discord.com/api/webhooks/..." />
             </div>
+            <div className="embed-field">
+              <label className="embed-label">Pseudo (optionnel)</label>
+              <input type="text" className="embed-input" value={webhookUsername} onChange={(e) => setWebhookUsername(e.target.value)} placeholder="Nom affiché pour ce message" />
+            </div>
+            <div className="embed-field">
+              <label className="embed-label">Photo de profil (URL, optionnel)</label>
+              <input type="url" className="embed-input" value={webhookAvatarUrl} onChange={(e) => setWebhookAvatarUrl(e.target.value)} placeholder="https://..." />
+            </div>
+            <div className="embed-webhook-actions">
+            <button type="button" onClick={() => {
+              const name = prompt("Nom pour ce webhook (ex: Annonces)", "Webhook");
+              if (name && webhookUrl.trim()) {
+                const next = [...savedWebhooks, { id: crypto.randomUUID(), name: name.trim(), url: webhookUrl.trim(), username: webhookUsername.trim() || undefined, avatar_url: webhookAvatarUrl.trim() || undefined }];
+                setSavedWebhooks(next);
+                try { localStorage.setItem("embed_saved_webhooks", JSON.stringify(next)); } catch (_) {}
+              }
+            }} className="embed-btn embed-btn-secondary">
+              <i className="fa-solid fa-bookmark" aria-hidden /> Enregistrer ce webhook
+            </button>
             <button type="button" onClick={sendToWebhook} disabled={sending} className="embed-btn embed-btn-primary">
               {sending ? <><i className="fa-solid fa-spinner fa-spin" aria-hidden /> Envoi…</> : <><i className="fa-solid fa-paper-plane" aria-hidden /> Envoyer</>}
             </button>
+            </div>
             {sendResult && (
               <p className={`embed-send-result ${sendResult.ok ? "embed-send-result--ok" : "embed-send-result--err"}`}>
                 {sendResult.ok ? <i className="fa-solid fa-check" aria-hidden /> : <i className="fa-solid fa-exclamation-triangle" aria-hidden />} {sendResult.message}
