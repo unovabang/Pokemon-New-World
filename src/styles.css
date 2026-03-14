@@ -5363,9 +5363,11 @@ a.dex-panel--active{cursor:default}
   .admin-bst-card-total { margin-top: 0.35rem; }
   .admin-bst-card-ability { margin-top: 0.5rem; }
   .admin-bst-card-delete { position: absolute; top: 0.5rem; right: 0.5rem; }
-  .admin-pokedex-card > div[style*="flex"] { flex-direction: column; align-items: stretch; gap: 0.75rem; }
-  .admin-pokedex-card .admin-pokedex-input { width: 100%; max-width: 100%; box-sizing: border-box; }
-  .admin-pokedex-card .admin-pokedex-btn { flex: 1; min-width: 0; }
+  .admin-pokedex-toolbar { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+  .admin-pokedex-toolbar-actions { flex-direction: column; width: 100%; }
+  .admin-pokedex-toolbar-actions .admin-pokedex-input { width: 100% !important; max-width: 100%; box-sizing: border-box; }
+  .admin-pokedex-toolbar-actions .admin-pokedex-btn { width: 100%; justify-content: center; min-width: 0; }
+  .admin-pokedex-toolbar-actions > div[role="group"] { justify-content: flex-start; }
   .admin-pokedex-modal { max-width: calc(100vw - 1.5rem); max-height: 90vh; margin: .75rem; }
   .admin-pokedex-modal-body { padding: 1rem; gap: 1rem; }
   .admin-pokedex-modal-footer { flex-wrap: wrap; gap: .5rem; padding: 1rem; }
@@ -5384,8 +5386,9 @@ a.dex-panel--active{cursor:default}
   .admin-guide-modal-body { padding: 1rem; }
   .admin-guide-modal-footer { flex-wrap: wrap; padding: 1rem; }
   .admin-guide-confirm-box { max-width: calc(100vw - 2rem); margin: 1rem; padding: 1.25rem; }
-  .item-location-editor-head { flex-direction: column; align-items: flex-start; }
-  .item-location-editor-actions { width: 100%; }
+  .item-location-editor-head { flex-direction: column; align-items: stretch; }
+  .item-location-editor-actions { width: 100%; flex-direction: column; }
+  .item-location-editor-actions .btn { width: 100%; justify-content: center; }
   .item-location-editor-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .item-location-editor-table { min-width: 420px; font-size: .85rem; }
   .item-location-editor-table th, .item-location-editor-table td { padding: .6rem .75rem; }
@@ -5418,9 +5421,11 @@ a.dex-panel--active{cursor:default}
   .team-editor-member-fields { grid-template-columns: 1fr; }
   .team-editor-thanks-list { padding: 1rem 0; }
   .team-editor-thanks-row { flex-wrap: wrap; }
-  .admin-panel-table-wrap { margin: 0 -0.5rem; }
+  .admin-panel-table-wrap { margin: 0 -0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .admin-panel-table { min-width: 320px; font-size: .8rem; }
   .admin-panel-table th, .admin-panel-table td { padding: 0.5rem 0.6rem; }
+  .site-editor-header { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .site-editor-header .btn { width: 100%; justify-content: center; }
 }
 /* Bannière actualité: boutons plus lisibles et touch-friendly */
 .admin-panel .banner-manager-card-order { gap: 0.5rem; }
@@ -5454,6 +5459,8 @@ a.dex-panel--active{cursor:default}
   .admin-guide-confirm-actions { flex-direction: column; }
   .admin-guide-confirm-actions button { width: 100%; }
   .item-location-add-modal .admin-pokedex-modal-body { padding: 1rem; }
+  .admin-panel-table { font-size: .75rem; min-width: 280px; }
+  .admin-panel-table th, .admin-panel-table td { padding: 0.4rem 0.5rem; }
 }
 
 /* ===== ADMIN ITEM LOCATION EDITOR ===== */
@@ -5541,7 +5548,7 @@ a.dex-panel--active{cursor:default}
   .item-location-editor-table thead { display: none; }
   .item-location-editor-table .item-location-editor-zone-header td { display: block; padding: .75rem 1rem; }
   .item-location-editor-table .item-location-editor-zone-title { padding: .5rem 0; }
-  .item-location-editor-table tbody tr.item-location-editor-data-row { display: block; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; margin-bottom: 1rem; padding: 1rem; background: rgba(255,255,255,.03); }
+  .item-location-editor-table tbody tr.item-location-editor-data-row { display: block; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; margin-bottom: 1rem; margin-left: auto; margin-right: auto; padding: 1rem; background: rgba(255,255,255,.03); max-width: 420px; }
   .item-location-editor-table tbody tr.item-location-editor-data-row td { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding: .5rem 0; border: none; width: 100%; }
   .item-location-editor-table tbody tr.item-location-editor-data-row td::before { content: attr(data-label); font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); min-width: 80px; flex-shrink: 0; }
   .item-location-editor-table tbody tr.item-location-editor-data-row td.td-ordre { flex-wrap: nowrap; }

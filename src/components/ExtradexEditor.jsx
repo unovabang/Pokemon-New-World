@@ -330,9 +330,9 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
       </section>
 
       <section className="admin-pokedex-card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
+        <div className="admin-pokedex-toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
           <h3 style={{ margin: 0 }}><i className="fa-solid fa-star" aria-hidden /> Liste des créatures ({entries.length})</h3>
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+          <div className="admin-pokedex-toolbar-actions" style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
             <div style={{ display: "flex", gap: "0.25rem" }} role="group" aria-label="Affichage">
               <button
                 type="button"

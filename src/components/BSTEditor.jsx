@@ -344,11 +344,11 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
       </section>
 
       <section className="admin-pokedex-card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
+        <div className="admin-pokedex-toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
           <h3 style={{ margin: 0 }}>
             <i className="fa-solid fa-list" aria-hidden /> Liste ({entries.length})
           </h3>
-          <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+          <div className="admin-pokedex-toolbar-actions" style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
             <input
               type="search"
               className="admin-pokedex-input"

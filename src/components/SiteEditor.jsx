@@ -183,8 +183,8 @@ const SiteEditor = ({ onSave }) => {
   }
 
   return (
-    <div>
-      <div style={{ 
+    <div className="site-editor">
+      <div className="site-editor-header" style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
