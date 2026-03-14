@@ -125,6 +125,8 @@ export default function EVsLocationPage() {
         } else {
           setEvsEntries((Array.isArray(evsConfigFallback) ? evsConfigFallback : []).map(normalizeEvEntry));
         }
+        const bg = evsData?.evs?.background;
+        setPageBackground(bg && String(bg).trim() ? String(bg).trim() : null);
         if (pokedexRes?.success && Array.isArray(pokedexRes?.pokedex?.entries)) {
           setPokedexEntries(pokedexRes.pokedex.entries);
         } else {

@@ -60,13 +60,18 @@ export default function ItemLocationPage() {
     fetch(`${API_BASE}/config/item-location?t=${Date.now()}`)
       .then((r) => r.json())
       .then((data) => {
-        if (!cancelled && data?.success && data?.config?.entries) {
-          setGroups(groupByZone(data.config.entries));
+        if (cancelled) return;
+        if (data?.success && data?.config) {
+          if (Array.isArray(data.config.entries)) setGroups(groupByZone(data.config.entries));
+          else setGroups([]);
+          const bg = data.config.background;
+          setPageBackground(bg && String(bg).trim() ? String(bg).trim() : null);
         } else {
           setGroups([]);
+          setPageBackground(null);
         }
       })
-      .catch(() => setGroups([]))
+      .catch(() => { if (!cancelled) { setGroups([]); setPageBackground(null); } })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, []);

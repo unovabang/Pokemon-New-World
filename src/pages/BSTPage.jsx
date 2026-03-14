@@ -433,7 +433,7 @@ export default function BSTPage() {
   const totalCount = useMemo(() => sections.reduce((acc, s) => acc + (s.data?.length || 0), 0), [sections]);
 
   return (
-    <div className="page bst-page">
+    <div className={`page bst-page${pageBackground ? " bst-page--has-bg" : ""}`}>
       {pageBackground && (
         <>
           <div className="page-bg-layer" aria-hidden>
