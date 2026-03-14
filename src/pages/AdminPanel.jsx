@@ -459,7 +459,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'dashboard' && activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
-           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'itemlocation' && activeTab !== 'settings' && activeTab !== 'team' && activeTab !== 'embed' && activeTab !== 'tips' && activeTab !== 'logs' && (
+           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'itemlocation' && activeTab !== 'evs' && activeTab !== 'settings' && activeTab !== 'team' && activeTab !== 'embed' && activeTab !== 'tips' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">
                 <h2 className="admin-panel-card-title">

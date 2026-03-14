@@ -39,18 +39,34 @@ function buildPokedexLookup(entries) {
   return map;
 }
 
+/** Variantes de noms (EVs vs Pokédex : "Staross Bélamie" vs "Staross de Bélamie") */
+function nameVariants(normalized) {
+  const out = [normalized];
+  const add = (s) => { if (s && !out.includes(s)) out.push(s); };
+  add(normalized.replace(/\s+belamie\s*$/, " de belamie"));
+  add(normalized.replace(/\s+de belamie\s*$/, " belamie"));
+  add(normalized.replace(/\s+galar\s*$/, " de galar"));
+  add(normalized.replace(/\s+de galar\s*$/, " galar"));
+  add(normalized.replace(/\s+hisui\s*$/, " de hisui"));
+  add(normalized.replace(/\s+de hisui\s*$/, " hisui"));
+  add(normalized.replace(/\s+male\s*$/, " male"));
+  add(normalized.replace(/\s+femelle\s*$/, " female"));
+  return out;
+}
+
 /** Trouve le sprite pour un nom affiché (avec variante type "Bélamie", "Galar") */
 function findSprite(lookup, displayName) {
   if (!displayName) return null;
   const normalized = normalizeName(displayName);
-  let entry = lookup.get(normalized);
-  if (entry?.imageUrl) return entry.imageUrl;
   const withoutSuffix = normalized.replace(/\s*\(\d+pts?\)\s*$/, "").trim();
-  entry = lookup.get(withoutSuffix);
-  if (entry?.imageUrl) return entry.imageUrl;
+  const toTry = nameVariants(withoutSuffix);
+  for (const key of toTry) {
+    const entry = lookup.get(key);
+    if (entry?.imageUrl) return entry.imageUrl;
+  }
   const firstWord = withoutSuffix.split(/\s+/)[0] || "";
   if (firstWord) {
-    entry = lookup.get(firstWord);
+    const entry = lookup.get(firstWord);
     if (entry?.imageUrl) return entry.imageUrl;
   }
   for (const [key, value] of lookup) {
@@ -184,7 +200,10 @@ export default function EVsLocationPage() {
                         const points = p.points ?? 0;
                         const spriteUrl = (p.imageUrl && p.imageUrl.trim()) || findSprite(lookup, name) || PLACEHOLDER_SPRITE;
                         return (
-                          <div key={`${ev.id}-${name}-${i}`} className="evs-location-pokemon-item">
+                          <div key={`${ev.id}-${name}-${i}`} className={`evs-location-pokemon-item ${points > 0 ? "evs-location-pokemon-item--has-pts" : ""}`}>
+                            {points > 0 && (
+                              <span className="evs-location-pokemon-tooltip" role="tooltip">{points} EV par KO</span>
+                            )}
                             <div className="evs-location-pokemon-sprite-wrap">
                               <img
                                 src={spriteUrl}
@@ -193,7 +212,7 @@ export default function EVsLocationPage() {
                                 loading="lazy"
                               />
                               {points > 0 && (
-                                <span className="evs-location-pokemon-pts" title={`${points} EV par KO`}>
+                                <span className="evs-location-pokemon-pts">
                                   {points}
                                 </span>
                               )}

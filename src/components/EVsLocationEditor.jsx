@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
 
 const API_BASE = import.meta.env.VITE_API_URL
@@ -25,6 +25,41 @@ function normalizeName(str) {
   return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
 }
 
+/** Variantes pour matcher Pokédex (ex. "Staross Bélamie" -> "Staross de Bélamie") */
+function nameVariants(normalized) {
+  const out = [normalized];
+  const add = (s) => { if (s && !out.includes(s)) out.push(s); };
+  add(normalized.replace(/\s+belamie\s*$/, " de belamie"));
+  add(normalized.replace(/\s+de belamie\s*$/, " belamie"));
+  add(normalized.replace(/\s+galar\s*$/, " de galar"));
+  add(normalized.replace(/\s+de galar\s*$/, " galar"));
+  add(normalized.replace(/\s+hisui\s*$/, " de hisui"));
+  add(normalized.replace(/\s+de hisui\s*$/, " hisui"));
+  return out;
+}
+
+/** Trouve l'URL du sprite dans le Pokédex à partir du nom affiché (avec variantes) */
+function findPokedexSprite(entries, displayName) {
+  if (!displayName || !Array.isArray(entries) || entries.length === 0) return null;
+  const normalized = normalizeName(displayName);
+  const toTry = nameVariants(normalized);
+  for (const key of toTry) {
+    const e = entries.find((x) => normalizeName(x.name) === key);
+    if (e?.imageUrl) return e.imageUrl;
+  }
+  const firstWord = normalized.split(/\s+/)[0];
+  if (firstWord) {
+    const e = entries.find((x) => normalizeName(x.name) === firstWord);
+    if (e?.imageUrl) return e.imageUrl;
+  }
+  for (const e of entries) {
+    if (!e?.imageUrl) continue;
+    const n = normalizeName(e.name);
+    if (normalized.startsWith(n) || n.startsWith(normalized)) return e.imageUrl;
+  }
+  return null;
+}
+
 export default function EVsLocationEditor({ onSave }) {
   const [entries, setEntries] = useState([]);
   const [pokedexEntries, setPokedexEntries] = useState([]);
@@ -39,6 +74,9 @@ export default function EVsLocationEditor({ onSave }) {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [saveMessage, setSaveMessage] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [pokedexSearch, setPokedexSearch] = useState("");
+  const [pokedexDropdownOpen, setPokedexDropdownOpen] = useState(false);
+  const pokedexDropdownRef = useRef(null);
 
   const load = async () => {
     try {
@@ -79,6 +117,12 @@ export default function EVsLocationEditor({ onSave }) {
     const q = searchQuery.trim().toLowerCase();
     return pokemonList.filter((p) => (typeof p === "object" ? (p.name || "").toLowerCase().includes(q) : String(p).toLowerCase().includes(q)));
   }, [pokemonList, searchQuery]);
+
+  const filteredPokedexForDropdown = useMemo(() => {
+    if (!pokedexSearch.trim()) return pokedexEntries.slice(0, 80);
+    const q = normalizeName(pokedexSearch);
+    return pokedexEntries.filter((e) => normalizeName(e.name).includes(q)).slice(0, 80);
+  }, [pokedexEntries, pokedexSearch]);
 
   const saveToApi = async (entriesToSave) => {
     const payload = Array.isArray(entriesToSave) ? entriesToSave : entries;
@@ -145,6 +189,8 @@ export default function EVsLocationEditor({ onSave }) {
   const closeModal = () => {
     setShowModal(false);
     setEditingIndex(null);
+    setPokedexDropdownOpen(false);
+    setPokedexSearch("");
     setForm({ name: "", imageUrl: "", points: 0 });
   };
 
@@ -215,19 +261,43 @@ export default function EVsLocationEditor({ onSave }) {
         {modalMode === "add" && addSource === "pokedex" && (
           <div className="evs-editor-pokedex-pick">
             <label className="evs-editor-label">Choisir un Pokémon du Pokédex</label>
-            <select
-              className="evs-editor-select"
-              value=""
-              onChange={(e) => {
-                const idx = e.target.value ? parseInt(e.target.value, 10) : -1;
-                if (idx >= 0 && pokedexEntries[idx]) selectPokedexEntry(pokedexEntries[idx]);
-              }}
-            >
-              <option value="">-- Sélectionner --</option>
-              {pokedexEntries.map((entry, i) => (
-                <option key={entry.num || i} value={i}>{entry.name}</option>
-              ))}
-            </select>
+            <div className="evs-editor-pokedex-dropdown" ref={pokedexDropdownRef}>
+              <input
+                type="text"
+                className="evs-editor-input evs-editor-pokedex-search"
+                value={pokedexSearch}
+                onChange={(e) => { setPokedexSearch(e.target.value); setPokedexDropdownOpen(true); }}
+                onFocus={() => setPokedexDropdownOpen(true)}
+                placeholder="Rechercher par nom (ex: Staross, Bélamie…)"
+                autoComplete="off"
+              />
+              {pokedexDropdownOpen && (
+                <div className="evs-editor-pokedex-list" role="listbox">
+                  {filteredPokedexForDropdown.length === 0 ? (
+                    <div className="evs-editor-pokedex-list-empty">Aucun Pokémon trouvé</div>
+                  ) : (
+                    filteredPokedexForDropdown.map((entry) => (
+                      <button
+                        key={entry.num || entry.name}
+                        type="button"
+                        className="evs-editor-pokedex-option"
+                        role="option"
+                        onClick={() => {
+                          selectPokedexEntry(entry);
+                          setPokedexDropdownOpen(false);
+                          setPokedexSearch("");
+                        }}
+                      >
+                        <span className="evs-editor-pokedex-option-sprite">
+                          <img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
+                        </span>
+                        <span className="evs-editor-pokedex-option-name">{entry.name}</span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -359,7 +429,7 @@ export default function EVsLocationEditor({ onSave }) {
             const imageUrl = typeof p === "object" ? (p?.imageUrl || "") : "";
             const points = typeof p === "object" && typeof p?.points === "number" ? p.points : 0;
             const realIndex = pokemonList.indexOf(p);
-            const spriteUrl = imageUrl || (pokedexEntries.find((e) => normalizeName(e.name) === normalizeName(name))?.imageUrl) || PLACEHOLDER_SPRITE;
+            const spriteUrl = imageUrl || findPokedexSprite(pokedexEntries, name) || PLACEHOLDER_SPRITE;
             return (
               <div key={`${name}-${realIndex}`} className="evs-editor-card">
                 <div className="evs-editor-card-sprite">

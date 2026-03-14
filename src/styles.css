@@ -1225,6 +1225,15 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   padding:.6rem; border-radius:10px; background:rgba(255,255,255,.03);
   border:1px solid rgba(255,255,255,.06); transition:background .15s, border-color .15s;
 }
+.evs-location-pokemon-item--has-pts{position:relative}
+.evs-location-pokemon-tooltip{
+  position:absolute; left:50%; bottom:100%; transform:translateX(-50%); margin-bottom:6px;
+  padding:.35rem .6rem; font-size:.75rem; font-weight:600; color:var(--bg); background:var(--primary-2);
+  border-radius:8px; white-space:nowrap; box-shadow:0 4px 12px rgba(0,0,0,.3);
+  opacity:0; visibility:hidden; transition:opacity .15s, visibility .15s; pointer-events:none;
+  z-index:5;
+}
+.evs-location-pokemon-item--has-pts:hover .evs-location-pokemon-tooltip{opacity:1; visibility:visible}
 .evs-location-pokemon-item:hover{background:rgba(255,255,255,.06); border-color:rgba(126,205,242,.15)}
 .evs-location-pokemon-sprite-wrap{position:relative; width:64px; height:64px; display:flex; align-items:center; justify-content:center}
 .evs-location-pokemon-sprite{max-width:100%; max-height:100%; object-fit:contain; image-rendering:pixelated; image-rendering:-moz-crisp-edges; image-rendering:crisp-edges}
@@ -1237,9 +1246,16 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .evs-location-pokemon-name{font-size:.8rem; color:var(--text); text-align:center; line-height:1.2; word-break:break-word}
 
 @media (max-width:640px){
-  .evs-location-container{padding-left:1rem; padding-right:1rem}
+  .evs-location-page{padding-bottom:2rem}
+  .evs-location-container{padding-left:1rem; padding-right:1rem; padding-top:1rem}
+  .evs-location-header{margin-bottom:1.5rem}
+  .evs-location-title{font-size:1.35rem; flex-wrap:wrap; justify-content:center}
+  .evs-location-desc{font-size:.95rem}
+  .evs-location-card-head{padding:.85rem 1rem; gap:.75rem; flex-wrap:wrap}
+  .evs-location-card-body{padding:1rem}
   .evs-location-pokemon-grid{grid-template-columns:repeat(auto-fill, minmax(80px, 1fr)); gap:.75rem}
   .evs-location-pokemon-sprite-wrap{width:56px; height:56px}
+  .evs-location-pokemon-tooltip{font-size:.7rem; padding:.3rem .5rem}
 }
 
 /* Fond Pokédex en élément réel (img) pour affichage fiable */
@@ -5638,11 +5654,43 @@ a.dex-panel--active{cursor:default}
 .evs-editor-modal .evs-editor-modal-tabs { display: flex; gap: .5rem; margin-bottom: 1rem; }
 .evs-editor-modal-tabs .admin-panel-nav-btn { width: auto; padding: .5rem 1rem; }
 .evs-editor-pokedex-pick { margin-bottom: 1rem; }
+.evs-editor-pokedex-dropdown { position: relative; }
+.evs-editor-pokedex-search { margin-bottom: 0; }
+.evs-editor-pokedex-list {
+  position: absolute; top: 100%; left: 0; right: 0; margin-top: .35rem; max-height: 220px; overflow-y: auto;
+  background: rgba(12,18,32,.98); border: 1px solid rgba(126,205,242,.25); border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.4); z-index: 100; display: flex; flex-direction: column; gap: 0;
+}
+.evs-editor-pokedex-list-empty { padding: 1rem; text-align: center; color: var(--muted); font-size: .9rem; }
+.evs-editor-pokedex-option {
+  display: flex; align-items: center; gap: .75rem; width: 100%; padding: .5rem .75rem; border: none;
+  background: transparent; color: var(--text); font-size: .9rem; text-align: left; cursor: pointer;
+  transition: background .12s; border-radius: 0;
+}
+.evs-editor-pokedex-option:hover { background: rgba(126,205,242,.15); }
+.evs-editor-pokedex-option-sprite { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,.2); }
+.evs-editor-pokedex-option-sprite img { max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: pixelated; }
+.evs-editor-pokedex-option-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .evs-editor-label { display: block; margin-bottom: .35rem; font-size: .85rem; font-weight: 500; color: var(--muted); }
 .evs-editor-form-row { margin-bottom: 1rem; }
 .evs-editor-input, .evs-editor-select { width: 100%; padding: .6rem .9rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--text); font-size: .9rem; box-sizing: border-box; }
 .evs-editor-input:focus, .evs-editor-select:focus { outline: none; border-color: rgba(126,205,242,.4); }
 .evs-editor-confirm-text { margin: 0; font-size: .95rem; color: var(--text); }
+
+@media (max-width: 768px) {
+  .evs-location-editor { padding: 0 1rem; }
+  .evs-editor-head { flex-direction: column; align-items: stretch; }
+  .evs-editor-actions { flex-wrap: wrap; justify-content: flex-start; }
+  .evs-editor-tabs { gap: .4rem; }
+  .evs-editor-tabs .admin-panel-nav-btn { padding: .45rem .85rem; font-size: .85rem; }
+  .evs-editor-toolbar { flex-direction: column; align-items: stretch; }
+  .evs-editor-search { width: 100%; }
+  .evs-editor-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: .75rem; }
+  .evs-editor-card-sprite { width: 56px; height: 56px; }
+  .evs-editor-pokedex-list { max-height: 180px; }
+  .evs-editor-pokedex-option { padding: .45rem .65rem; font-size: .85rem; }
+  .evs-editor-pokedex-option-sprite { width: 32px; height: 32px; }
+}
 
 .item-location-add-modal { max-width: 440px; }
 .item-location-add-modal .admin-pokedex-modal-header { padding: 1.5rem 1.75rem 0; border-bottom: none; }
