@@ -168,8 +168,8 @@ const FooterEditor = ({ onSave }) => {
   }
 
   return (
-    <div>
-      <div style={{ 
+    <div className="footer-editor">
+      <div className="footer-editor-header" style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 

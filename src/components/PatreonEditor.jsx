@@ -181,8 +181,8 @@ const PatreonEditor = ({ onSave }) => {
   }
 
   return (
-    <div>
-      <div style={{ 
+    <div className="patreon-editor">
+      <div className="patreon-editor-header" style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 

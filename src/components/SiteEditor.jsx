@@ -206,9 +206,9 @@ const SiteEditor = ({ onSave }) => {
         </button>
       </div>
 
-      <div style={{ display: 'grid', gap: '2rem' }}>
+      <div className="site-editor-grid" style={{ display: 'grid', gap: '2rem' }}>
         {/* SEO et Métadonnées */}
-        <div style={{ 
+        <div className="site-editor-section" style={{ 
           background: 'rgba(255,255,255,0.05)', 
           borderRadius: '10px', 
           padding: '2rem',
@@ -276,7 +276,7 @@ const SiteEditor = ({ onSave }) => {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="site-editor-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
                 <label style={{ 
                   display: 'block', 
@@ -357,9 +357,9 @@ const SiteEditor = ({ onSave }) => {
         </div>
 
         {/* Thème et Couleurs */}
-        <div style={{ 
-          background: 'rgba(255,255,255,0.05)', 
-          borderRadius: '10px', 
+        <div className="site-editor-section" style={{
+          background: 'rgba(255,255,255,0.05)',
+          borderRadius: '10px',
           padding: '2rem',
           border: '1px solid rgba(255,255,255,0.1)'
         }}>
@@ -373,12 +373,12 @@ const SiteEditor = ({ onSave }) => {
             <i className="fa-solid fa-palette"></i> Thème et Couleurs
           </h3>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+          <div className="site-editor-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
             <div>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: '0.5rem', 
-                fontWeight: 'bold' 
+              <label style={{
+                display: 'block',
+                marginBottom: '0.5rem',
+                fontWeight: 'bold'
               }}>
                 <i className="fa-solid fa-circle" style={{ color: primaryColor }}></i> Couleur principale :
               </label>
@@ -455,13 +455,13 @@ const SiteEditor = ({ onSave }) => {
         </div>
 
         {/* Images et Branding */}
-        <div style={{ 
-          background: 'rgba(255,255,255,0.05)', 
-          borderRadius: '10px', 
+        <div className="site-editor-section" style={{
+          background: 'rgba(255,255,255,0.05)',
+          borderRadius: '10px',
           padding: '2rem',
           border: '1px solid rgba(255,255,255,0.1)'
         }}>
-          <h3 style={{ 
+          <h3 style={{
             marginBottom: '1.5rem',
             display: 'flex',
             alignItems: 'center',
@@ -599,7 +599,7 @@ const SiteEditor = ({ onSave }) => {
               )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="site-editor-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
                 <label style={{ 
                   display: 'block', 
@@ -658,7 +658,7 @@ const SiteEditor = ({ onSave }) => {
         </div>
 
         {/* Médias et Contenu */}
-        <div style={{ 
+        <div className="site-editor-section" style={{ 
           background: 'rgba(255,255,255,0.05)', 
           borderRadius: '10px', 
           padding: '2rem',
