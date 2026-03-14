@@ -264,6 +264,7 @@ export default function EVsLocationEditor({ onSave }) {
           </select>
         </div>
 
+        </div>
         <div className="admin-pokedex-modal-footer">
           <button type="button" className="admin-panel-nav-btn" onClick={closeModal}>Annuler</button>
           <button type="button" className="admin-pokedex-btn admin-pokedex-btn-primary" onClick={submitForm} disabled={!form.name?.trim()}>
