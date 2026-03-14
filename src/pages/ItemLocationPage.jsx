@@ -141,7 +141,7 @@ export default function ItemLocationPage() {
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Rechercher un objet, une zone ou un mode d'obtention…"
+                  placeholder="Rechercher (objet, zone, obtention)…"
                   className="item-location-search-input"
                   aria-label="Recherche"
                 />

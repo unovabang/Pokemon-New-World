@@ -1164,9 +1164,13 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .item-location-no-results .fa-magnifying-glass{font-size:2rem; margin-bottom:1rem; opacity:.6}
 
 @media (max-width:640px){
-  .item-location-container{padding-left:.75rem; padding-right:.75rem}
-  .item-location-toolbar{flex-direction:column; align-items:stretch; padding:.75rem 0; gap:.75rem}
-  .item-location-search-wrap{min-width:0}
+  .item-location-container{padding-left:1rem; padding-right:1rem}
+  .item-location-toolbar{
+    flex-direction:column; align-items:stretch; padding:1rem 1.25rem; gap:1rem;
+  }
+  .item-location-search-wrap{min-width:0; width:100%}
+  .item-location-search-input{min-width:0; font-size:16px}
+  .item-location-dropdown-wrap{width:100%}
   .item-location-dropdown{width:100%}
   .item-location-dropdown-trigger{min-width:0; width:100%; box-sizing:border-box}
   .item-location-dropdown-list{left:0; right:0; min-width:100%; max-height:50vh}
@@ -2763,10 +2767,24 @@ a.dex-panel--active{cursor:default}
   font-size:12px;
   letter-spacing:.3px;
 }
-@media (max-width:900px){.footer-grid{grid-template-columns:1fr; gap:24px}}
+@media (max-width:900px){
+  .footer-grid{grid-template-columns:1fr; gap:24px; text-align:center}
+  .footer-brand{justify-content:center}
+  .footer-col ul{display:grid; gap:8px; justify-items:center}
+  .footer-col a,.footer-col li{text-align:center}
+  .social{justify-content:center}
+}
 @media (max-width:480px){
-  .footer-grid{padding:1.5rem 0; gap:1.5rem}
-  .footnote{padding:1rem 0; font-size:.75rem; margin-top:1.5rem}
+  .site-footer{margin-top:2.5rem; padding:2rem 1rem 0}
+  .footer-grid{padding:1.5rem 0; gap:2rem}
+  .footer-col h4{font-size:.75rem; margin-bottom:10px}
+  .footer-brand{flex-direction:column; text-align:center; gap:8px; margin-bottom:1rem}
+  .footer-brand img{height:28px}
+  .footer-brand strong{font-size:14px}
+  .footer-col ul{justify-content:center}
+  .social{flex-wrap:wrap; justify-content:center; gap:8px; margin-top:1rem}
+  .social a{width:36px; height:36px; font-size:.9rem}
+  .footnote{padding:1rem .75rem; font-size:.75rem; margin-top:1.5rem; line-height:1.5}
 }
 
 /* ===== Patreon Section ===== */
