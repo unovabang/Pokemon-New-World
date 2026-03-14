@@ -371,7 +371,8 @@ function handlePatchnotesGet(req, res) {
     if (!fs.existsSync(patchnotesPath)) {
       // Créer un fichier vide s'il n'existe pas
       const defaultData = {
-        versions: []
+        versions: [],
+        background: null
       };
       fs.writeJsonSync(patchnotesPath, defaultData, { spaces: 2 });
       return res.json({ success: true, patchnotes: defaultData });
@@ -400,7 +401,10 @@ function handlePatchnotesGet(req, res) {
     
     // S'assurer que le format est correct
     if (!data.versions) {
-      data = { versions: [] };
+      data.versions = [];
+    }
+    if (data.background === undefined) {
+      data.background = null;
     }
     
     res.json({ success: true, patchnotes: data });
@@ -679,6 +683,24 @@ app.put('/api/patchnotes/:lang/reorder', (req, res) => {
       return res.status(400).json({ success: false, error: 'Une ou plusieurs versions introuvables' });
     }
     data.versions = reordered;
+    fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
+    res.json({ success: true, patchnotes: data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/patchnotes/background - Mettre à jour l'image de fond (patchnotes.json fr)
+app.put('/api/patchnotes/background', (req, res) => {
+  try {
+    const { background } = req.body || {};
+    const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
+    let data = { versions: [], background: null };
+    if (fs.existsSync(patchnotesPath)) {
+      data = fs.readJsonSync(patchnotesPath);
+      if (!Array.isArray(data.versions)) data.versions = [];
+    }
+    data.background = background !== undefined && background !== null && String(background).trim() ? String(background).trim() : null;
     fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
     res.json({ success: true, patchnotes: data });
   } catch (error) {
@@ -996,7 +1018,8 @@ app.get('/api/guide', (req, res) => {
         title: guideData.title || 'Guide Pokémon New World',
         subtitle: guideData.subtitle || '',
         disclaimer: guideData.disclaimer || '',
-        steps: Array.isArray(guideData.steps) ? guideData.steps : []
+        steps: Array.isArray(guideData.steps) ? guideData.steps : [],
+        background: guideData.background && String(guideData.background).trim() ? String(guideData.background).trim() : null
       }
     });
   } catch (error) {
@@ -1008,7 +1031,7 @@ app.get('/api/guide', (req, res) => {
 // PUT /api/guide - Sauvegarder le guide (écrit dans guide.json)
 app.put('/api/guide', (req, res) => {
   try {
-    const { title, subtitle, disclaimer, steps } = req.body;
+    const { title, subtitle, disclaimer, steps, background } = req.body;
     const guidePath = path.join(CONFIG_DIR, 'guide.json');
 
     let current = { title: '', subtitle: '', disclaimer: '', steps: [] };
@@ -1023,7 +1046,8 @@ app.put('/api/guide', (req, res) => {
       title: typeof title === 'string' ? title : (current.title || 'Guide Pokémon New World'),
       subtitle: typeof subtitle === 'string' ? subtitle : (current.subtitle || ''),
       disclaimer: typeof disclaimer === 'string' ? disclaimer : (current.disclaimer || ''),
-      steps: Array.isArray(steps) ? steps : current.steps
+      steps: Array.isArray(steps) ? steps : current.steps,
+      background: background !== undefined ? (background && String(background).trim() ? String(background).trim() : null) : (current.background !== undefined ? current.background : null)
     };
 
     const opts = { spaces: 2 };
@@ -1100,6 +1124,7 @@ app.get('/api/bst', (req, res) => {
         fakemon: Array.isArray(bstData.fakemon) ? bstData.fakemon : [],
         megas: Array.isArray(bstData.megas) ? bstData.megas : [],
         speciaux: Array.isArray(bstData.speciaux) ? bstData.speciaux : [],
+        background: bstData.background ?? null,
       },
     });
   } catch (error) {
@@ -1111,10 +1136,10 @@ app.get('/api/bst', (req, res) => {
 // PUT /api/bst - Sauvegarder le BST (écrit dans bst.json)
 app.put('/api/bst', (req, res) => {
   try {
-    const { fakemon, megas, speciaux } = req.body;
+    const { fakemon, megas, speciaux, background } = req.body;
     const bstPath = path.join(CONFIG_DIR, 'bst.json');
 
-    let current = { fakemon: [], megas: [], speciaux: [] };
+    let current = { fakemon: [], megas: [], speciaux: [], background: null };
     if (fs.existsSync(bstPath)) {
       current = fs.readJsonSync(bstPath);
     }
@@ -1123,6 +1148,7 @@ app.put('/api/bst', (req, res) => {
       fakemon: Array.isArray(fakemon) ? fakemon : (current.fakemon || []),
       megas: Array.isArray(megas) ? megas : (current.megas || []),
       speciaux: Array.isArray(speciaux) ? speciaux : (current.speciaux || []),
+      background: background !== undefined ? (background && String(background).trim() ? String(background).trim() : null) : (current.background ?? null),
     };
 
     if (!saveConfig('bst', updated)) {
@@ -1161,7 +1187,7 @@ app.get('/api/evs-location', (req, res) => {
     const entries = Array.isArray(configData?.entries) ? configData.entries : [];
     res.json({
       success: true,
-      evs: { entries },
+      evs: { entries, background: configData.background ?? null },
     });
   } catch (error) {
     console.error('❌ Erreur API /api/evs-location:', error);
@@ -1172,16 +1198,17 @@ app.get('/api/evs-location', (req, res) => {
 // PUT /api/evs-location - Sauvegarder la table EVs (écrit dans evs-location.json)
 app.put('/api/evs-location', (req, res) => {
   try {
-    const { entries } = req.body;
+    const { entries, background } = req.body;
     const evsPath = path.join(CONFIG_DIR, 'evs-location.json');
 
-    let current = { entries: [] };
+    let current = { entries: [], background: null };
     if (fs.existsSync(evsPath)) {
       current = fs.readJsonSync(evsPath);
     }
 
     const updated = {
       entries: Array.isArray(entries) ? entries : (current.entries || []),
+      background: background !== undefined ? (background && String(background).trim() ? String(background).trim() : null) : (current.background ?? null),
     };
 
     const opts = { spaces: 2 };

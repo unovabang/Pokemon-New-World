@@ -9,6 +9,7 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 const ItemLocationEditor = ({ onSave }) => {
   const [entries, setEntries] = useState([]);
+  const [background, setBackground] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -27,6 +28,7 @@ const ItemLocationEditor = ({ onSave }) => {
       const data = await res.json();
       if (data?.success && Array.isArray(data?.config?.entries)) {
         setEntries(data.config.entries.map((e, i) => ({ id: getNewId(), zone: e.zone || '', item: e.item || '', obtention: e.obtention || '' })));
+        setBackground(data.config.background ?? '');
       } else {
         setEntries([]);
       }
@@ -139,7 +141,10 @@ const ItemLocationEditor = ({ onSave }) => {
   const saveConfig = async (entriesToSave = entries) => {
     setSaving(true);
     try {
-      const config = { entries: entriesToSave.map((e) => ({ zone: (e.zone || '').trim(), item: (e.item || '').trim(), obtention: (e.obtention || '').trim() })) };
+      const config = {
+        entries: entriesToSave.map((e) => ({ zone: (e.zone || '').trim(), item: (e.item || '').trim(), obtention: (e.obtention || '').trim() })),
+        background: background && String(background).trim() ? String(background).trim() : null
+      };
       const res = await fetch(`${API_BASE}/config/item-location`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -179,6 +184,18 @@ const ItemLocationEditor = ({ onSave }) => {
         Les entrées sont affichées sur la page publique par zone. Même zone = même bloc ; l’ordre des lignes est conservé.
       </p>
 
+      <div className="item-location-editor-background" style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <label style={{ minWidth: '140px' }}>URL image de fond (page publique)</label>
+        <input
+          type="url"
+          value={background}
+          onChange={(e) => setBackground(e.target.value)}
+          placeholder="https://… ou /image.jpg"
+          className="item-location-editor-search-input"
+          style={{ flex: '1', minWidth: '200px', maxWidth: '400px' }}
+        />
+      </div>
+
       {!loading && entries.length > 0 && (
         <div className="item-location-editor-search-wrap">
           <i className="fa-solid fa-magnifying-glass item-location-editor-search-icon" />
@@ -207,9 +224,9 @@ const ItemLocationEditor = ({ onSave }) => {
             <thead>
               <tr>
                 <th className="th-ordre" style={{ width: '90px' }}>Ordre</th>
-                <th style={{ width: '18%' }}>Zone</th>
-                <th style={{ width: '22%' }}>Objet</th>
-                <th style={{ width: '32%' }}>Obtention</th>
+                <th className="th-zone" style={{ width: '22%' }}>Zone</th>
+                <th className="th-objet" style={{ width: '26%' }}>Objet</th>
+                <th className="th-obtention" style={{ width: '38%' }}>Obtention</th>
                 <th className="th-actions" style={{ width: '90px' }}>Actions</th>
               </tr>
             </thead>

@@ -383,6 +383,7 @@ export default function BSTPage() {
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [bstSource, setBstSource] = useState(() => getBSTDataFallback());
   const [pokedexList, setPokedexList] = useState(() => getPokedexEntriesFallback());
+  const [pageBackground, setPageBackground] = useState(null);
 
   const MOBILE_BREAKPOINT = 768;
   useEffect(() => {
@@ -406,6 +407,7 @@ export default function BSTPage() {
           megas: Array.isArray(bstRes.bst.megas) ? bstRes.bst.megas : [],
           speciaux: Array.isArray(bstRes.bst.speciaux) ? bstRes.bst.speciaux : [],
         });
+        setPageBackground(bstRes.bst.background && String(bstRes.bst.background).trim() ? bstRes.bst.background.trim() : null);
       }
       if (pokedexRes.success && pokedexRes.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
         setPokedexList(pokedexRes.pokedex.entries);
@@ -432,6 +434,14 @@ export default function BSTPage() {
 
   return (
     <div className="page bst-page">
+      {pageBackground && (
+        <>
+          <div className="page-bg-layer" aria-hidden>
+            <img src={pageBackground} alt="" />
+          </div>
+          <div className="page-overlay-layer" aria-hidden />
+        </>
+      )}
       <Sidebar />
       <div className="bst-bg">
         <div className="bst-bg-grid" />

@@ -29,6 +29,7 @@ export default function PatchNotesPage() {
 
   const versions = data?.versions || [];
   const selectedVersion = versions[selectedIndex] ?? versions[0];
+  const pageBackground = data?.background && String(data.background).trim() ? data.background.trim() : null;
 
   // Réinitialiser la sélection si l'index est hors limite (ex: après changement de langue)
   useEffect(() => {
@@ -37,6 +38,14 @@ export default function PatchNotesPage() {
 
   return (
     <main className="page page-with-nav patchnotes-page">
+      {pageBackground && (
+        <>
+          <div className="page-bg-layer" aria-hidden>
+            <img src={pageBackground} alt="" />
+          </div>
+          <div className="page-overlay-layer" aria-hidden />
+        </>
+      )}
       <Sidebar />
       <div className="container patchnotes-container patchnotes-container--with-sidebar">
         <aside className="patchnotes-sidebar">

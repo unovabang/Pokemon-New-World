@@ -24,6 +24,8 @@ const PatchNotesEditor = ({ onSave }) => {
   const [discordWebhookUrl, setDiscordWebhookUrl] = useState('');
   const [discordImageStyle, setDiscordImageStyle] = useState('thumbnail');
   const [discordWebhookSaving, setDiscordWebhookSaving] = useState(false);
+  const [pageBackground, setPageBackground] = useState('');
+  const [pageBackgroundSaving, setPageBackgroundSaving] = useState(false);
   const [currentPatch, setCurrentPatch] = useState({
     version: '',
     date: '',
@@ -83,6 +85,24 @@ const PatchNotesEditor = ({ onSave }) => {
     }
   };
 
+  const savePageBackground = async () => {
+    setPageBackgroundSaving(true);
+    try {
+      const res = await fetch(`${API_BASE}/patchnotes/background`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ background: pageBackground.trim() || null })
+      });
+      const data = await res.json();
+      if (data.success) showMessage('Succès', 'Image de fond de la page Notes de patch (FR) enregistrée.', 'success');
+      else throw new Error(data.error);
+    } catch (e) {
+      showMessage('Erreur', e.message || 'Impossible d\'enregistrer le fond.', 'error');
+    } finally {
+      setPageBackgroundSaving(false);
+    }
+  };
+
   const loadPatchNotes = async () => {
     try {
       setLoading(true);
@@ -90,6 +110,7 @@ const PatchNotesEditor = ({ onSave }) => {
       const data = await response.json();
       if (data.success && data.patchnotes?.versions) {
         setAllVersions(data.patchnotes.versions);
+        if (data.patchnotes.background !== undefined) setPageBackground(data.patchnotes.background ?? '');
         const versions = data.patchnotes.versions;
         if (selectedVersion !== null) {
           const v = versions.find(x => x.version === selectedVersion);
@@ -388,6 +409,25 @@ const PatchNotesEditor = ({ onSave }) => {
             <option value="thumbnail">Thumbnail (petite, en coin)</option>
             <option value="banner">Banner (grande image)</option>
           </select>
+        </div>
+      </div>
+
+      <div className="patchnotes-editor-webhook card">
+        <h3 className="patchnotes-editor-webhook-title"><i className="fa-solid fa-image" /> Image de fond de la page (FR)</h3>
+        <p className="patchnotes-editor-webhook-desc">
+          Fond d’écran de la page publique Notes de patch (version française).
+        </p>
+        <div className="patchnotes-editor-webhook-row">
+          <input
+            type="url"
+            value={pageBackground}
+            onChange={(e) => setPageBackground(e.target.value)}
+            placeholder="https://… ou /image.jpg"
+            className="patchnotes-editor-input patchnotes-editor-webhook-input"
+          />
+          <button type="button" onClick={savePageBackground} disabled={pageBackgroundSaving} className="btn btn-primary">
+            {pageBackgroundSaving ? <i className="fa-solid fa-spinner fa-spin" /> : <i className="fa-solid fa-save" />} Sauvegarder
+          </button>
         </div>
       </div>
 

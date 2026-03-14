@@ -62,6 +62,7 @@ function findPokedexSprite(entries, displayName) {
 
 export default function EVsLocationEditor({ onSave }) {
   const [entries, setEntries] = useState([]);
+  const [background, setBackground] = useState("");
   const [pokedexEntries, setPokedexEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -89,6 +90,7 @@ export default function EVsLocationEditor({ onSave }) {
       ]);
       if (evsRes?.success && Array.isArray(evsRes?.evs?.entries)) {
         setEntries(evsRes.evs.entries);
+        setBackground(evsRes.evs.background ?? "");
       } else {
         setEntries([]);
       }
@@ -169,7 +171,7 @@ export default function EVsLocationEditor({ onSave }) {
       const res = await fetch(`${API_BASE}/evs-location`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entries: payload }),
+        body: JSON.stringify({ entries: payload, background: background && String(background).trim() ? String(background).trim() : null }),
       });
       const data = await res.json();
       if (data?.success) {
@@ -472,6 +474,18 @@ export default function EVsLocationEditor({ onSave }) {
       <p className="evs-editor-desc">
         Gérez les Pokémon affichés par stat sur la page publique. Vous pouvez ajouter depuis le Pokédex (sprite inclus) ou en saisie manuelle, modifier le nom/sprite/points et supprimer.
       </p>
+
+      <div className="evs-editor-background" style={{ marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+        <label style={{ minWidth: "140px" }}>URL image de fond (page publique)</label>
+        <input
+          type="url"
+          className="evs-editor-search"
+          value={background}
+          onChange={(e) => setBackground(e.target.value)}
+          placeholder="https://… ou /image.jpg"
+          style={{ flex: "1", minWidth: "200px", maxWidth: "400px" }}
+        />
+      </div>
 
       <div className="evs-editor-tabs">
         {EV_SECTIONS.map((s) => (

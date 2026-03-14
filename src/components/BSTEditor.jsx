@@ -96,7 +96,7 @@ function findPokedexEntry(name, entries) {
 }
 
 export default function BSTEditor({ initialData, initialPokedexEntries = [], onSave }) {
-  const [data, setData] = useState({ fakemon: [], megas: [], speciaux: [] });
+  const [data, setData] = useState({ fakemon: [], megas: [], speciaux: [], background: "" });
   const [pokedexEntries, setPokedexEntries] = useState(() => (Array.isArray(initialPokedexEntries) ? initialPokedexEntries : []));
   const [activeSection, setActiveSection] = useState("fakemon");
   const [showModal, setShowModal] = useState(false);
@@ -108,7 +108,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
   const [saving, setSaving] = useState(false);
   const initialLoadDone = useRef(false);
   const skipNextAutoSave = useRef(true);
-  const dataRef = useRef({ fakemon: [], megas: [], speciaux: [] });
+  const dataRef = useRef({ fakemon: [], megas: [], speciaux: [], background: "" });
 
   useEffect(() => {
     let cancelled = false;
@@ -124,6 +124,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
             fakemon: Array.isArray(bstRes.bst.fakemon) ? bstRes.bst.fakemon : [],
             megas: Array.isArray(bstRes.bst.megas) ? bstRes.bst.megas : [],
             speciaux: Array.isArray(bstRes.bst.speciaux) ? bstRes.bst.speciaux : [],
+            background: bstRes.bst.background ?? "",
           });
           initialLoadDone.current = true;
         } else {
@@ -135,16 +136,18 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                 fakemon: Array.isArray(parsed.fakemon) ? parsed.fakemon : [],
                 megas: Array.isArray(parsed.megas) ? parsed.megas : [],
                 speciaux: Array.isArray(parsed.speciaux) ? parsed.speciaux : [],
+                background: parsed.background ?? "",
               });
             } else if (initialData) {
               setData({
                 fakemon: Array.isArray(initialData.fakemon) ? initialData.fakemon : [],
                 megas: Array.isArray(initialData.megas) ? initialData.megas : [],
                 speciaux: Array.isArray(initialData.speciaux) ? initialData.speciaux : [],
+                background: initialData.background ?? "",
               });
             }
           } catch {
-            if (initialData) setData(initialData);
+            if (initialData) setData({ ...initialData, background: initialData.background ?? "" });
           }
           initialLoadDone.current = true;
         }
@@ -161,16 +164,18 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
               fakemon: Array.isArray(parsed.fakemon) ? parsed.fakemon : [],
               megas: Array.isArray(parsed.megas) ? parsed.megas : [],
               speciaux: Array.isArray(parsed.speciaux) ? parsed.speciaux : [],
+              background: parsed.background ?? "",
             });
           } else if (initialData) {
             setData({
               fakemon: Array.isArray(initialData.fakemon) ? initialData.fakemon : [],
               megas: Array.isArray(initialData.megas) ? initialData.megas : [],
               speciaux: Array.isArray(initialData.speciaux) ? initialData.speciaux : [],
+              background: initialData.background ?? "",
             });
           }
         } catch {
-          if (initialData) setData(initialData);
+          if (initialData) setData({ ...initialData, background: initialData.background ?? "" });
         }
         initialLoadDone.current = true;
       }
@@ -369,6 +374,17 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
             <button type="button" onClick={saveToApiNow} disabled={saving} className="admin-pokedex-btn admin-pokedex-btn-ghost">
               <i className="fa-solid fa-save" /> {saving ? "Enregistrement…" : "Sauvegarder maintenant"}
             </button>
+          </div>
+          <div className="admin-bst-background-row" style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+            <label style={{ minWidth: "140px" }}>URL image de fond (page publique)</label>
+            <input
+              type="url"
+              className="admin-pokedex-input"
+              value={data.background || ""}
+              onChange={(e) => setData((d) => ({ ...d, background: e.target.value }))}
+              placeholder="https://… ou /image.jpg"
+              style={{ flex: "1", minWidth: "200px", maxWidth: "400px" }}
+            />
           </div>
         </div>
 

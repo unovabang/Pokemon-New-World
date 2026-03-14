@@ -107,6 +107,7 @@ function normalizeEvEntry(ev) {
 export default function EVsLocationPage() {
   const [evsEntries, setEvsEntries] = useState([]);
   const [pokedexEntries, setPokedexEntries] = useState([]);
+  const [pageBackground, setPageBackground] = useState(null);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
 
@@ -146,6 +147,14 @@ export default function EVsLocationPage() {
 
   return (
     <main className="page page-with-nav evs-location-page">
+      {pageBackground && (
+        <>
+          <div className="page-bg-layer" aria-hidden>
+            <img src={pageBackground} alt="" />
+          </div>
+          <div className="page-overlay-layer" aria-hidden />
+        </>
+      )}
       <Sidebar />
       <div className="container evs-location-container">
         <header className="evs-location-header">

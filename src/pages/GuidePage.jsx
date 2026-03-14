@@ -143,6 +143,7 @@ export default function GuidePage() {
             title: data.guide.title || guideDataFallback.title,
             subtitle: data.guide.subtitle || "",
             disclaimer: data.guide.disclaimer || "",
+            background: data.guide.background || null,
             steps: Array.isArray(data.guide.steps) ? data.guide.steps : [],
           });
         }
@@ -153,13 +154,20 @@ export default function GuidePage() {
     return () => { cancelled = true; };
   }, []);
 
-  const { title, subtitle, disclaimer, steps } = guideData;
+  const { title, subtitle, disclaimer, background, steps } = guideData;
   const stepList = Array.isArray(steps) ? steps : [];
+  const hasBg = background && String(background).trim();
 
   return (
-    <main className="page page-with-sidebar guide-page">
-      <div className="guide-page-bg" aria-hidden />
-      <div className="guide-page-overlay" aria-hidden />
+    <main className={`page page-with-sidebar guide-page${hasBg ? " guide-page--has-bg" : ""}`}>
+      {hasBg && (
+        <>
+          <div className="guide-page-bg" aria-hidden>
+            <img src={hasBg ? background : ""} alt="" />
+          </div>
+          <div className="guide-page-overlay" aria-hidden />
+        </>
+      )}
       <Sidebar />
 
       <div className="guide-wrap">

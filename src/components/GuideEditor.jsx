@@ -119,6 +119,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [disclaimer, setDisclaimer] = useState("");
+  const [background, setBackground] = useState("");
   const [steps, setSteps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -149,6 +150,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
           setTitle(data.guide.title || "");
           setSubtitle(data.guide.subtitle || "");
           setDisclaimer(data.guide.disclaimer || "");
+          setBackground(data.guide.background || "");
           setSteps(Array.isArray(data.guide.steps) ? data.guide.steps : []);
           setLoading(false);
           return;
@@ -163,11 +165,13 @@ export default function GuideEditor({ initialData = null, onSave }) {
           setTitle(parsed.title || "");
           setSubtitle(parsed.subtitle || "");
           setDisclaimer(parsed.disclaimer || "");
+          setBackground(parsed.background || "");
           setSteps(Array.isArray(parsed.steps) ? parsed.steps : []);
         } else if (initialData) {
           setTitle(initialData.title || "");
           setSubtitle(initialData.subtitle || "");
           setDisclaimer(initialData.disclaimer || "");
+          setBackground(initialData.background || "");
           setSteps(Array.isArray(initialData.steps) ? initialData.steps : []);
         }
       } catch {
@@ -175,6 +179,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
           setTitle(initialData.title || "");
           setSubtitle(initialData.subtitle || "");
           setDisclaimer(initialData.disclaimer || "");
+          setBackground(initialData.background || "");
           setSteps(Array.isArray(initialData.steps) ? initialData.steps : []);
         }
       }
@@ -185,13 +190,13 @@ export default function GuideEditor({ initialData = null, onSave }) {
   }, [initialData]);
 
   const saveToStorage = (dataToStore) => {
-    const data = dataToStore ?? { title, subtitle, disclaimer, steps };
+    const data = dataToStore ?? { title, subtitle, disclaimer, background, steps };
     localStorage.setItem(STORAGE_GUIDE, JSON.stringify(data));
     onSave?.(data);
   };
 
   const saveToApiNow = async (payload) => {
-    const pl = payload ?? { title, subtitle, disclaimer, steps };
+    const pl = payload ?? { title, subtitle, disclaimer, background: background || null, steps };
     setSaveMessage(null);
     setSaving(true);
     try {
@@ -298,16 +303,16 @@ export default function GuideEditor({ initialData = null, onSave }) {
     }
     setShowStepModal(false);
     setInsertAfterIndex(null);
-    saveToStorage({ title, subtitle, disclaimer, steps: newSteps });
-    saveToApiNow({ title, subtitle, disclaimer, steps: newSteps });
+    saveToStorage({ title, subtitle, disclaimer, background, steps: newSteps });
+    saveToApiNow({ title, subtitle, disclaimer, background: background || null, steps: newSteps });
   };
 
   const handleDelete = (index) => {
     const next = steps.filter((_, i) => i !== index);
     setSteps(next);
     setDeleteConfirm(null);
-    saveToStorage({ title, subtitle, disclaimer, steps: next });
-    saveToApiNow({ title, subtitle, disclaimer, steps: next });
+    saveToStorage({ title, subtitle, disclaimer, background, steps: next });
+    saveToApiNow({ title, subtitle, disclaimer, background: background || null, steps: next });
   };
 
   const moveStep = (index, direction) => {
@@ -319,8 +324,8 @@ export default function GuideEditor({ initialData = null, onSave }) {
     next[index] = { ...next[index], num: next[targetIdx].num };
     next[targetIdx] = { ...next[targetIdx], num: tempNum };
     setSteps(next);
-    saveToStorage({ title, subtitle, disclaimer, steps: next });
-    saveToApiNow({ title, subtitle, disclaimer, steps: next });
+    saveToStorage({ title, subtitle, disclaimer, background, steps: next });
+    saveToApiNow({ title, subtitle, disclaimer, background: background || null, steps: next });
   };
 
   const sortedSteps = [...steps].sort((a, b) => (parseInt(a.num, 10) || 0) - (parseInt(b.num, 10) || 0));
@@ -380,6 +385,15 @@ export default function GuideEditor({ initialData = null, onSave }) {
               value={disclaimer}
               onChange={(e) => setDisclaimer(e.target.value)}
               placeholder="Ce guide suit la trame principale, les quêtes annexes ne sont pas indiquées."
+            />
+          </div>
+          <div className="admin-guide-field">
+            <label>URL image de fond (page publique)</label>
+            <input
+              type="url"
+              value={background}
+              onChange={(e) => setBackground(e.target.value)}
+              placeholder="https://… ou /image.jpg"
             />
           </div>
         </div>

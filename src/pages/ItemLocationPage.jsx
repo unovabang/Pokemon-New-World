@@ -38,6 +38,7 @@ function groupByZone(entries) {
 
 export default function ItemLocationPage() {
   const [groups, setGroups] = useState([]);
+  const [pageBackground, setPageBackground] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterZone, setFilterZone] = useState("");
@@ -110,6 +111,14 @@ export default function ItemLocationPage() {
 
   return (
     <main className="page page-with-nav item-location-page">
+      {pageBackground && (
+        <>
+          <div className="page-bg-layer" aria-hidden>
+            <img src={pageBackground} alt="" />
+          </div>
+          <div className="page-overlay-layer" aria-hidden />
+        </>
+      )}
       <Sidebar />
       <div className="container item-location-container">
         <header className="item-location-header">
