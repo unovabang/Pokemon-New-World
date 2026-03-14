@@ -5655,22 +5655,64 @@ a.dex-panel--active{cursor:default}
 .evs-editor-modal-tabs .admin-panel-nav-btn { width: auto; padding: .5rem 1rem; }
 .evs-editor-pokedex-pick { margin-bottom: 1rem; }
 .evs-editor-pokedex-dropdown { position: relative; }
-.evs-editor-pokedex-search { margin-bottom: 0; }
-.evs-editor-pokedex-list {
-  position: absolute; top: 100%; left: 0; right: 0; margin-top: .35rem; max-height: 220px; overflow-y: auto;
-  background: rgba(12,18,32,.98); border: 1px solid rgba(126,205,242,.25); border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(0,0,0,.4); z-index: 100; display: flex; flex-direction: column; gap: 0;
+.evs-editor-pokedex-search-row { display: flex; gap: .4rem; align-items: stretch; }
+.evs-editor-pokedex-search { margin-bottom: 0; flex: 1; min-width: 0; }
+.evs-editor-pokedex-toggle {
+  flex-shrink: 0; width: 42px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--primary-2);
+  border-radius: 10px; cursor: pointer; transition: background .15s, border-color .15s;
 }
+.evs-editor-pokedex-toggle:hover { background: rgba(126,205,242,.15); border-color: rgba(126,205,242,.3); }
+.evs-editor-pokedex-list {
+  position: absolute; top: 100%; left: 0; right: 0; margin-top: .35rem; max-height: 320px; overflow: hidden;
+  background: rgba(12,18,32,.98); border: 1px solid rgba(126,205,242,.25); border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.4); z-index: 100; display: flex; flex-direction: column;
+}
+.evs-editor-pokedex-list-header {
+  display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .5rem .75rem;
+  border-bottom: 1px solid rgba(255,255,255,.08); font-size: .8rem; color: var(--muted); flex-shrink: 0;
+}
+.evs-editor-pokedex-list-close {
+  padding: .3rem .5rem; border: none; border-radius: 8px; background: rgba(255,255,255,.08);
+  color: var(--text); font-size: .8rem; cursor: pointer; display: inline-flex; align-items: center; gap: .35rem;
+  transition: background .15s;
+}
+.evs-editor-pokedex-list-close:hover { background: rgba(126,205,242,.2); color: var(--primary-2); }
+.evs-editor-pokedex-list > .evs-editor-pokedex-list-empty { padding: 1rem; text-align: center; color: var(--muted); font-size: .9rem; }
+.evs-editor-pokedex-list > button.evs-editor-pokedex-option { border-radius: 0; }
+.evs-editor-pokedex-list-body { max-height: 280px; overflow-y: auto; }
 .evs-editor-pokedex-list-empty { padding: 1rem; text-align: center; color: var(--muted); font-size: .9rem; }
 .evs-editor-pokedex-option {
   display: flex; align-items: center; gap: .75rem; width: 100%; padding: .5rem .75rem; border: none;
   background: transparent; color: var(--text); font-size: .9rem; text-align: left; cursor: pointer;
-  transition: background .12s; border-radius: 0;
+  transition: background .12s; border-radius: 0; flex-shrink: 0;
 }
 .evs-editor-pokedex-option:hover { background: rgba(126,205,242,.15); }
 .evs-editor-pokedex-option-sprite { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,.2); }
 .evs-editor-pokedex-option-sprite img { max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: pixelated; }
 .evs-editor-pokedex-option-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.evs-editor-pokedex-option-num { font-size: .8rem; color: var(--muted); flex-shrink: 0; }
+.evs-editor-custom-select { position: relative; }
+.evs-editor-select-trigger {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: .5rem;
+  padding: .6rem .9rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06); color: var(--text); font-size: .9rem; cursor: pointer;
+  transition: border-color .15s, background .15s; text-align: left;
+}
+.evs-editor-select-trigger:hover { border-color: rgba(126,205,242,.3); background: rgba(255,255,255,.08); }
+.evs-editor-select-trigger i { font-size: .7rem; color: var(--primary-2); opacity: .9; }
+.evs-editor-select-list {
+  position: absolute; top: 100%; left: 0; right: 0; margin-top: .35rem; padding: .25rem 0;
+  background: rgba(12,18,32,.98); border: 1px solid rgba(126,205,242,.25); border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.4); z-index: 100;
+}
+.evs-editor-select-option {
+  display: block; width: 100%; padding: .55rem .9rem; border: none; background: transparent;
+  color: var(--text); font-size: .9rem; text-align: left; cursor: pointer;
+  transition: background .12s;
+}
+.evs-editor-select-option:hover { background: rgba(126,205,242,.15); }
+.evs-editor-select-option--active { background: rgba(126,205,242,.2); color: var(--primary-2); font-weight: 600; }
 .evs-editor-label { display: block; margin-bottom: .35rem; font-size: .85rem; font-weight: 500; color: var(--muted); }
 .evs-editor-form-row { margin-bottom: 1rem; }
 .evs-editor-input, .evs-editor-select { width: 100%; padding: .6rem .9rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--text); font-size: .9rem; box-sizing: border-box; }

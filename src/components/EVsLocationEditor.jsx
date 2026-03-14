@@ -76,7 +76,9 @@ export default function EVsLocationEditor({ onSave }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [pokedexSearch, setPokedexSearch] = useState("");
   const [pokedexDropdownOpen, setPokedexDropdownOpen] = useState(false);
+  const [evDropdownOpen, setEvDropdownOpen] = useState(false);
   const pokedexDropdownRef = useRef(null);
+  const evDropdownRef = useRef(null);
 
   const load = async () => {
     try {
@@ -105,6 +107,34 @@ export default function EVsLocationEditor({ onSave }) {
 
   useEffect(() => { load(); }, []);
 
+  useEffect(() => {
+    if (!pokedexDropdownOpen) return;
+    const onDocClick = (e) => {
+      if (pokedexDropdownRef.current && !pokedexDropdownRef.current.contains(e.target)) setPokedexDropdownOpen(false);
+    };
+    const onKeyDown = (e) => { if (e.key === "Escape") setPokedexDropdownOpen(false); };
+    document.addEventListener("click", onDocClick, true);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("click", onDocClick, true);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [pokedexDropdownOpen]);
+
+  useEffect(() => {
+    if (!evDropdownOpen) return;
+    const onDocClick = (e) => {
+      if (evDropdownRef.current && !evDropdownRef.current.contains(e.target)) setEvDropdownOpen(false);
+    };
+    const onKeyDown = (e) => { if (e.key === "Escape") setEvDropdownOpen(false); };
+    document.addEventListener("click", onDocClick, true);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("click", onDocClick, true);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [evDropdownOpen]);
+
   const currentEv = useMemo(() => {
     const ev = entries.find((e) => e.id === activeSection);
     if (ev) return ev;
@@ -119,9 +149,16 @@ export default function EVsLocationEditor({ onSave }) {
   }, [pokemonList, searchQuery]);
 
   const filteredPokedexForDropdown = useMemo(() => {
-    if (!pokedexSearch.trim()) return pokedexEntries.slice(0, 80);
-    const q = normalizeName(pokedexSearch);
-    return pokedexEntries.filter((e) => normalizeName(e.name).includes(q)).slice(0, 80);
+    const raw = pokedexSearch.trim();
+    if (!raw) return pokedexEntries;
+    const words = normalizeName(raw).split(/\s+/).filter(Boolean);
+    if (words.length === 0) return pokedexEntries;
+    return pokedexEntries.filter((e) => {
+      const nameNorm = normalizeName(e.name);
+      const numStr = (e.num || "").toString().trim();
+      const matchWords = words.every((w) => nameNorm.includes(w) || (numStr && numStr.includes(w)));
+      return matchWords;
+    });
   }, [pokedexEntries, pokedexSearch]);
 
   const saveToApi = async (entriesToSave) => {
@@ -190,6 +227,7 @@ export default function EVsLocationEditor({ onSave }) {
     setShowModal(false);
     setEditingIndex(null);
     setPokedexDropdownOpen(false);
+    setEvDropdownOpen(false);
     setPokedexSearch("");
     setForm({ name: "", imageUrl: "", points: 0 });
   };
@@ -260,21 +298,39 @@ export default function EVsLocationEditor({ onSave }) {
 
         {modalMode === "add" && addSource === "pokedex" && (
           <div className="evs-editor-pokedex-pick">
-            <label className="evs-editor-label">Choisir un Pokémon du Pokédex</label>
+            <label className="evs-editor-label">Choisir un Pokémon du Pokédex ({pokedexEntries.length} au total)</label>
             <div className="evs-editor-pokedex-dropdown" ref={pokedexDropdownRef}>
-              <input
-                type="text"
-                className="evs-editor-input evs-editor-pokedex-search"
-                value={pokedexSearch}
-                onChange={(e) => { setPokedexSearch(e.target.value); setPokedexDropdownOpen(true); }}
-                onFocus={() => setPokedexDropdownOpen(true)}
-                placeholder="Rechercher par nom (ex: Staross, Bélamie…)"
-                autoComplete="off"
-              />
+              <div className="evs-editor-pokedex-search-row">
+                <input
+                  type="text"
+                  className="evs-editor-input evs-editor-pokedex-search"
+                  value={pokedexSearch}
+                  onChange={(e) => { setPokedexSearch(e.target.value); setPokedexDropdownOpen(true); }}
+                  onFocus={() => setPokedexDropdownOpen(true)}
+                  placeholder="Rechercher par nom (ex: Staross Bélamie, 338…)"
+                  autoComplete="off"
+                />
+                <button
+                  type="button"
+                  className="evs-editor-pokedex-toggle"
+                  onClick={() => setPokedexDropdownOpen((o) => !o)}
+                  title={pokedexDropdownOpen ? "Fermer la liste" : "Ouvrir la liste"}
+                  aria-expanded={pokedexDropdownOpen}
+                >
+                  <i className={`fa-solid fa-chevron-${pokedexDropdownOpen ? "up" : "down"}`} />
+                </button>
+              </div>
               {pokedexDropdownOpen && (
                 <div className="evs-editor-pokedex-list" role="listbox">
+                  <div className="evs-editor-pokedex-list-header">
+                    <span>{pokedexSearch.trim() ? `${filteredPokedexForDropdown.length} résultat(s)` : `Tous les Pokémon (${pokedexEntries.length})`}</span>
+                    <button type="button" className="evs-editor-pokedex-list-close" onClick={() => setPokedexDropdownOpen(false)} title="Fermer la liste">
+                      <i className="fa-solid fa-times" /> Fermer
+                    </button>
+                  </div>
+                  <div className="evs-editor-pokedex-list-body">
                   {filteredPokedexForDropdown.length === 0 ? (
-                    <div className="evs-editor-pokedex-list-empty">Aucun Pokémon trouvé</div>
+                    <div className="evs-editor-pokedex-list-empty">Aucun Pokémon trouvé. Essayez un autre terme.</div>
                   ) : (
                     filteredPokedexForDropdown.map((entry) => (
                       <button
@@ -292,9 +348,11 @@ export default function EVsLocationEditor({ onSave }) {
                           <img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
                         </span>
                         <span className="evs-editor-pokedex-option-name">{entry.name}</span>
+                        {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
                       </button>
                     ))
                   )}
+                  </div>
                 </div>
               )}
             </div>
@@ -321,17 +379,38 @@ export default function EVsLocationEditor({ onSave }) {
             placeholder="https://..."
           />
         </div>
-        <div className="evs-editor-form-row">
+        <div className="evs-editor-form-row" ref={evDropdownRef}>
           <label className="evs-editor-label">EV par KO (0, 1, 2 ou 3)</label>
-          <select
-            className="evs-editor-select"
-            value={form.points}
-            onChange={(e) => setForm((f) => ({ ...f, points: Number(e.target.value) }))}
-          >
-            {[0, 1, 2, 3].map((n) => (
-              <option key={n} value={n}>{n} pt{n > 1 ? "s" : ""}</option>
-            ))}
-          </select>
+          <div className="evs-editor-custom-select">
+            <button
+              type="button"
+              className="evs-editor-select-trigger"
+              onClick={() => setEvDropdownOpen((o) => !o)}
+              aria-expanded={evDropdownOpen}
+              aria-haspopup="listbox"
+            >
+              <span>{form.points} pt{form.points > 1 ? "s" : ""}</span>
+              <i className={`fa-solid fa-chevron-${evDropdownOpen ? "up" : "down"}`} />
+            </button>
+            {evDropdownOpen && (
+              <div className="evs-editor-select-list" role="listbox">
+                {[0, 1, 2, 3].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    role="option"
+                    className={`evs-editor-select-option ${form.points === n ? "evs-editor-select-option--active" : ""}`}
+                    onClick={() => {
+                      setForm((f) => ({ ...f, points: n }));
+                      setEvDropdownOpen(false);
+                    }}
+                  >
+                    {n} pt{n > 1 ? "s" : ""}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         </div>
