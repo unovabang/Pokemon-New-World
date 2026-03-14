@@ -34,6 +34,7 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
   const [saveMessage, setSaveMessage] = useState(null);
   const [searchList, setSearchList] = useState("");
   const [viewMode, setViewMode] = useState("grid");
+  const [imageVersion, setImageVersion] = useState(0); // cache-buster après modification d'image
   const initialLoadDone = useRef(false);
   const skipNextAutoSave = useRef(true);
   const dataRef = useRef({ entries: [], backgroundUrl: "", customTypes: [] });
@@ -214,10 +215,12 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
       const next = [...entries];
       next[editingIndex] = entry;
       setEntries(next);
+      setImageVersion((v) => v + 1); // force le rechargement des images (évite le cache navigateur)
       saveToStorage(next, undefined, undefined);
     } else {
       const next = [...entries, entry];
       setEntries(next);
+      setImageVersion((v) => v + 1);
       saveToStorage(next, undefined, undefined);
     }
     setShowAddModal(false);
@@ -375,7 +378,12 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
                     </button>
                     <div className="admin-dex-card-sprite">
                       {e.imageUrl ? (
-                        <img src={e.imageUrl} alt="" onError={(ev) => (ev.target.style.display = "none")} />
+                        <img
+                          key={`sprite-${globalIndex}-${e.imageUrl}-${imageVersion}`}
+                          src={`${e.imageUrl}${e.imageUrl.includes("?") ? "&" : "?"}v=${imageVersion}`}
+                          alt=""
+                          onError={(ev) => (ev.target.style.display = "none")}
+                        />
                       ) : (
                         <span style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "rgba(255,255,255,.3)", fontSize: "1.5rem" }}>?</span>
                       )}
@@ -418,7 +426,12 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
                         <td style={{ fontWeight: "600" }}>{e.name}</td>
                         <td>
                           {e.imageUrl ? (
-                            <img src={e.imageUrl} alt="" onError={(ev) => (ev.target.style.display = "none")} />
+                            <img
+                              key={`sprite-t-${globalIndex}-${e.imageUrl}-${imageVersion}`}
+                              src={`${e.imageUrl}${e.imageUrl.includes("?") ? "&" : "?"}v=${imageVersion}`}
+                              alt=""
+                              onError={(ev) => (ev.target.style.display = "none")}
+                            />
                           ) : (
                             <span style={{ opacity: 0.5 }}>—</span>
                           )}
@@ -474,6 +487,11 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
               <div>
                 <label className="admin-pokedex-label">URL image</label>
                 <input type="url" className="admin-pokedex-input" value={form.imageUrl} onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))} placeholder="https://..." />
+                {form.imageUrl?.trim() && (
+                  <div className="admin-pokedex-sprite-preview" style={{ marginTop: "0.5rem", width: "80px", height: "80px", borderRadius: "12px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(0,0,0,0.2)" }}>
+                    <img src={form.imageUrl.trim()} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} onError={(ev) => (ev.target.style.display = "none")} />
+                  </div>
+                )}
               </div>
               <div>
                 <label className="admin-pokedex-label">Types (max 2)</label>

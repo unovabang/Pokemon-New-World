@@ -294,6 +294,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
     const entry = {
       name: form.name.trim(),
       type: (form.type || "").trim(),
+      imageUrl: (form.imageUrl || "").trim() || undefined,
       hp: String(form.hp).trim() || "0",
       atk: String(form.atk).trim() || "0",
       def: String(form.def).trim() || "0",
