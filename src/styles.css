@@ -3104,7 +3104,7 @@ a.dex-panel--active{cursor:default}
 
 /* ===== EMBED EDITOR (Discord) — refonte sobre ===== */
 .embed-editor {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 0 1.5rem 2rem;
 }
@@ -3124,11 +3124,11 @@ a.dex-panel--active{cursor:default}
 }
 .embed-editor-layout {
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: 1fr 420px;
   gap: 2.5rem;
   align-items: start;
 }
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
   .embed-editor-layout { grid-template-columns: 1fr; }
 }
 .embed-editor-form {
@@ -3333,10 +3333,13 @@ a.dex-panel--active{cursor:default}
 
 .embed-editor-aside {
   position: sticky;
-  top: 1.5rem;
+  top: 1rem;
+  align-self: start;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
 }
 .embed-preview-card,
 .embed-webhook-card {
@@ -3429,6 +3432,21 @@ a.dex-panel--active{cursor:default}
   word-break: break-word;
   margin-bottom: 0.5rem;
 }
+.embed-preview-description strong { font-weight: 700; color: #fff; }
+.embed-preview-description em { font-style: italic; }
+.embed-preview-description s { text-decoration: line-through; }
+.embed-preview-inline-code {
+  background: rgba(0,0,0,.35);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.85em;
+}
+.embed-preview-link {
+  color: #00a8fc;
+  text-decoration: none;
+}
+.embed-preview-link:hover { text-decoration: underline; }
 .embed-preview-image-wrap { margin: 0.5rem 0; border-radius: 6px; overflow: hidden; max-width: 100%; }
 .embed-preview-image { max-width: 100%; height: auto; display: block; }
 .embed-preview-fields {

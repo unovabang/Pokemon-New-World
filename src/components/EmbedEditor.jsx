@@ -2,6 +2,95 @@ import { useState, useMemo, useRef } from "react";
 
 const DEFAULT_COLOR_HEX = "#5865F2";
 
+/** Rend le texte en Markdown style Discord pour l'aperçu (gras, italique, souligné, barré, code, lien) */
+function renderDiscordMarkdown(text) {
+  if (!text || typeof text !== "string") return null;
+  const parts = [];
+  let pos = 0;
+  while (pos < text.length) {
+    const rest = text.slice(pos);
+    let matched = false;
+    if (rest.startsWith("**")) {
+      const end = text.indexOf("**", pos + 2);
+      if (end !== -1) {
+        parts.push({ type: "bold", content: text.slice(pos + 2, end) });
+        pos = end + 2;
+        matched = true;
+      }
+    }
+    if (!matched && rest.startsWith("__")) {
+      const end = text.indexOf("__", pos + 2);
+      if (end !== -1) {
+        parts.push({ type: "underline", content: text.slice(pos + 2, end) });
+        pos = end + 2;
+        matched = true;
+      }
+    }
+    if (!matched && rest.startsWith("~~")) {
+      const end = text.indexOf("~~", pos + 2);
+      if (end !== -1) {
+        parts.push({ type: "strikethrough", content: text.slice(pos + 2, end) });
+        pos = end + 2;
+        matched = true;
+      }
+    }
+    if (!matched && rest.startsWith("`")) {
+      const end = text.indexOf("`", pos + 1);
+      if (end !== -1) {
+        parts.push({ type: "code", content: text.slice(pos + 1, end) });
+        pos = end + 1;
+        matched = true;
+      }
+    }
+    if (!matched && rest.startsWith("[")) {
+      const linkMatch = rest.match(/^\[([^\]]*)\]\(([^)]*)\)/);
+      if (linkMatch) {
+        parts.push({ type: "link", content: linkMatch[1], url: linkMatch[2] });
+        pos += linkMatch[0].length;
+        matched = true;
+      }
+    }
+    if (!matched && rest.startsWith("*") && !rest.startsWith("**")) {
+      const end = text.indexOf("*", pos + 1);
+      if (end !== -1) {
+        const inner = text.slice(pos + 1, end);
+        if (!inner.includes("\n")) {
+          parts.push({ type: "italic", content: inner });
+          pos = end + 1;
+          matched = true;
+        }
+      }
+    }
+    if (!matched && rest.startsWith("_") && !rest.startsWith("__")) {
+      const end = text.indexOf("_", pos + 1);
+      if (end !== -1) {
+        const inner = text.slice(pos + 1, end);
+        if (!inner.includes("\n")) {
+          parts.push({ type: "italic", content: inner });
+          pos = end + 1;
+          matched = true;
+        }
+      }
+    }
+    if (!matched) {
+      const next = text.slice(pos).search(/\*\*|__|~~|`|\[|\*|_/);
+      const until = next === -1 ? text.length : pos + next;
+      if (until > pos) parts.push({ type: "text", content: text.slice(pos, until) });
+      pos = next === -1 ? text.length : pos + next;
+    }
+  }
+  return parts.map((p, i) => {
+    if (p.type === "text") return p.content;
+    if (p.type === "bold") return <strong key={i}>{p.content}</strong>;
+    if (p.type === "italic") return <em key={i}>{p.content}</em>;
+    if (p.type === "underline") return <span key={i} style={{ textDecoration: "underline" }}>{p.content}</span>;
+    if (p.type === "strikethrough") return <s key={i}>{p.content}</s>;
+    if (p.type === "code") return <code key={i} className="embed-preview-inline-code">{p.content}</code>;
+    if (p.type === "link") return <a key={i} href={p.url} target="_blank" rel="noopener noreferrer" className="embed-preview-link">{p.content || p.url}</a>;
+    return p.content;
+  });
+}
+
 function hexToDecimal(hex) {
   if (!hex || typeof hex !== "string") return null;
   const cleaned = hex.replace(/^#/, "");
@@ -343,7 +432,7 @@ export default function EmbedEditor() {
                         )}
                       </div>
                     )}
-                    {embed.description?.trim() && <div className="embed-preview-description">{embed.description}</div>}
+                    {embed.description?.trim() && <div className="embed-preview-description">{renderDiscordMarkdown(embed.description)}</div>}
                     {embed.image?.trim() && (
                       <div className="embed-preview-image-wrap">
                         <img src={embed.image} alt="" className="embed-preview-image" onError={(e) => (e.target.style.display = "none")} />
