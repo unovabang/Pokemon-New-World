@@ -18,6 +18,7 @@ export default function TeamEditor() {
   const [message, setMessage] = useState(null);
   const [members, setMembers] = useState([]);
   const [thanks, setThanks] = useState([]);
+  const [showBackground, setShowBackground] = useState(true);
 
   const load = async () => {
     setLoading(true);
@@ -28,9 +29,11 @@ export default function TeamEditor() {
         const m = Array.isArray(data.config.members) ? data.config.members : [];
         setMembers(m.map((x) => ({ ...x, id: x.id || generateId() })));
         setThanks(Array.isArray(data.config.thanks) ? data.config.thanks : []);
+        setShowBackground(data.config.showBackground !== false);
       } else {
         setMembers([]);
         setThanks([]);
+        setShowBackground(true);
       }
     } catch (e) {
       setMembers([]);
@@ -47,6 +50,7 @@ export default function TeamEditor() {
     setMessage(null);
     try {
       const payload = {
+        showBackground,
         members: members.map(({ id, pseudo, role, avatar, roleColor }) => ({
           id: id || generateId(),
           pseudo: (pseudo || "").trim(),
@@ -66,6 +70,7 @@ export default function TeamEditor() {
         setMessage({ type: "success", text: "Équipe et remerciements enregistrés." });
         setMembers(payload.members);
         setThanks(payload.thanks);
+        setShowBackground(payload.showBackground);
       } else {
         setMessage({ type: "error", text: data?.error || "Erreur lors de l’enregistrement." });
       }
@@ -158,6 +163,20 @@ export default function TeamEditor() {
           {message.type === "success" ? <i className="fa-solid fa-check" aria-hidden /> : <i className="fa-solid fa-exclamation-triangle" aria-hidden />} {message.text}
         </p>
       )}
+
+      <section className="team-editor-section">
+        <h3 className="team-editor-section-title">
+          <i className="fa-solid fa-image" aria-hidden /> Apparence de la page
+        </h3>
+        <label className="team-editor-toggle">
+          <input
+            type="checkbox"
+            checked={showBackground}
+            onChange={(e) => setShowBackground(e.target.checked)}
+          />
+          <span>Afficher le fond décoratif sur la page équipe</span>
+        </label>
+      </section>
 
       <section className="team-editor-section">
         <h3 className="team-editor-section-title">

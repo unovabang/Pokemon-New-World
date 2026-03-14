@@ -782,10 +782,10 @@ app.get('/api/config/:name', (req, res) => {
         try {
           configData = fs.readJsonSync(seedPath);
         } catch (e) {
-          configData = { members: [], thanks: [] };
+          configData = { members: [], thanks: [], showBackground: true };
         }
       } else {
-        configData = { members: [], thanks: [] };
+        configData = { members: [], thanks: [], showBackground: true };
       }
     }
     if (!configData) {

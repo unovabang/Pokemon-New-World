@@ -18,6 +18,7 @@ export default function TeamPage() {
   const [visible, setVisible] = useState(false);
   const [members, setMembers] = useState([]);
   const [thanks, setThanks] = useState([]);
+  const [showBackground, setShowBackground] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export default function TeamPage() {
         const config = data.config || {};
         setMembers(Array.isArray(config.members) ? config.members : []);
         setThanks(Array.isArray(config.thanks) ? config.thanks : []);
+        setShowBackground(config.showBackground !== false);
       })
       .catch(() => {})
       .finally(() => { if (!cancelled) setLoading(false); });
@@ -41,9 +43,9 @@ export default function TeamPage() {
   }, []);
 
   return (
-    <main className="page page-with-nav team-page">
+    <main className={`page page-with-nav team-page ${showBackground ? "team-page--with-bg" : ""}`}>
       <Sidebar />
-      <div className="team-page-bg" aria-hidden />
+      {showBackground && <div className="team-page-bg" aria-hidden />}
       <div className="container team-container">
         <header className="team-hero">
           <LanguageSelector className="team-lang-selector" />
@@ -89,8 +91,9 @@ export default function TeamPage() {
                 >
                   {member.role || "—"}
                 </span>
+                {isFounder && <span className="team-card-founder-badge" aria-hidden><i className="fa-solid fa-crown" /></span>}
               </article>
-            ))
+            ); })
           )}
         </section>
 

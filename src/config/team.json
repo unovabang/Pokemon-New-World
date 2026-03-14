@@ -1,4 +1,5 @@
 {
+  "showBackground": true,
   "members": [
     { "id": "1", "pseudo": "Unovabang", "role": "Fondateur", "avatar": "", "roleColor": "#7ecdf2" },
     { "id": "2", "pseudo": "Jirô", "role": "DevTeam", "avatar": "", "roleColor": "#a78bfa" }

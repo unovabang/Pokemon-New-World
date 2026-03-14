@@ -5321,8 +5321,9 @@ a.dex-panel--active{cursor:default}
   opacity: 0.9;
 }
 .team-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1.5rem;
   margin-bottom: 4rem;
   opacity: 0;
@@ -5334,7 +5335,7 @@ a.dex-panel--active{cursor:default}
   transform: translateY(0);
 }
 .team-loading {
-  grid-column: 1 / -1;
+  width: 100%;
   text-align: center;
   padding: 2rem;
   color: var(--muted);
@@ -5352,11 +5353,49 @@ a.dex-panel--active{cursor:default}
   overflow: hidden;
   transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease, border-color 0.35s ease;
   animation: teamCardIn 0.6s ease backwards;
+  width: 200px;
+  flex-shrink: 0;
 }
 .team-card:hover {
   transform: translateY(-8px) scale(1.02);
   border-color: rgba(126,205,242,.4);
   box-shadow: 0 20px 50px rgba(0,0,0,.4), 0 0 40px rgba(126,205,242,.15);
+}
+.team-card--founder {
+  width: 260px;
+  padding: 2.25rem 1.5rem;
+  border-width: 2px;
+  border-color: rgba(251,191,36,.35);
+  background: linear-gradient(165deg, rgba(251,191,36,.12) 0%, rgba(255,255,255,.06) 40%, rgba(255,255,255,.02) 100%);
+  box-shadow: 0 12px 40px rgba(0,0,0,.35), 0 0 30px rgba(251,191,36,.12);
+}
+.team-card--founder:hover {
+  border-color: rgba(251,191,36,.55);
+  box-shadow: 0 20px 50px rgba(0,0,0,.4), 0 0 50px rgba(251,191,36,.2);
+}
+.team-card--founder .team-card-avatar-wrap {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1.25rem;
+  padding: 5px;
+  background: linear-gradient(145deg, rgba(251,191,36,.6), rgba(245,158,11,.4));
+  box-shadow: 0 8px 24px rgba(251,191,36,.3);
+}
+.team-card--founder .team-card-pseudo {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+.team-card--founder .team-card-role {
+  font-size: 0.85rem;
+  padding: 0.4rem 1rem;
+}
+.team-card-founder-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  color: rgba(251,191,36,.95);
+  font-size: 1.1rem;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.5));
 }
 .team-card-glow {
   position: absolute;
@@ -5535,6 +5574,20 @@ a.dex-panel--active{cursor:default}
   font-size: 0.85rem;
   color: var(--muted);
   line-height: 1.45;
+}
+.team-editor-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.team-editor-toggle input[type="checkbox"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--primary-2);
+  cursor: pointer;
 }
 .team-editor-empty {
   margin: 0 0 1rem;
