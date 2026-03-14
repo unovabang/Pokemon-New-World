@@ -11,6 +11,7 @@ const SIDEBAR_ITEMS = [
   { id: "evs", label: "EVs locations", icon: "fa-location-dot", to: "/evs-location" },
   { id: "bst", label: "All BST + new Abilities", icon: "fa-table", to: "/bst" },
   { id: "nerfs", label: "Nerfs and buffs", icon: "fa-scale-balanced", to: "/nerfs-and-bugs" },
+  { id: "equipe", label: "L'équipe", icon: "fa-users", to: "/equipe" },
 ];
 
 const Sidebar = () => {

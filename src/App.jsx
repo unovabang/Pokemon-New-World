@@ -16,6 +16,7 @@ import ExtradexPage from "./pages/ExtradexPage";
 import GuidePage from "./pages/GuidePage";
 import BSTPage from "./pages/BSTPage";
 import ItemLocationPage from "./pages/ItemLocationPage";
+import TeamPage from "./pages/TeamPage";
 import UnderConstructionPage from "./pages/UnderConstructionPage";
 import LoginAdmin from "./pages/LoginAdmin";
 import Page404 from "./pages/Page404";
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="/guide" element={<GuidePage />} />
         <Route path="/bst" element={<BSTPage />} />
         <Route path="/item-location" element={<ItemLocationPage />} />
+        <Route path="/equipe" element={<TeamPage />} />
         <Route path="/evs-location" element={<UnderConstructionPage title="EVs Location" />} />
         <Route path="/nerfs-and-bugs" element={<UnderConstructionPage title="Nerfs and Bugs" />} />
         <Route path="/admin-login" element={<LoginAdmin />} />
