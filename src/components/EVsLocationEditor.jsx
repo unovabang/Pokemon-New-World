@@ -465,6 +465,15 @@ export default function EVsLocationEditor({ onSave }) {
               <i className={`fa-solid ${saveMessage.type === "success" ? "fa-check" : "fa-exclamation-triangle"}`} /> {saveMessage.text}
             </span>
           )}
+          <button
+            type="button"
+            className="admin-pokedex-btn admin-pokedex-btn-primary"
+            onClick={() => saveToApi(entries)}
+            disabled={saving}
+            title="Enregistrer les données et l’image de fond sur la page publique"
+          >
+            <i className={`fa-solid ${saving ? "fa-spinner fa-spin" : "fa-floppy-disk"}`} /> Sauvegarder
+          </button>
           <button type="button" className="admin-pokedex-btn admin-pokedex-btn-primary" onClick={openAdd}>
             <i className="fa-solid fa-plus" /> Ajouter un Pokémon
           </button>
@@ -475,16 +484,21 @@ export default function EVsLocationEditor({ onSave }) {
         Gérez les Pokémon affichés par stat sur la page publique. Vous pouvez ajouter depuis le Pokédex (sprite inclus) ou en saisie manuelle, modifier le nom/sprite/points et supprimer.
       </p>
 
-      <div className="evs-editor-background" style={{ marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-        <label style={{ minWidth: "140px" }}>URL image de fond (page publique)</label>
-        <input
-          type="url"
-          className="evs-editor-search"
-          value={background}
-          onChange={(e) => setBackground(e.target.value)}
-          placeholder="https://… ou /image.jpg"
-          style={{ flex: "1", minWidth: "200px", maxWidth: "400px" }}
-        />
+      <div className="evs-editor-background" style={{ marginBottom: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+          <label style={{ minWidth: "140px" }}>URL image de fond (page publique)</label>
+          <input
+            type="url"
+            className="evs-editor-search"
+            value={background}
+            onChange={(e) => setBackground(e.target.value)}
+            placeholder="https://… ou /image.jpg"
+            style={{ flex: "1", minWidth: "200px", maxWidth: "400px" }}
+          />
+        </div>
+        <p className="evs-editor-hint" style={{ margin: "0.25rem 0 0 140px", fontSize: "0.85rem", color: "var(--muted, #94a3b8)" }}>
+          Cliquez sur « Sauvegarder » ci-dessus pour enregistrer l’image de fond sur la page publique.
+        </p>
       </div>
 
       <div className="evs-editor-tabs">
