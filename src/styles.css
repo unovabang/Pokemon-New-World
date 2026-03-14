@@ -2786,9 +2786,15 @@ a.dex-panel--active{cursor:default}
 .patreon-image-container:hover .patreon-overlay{
   opacity:1;
 }
+/* Mobile : overlay visible au clic (comme les autres sections) */
 @media (max-width:768px){
+  .patreon-image-container{
+    min-height:200px;
+    cursor:pointer;
+  }
   .patreon-image-container .patreon-overlay{
-    opacity:1;
+    opacity:0;
+    pointer-events:none;
     background:linear-gradient(to top, rgba(8,12,28,.98) 0%, rgba(20,15,25,.95) 60%, rgba(8,12,28,.9) 100%);
     overflow-y:auto;
     overflow-x:hidden;
@@ -2796,8 +2802,13 @@ a.dex-panel--active{cursor:default}
     justify-content:flex-start;
     padding:1rem;
     -webkit-overflow-scrolling:touch;
+    transition:opacity .3s ease;
   }
-  .patreon-image-container{min-height:280px;}
+  .patreon-image-container.patreon-overlay-visible .patreon-overlay{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .patreon-image-container.patreon-overlay-visible{cursor:default;}
   .patreon-cta{
     background:rgba(5,9,20,.92);
     border-radius:16px;
@@ -2807,6 +2818,7 @@ a.dex-panel--active{cursor:default}
     max-width:100%;
     width:100%;
     box-sizing:border-box;
+    cursor:default;
   }
   .patreon-cta h3{font-size:1.1rem;}
   .patreon-cta p{color:#fff; font-size:14px; margin-bottom:1rem;}

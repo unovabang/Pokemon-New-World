@@ -78,6 +78,7 @@ const HomePage = () => {
   };
   
   const patreonContent = getPatreonContent();
+  const [patreonOverlayOpen, setPatreonOverlayOpen] = useState(false);
   const [openVideo, setOpenVideo] = useState(false);
   const [openExplanations, setOpenExplanations] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
@@ -272,14 +273,22 @@ const HomePage = () => {
               {patreonContent?.title || t('sections.patreon.title')}
             </h2>
             <div className="patreon-content">
-              <div className="patreon-image-container">
+              <div
+                className={`patreon-image-container${patreonOverlayOpen ? " patreon-overlay-visible" : ""}`}
+                onClick={() => setPatreonOverlayOpen((v) => !v)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setPatreonOverlayOpen((v) => !v); } }}
+                aria-expanded={patreonOverlayOpen}
+                aria-label={patreonOverlayOpen ? (t("sections.patreon.close") || "Fermer") : (t("sections.patreon.open") || "Voir le contenu Patreon")}
+              >
                 <img 
                   src={patreonContent?.image || "/patreon.png"} 
                   alt="Soutenez-nous sur Patreon" 
                   className="patreon-image"
                 />
                 <div className="patreon-overlay">
-                  <div className="patreon-cta">
+                  <div className="patreon-cta" onClick={(e) => e.stopPropagation()}>
                     <h3>{patreonContent?.content?.heading || t('sections.patreon.heading')}</h3>
                     <p>{patreonContent?.content?.description || t('sections.patreon.description')}</p>
                     <a 
