@@ -3102,6 +3102,200 @@ a.dex-panel--active{cursor:default}
   background: rgba(239,68,68,.3);
 }
 
+/* ===== EMBED EDITOR (Discord) ===== */
+.embed-editor-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2rem;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .embed-editor-layout { grid-template-columns: 1fr; }
+}
+.embed-editor-form { display: flex; flex-direction: column; gap: 1rem; }
+.embed-editor-block { display: flex; flex-direction: column; gap: 0.5rem; }
+.embed-editor-block .admin-pokedex-input { margin-bottom: 0; }
+.embed-editor-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.embed-editor-field-row .admin-pokedex-input { margin-bottom: 0; }
+.embed-editor-json { color: #a5b4fc; white-space: pre-wrap; word-break: break-all; }
+
+.embed-editor-preview-wrap {
+  position: sticky;
+  top: 1rem;
+}
+.embed-editor-preview {
+  background: #313338;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,.08);
+  min-height: 120px;
+}
+.embed-preview-content {
+  color: #dbdee1;
+  font-size: 0.95rem;
+  margin: 0 0 0.5rem 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.embed-preview-empty {
+  color: rgba(255,255,255,.5);
+  font-size: 0.9rem;
+  margin: 0;
+}
+.embed-preview-box {
+  border-left: 4px solid #5865F2;
+  background: #2b2d31;
+  border-radius: 0 4px 4px 0;
+  padding: 0.5rem 1rem 0.75rem;
+  margin-top: 0.5rem;
+  max-width: 100%;
+}
+.embed-preview-author {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+.embed-preview-author-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+.embed-preview-author-name {
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.embed-preview-author-name:hover { text-decoration: underline; }
+.embed-preview-title {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+.embed-preview-title a { color: #00a8fc; text-decoration: none; }
+.embed-preview-title a:hover { text-decoration: underline; }
+.embed-preview-description {
+  color: #dbdee1;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 0.5rem;
+}
+.embed-preview-image-wrap { margin: 0.5rem 0; border-radius: 4px; overflow: hidden; max-width: 100%; }
+.embed-preview-image { max-width: 100%; height: auto; display: block; }
+.embed-preview-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem 1rem;
+  margin-top: 0.5rem;
+}
+.embed-preview-field { margin-bottom: 0.25rem; }
+.embed-preview-field--inline { grid-column: span 1; }
+.embed-preview-field:not(.embed-preview-field--inline) { grid-column: 1 / -1; }
+.embed-preview-field-name {
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+.embed-preview-field-value { color: #dbdee1; font-size: 0.875rem; }
+.embed-preview-footer-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.embed-preview-thumbnail { width: 24px; height: 24px; border-radius: 4px; }
+.embed-preview-footer-text { color: #b5bac1; font-size: 0.75rem; }
+.embed-editor-webhook { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.1); }
+
+.embed-editor-markdown-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+.embed-editor-md-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s, border-color .2s;
+}
+.embed-editor-md-btn:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(102,126,234,.5);
+}
+.embed-editor-md-btn i { font-size: 0.95rem; }
+
+.embed-editor-hint {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.65);
+}
+
+.embed-editor-help {
+  margin-top: 1.25rem;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(0,0,0,.25);
+}
+.embed-editor-help-toggle {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  color: #a5b4fc;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.embed-editor-help-toggle:hover { background: rgba(255,255,255,.04); color: #c7d2fe; }
+.embed-editor-help-content { padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,.08); }
+.embed-editor-help-block { margin-bottom: 1rem; }
+.embed-editor-help-block:last-child { margin-bottom: 0; }
+.embed-editor-help-block h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,.9);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.embed-editor-help-block ul { margin: 0; padding-left: 1.25rem; color: rgba(255,255,255,.8); font-size: 0.85rem; }
+.embed-editor-help-block li { margin-bottom: 0.25rem; }
+.embed-editor-help-block code {
+  background: rgba(0,0,0,.4);
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+.embed-editor-help-icons { list-style: none; padding-left: 0; }
+.embed-editor-help-icons li { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; }
+.embed-editor-help-icons li i { color: #a5b4fc; width: 1.1rem; text-align: center; }
+
 /* Modale — overlay fixe, centrée dans le viewport (rendu via portail dans document.body) */
 .admin-pokedex-modal-overlay {
   position: fixed !important;
