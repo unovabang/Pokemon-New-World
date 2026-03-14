@@ -10,7 +10,7 @@ const SIDEBAR_ITEMS = [
   { id: "items", label: "Items locations", icon: "fa-location-dot", to: "/item-location" },
   { id: "evs", label: "EVs locations", icon: "fa-location-dot", to: "/evs-location" },
   { id: "bst", label: "All BST + new Abilities", icon: "fa-table", to: "/bst" },
-  { id: "nerfs", label: "Nerfs and buffs", icon: "fa-scale-balanced", to: "/nerfs-and-bugs" },
+  { id: "nerfs", label: "Nerfs and buffs", icon: "fa-scale-balanced", to: "/nerfs-and-buffs" },
   { id: "equipe", label: "L'équipe", icon: "fa-users", to: "/equipe" },
 ];
 

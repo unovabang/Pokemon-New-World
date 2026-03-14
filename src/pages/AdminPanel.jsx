@@ -20,6 +20,7 @@ import BSTEditor from "../components/BSTEditor";
 import AdminTips from "../components/AdminTips";
 import ItemLocationEditor from "../components/ItemLocationEditor";
 import EVsLocationEditor from "../components/EVsLocationEditor";
+import NerfsBuffsEditor from "../components/NerfsBuffsEditor";
 import EmbedEditor from "../components/EmbedEditor";
 import TeamEditor from "../components/TeamEditor";
 import UnderConstructionPage from "./UnderConstructionPage";
@@ -393,12 +394,7 @@ const AdminPanel = () => {
             <EVsLocationEditor onSave={() => {}} />
           )}
           {activeTab === 'nerfs' && (
-            <UnderConstructionPage
-              title="Nerfs and Buffs"
-              backLabel="Retour à l'admin"
-              onBack={() => setActiveTab("dashboard")}
-              embedded
-            />
+            <NerfsBuffsEditor onSave={() => {}} />
           )}
           
           {/* Paramètres unifiés : Site + Patreon + Pied de page + Liens externes */}
@@ -458,8 +454,8 @@ const AdminPanel = () => {
             </div>
           )}
 
-          {activeTab !== 'dashboard' && activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
-           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'itemlocation' && activeTab !== 'evs' && activeTab !== 'settings' && activeTab !== 'team' && activeTab !== 'embed' && activeTab !== 'tips' && activeTab !== 'logs' && (
+          {activeTab !== 'dashboard' && activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' &&
+           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'itemlocation' && activeTab !== 'evs' && activeTab !== 'nerfs' && activeTab !== 'settings' && activeTab !== 'team' && activeTab !== 'embed' && activeTab !== 'tips' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">
                 <h2 className="admin-panel-card-title">

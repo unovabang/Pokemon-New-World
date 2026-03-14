@@ -17,6 +17,7 @@ import GuidePage from "./pages/GuidePage";
 import BSTPage from "./pages/BSTPage";
 import ItemLocationPage from "./pages/ItemLocationPage";
 import EVsLocationPage from "./pages/EVsLocationPage";
+import NerfsBuffsPage from "./pages/NerfsBuffsPage";
 import TeamPage from "./pages/TeamPage";
 import UnderConstructionPage from "./pages/UnderConstructionPage";
 import LoginAdmin from "./pages/LoginAdmin";
@@ -37,7 +38,7 @@ export default function App() {
         <Route path="/item-location" element={<ItemLocationPage />} />
         <Route path="/equipe" element={<TeamPage />} />
         <Route path="/evs-location" element={<EVsLocationPage />} />
-        <Route path="/nerfs-and-bugs" element={<UnderConstructionPage title="Nerfs and Bugs" />} />
+        <Route path="/nerfs-and-buffs" element={<NerfsBuffsPage />} />
         <Route path="/admin-login" element={<LoginAdmin />} />
         <Route path="/admin" element={
           <ProtectedRoute>
