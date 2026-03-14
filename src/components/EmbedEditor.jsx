@@ -1,6 +1,5 @@
 import { useState, useMemo, useRef } from "react";
 
-/** Couleur par défaut style Discord (bleu) */
 const DEFAULT_COLOR_HEX = "#5865F2";
 
 function hexToDecimal(hex) {
@@ -36,53 +35,20 @@ export default function EmbedEditor() {
   const [content, setContent] = useState("");
   const [embed, setEmbed] = useState(emptyEmbed());
   const [showJson, setShowJson] = useState(false);
-  const [showHelp, setShowHelp] = useState(true);
+  const [showHelp, setShowHelp] = useState(false);
   const [jsonCopied, setJsonCopied] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState("");
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState(null);
   const descRef = useRef(null);
 
-  const updateEmbed = (key, value) => {
-    setEmbed((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const updateAuthor = (key, value) => {
-    setEmbed((prev) => ({
-      ...prev,
-      author: { ...prev.author, [key]: value },
-    }));
-  };
-
-  const updateFooter = (key, value) => {
-    setEmbed((prev) => ({
-      ...prev,
-      footer: { ...prev.footer, [key]: value },
-    }));
-  };
-
-  const addField = () => {
-    setEmbed((prev) => ({
-      ...prev,
-      fields: [...prev.fields, { name: "", value: "", inline: false }],
-    }));
-  };
-
-  const updateField = (index, key, value) => {
-    setEmbed((prev) => ({
-      ...prev,
-      fields: prev.fields.map((f, i) =>
-        i === index ? { ...f, [key]: value } : f
-      ),
-    }));
-  };
-
-  const removeField = (index) => {
-    setEmbed((prev) => ({
-      ...prev,
-      fields: prev.fields.filter((_, i) => i !== index),
-    }));
-  };
+  const updateEmbed = (key, value) => setEmbed((prev) => ({ ...prev, [key]: value }));
+  const updateAuthor = (key, value) => setEmbed((prev) => ({ ...prev, author: { ...prev.author, [key]: value } }));
+  const updateFooter = (key, value) => setEmbed((prev) => ({ ...prev, footer: { ...prev.footer, [key]: value } }));
+  const addField = () => setEmbed((prev) => ({ ...prev, fields: [...prev.fields, { name: "", value: "", inline: false }] }));
+  const updateField = (index, key, value) =>
+    setEmbed((prev) => ({ ...prev, fields: prev.fields.map((f, i) => (i === index ? { ...f, [key]: value } : f)) }));
+  const removeField = (index) => setEmbed((prev) => ({ ...prev, fields: prev.fields.filter((_, i) => i !== index) }));
 
   const insertMarkdown = (before, after) => {
     const ta = descRef.current;
@@ -95,8 +61,7 @@ export default function EmbedEditor() {
     updateEmbed("description", newText);
     setTimeout(() => {
       ta.focus();
-      const newCursor = start + before.length + selected.length;
-      ta.setSelectionRange(newCursor, newCursor);
+      ta.setSelectionRange(start + before.length + selected.length, start + before.length + selected.length);
     }, 0);
   };
 
@@ -138,7 +103,6 @@ export default function EmbedEditor() {
   }, [embed, content]);
 
   const payloadJson = useMemo(() => JSON.stringify(payload, null, 2), [payload]);
-
   const copyJson = () => {
     navigator.clipboard.writeText(payloadJson).then(() => {
       setJsonCopied(true);
@@ -155,17 +119,8 @@ export default function EmbedEditor() {
     setSending(true);
     setSendResult(null);
     try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) {
-        setSendResult({ ok: true, message: "Message envoyé avec succès." });
-      } else {
-        const text = await res.text();
-        setSendResult({ ok: false, message: `Erreur ${res.status}: ${text.slice(0, 200)}` });
-      }
+      const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      setSendResult(res.ok ? { ok: true, message: "Message envoyé avec succès." } : { ok: false, message: `Erreur ${res.status}` });
     } catch (err) {
       setSendResult({ ok: false, message: err.message || "Erreur réseau." });
     } finally {
@@ -182,291 +137,233 @@ export default function EmbedEditor() {
   const hasPreview = embed.title || embed.description || embed.author?.name || embed.footer?.text || embed.image || embed.thumbnail || (embed.fields?.length && embed.fields.some((f) => f.name || f.value));
 
   return (
-    <div className="admin-pokedex embed-editor">
-      <section className="admin-pokedex-card">
-        <h3><i className="fa-solid fa-palette" aria-hidden /> Créateur d&apos;embed Discord</h3>
-        <p style={{ margin: "0 0 1rem 0", opacity: 0.9, fontSize: "0.9rem" }}>
-          Remplissez les champs et prévisualisez l&apos;embed. Vous pouvez copier le JSON ou envoyer directement à un webhook.
-        </p>
+    <div className="embed-editor">
+      <header className="embed-editor-header">
+        <h2 className="embed-editor-title">Embed Discord</h2>
+        <p className="embed-editor-intro">Créez un embed, prévisualisez-le et envoyez-le à un webhook.</p>
+      </header>
 
-        <div className="embed-editor-layout">
-          <div className="embed-editor-form">
-            <div>
-              <label className="admin-pokedex-label">Message (au-dessus de l&apos;embed)</label>
-              <input
-                type="text"
-                className="admin-pokedex-input"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Texte optionnel..."
-              />
+      <div className="embed-editor-layout">
+        <div className="embed-editor-form">
+          <section className="embed-section">
+            <h3 className="embed-section-title">Message & contenu</h3>
+            <div className="embed-field">
+              <label className="embed-label">Message (au-dessus de l&apos;embed)</label>
+              <input type="text" className="embed-input" value={content} onChange={(e) => setContent(e.target.value)} placeholder="Texte optionnel" />
             </div>
-            <div>
-              <label className="admin-pokedex-label">Titre</label>
-              <input
-                type="text"
-                className="admin-pokedex-input"
-                value={embed.title}
-                onChange={(e) => updateEmbed("title", e.target.value)}
-                placeholder="Titre de l'embed"
-              />
+            <div className="embed-field">
+              <label className="embed-label">Titre</label>
+              <input type="text" className="embed-input" value={embed.title} onChange={(e) => updateEmbed("title", e.target.value)} placeholder="Titre de l'embed" />
             </div>
-            <div>
-              <label className="admin-pokedex-label">URL (lien du titre)</label>
-              <input
-                type="url"
-                className="admin-pokedex-input"
-                value={embed.url}
-                onChange={(e) => updateEmbed("url", e.target.value)}
-                placeholder="https://..."
-              />
+            <div className="embed-field">
+              <label className="embed-label">URL du titre</label>
+              <input type="url" className="embed-input" value={embed.url} onChange={(e) => updateEmbed("url", e.target.value)} placeholder="https://..." />
             </div>
-            <div>
-              <label className="admin-pokedex-label">Description</label>
+            <div className="embed-field embed-field-description">
+              <label className="embed-label">Description</label>
+              <div className="embed-description-toolbar">
+                {MARKDOWN_BUTTONS.map((btn) => (
+                  <button
+                    key={btn.icon}
+                    type="button"
+                    className="embed-md-btn"
+                    onClick={() => insertMarkdown(btn.before, btn.after)}
+                    title={btn.title}
+                    aria-label={btn.label}
+                  >
+                    <i className={`fa-solid ${btn.icon}`} aria-hidden />
+                  </button>
+                ))}
+              </div>
               <textarea
-                className="admin-pokedex-textarea"
+                ref={descRef}
+                className="embed-textarea"
                 value={embed.description}
                 onChange={(e) => updateEmbed("description", e.target.value)}
-                placeholder="Description (supporte le Markdown basique)"
-                rows={4}
+                placeholder="Description (Markdown accepté)"
+                rows={5}
               />
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
-              <label className="admin-pokedex-label" style={{ marginBottom: 0 }}>Couleur de la barre</label>
-              <input
-                type="color"
-                value={embed.color}
-                onChange={(e) => updateEmbed("color", e.target.value)}
-                style={{ width: 48, height: 36, padding: 2, borderRadius: 8, border: "1px solid rgba(255,255,255,.2)", cursor: "pointer" }}
-                title={embed.color}
-              />
-              <input
-                type="text"
-                className="admin-pokedex-input"
-                value={embed.color}
-                onChange={(e) => updateEmbed("color", e.target.value)}
-                placeholder="#5865F2"
-                style={{ width: 100 }}
-              />
-            </div>
+          </section>
 
-            <div className="embed-editor-block">
-              <span className="admin-pokedex-label"><i className="fa-solid fa-user" aria-hidden /> Auteur</span>
-              <input
-                type="text"
-                className="admin-pokedex-input"
-                value={embed.author?.name ?? ""}
-                onChange={(e) => updateAuthor("name", e.target.value)}
-                placeholder="Nom"
-              />
-              <input
-                type="url"
-                className="admin-pokedex-input"
-                value={embed.author?.icon_url ?? ""}
-                onChange={(e) => updateAuthor("icon_url", e.target.value)}
-                placeholder="URL icône"
-              />
-              <input
-                type="url"
-                className="admin-pokedex-input"
-                value={embed.author?.url ?? ""}
-                onChange={(e) => updateAuthor("url", e.target.value)}
-                placeholder="URL (lien du nom)"
-              />
+          <section className="embed-section">
+            <h3 className="embed-section-title">Apparence</h3>
+            <div className="embed-field embed-field-color">
+              <label className="embed-label">Couleur de la barre</label>
+              <div className="embed-color-row">
+                <input type="color" value={embed.color} onChange={(e) => updateEmbed("color", e.target.value)} className="embed-color-picker" />
+                <input type="text" className="embed-input" value={embed.color} onChange={(e) => updateEmbed("color", e.target.value)} placeholder="#5865F2" style={{ width: "120px" }} />
+              </div>
             </div>
+          </section>
 
-            <div className="embed-editor-block">
-              <span className="admin-pokedex-label"><i className="fa-solid fa-image" aria-hidden /> Image dans l&apos;embed</span>
-              <p className="embed-editor-hint">URL de l&apos;image principale affichée dans l&apos;embed (grande image en bas de la description).</p>
-              <input
-                type="url"
-                className="admin-pokedex-input"
-                value={embed.image}
-                onChange={(e) => updateEmbed("image", e.target.value)}
-                placeholder="https://exemple.com/image.png"
-              />
+          <section className="embed-section">
+            <h3 className="embed-section-title">Auteur</h3>
+            <div className="embed-field">
+              <label className="embed-label">Nom</label>
+              <input type="text" className="embed-input" value={embed.author?.name ?? ""} onChange={(e) => updateAuthor("name", e.target.value)} placeholder="Nom de l'auteur" />
             </div>
-            <div className="embed-editor-block">
-              <span className="admin-pokedex-label"><i className="fa-solid fa-crop" aria-hidden /> Miniature (thumbnail)</span>
-              <p className="embed-editor-hint">Petite image en haut à droite de l&apos;embed.</p>
-              <input
-                type="url"
-                className="admin-pokedex-input"
-                value={embed.thumbnail}
-                onChange={(e) => updateEmbed("thumbnail", e.target.value)}
-                placeholder="https://exemple.com/thumb.png"
-              />
+            <div className="embed-field">
+              <label className="embed-label">Icône (URL)</label>
+              <input type="url" className="embed-input" value={embed.author?.icon_url ?? ""} onChange={(e) => updateAuthor("icon_url", e.target.value)} placeholder="https://..." />
             </div>
+            <div className="embed-field">
+              <label className="embed-label">Lien (URL)</label>
+              <input type="url" className="embed-input" value={embed.author?.url ?? ""} onChange={(e) => updateAuthor("url", e.target.value)} placeholder="https://..." />
+            </div>
+          </section>
 
-            <div className="embed-editor-block">
-              <span className="admin-pokedex-label"><i className="fa-solid fa-align-left" aria-hidden /> Pied de page</span>
-              <input
-                type="text"
-                className="admin-pokedex-input"
-                value={embed.footer?.text ?? ""}
-                onChange={(e) => updateFooter("text", e.target.value)}
-                placeholder="Texte"
-              />
-              <input
-                type="url"
-                className="admin-pokedex-input"
-                value={embed.footer?.icon_url ?? ""}
-                onChange={(e) => updateFooter("icon_url", e.target.value)}
-                placeholder="URL icône"
-              />
+          <section className="embed-section">
+            <h3 className="embed-section-title">Médias</h3>
+            <div className="embed-field">
+              <label className="embed-label">Image principale</label>
+              <p className="embed-hint">Grande image affichée dans l&apos;embed.</p>
+              <input type="url" className="embed-input" value={embed.image} onChange={(e) => updateEmbed("image", e.target.value)} placeholder="https://..." />
             </div>
+            <div className="embed-field">
+              <label className="embed-label">Miniature (thumbnail)</label>
+              <p className="embed-hint">Petite image en haut à droite de l&apos;embed.</p>
+              <input type="url" className="embed-input" value={embed.thumbnail} onChange={(e) => updateEmbed("thumbnail", e.target.value)} placeholder="https://..." />
+            </div>
+          </section>
 
-            <div className="embed-editor-block">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                <span className="admin-pokedex-label"><i className="fa-solid fa-list" aria-hidden /> Champs</span>
-                <button type="button" onClick={addField} className="admin-pokedex-btn admin-pokedex-btn-primary" style={{ padding: "0.4rem 0.75rem" }}>
-                  <i className="fa-solid fa-plus" /> Ajouter
+          <section className="embed-section">
+            <h3 className="embed-section-title">Pied de page</h3>
+            <div className="embed-field">
+              <label className="embed-label">Texte</label>
+              <input type="text" className="embed-input" value={embed.footer?.text ?? ""} onChange={(e) => updateFooter("text", e.target.value)} placeholder="Texte du footer" />
+            </div>
+            <div className="embed-field">
+              <label className="embed-label">Icône (URL)</label>
+              <input type="url" className="embed-input" value={embed.footer?.icon_url ?? ""} onChange={(e) => updateFooter("icon_url", e.target.value)} placeholder="https://..." />
+            </div>
+          </section>
+
+          <section className="embed-section">
+            <h3 className="embed-section-title">Champs</h3>
+            <button type="button" onClick={addField} className="embed-btn embed-btn-secondary">
+              <i className="fa-solid fa-plus" aria-hidden /> Ajouter un champ
+            </button>
+            {embed.fields.map((field, i) => (
+              <div key={i} className="embed-field-row">
+                <input type="text" className="embed-input" value={field.name} onChange={(e) => updateField(i, "name", e.target.value)} placeholder="Nom" />
+                <input type="text" className="embed-input" value={field.value} onChange={(e) => updateField(i, "value", e.target.value)} placeholder="Valeur" />
+                <label className="embed-checkbox">
+                  <input type="checkbox" checked={!!field.inline} onChange={(e) => updateField(i, "inline", e.target.checked)} />
+                  Inline
+                </label>
+                <button type="button" onClick={() => removeField(i)} className="embed-btn embed-btn-icon" title="Supprimer" aria-label="Supprimer">
+                  <i className="fa-solid fa-trash" aria-hidden />
                 </button>
               </div>
-              {embed.fields.map((field, i) => (
-                <div key={i} className="embed-editor-field-row">
-                  <input
-                    type="text"
-                    className="admin-pokedex-input"
-                    value={field.name}
-                    onChange={(e) => updateField(i, "name", e.target.value)}
-                    placeholder="Nom"
-                  />
-                  <input
-                    type="text"
-                    className="admin-pokedex-input"
-                    value={field.value}
-                    onChange={(e) => updateField(i, "value", e.target.value)}
-                    placeholder="Valeur"
-                  />
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.35rem", whiteSpace: "nowrap" }}>
-                    <input
-                      type="checkbox"
-                      checked={!!field.inline}
-                      onChange={(e) => updateField(i, "inline", e.target.checked)}
-                    />
-                    Inline
-                  </label>
-                  <button type="button" onClick={() => removeField(i)} className="admin-pokedex-btn admin-pokedex-btn-ghost" title="Supprimer" style={{ padding: "0.4rem" }}>
-                    <i className="fa-solid fa-trash" />
-                  </button>
-                </div>
-              ))}
-            </div>
+            ))}
+          </section>
 
-            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "1rem" }}>
-              <button type="button" onClick={() => setShowJson((s) => !s)} className="admin-pokedex-btn admin-pokedex-btn-ghost">
-                <i className="fa-solid fa-code" /> {showJson ? "Masquer" : "Voir"} le JSON
+          <section className="embed-section">
+            <h3 className="embed-section-title">Actions</h3>
+            <div className="embed-actions">
+              <button type="button" onClick={() => setShowJson((s) => !s)} className="embed-btn embed-btn-secondary">
+                <i className="fa-solid fa-code" aria-hidden /> {showJson ? "Masquer" : "Voir"} le JSON
               </button>
-              <button type="button" onClick={copyJson} className="admin-pokedex-btn admin-pokedex-btn-ghost">
-                <i className="fa-solid fa-copy" /> {jsonCopied ? "Copié !" : "Copier le JSON"}
+              <button type="button" onClick={copyJson} className="embed-btn embed-btn-secondary">
+                <i className="fa-solid fa-copy" aria-hidden /> {jsonCopied ? "Copié" : "Copier le JSON"}
               </button>
-              <button type="button" onClick={resetEmbed} className="admin-pokedex-btn admin-pokedex-btn-ghost">
-                <i className="fa-solid fa-rotate-left" /> Réinitialiser
+              <button type="button" onClick={resetEmbed} className="embed-btn embed-btn-secondary">
+                <i className="fa-solid fa-rotate-left" aria-hidden /> Réinitialiser
               </button>
             </div>
+            {showJson && <pre className="embed-json">{payloadJson}</pre>}
+          </section>
 
-            <section className="embed-editor-help">
-              <button
-                type="button"
-                className="embed-editor-help-toggle"
-                onClick={() => setShowHelp((h) => !h)}
-                aria-expanded={showHelp}
-              >
-                <i className="fa-solid fa-circle-info" aria-hidden /> Aide : Markdown & icônes
-                <i className={`fa-solid fa-chevron-${showHelp ? "up" : "down"}`} aria-hidden />
-              </button>
-              {showHelp && (
-                <div className="embed-editor-help-content">
-                  <div className="embed-editor-help-block">
-                    <h4><i className="fa-solid fa-font" aria-hidden /> Markdown dans la description</h4>
-                    <ul>
-                      <li><code>**texte**</code> → <strong>gras</strong></li>
-                      <li><code>*texte*</code> → <em>italique</em></li>
-                      <li><code>__texte__</code> → souligné</li>
-                      <li><code>~~texte~~</code> → <s>barré</s></li>
-                      <li><code>`code`</code> → code inline</li>
-                      <li><code>[texte](url)</code> → lien cliquable</li>
-                    </ul>
-                  </div>
-                  <div className="embed-editor-help-block">
-                    <h4><i className="fa-solid fa-icons" aria-hidden /> Icônes du formulaire</h4>
-                    <ul className="embed-editor-help-icons">
-                      <li><i className="fa-solid fa-heading" aria-hidden /> Titre — titre de l&apos;embed (cliquable si URL renseignée)</li>
-                      <li><i className="fa-solid fa-user" aria-hidden /> Auteur — nom + icône + lien optionnels en haut de l&apos;embed</li>
-                      <li><i className="fa-solid fa-image" aria-hidden /> Image — grande image dans l&apos;embed</li>
-                      <li><i className="fa-solid fa-crop" aria-hidden /> Miniature — petite image en haut à droite</li>
-                      <li><i className="fa-solid fa-align-left" aria-hidden /> Pied de page — texte + icône en bas</li>
-                      <li><i className="fa-solid fa-list" aria-hidden /> Champs — paires nom/valeur (inline ou bloc)</li>
-                      <li><i className="fa-solid fa-palette" aria-hidden /> Couleur — barre verticale à gauche de l&apos;embed</li>
-                      <li><i className="fa-solid fa-paper-plane" aria-hidden /> Webhook — envoi direct vers Discord</li>
-                    </ul>
-                  </div>
+          <section className="embed-section embed-section-help">
+            <button type="button" className="embed-help-toggle" onClick={() => setShowHelp((h) => !h)} aria-expanded={showHelp}>
+              <i className="fa-solid fa-circle-info" aria-hidden /> Aide : Markdown & icônes
+              <i className={`fa-solid fa-chevron-${showHelp ? "up" : "down"}`} aria-hidden />
+            </button>
+            {showHelp && (
+              <div className="embed-help-content">
+                <div className="embed-help-block">
+                  <h4>Markdown dans la description</h4>
+                  <ul>
+                    <li><code>**texte**</code> → gras</li>
+                    <li><code>*texte*</code> → italique</li>
+                    <li><code>__texte__</code> → souligné</li>
+                    <li><code>~~texte~~</code> → barré</li>
+                    <li><code>`code`</code> → code</li>
+                    <li><code>[texte](url)</code> → lien</li>
+                  </ul>
                 </div>
-              )}
-            </section>
-
-            {showJson && (
-              <pre className="embed-editor-json" style={{ marginTop: "0.75rem", padding: "1rem", borderRadius: 12, background: "rgba(0,0,0,.35)", fontSize: "0.8rem", overflow: "auto", maxHeight: 280 }}>
-                {payloadJson}
-              </pre>
+                <div className="embed-help-block">
+                  <h4>Icônes du formulaire</h4>
+                  <ul className="embed-help-icons">
+                    <li><i className="fa-solid fa-heading" aria-hidden /> Titre — cliquable si URL renseignée</li>
+                    <li><i className="fa-solid fa-user" aria-hidden /> Auteur — nom, icône, lien en haut de l&apos;embed</li>
+                    <li><i className="fa-solid fa-image" aria-hidden /> Image principale — grande image</li>
+                    <li><i className="fa-solid fa-crop" aria-hidden /> Miniature — en haut à droite</li>
+                    <li><i className="fa-solid fa-align-left" aria-hidden /> Pied de page — texte + icône en bas</li>
+                    <li><i className="fa-solid fa-list" aria-hidden /> Champs — paires nom / valeur</li>
+                  </ul>
+                </div>
+              </div>
             )}
-          </div>
+          </section>
+        </div>
 
-          <div className="embed-editor-preview-wrap">
-            <span className="admin-pokedex-label" style={{ marginBottom: "0.5rem", display: "block" }}>
-              <i className="fa-solid fa-eye" aria-hidden /> Aperçu (style Discord)
-            </span>
-            <div className="embed-editor-preview">
+        <aside className="embed-editor-aside">
+          <div className="embed-preview-card">
+            <h3 className="embed-preview-card-title">Aperçu</h3>
+            <div className="embed-preview-inner">
               {content.trim() && <p className="embed-preview-content">{content.trim()}</p>}
               {hasPreview ? (
-                <div
-                  className="embed-preview-box"
-                  style={{
-                    borderLeftColor: embed.color || DEFAULT_COLOR_HEX,
-                  }}
-                >
-                  {embed.author?.name?.trim() && (
-                    <div className="embed-preview-author">
-                      {embed.author?.icon_url?.trim() && (
-                        <img src={embed.author.icon_url} alt="" className="embed-preview-author-icon" onError={(e) => (e.target.style.display = "none")} />
-                      )}
-                      {embed.author?.url?.trim() ? (
-                        <a href={embed.author.url} target="_blank" rel="noopener noreferrer" className="embed-preview-author-name">{embed.author.name}</a>
-                      ) : (
-                        <span className="embed-preview-author-name">{embed.author.name}</span>
-                      )}
+                <div className={`embed-preview-box${embed.thumbnail?.trim() ? " embed-preview-box--with-thumbnail" : ""}`} style={{ borderLeftColor: embed.color || DEFAULT_COLOR_HEX }}>
+                  {embed.thumbnail?.trim() && (
+                    <div className="embed-preview-thumbnail-wrap">
+                      <img src={embed.thumbnail} alt="" className="embed-preview-thumbnail" onError={(e) => (e.target.style.display = "none")} />
                     </div>
                   )}
-                  {embed.title?.trim() && (
-                    <div className="embed-preview-title">
-                      {embed.url?.trim() ? (
-                        <a href={embed.url} target="_blank" rel="noopener noreferrer">{embed.title}</a>
-                      ) : (
-                        embed.title
-                      )}
-                    </div>
-                  )}
-                  {embed.description?.trim() && <div className="embed-preview-description">{embed.description}</div>}
-                  {embed.image?.trim() && (
-                    <div className="embed-preview-image-wrap">
-                      <img src={embed.image} alt="" className="embed-preview-image" onError={(e) => (e.target.style.display = "none")} />
-                    </div>
-                  )}
-                  {embed.fields?.filter((f) => f.name?.trim() || f.value?.trim()).length > 0 && (
-                    <div className="embed-preview-fields">
-                      {embed.fields.filter((f) => f.name?.trim() || f.value?.trim()).map((f, i) => (
-                        <div key={i} className={`embed-preview-field ${f.inline ? "embed-preview-field--inline" : ""}`}>
-                          <div className="embed-preview-field-name">{(f.name || "").trim() || "—"}</div>
-                          <div className="embed-preview-field-value">{(f.value || "").trim() || "—"}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {(embed.thumbnail?.trim() || embed.footer?.text?.trim()) && (
+                  <div className="embed-preview-body">
+                    {embed.author?.name?.trim() && (
+                      <div className="embed-preview-author">
+                        {embed.author?.icon_url?.trim() && (
+                          <img src={embed.author.icon_url} alt="" className="embed-preview-author-icon" onError={(e) => (e.target.style.display = "none")} />
+                        )}
+                        {embed.author?.url?.trim() ? (
+                          <a href={embed.author.url} target="_blank" rel="noopener noreferrer" className="embed-preview-author-name">{embed.author.name}</a>
+                        ) : (
+                          <span className="embed-preview-author-name">{embed.author.name}</span>
+                        )}
+                      </div>
+                    )}
+                    {embed.title?.trim() && (
+                      <div className="embed-preview-title">
+                        {embed.url?.trim() ? (
+                          <a href={embed.url} target="_blank" rel="noopener noreferrer">{embed.title}</a>
+                        ) : (
+                          embed.title
+                        )}
+                      </div>
+                    )}
+                    {embed.description?.trim() && <div className="embed-preview-description">{embed.description}</div>}
+                    {embed.image?.trim() && (
+                      <div className="embed-preview-image-wrap">
+                        <img src={embed.image} alt="" className="embed-preview-image" onError={(e) => (e.target.style.display = "none")} />
+                      </div>
+                    )}
+                    {embed.fields?.filter((f) => f.name?.trim() || f.value?.trim()).length > 0 && (
+                      <div className="embed-preview-fields">
+                        {embed.fields.filter((f) => f.name?.trim() || f.value?.trim()).map((f, i) => (
+                          <div key={i} className={`embed-preview-field ${f.inline ? "embed-preview-field--inline" : ""}`}>
+                            <div className="embed-preview-field-name">{(f.name || "").trim() || "—"}</div>
+                            <div className="embed-preview-field-value">{(f.value || "").trim() || "—"}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {(embed.footer?.text?.trim() || embed.footer?.icon_url?.trim()) && (
                     <div className="embed-preview-footer-row">
-                      {embed.thumbnail?.trim() && (
-                        <img src={embed.thumbnail} alt="" className="embed-preview-thumbnail" onError={(e) => (e.target.style.display = "none")} />
+                      {embed.footer?.icon_url?.trim() && (
+                        <img src={embed.footer.icon_url} alt="" className="embed-preview-footer-icon" onError={(e) => (e.target.style.display = "none")} />
                       )}
                       {embed.footer?.text?.trim() && <span className="embed-preview-footer-text">{embed.footer.text}</span>}
                     </div>
@@ -476,28 +373,25 @@ export default function EmbedEditor() {
                 <p className="embed-preview-empty">Remplissez au moins un champ pour voir l&apos;aperçu.</p>
               )}
             </div>
-
-            <div className="embed-editor-webhook">
-              <label className="admin-pokedex-label"><i className="fa-solid fa-paper-plane" aria-hidden /> Envoyer à un webhook</label>
-              <input
-                type="url"
-                className="admin-pokedex-input"
-                value={webhookUrl}
-                onChange={(e) => setWebhookUrl(e.target.value)}
-                placeholder="https://discord.com/api/webhooks/..."
-              />
-              <button type="button" onClick={sendToWebhook} disabled={sending} className="admin-pokedex-btn admin-pokedex-btn-primary" style={{ marginTop: "0.5rem" }}>
-                {sending ? <><i className="fa-solid fa-spinner fa-spin" /> Envoi…</> : <><i className="fa-solid fa-paper-plane" /> Envoyer</>}
-              </button>
-              {sendResult && (
-                <p style={{ marginTop: "0.5rem", color: sendResult.ok ? "#86efac" : "#fca5a5", fontSize: "0.9rem" }}>
-                  {sendResult.ok ? <i className="fa-solid fa-check" /> : <i className="fa-solid fa-exclamation-triangle" />} {sendResult.message}
-                </p>
-              )}
-            </div>
           </div>
-        </div>
-      </section>
+
+          <div className="embed-webhook-card">
+            <h3 className="embed-preview-card-title">Envoyer au webhook</h3>
+            <div className="embed-field">
+              <label className="embed-label">URL du webhook</label>
+              <input type="url" className="embed-input" value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://discord.com/api/webhooks/..." />
+            </div>
+            <button type="button" onClick={sendToWebhook} disabled={sending} className="embed-btn embed-btn-primary">
+              {sending ? <><i className="fa-solid fa-spinner fa-spin" aria-hidden /> Envoi…</> : <><i className="fa-solid fa-paper-plane" aria-hidden /> Envoyer</>}
+            </button>
+            {sendResult && (
+              <p className={`embed-send-result ${sendResult.ok ? "embed-send-result--ok" : "embed-send-result--err"}`}>
+                {sendResult.ok ? <i className="fa-solid fa-check" aria-hidden /> : <i className="fa-solid fa-exclamation-triangle" aria-hidden />} {sendResult.message}
+              </p>
+            )}
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }
