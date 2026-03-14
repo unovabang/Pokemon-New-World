@@ -3193,9 +3193,18 @@ a.dex-panel--active{cursor:default}
 .admin-settings-section-body {
   padding: 0 1.25rem 1.25rem;
   border-top: 1px solid rgba(255,255,255,.06);
+  overflow-x: hidden;
 }
 .admin-settings-section-body > * {
   margin-top: 1rem;
+  max-width: 100%;
+  min-width: 0;
+}
+.admin-settings-section-body input,
+.admin-settings-section-body textarea,
+.admin-settings-section-body select {
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 /* ===== ADMIN PANEL — POKÉDEX EDITOR ===== */
@@ -5405,10 +5414,15 @@ a.dex-panel--active{cursor:default}
   .patchnotes-editor-webhook-input { min-width: 0; }
   .patchnotes-editor-webhook-select { min-width: 0; width: 100%; }
   .patchnotes-editor-version-item { flex-wrap: wrap; }
-  .admin-settings-unified { padding: 0.5rem 0; }
-  .admin-settings-section-header { padding: 1rem; font-size: .95rem; }
-  .admin-settings-section-body { padding: 1rem; }
-  .admin-settings-section-body > * { min-width: 0; }
+  .admin-settings-unified { padding: 0.5rem 0; max-width: 100%; overflow-x: hidden; }
+  .admin-settings-section-header { padding: 1rem 1.25rem; font-size: .95rem; }
+  .admin-settings-section-body { padding: 1.25rem 1.5rem; overflow-x: hidden; }
+  .admin-settings-section-body > * { min-width: 0; max-width: 100%; }
+  .admin-settings-section-body input,
+  .admin-settings-section-body textarea,
+  .admin-settings-section-body select { max-width: 100% !important; box-sizing: border-box !important; min-width: 0; }
+  .admin-settings-section-body .btn { max-width: 100%; }
+  .admin-settings-section-body div[style*="flex"] > input { flex: 1 1 0%; min-width: 0; }
   .team-editor-head { flex-direction: column; align-items: stretch; gap: 1rem; }
   .team-editor-head .admin-panel-card-title { margin-bottom: 0; }
   .team-editor-actions { flex-direction: column; }
@@ -5477,17 +5491,20 @@ a.dex-panel--active{cursor:default}
   .item-location-add-modal .admin-pokedex-modal-body { padding: 1rem; }
   .admin-panel-table { font-size: .75rem; min-width: 280px; }
   .admin-panel-table th, .admin-panel-table td { padding: 0.4rem 0.5rem; }
+  .admin-settings-section-body { padding: 1rem 1.25rem; }
+  .site-editor-section { padding: 1rem !important; }
+  .item-location-editor { padding: 0 1rem; }
 }
 
 /* ===== ADMIN ITEM LOCATION EDITOR ===== */
-.item-location-editor { --il-input-bg: rgba(255,255,255,.04); --il-input-border: rgba(255,255,255,.1); }
+.item-location-editor { --il-input-bg: rgba(255,255,255,.04); --il-input-border: rgba(255,255,255,.1); max-width: 100%; margin-left: auto; margin-right: auto; padding: 0 1.25rem; box-sizing: border-box; }
 .item-location-editor-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
 .item-location-editor-head h2 { margin: 0; font-size: 1.2rem; display: flex; align-items: center; gap: .5rem; color: var(--text); }
 .item-location-editor-head h2 i { color: var(--primary-2); opacity: .9; }
 .item-location-editor-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
 .item-location-editor-desc { margin: 0 0 1.5rem; font-size: .9rem; color: var(--muted); line-height: 1.5; max-width: 560px; }
 .item-location-editor-loading { text-align: center; padding: 2.5rem; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: .5rem; }
-.item-location-editor-table-wrap { overflow-x: auto; border: 1px solid rgba(255,255,255,.1); border-radius: 14px; overflow: hidden; background: rgba(0,0,0,.15); }
+.item-location-editor-table-wrap { overflow-x: auto; border: 1px solid rgba(255,255,255,.1); border-radius: 14px; overflow: hidden; background: rgba(0,0,0,.15); margin-left: auto; margin-right: auto; max-width: 560px; }
 .item-location-editor-table { width: 100%; border-collapse: collapse; font-size: .9rem; table-layout: fixed; }
 .item-location-editor-table th { text-align: left; padding: .85rem 1.25rem; background: rgba(255,255,255,.08); color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid rgba(255,255,255,.12); }
 .item-location-editor-table th.th-ordre,
@@ -5559,12 +5576,14 @@ a.dex-panel--active{cursor:default}
 
 /* ----- Item Location: vue cartes sur mobile ----- */
 @media (max-width: 768px) {
-  .item-location-editor-table-wrap { overflow: visible; }
+  .item-location-editor { padding: 0 1.5rem; }
+  .item-location-editor-table-wrap { overflow: visible; max-width: 100%; margin-left: auto; margin-right: auto; }
   .item-location-editor-table { display: block; min-width: 0; }
   .item-location-editor-table thead { display: none; }
-  .item-location-editor-table .item-location-editor-zone-header td { display: block; padding: .75rem 1rem; }
-  .item-location-editor-table .item-location-editor-zone-title { padding: .5rem 0; }
-  .item-location-editor-table tbody tr.item-location-editor-data-row { display: block; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; margin-bottom: 1rem; margin-left: auto; margin-right: auto; padding: 1rem; background: rgba(255,255,255,.03); max-width: 420px; }
+  .item-location-editor-table .item-location-editor-zone-header { display: block; max-width: 420px; margin-left: auto; margin-right: auto; }
+  .item-location-editor-table .item-location-editor-zone-header td { display: block; padding: .75rem 1rem; text-align: center; }
+  .item-location-editor-table .item-location-editor-zone-title { padding: .5rem 0; justify-content: center; }
+  .item-location-editor-table tbody tr.item-location-editor-data-row { display: block; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; margin-bottom: 1rem; margin-left: auto; margin-right: auto; padding: 1rem; background: rgba(255,255,255,.03); max-width: 420px; width: 100%; box-sizing: border-box; }
   .item-location-editor-table tbody tr.item-location-editor-data-row td { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding: .5rem 0; border: none; width: 100%; }
   .item-location-editor-table tbody tr.item-location-editor-data-row td:not(.td-ordre):not(.td-actions) { justify-content: center; }
   .item-location-editor-table tbody tr.item-location-editor-data-row td::before { content: attr(data-label); font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); min-width: 80px; flex-shrink: 0; }
