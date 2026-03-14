@@ -122,6 +122,7 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
 export default function ExtradexPage() {
   const [extradexData, setExtradexData] = useState(extradexDataFallback);
   const [extradexBgSrc, setExtradexBgSrc] = useState(extradexBgImg);
+  const [pokedexCount, setPokedexCount] = useState(() => (Array.isArray(pokedexData?.entries) ? pokedexData.entries.length : 0));
   const [search, setSearch] = useState("");
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
@@ -129,21 +130,29 @@ export default function ExtradexPage() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`${API_BASE}/extradex?t=${Date.now()}`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (cancelled) return;
-        if (d.success && d.extradex) {
-          setExtradexData({
-            title: d.extradex.title || "Extradex",
-            entries: d.extradex.entries || [],
-            customTypes: d.extradex.customTypes || [],
-          });
-          const bg = d.extradex.background && d.extradex.background.trim();
-          setExtradexBgSrc(bg ? bg.trim() : extradexBgImg);
-        }
-      })
-      .catch(() => {});
+    Promise.all([
+      fetch(`${API_BASE}/extradex?t=${Date.now()}`).then((r) => r.json()),
+      fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
+    ]).then(([extradexRes, pokedexRes]) => {
+      if (cancelled) return;
+      if (extradexRes.success && extradexRes.extradex) {
+        setExtradexData({
+          title: extradexRes.extradex.title || "Extradex",
+          entries: extradexRes.extradex.entries || [],
+          customTypes: extradexRes.extradex.customTypes || [],
+        });
+        const bg = extradexRes.extradex.background && extradexRes.extradex.background.trim();
+        setExtradexBgSrc(bg ? bg.trim() : extradexBgImg);
+      }
+      if (pokedexRes.success && pokedexRes.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
+        setPokedexCount(pokedexRes.pokedex.entries.length);
+      } else {
+        setPokedexCount(Array.isArray(pokedexData?.entries) ? pokedexData.entries.length : 0);
+      }
+    }).catch(() => {
+      if (cancelled) return;
+      setPokedexCount(Array.isArray(pokedexData?.entries) ? pokedexData.entries.length : 0);
+    });
     return () => { cancelled = true; };
   }, []);
 
@@ -202,7 +211,7 @@ export default function ExtradexPage() {
                 <div className="dex-panel-text">
                   <h1 className="dex-panel-title">Pokédex</h1>
                   <p className="dex-panel-subtitle">
-                    Pokémon New World — {Array.isArray(pokedexData?.entries) ? pokedexData.entries.length : 519} créatures
+                    Pokémon New World — {pokedexCount} créatures
                   </p>
                 </div>
               </Link>

@@ -135,29 +135,36 @@ export default function PokedexPage() {
   const [entries, setEntries] = useState(() => Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
   const [pokedexBgSrc, setPokedexBgSrc] = useState(pokedexBgImg);
   const [customTypes, setCustomTypes] = useState([]);
+  const [extradexCount, setExtradexCount] = useState(() => (Array.isArray(extradexData?.entries) ? extradexData.entries.length : 0));
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`${API_BASE}/pokedex`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (cancelled) return;
-        if (data.success && data.pokedex) {
-          setEntries(Array.isArray(data.pokedex.entries) ? data.pokedex.entries : []);
-          setPokedexBgSrc(data.pokedex.background && data.pokedex.background.trim() ? data.pokedex.background.trim() : pokedexBgImg);
-          setCustomTypes(Array.isArray(data.pokedex.customTypes) ? data.pokedex.customTypes : []);
-        } else {
-          setEntries(Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
-          setPokedexBgSrc(pokedexBgImg);
-          setCustomTypes([]);
-        }
-      })
-      .catch(() => {
-        if (cancelled) return;
+    Promise.all([
+      fetch(`${API_BASE}/pokedex`).then((res) => res.json()),
+      fetch(`${API_BASE}/extradex?t=${Date.now()}`).then((res) => res.json()),
+    ]).then(([pokedexRes, extradexRes]) => {
+      if (cancelled) return;
+      if (pokedexRes.success && pokedexRes.pokedex) {
+        setEntries(Array.isArray(pokedexRes.pokedex.entries) ? pokedexRes.pokedex.entries : []);
+        setPokedexBgSrc(pokedexRes.pokedex.background && pokedexRes.pokedex.background.trim() ? pokedexRes.pokedex.background.trim() : pokedexBgImg);
+        setCustomTypes(Array.isArray(pokedexRes.pokedex.customTypes) ? pokedexRes.pokedex.customTypes : []);
+      } else {
         setEntries(Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
         setPokedexBgSrc(pokedexBgImg);
         setCustomTypes([]);
-      });
+      }
+      if (extradexRes.success && extradexRes.extradex && Array.isArray(extradexRes.extradex.entries)) {
+        setExtradexCount(extradexRes.extradex.entries.length);
+      } else {
+        setExtradexCount(Array.isArray(extradexData?.entries) ? extradexData.entries.length : 0);
+      }
+    }).catch(() => {
+      if (cancelled) return;
+      setEntries(Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
+      setPokedexBgSrc(pokedexBgImg);
+      setCustomTypes([]);
+      setExtradexCount(Array.isArray(extradexData?.entries) ? extradexData.entries.length : 0);
+    });
     return () => { cancelled = true; };
   }, []);
 
@@ -231,7 +238,7 @@ export default function PokedexPage() {
                 <div className="dex-panel-text">
                   <h1 className="dex-panel-title">Extradex</h1>
                   <p className="dex-panel-subtitle">
-                    Pokémon New World — {Array.isArray(extradexData?.entries) ? extradexData.entries.length : 50} créatures
+                    Pokémon New World — {extradexCount} créatures
                   </p>
                 </div>
               </Link>

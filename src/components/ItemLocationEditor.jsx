@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 const API_BASE = import.meta.env.VITE_API_URL
@@ -17,13 +17,16 @@ const ItemLocationEditor = ({ onSave }) => {
   const [addForm, setAddForm] = useState({ zone: '', item: '', obtention: '' });
   const [searchQuery, setSearchQuery] = useState('');
 
+  const nextId = useRef(typeof window !== 'undefined' ? Date.now() : 0);
+  const getNewId = () => String(++nextId.current);
+
   const load = async () => {
     try {
       setLoading(true);
       const res = await fetch(`${API_BASE}/config/item-location?t=${Date.now()}`);
       const data = await res.json();
       if (data?.success && Array.isArray(data?.config?.entries)) {
-        setEntries(data.config.entries.map((e) => ({ zone: e.zone || '', item: e.item || '', obtention: e.obtention || '' })));
+        setEntries(data.config.entries.map((e, i) => ({ id: getNewId(), zone: e.zone || '', item: e.item || '', obtention: e.obtention || '' })));
       } else {
         setEntries([]);
       }
@@ -51,11 +54,9 @@ const ItemLocationEditor = ({ onSave }) => {
     setModalConfig({ title: '', message: '', type: 'info', onConfirm: null });
   };
 
-  const updateRow = (index, field, value) => {
+  const updateRow = (id, field, value) => {
     setEntries((prev) => {
-      const next = [...prev];
-      if (!next[index]) return next;
-      next[index] = { ...next[index], [field]: value };
+      const next = prev.map((e) => (e.id === id ? { ...e, [field]: value } : e));
       return next;
     });
   };
@@ -65,34 +66,38 @@ const ItemLocationEditor = ({ onSave }) => {
     setShowAddModal(true);
   };
 
+  const getEntryIndex = (id) => entries.findIndex((e) => e.id === id);
+
   const closeAddModal = () => {
     setShowAddModal(false);
     setAddForm({ zone: '', item: '', obtention: '' });
   };
 
   const submitAddRow = async () => {
-    const newEntry = { zone: addForm.zone.trim(), item: addForm.item.trim(), obtention: addForm.obtention.trim() };
+    const newEntry = { id: getNewId(), zone: addForm.zone.trim(), item: addForm.item.trim(), obtention: addForm.obtention.trim() };
     const newEntries = [...entries, newEntry];
     setEntries(newEntries);
     closeAddModal();
     await saveConfig(newEntries);
   };
 
-  const removeRow = (index) => {
+  const removeRow = (id) => {
     showConfirm('Supprimer la ligne', 'Supprimer cette entrée ?', () => {
-      const nextEntries = entries.filter((_, i) => i !== index);
+      const nextEntries = entries.filter((e) => e.id !== id);
       setEntries(nextEntries);
       showMessage('Succès', 'Entrée supprimée.', 'success');
       saveConfig(nextEntries);
     });
   };
 
-  const moveRow = (index, dir) => {
+  const moveRow = (id, dir) => {
+    const index = getEntryIndex(id);
+    if (index === -1) return;
     if (dir === 'up' && index <= 0) return;
     if (dir === 'down' && index >= entries.length - 1) return;
+    const swap = dir === 'up' ? index - 1 : index + 1;
     setEntries((prev) => {
       const next = [...prev];
-      const swap = dir === 'up' ? index - 1 : index + 1;
       [next[index], next[swap]] = [next[swap], next[index]];
       return next;
     });
@@ -113,6 +118,8 @@ const ItemLocationEditor = ({ onSave }) => {
         );
       });
   }, [entries, searchLower]);
+
+  const displayIndexForMove = (id) => getEntryIndex(id) + 1;
 
   const groupedByZone = useMemo(() => {
     const zoneOrder = [];
@@ -230,19 +237,19 @@ const ItemLocationEditor = ({ onSave }) => {
                       </td>
                     </tr>
                     {rows.map(({ row, index }) => (
-                      <tr key={index}>
+                      <tr key={row.id}>
                         <td className="td-ordre">
                           <div className="item-location-editor-order">
-                            <button type="button" onClick={() => moveRow(index, 'up')} disabled={index === 0} title="Monter"><i className="fa-solid fa-chevron-up" /></button>
-                            <span>{index + 1}</span>
-                            <button type="button" onClick={() => moveRow(index, 'down')} disabled={index === entries.length - 1} title="Descendre"><i className="fa-solid fa-chevron-down" /></button>
+                            <button type="button" onClick={() => moveRow(row.id, 'up')} disabled={getEntryIndex(row.id) === 0} title="Monter"><i className="fa-solid fa-chevron-up" /></button>
+                            <span>{displayIndexForMove(row.id)}</span>
+                            <button type="button" onClick={() => moveRow(row.id, 'down')} disabled={getEntryIndex(row.id) === entries.length - 1} title="Descendre"><i className="fa-solid fa-chevron-down" /></button>
                           </div>
                         </td>
                         <td>
                           <input
                             type="text"
                             value={row.zone}
-                            onChange={(e) => updateRow(index, 'zone', e.target.value)}
+                            onChange={(e) => updateRow(row.id, 'zone', e.target.value)}
                             placeholder="ex. Liora"
                             className="item-location-editor-input"
                           />
@@ -251,7 +258,7 @@ const ItemLocationEditor = ({ onSave }) => {
                           <input
                             type="text"
                             value={row.item}
-                            onChange={(e) => updateRow(index, 'item', e.target.value)}
+                            onChange={(e) => updateRow(row.id, 'item', e.target.value)}
                             placeholder="ex. Pokéball x5"
                             className="item-location-editor-input"
                           />
@@ -260,13 +267,13 @@ const ItemLocationEditor = ({ onSave }) => {
                           <input
                             type="text"
                             value={row.obtention}
-                            onChange={(e) => updateRow(index, 'obtention', e.target.value)}
+                            onChange={(e) => updateRow(row.id, 'obtention', e.target.value)}
                             placeholder="ex. Item au sol"
                             className="item-location-editor-input"
                           />
                         </td>
                         <td className="td-actions">
-                          <button type="button" className="item-location-editor-delete" onClick={() => removeRow(index)} title="Supprimer">
+                          <button type="button" className="item-location-editor-delete" onClick={() => removeRow(row.id)} title="Supprimer">
                             <i className="fa-solid fa-trash" />
                           </button>
                         </td>
