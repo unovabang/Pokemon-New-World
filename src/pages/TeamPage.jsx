@@ -19,6 +19,7 @@ export default function TeamPage() {
   const [members, setMembers] = useState([]);
   const [thanks, setThanks] = useState([]);
   const [showBackground, setShowBackground] = useState(true);
+  const [backgroundImage, setBackgroundImage] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function TeamPage() {
         setMembers(Array.isArray(config.members) ? config.members : []);
         setThanks(Array.isArray(config.thanks) ? config.thanks : []);
         setShowBackground(config.showBackground !== false);
+        setBackgroundImage(typeof config.backgroundImage === "string" ? config.backgroundImage.trim() : "");
       })
       .catch(() => {})
       .finally(() => { if (!cancelled) setLoading(false); });
@@ -43,8 +45,9 @@ export default function TeamPage() {
   }, []);
 
   return (
-    <main className={`page page-with-nav team-page ${showBackground ? "team-page--with-bg" : ""}`}>
+    <main className={`page page-with-nav team-page ${showBackground ? "team-page--with-bg" : ""} ${backgroundImage ? "team-page--with-image" : ""}`}>
       <Sidebar />
+      {backgroundImage && <div className="team-page-bg-image" style={{ backgroundImage: `url(${backgroundImage})` }} aria-hidden />}
       {showBackground && <div className="team-page-bg" aria-hidden />}
       <div className="container team-container">
         <header className="team-hero">

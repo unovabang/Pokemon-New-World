@@ -19,6 +19,7 @@ export default function TeamEditor() {
   const [members, setMembers] = useState([]);
   const [thanks, setThanks] = useState([]);
   const [showBackground, setShowBackground] = useState(true);
+  const [backgroundImage, setBackgroundImage] = useState("");
 
   const load = async () => {
     setLoading(true);
@@ -30,10 +31,12 @@ export default function TeamEditor() {
         setMembers(m.map((x) => ({ ...x, id: x.id || generateId() })));
         setThanks(Array.isArray(data.config.thanks) ? data.config.thanks : []);
         setShowBackground(data.config.showBackground !== false);
+        setBackgroundImage(typeof data.config.backgroundImage === "string" ? data.config.backgroundImage.trim() : "");
       } else {
         setMembers([]);
         setThanks([]);
         setShowBackground(true);
+        setBackgroundImage("");
       }
     } catch (e) {
       setMembers([]);
@@ -51,6 +54,7 @@ export default function TeamEditor() {
     try {
       const payload = {
         showBackground,
+        backgroundImage: (backgroundImage || "").trim(),
         members: members.map(({ id, pseudo, role, avatar, roleColor }) => ({
           id: id || generateId(),
           pseudo: (pseudo || "").trim(),
@@ -71,6 +75,7 @@ export default function TeamEditor() {
         setMembers(payload.members);
         setThanks(payload.thanks);
         setShowBackground(payload.showBackground);
+        setBackgroundImage(payload.backgroundImage || "");
       } else {
         setMessage({ type: "error", text: data?.error || "Erreur lors de l’enregistrement." });
       }
@@ -168,13 +173,26 @@ export default function TeamEditor() {
         <h3 className="team-editor-section-title">
           <i className="fa-solid fa-image" aria-hidden /> Apparence de la page
         </h3>
+        <label className="team-editor-label">
+          <span>Image de fond (URL)</span>
+          <input
+            type="url"
+            value={backgroundImage}
+            onChange={(e) => setBackgroundImage(e.target.value)}
+            placeholder="https://... ou /image.png"
+            className="team-editor-input"
+          />
+        </label>
+        <p className="team-editor-section-desc">
+          Lien vers une image (PNG, JPG, etc.) en arrière-plan de la page équipe. Laisser vide pour aucun fond image.
+        </p>
         <label className="team-editor-toggle">
           <input
             type="checkbox"
             checked={showBackground}
             onChange={(e) => setShowBackground(e.target.checked)}
           />
-          <span>Afficher le fond décoratif sur la page équipe</span>
+          <span>Afficher le fond décoratif (dégradé) par-dessus</span>
         </label>
       </section>
 

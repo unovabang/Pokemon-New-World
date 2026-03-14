@@ -5265,6 +5265,15 @@ a.dex-panel--active{cursor:default}
   min-height: 100vh;
   padding-bottom: 4rem;
 }
+.team-page-bg-image {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
 .team-page-bg {
   position: fixed;
   inset: 0;
