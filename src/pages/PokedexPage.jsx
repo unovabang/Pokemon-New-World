@@ -135,7 +135,8 @@ export default function PokedexPage() {
   const [entries, setEntries] = useState(() => Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
   const [pokedexBgSrc, setPokedexBgSrc] = useState(pokedexBgImg);
   const [customTypes, setCustomTypes] = useState([]);
-  const [extradexCount, setExtradexCount] = useState(() => (Array.isArray(extradexData?.entries) ? extradexData.entries.length : 0));
+  const [pokedexCount, setPokedexCount] = useState(null);
+  const [extradexCount, setExtradexCount] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -145,11 +146,15 @@ export default function PokedexPage() {
     ]).then(([pokedexRes, extradexRes]) => {
       if (cancelled) return;
       if (pokedexRes.success && pokedexRes.pokedex) {
-        setEntries(Array.isArray(pokedexRes.pokedex.entries) ? pokedexRes.pokedex.entries : []);
+        const list = Array.isArray(pokedexRes.pokedex.entries) ? pokedexRes.pokedex.entries : [];
+        setEntries(list);
+        setPokedexCount(list.length);
         setPokedexBgSrc(pokedexRes.pokedex.background && pokedexRes.pokedex.background.trim() ? pokedexRes.pokedex.background.trim() : pokedexBgImg);
         setCustomTypes(Array.isArray(pokedexRes.pokedex.customTypes) ? pokedexRes.pokedex.customTypes : []);
       } else {
-        setEntries(Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
+        const list = Array.isArray(pokedexData?.entries) ? pokedexData.entries : [];
+        setEntries(list);
+        setPokedexCount(list.length);
         setPokedexBgSrc(pokedexBgImg);
         setCustomTypes([]);
       }
@@ -160,7 +165,9 @@ export default function PokedexPage() {
       }
     }).catch(() => {
       if (cancelled) return;
-      setEntries(Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
+      const list = Array.isArray(pokedexData?.entries) ? pokedexData.entries : [];
+      setEntries(list);
+      setPokedexCount(list.length);
       setPokedexBgSrc(pokedexBgImg);
       setCustomTypes([]);
       setExtradexCount(Array.isArray(extradexData?.entries) ? extradexData.entries.length : 0);
@@ -227,7 +234,7 @@ export default function PokedexPage() {
                 <div className="dex-panel-text">
                   <h1 className="dex-panel-title">Pokédex</h1>
                   <p className="dex-panel-subtitle">
-                    Pokémon New World — {entries.length} créatures
+                    Pokémon New World — {pokedexCount !== null ? pokedexCount : "…"} créatures
                   </p>
                 </div>
               </div>
@@ -238,7 +245,7 @@ export default function PokedexPage() {
                 <div className="dex-panel-text">
                   <h1 className="dex-panel-title">Extradex</h1>
                   <p className="dex-panel-subtitle">
-                    Pokémon New World — {extradexCount} créatures
+                    Pokémon New World — {extradexCount !== null ? extradexCount : "…"} créatures
                   </p>
                 </div>
               </Link>

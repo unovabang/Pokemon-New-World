@@ -122,7 +122,8 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
 export default function ExtradexPage() {
   const [extradexData, setExtradexData] = useState(extradexDataFallback);
   const [extradexBgSrc, setExtradexBgSrc] = useState(extradexBgImg);
-  const [pokedexCount, setPokedexCount] = useState(() => (Array.isArray(pokedexData?.entries) ? pokedexData.entries.length : 0));
+  const [pokedexCount, setPokedexCount] = useState(null);
+  const [extradexCount, setExtradexCount] = useState(null);
   const [search, setSearch] = useState("");
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
@@ -136,13 +137,18 @@ export default function ExtradexPage() {
     ]).then(([extradexRes, pokedexRes]) => {
       if (cancelled) return;
       if (extradexRes.success && extradexRes.extradex) {
+        const list = extradexRes.extradex.entries || [];
         setExtradexData({
           title: extradexRes.extradex.title || "Extradex",
-          entries: extradexRes.extradex.entries || [],
+          entries: list,
           customTypes: extradexRes.extradex.customTypes || [],
         });
+        setExtradexCount(list.length);
         const bg = extradexRes.extradex.background && extradexRes.extradex.background.trim();
         setExtradexBgSrc(bg ? bg.trim() : extradexBgImg);
+      } else {
+        const list = Array.isArray(extradexDataFallback?.entries) ? extradexDataFallback.entries : [];
+        setExtradexCount(list.length);
       }
       if (pokedexRes.success && pokedexRes.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
         setPokedexCount(pokedexRes.pokedex.entries.length);
@@ -152,6 +158,7 @@ export default function ExtradexPage() {
     }).catch(() => {
       if (cancelled) return;
       setPokedexCount(Array.isArray(pokedexData?.entries) ? pokedexData.entries.length : 0);
+      setExtradexCount(Array.isArray(extradexDataFallback?.entries) ? extradexDataFallback.entries.length : 0);
     });
     return () => { cancelled = true; };
   }, []);
@@ -211,7 +218,7 @@ export default function ExtradexPage() {
                 <div className="dex-panel-text">
                   <h1 className="dex-panel-title">Pokédex</h1>
                   <p className="dex-panel-subtitle">
-                    Pokémon New World — {pokedexCount} créatures
+                    Pokémon New World — {pokedexCount !== null ? pokedexCount : "…"} créatures
                   </p>
                 </div>
               </Link>
@@ -222,7 +229,7 @@ export default function ExtradexPage() {
                 <div className="dex-panel-text">
                   <h1 className="dex-panel-title">Extradex</h1>
                   <p className="dex-panel-subtitle">
-                    Pokémon New World — {entries.length} créatures
+                    Pokémon New World — {extradexCount !== null ? extradexCount : "…"} créatures
                   </p>
                 </div>
               </div>
