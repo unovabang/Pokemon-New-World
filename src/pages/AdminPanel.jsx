@@ -47,6 +47,7 @@ const AdminPanel = () => {
   const [logs, setLogs] = useState([]);
   const [logsLoading, setLogsLoading] = useState(false);
   const [bgIndex, setBgIndex] = useState(0);
+  const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
     const t = setInterval(
@@ -200,6 +201,15 @@ const AdminPanel = () => {
       />
       <header className="admin-panel-header">
         <div className="admin-panel-header-inner">
+          <button
+            type="button"
+            className="admin-panel-hamburger"
+            onClick={() => setNavOpen((v) => !v)}
+            aria-label={navOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={navOpen}
+          >
+            <i className={navOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars"} aria-hidden />
+          </button>
           <div className="admin-panel-brand">
             <div className="admin-panel-logo">
               <i className="fa-solid fa-shield-halved" aria-hidden />
@@ -240,7 +250,12 @@ const AdminPanel = () => {
       </header>
 
       <div className="admin-panel-body">
-        <nav className="admin-panel-nav">
+        <div
+          className="admin-panel-nav-overlay"
+          aria-hidden={!navOpen}
+          onClick={() => setNavOpen(false)}
+        />
+        <nav className={`admin-panel-nav ${navOpen ? "admin-panel-nav--open" : ""}`}>
           <div className="admin-panel-nav-brand">
             <i className="fa-solid fa-shield-halved" aria-hidden />
             <span>Administration</span>
@@ -254,7 +269,7 @@ const AdminPanel = () => {
                 <button
                   key={tab.id}
                   type="button"
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => { setActiveTab(tab.id); setNavOpen(false); }}
                   className={`admin-panel-nav-btn ${activeTab === tab.id ? "admin-panel-nav-btn--active" : ""}`}
                   title={tab.description}
                 >
@@ -476,6 +491,17 @@ const AdminPanel = () => {
           )}
         </main>
       </div>
+
+      <footer className="admin-panel-footer">
+        <div className="admin-panel-footer-inner">
+          <span className="admin-panel-footer-brand">Pokémon New World</span>
+          <span className="admin-panel-footer-sep">—</span>
+          <span className="admin-panel-footer-copy">Panneau d'administration © {new Date().getFullYear()}</span>
+          <a href="/" target="_blank" rel="noreferrer" className="admin-panel-footer-link">
+            <i className="fa-solid fa-external-link-alt" aria-hidden /> Voir le site
+          </a>
+        </div>
+      </footer>
     </div>
   );
 };

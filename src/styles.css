@@ -4745,6 +4745,8 @@ a.dex-panel--active{cursor:default}
 /* ===== ADMIN PANEL (fond rotatif, design sobre) ===== */
 .admin-panel {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   color: var(--text);
   font-family: var(--font-body, "Outfit", system-ui, sans-serif);
   position: relative;
@@ -4897,11 +4899,13 @@ a.dex-panel--active{cursor:default}
 .admin-panel-body {
   position: relative;
   z-index: 5;
+  flex: 1;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
   display: flex;
   flex-direction: row;
-  min-height: calc(100vh - 80px);
+  min-height: 0;
 }
 @media (max-width: 768px) {
   .admin-panel-body { flex-direction: column; }
@@ -5171,6 +5175,245 @@ a.dex-panel--active{cursor:default}
 .admin-panel-json-edit:focus {
   outline: none;
   border-color: rgba(126,205,242,.35);
+}
+
+/* ----- Admin footer ----- */
+.admin-panel-footer {
+  position: relative;
+  z-index: 5;
+  margin-top: auto;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(255,255,255,.08);
+  background: rgba(8,12,24,.6);
+  backdrop-filter: blur(12px);
+  color: var(--muted);
+  font-size: .85rem;
+}
+.admin-panel-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem .75rem;
+}
+.admin-panel-footer-brand {
+  font-weight: 600;
+  color: rgba(255,255,255,.75);
+}
+.admin-panel-footer-sep {
+  opacity: .5;
+}
+.admin-panel-footer-copy {
+  color: var(--muted);
+}
+.admin-panel-footer-link {
+  color: var(--primary-2);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  transition: color .2s;
+}
+.admin-panel-footer-link:hover {
+  color: #a5d8ff;
+}
+@media (max-width: 768px) {
+  .admin-panel-footer { padding: .85rem 1rem; font-size: .8rem; }
+  .admin-panel-footer-inner { gap: .4rem .5rem; }
+}
+
+/* ----- Admin responsive global ----- */
+.admin-panel-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255,255,255,.08);
+  color: var(--text);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background .2s;
+}
+.admin-panel-hamburger:hover {
+  background: rgba(255,255,255,.12);
+}
+.admin-panel-nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 98;
+  background: rgba(0,0,0,.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+
+@media (max-width: 768px) {
+  .admin-panel-hamburger { display: flex; }
+  .admin-panel-header-inner { gap: .75rem; }
+  .admin-panel-actions .admin-panel-badge--success { font-size: 0; padding: .5rem .6rem; }
+  .admin-panel-actions .admin-panel-badge--success i { font-size: .9rem; }
+  .admin-panel-actions .admin-panel-btn { padding: .5rem .75rem; font-size: .85rem; }
+  .admin-panel-actions .admin-panel-btn--primary,
+  .admin-panel-actions .admin-panel-btn--secondary { font-size: 0; padding: .5rem .65rem; min-width: 44px; }
+  .admin-panel-actions .admin-panel-btn--primary i,
+  .admin-panel-actions .admin-panel-btn--secondary i { font-size: 1rem; }
+  .admin-panel-user { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-panel-body { flex-direction: column; position: relative; }
+  .admin-panel-nav-overlay {
+    display: block;
+  }
+  .admin-panel-nav--open + .admin-panel-body .admin-panel-nav-overlay,
+  .admin-panel-body .admin-panel-nav-overlay { display: block; }
+  .admin-panel-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: min(320px, 85vw);
+    max-width: 320px;
+    height: 100vh;
+    z-index: 99;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 1.25rem 0;
+    gap: 0;
+    border-right: 1px solid rgba(255,255,255,.1);
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    overflow-y: auto;
+    box-shadow: 8px 0 32px rgba(0,0,0,.4);
+  }
+  .admin-panel-nav.admin-panel-nav--open {
+    transform: translateX(0);
+  }
+  .admin-panel-body:has(.admin-panel-nav--open) .admin-panel-nav-overlay { pointer-events: auto; opacity: 1; }
+  .admin-panel-nav-brand { display: flex; padding: 0 1.25rem 1rem; margin-bottom: .5rem; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .admin-panel-nav-section-title { display: block; }
+  .admin-panel-nav-title { display: block; }
+  .admin-panel-nav-btn-icon { width: 36px; height: 36px; font-size: .95rem; }
+  .admin-panel-main { padding: 1rem .75rem; min-height: 0; }
+  .admin-panel-main > div { padding: 1.25rem 1rem; }
+  .admin-panel-card { padding: 1.25rem 1rem; }
+  .admin-panel-card-title { font-size: 1.05rem; }
+  .admin-panel-card-head { flex-direction: column; align-items: flex-start; gap: .75rem; }
+  .admin-panel-table-wrap { margin: 0 -1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .admin-panel-table { min-width: 480px; font-size: .85rem; }
+  .admin-panel-table th, .admin-panel-table td { padding: .5rem .75rem; }
+  .admin-dashboard-hero { margin-bottom: 1.5rem; padding-bottom: 1rem; }
+  .admin-dashboard-welcome { font-size: 1.4rem; }
+  .admin-dashboard-subtitle { font-size: .9rem; }
+  .admin-dashboard-grid { grid-template-columns: 1fr; gap: .75rem; }
+  .admin-dashboard-card { padding: 1rem 1.25rem; }
+  .admin-dashboard-card-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+  .admin-dashboard-card-title { font-size: 1rem; }
+  .admin-dashboard-card-desc { font-size: .8rem; }
+  .admin-pokedex-subnav { flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem !important; }
+  .admin-panel--editing .admin-panel-header-inner { flex-wrap: wrap; }
+  .admin-panel--editing .admin-panel-body { padding: 1rem; }
+  .admin-panel-json-edit { min-height: 60vh; padding: .75rem; font-size: .8rem; }
+}
+
+@media (max-width: 480px) {
+  .admin-panel-header { padding: .75rem 1rem; }
+  .admin-panel-title { font-size: 1.15rem; }
+  .admin-panel-user { max-width: 90px; }
+  .admin-panel-actions { gap: .4rem; }
+  .admin-panel-actions .admin-panel-btn { padding: .45rem .6rem; min-width: 40px; }
+  .admin-panel-main { padding: .75rem .5rem; }
+  .admin-panel-main > div { padding: 1rem .75rem; }
+  .admin-panel-card { padding: 1rem .75rem; }
+  .admin-dashboard-welcome { font-size: 1.25rem; }
+}
+
+/* ----- Admin responsive: login, éditeurs, modales ----- */
+@media (max-width: 640px) {
+  .login-admin-page { padding: 1rem; align-items: flex-start; padding-top: 2rem; }
+  .login-admin-card { padding: 1.5rem 1.25rem; max-width: 100%; }
+  .login-admin-header h1 { font-size: 1.25rem; }
+  .login-admin-form input { padding: .85rem 1rem; font-size: 16px; }
+  .login-admin-submit-wrap .btn { padding: .85rem; }
+}
+@media (max-width: 768px) {
+  .admin-settings-unified { padding: 1rem; }
+  .admin-settings-section-header { padding: 1rem 1.25rem; font-size: .95rem; }
+  .admin-settings-section-body { padding: 1rem 1.25rem; }
+  .admin-pokedex-card { padding: 1.25rem 1rem; }
+  .admin-pokedex-card h3 { font-size: 1.05rem; }
+  .admin-pokedex-input, .admin-pokedex-textarea { font-size: 16px; padding: .65rem .9rem; }
+  .admin-pokedex-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -1rem; }
+  .admin-pokedex-table { min-width: 520px; font-size: .85rem; }
+  .admin-pokedex-table th, .admin-pokedex-table td { padding: .5rem .75rem; }
+  .admin-dex-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: .75rem; }
+  .admin-dex-card { padding: .75rem; }
+  .admin-dex-card-sprite { height: 64px; }
+  .admin-dex-card-num, .admin-dex-card-name { font-size: .8rem; }
+  .admin-bst-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .75rem; }
+  .admin-bst-card { padding: .85rem; }
+  .admin-bst-card-sprite { height: 56px; }
+  .admin-bst-card-name, .admin-bst-card-type { font-size: .8rem; }
+  .admin-pokedex-modal { max-width: calc(100vw - 1.5rem); max-height: 90vh; margin: .75rem; }
+  .admin-pokedex-modal-body { padding: 1rem; gap: 1rem; }
+  .admin-pokedex-modal-footer { flex-wrap: wrap; gap: .5rem; padding: 1rem; }
+  .admin-pokedex-type-chips { flex-wrap: wrap; gap: .5rem; }
+  .admin-guide-card { padding: 1.25rem 1rem; }
+  .admin-guide-header-top { flex-direction: column; align-items: flex-start; gap: .75rem; }
+  .admin-guide-fields { grid-template-columns: 1fr; }
+  .admin-guide-character-row { flex-wrap: wrap; }
+  .admin-guide-character-row input:first-of-type { flex: 0 0 80px; }
+  .admin-guide-character-row input:nth-of-type(2) { flex: 0 0 100%; }
+  .admin-guide-character-row input:nth-of-type(3) { flex: 1 1 100%; }
+  .admin-guide-steps-header { flex-direction: column; align-items: flex-start; gap: .75rem; }
+  .admin-guide-step-card { padding: 1rem; }
+  .admin-guide-step-card-buttons { flex-wrap: wrap; }
+  .admin-guide-modal { max-width: calc(100vw - 1.5rem); max-height: 90vh; margin: .75rem; }
+  .admin-guide-modal-body { padding: 1rem; }
+  .admin-guide-modal-footer { flex-wrap: wrap; padding: 1rem; }
+  .admin-guide-confirm-box { max-width: calc(100vw - 2rem); margin: 1rem; padding: 1.25rem; }
+  .item-location-editor-head { flex-direction: column; align-items: flex-start; }
+  .item-location-editor-actions { width: 100%; }
+  .item-location-editor-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .item-location-editor-table { min-width: 420px; font-size: .85rem; }
+  .item-location-editor-table th, .item-location-editor-table td { padding: .6rem .75rem; }
+  .item-location-add-modal { max-width: calc(100vw - 1.5rem); margin: .75rem; }
+  .patchnotes-editor { padding: 0; }
+  .patchnotes-editor-head { flex-direction: column; align-items: flex-start; }
+  .patchnotes-editor-title-wrap { width: 100%; }
+  .patchnotes-editor-actions { width: 100%; }
+  .patchnotes-editor-card { padding: 1.25rem 1rem; }
+  .patchnotes-editor-fields { grid-template-columns: 1fr; }
+  .patchnotes-editor-section-head { flex-direction: column; align-items: flex-start; gap: .5rem; }
+  .patchnotes-editor-item-row { flex-wrap: wrap; }
+  .patchnotes-editor-webhook-row { flex-direction: column; align-items: stretch; }
+  .patchnotes-editor-webhook-input { min-width: 0; }
+  .patchnotes-editor-webhook-select { min-width: 0; width: 100%; }
+  .patchnotes-editor-version-item { flex-wrap: wrap; }
+}
+@media (max-width: 768px) {
+  .banner-manager-header { flex-direction: column; align-items: flex-start; }
+  .banner-manager-info { flex-direction: column; padding: 1rem; }
+  .banner-manager-info-icon { width: 40px; height: 40px; font-size: 1.25rem; }
+  .banner-manager-add-row { flex-direction: column; }
+  .banner-manager-add-input { min-width: 0; width: 100%; }
+  .banner-manager-card { grid-template-columns: 1fr; gap: .75rem; }
+  .banner-manager-card-preview { width: 100%; max-width: 200px; height: 80px; }
+  .banner-manager-card-actions { flex-wrap: wrap; }
+  .banner-manager-modal { max-width: calc(100vw - 2rem); margin: 1rem; padding: 1.25rem; }
+  .banner-manager-modal-buttons { flex-direction: column; }
+}
+@media (max-width: 480px) {
+  .admin-pokedex-modal-header { padding: 1rem; flex-wrap: wrap; }
+  .admin-pokedex-modal-title { font-size: 1rem; }
+  .admin-pokedex-modal-close { position: static; margin-left: auto; }
+  .admin-guide-modal-header { padding: 1rem; flex-wrap: wrap; }
+  .admin-guide-modal-header h3 { font-size: 1rem; }
+  .admin-guide-confirm-actions { flex-direction: column; }
+  .admin-guide-confirm-actions button { width: 100%; }
+  .item-location-add-modal .admin-pokedex-modal-body { padding: 1rem; }
 }
 
 /* ===== ADMIN ITEM LOCATION EDITOR ===== */
