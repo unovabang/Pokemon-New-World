@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import Sidebar from "../components/Sidebar";
-import evsConfig from "../config/evsLocation.js";
+import evsConfigFallback from "../config/evsLocation.js";
 import pokedexData from "../config/pokedex.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
@@ -24,7 +24,7 @@ function normalizeName(str) {
     .trim();
 }
 
-/** Construit une map nom normalisé -> { name, imageUrl } depuis le pokedex + extradex si besoin */
+/** Construit une map nom normalisé -> { name, imageUrl } depuis le pokedex */
 function buildPokedexLookup(entries) {
   const map = new Map();
   if (!Array.isArray(entries)) return map;
@@ -60,7 +60,36 @@ function findSprite(lookup, displayName) {
   return null;
 }
 
+/** Normalise une entrée EV : pokemon peut être string[] + points[] (legacy) ou { name, imageUrl?, points }[] */
+function normalizeEvEntry(ev) {
+  const pokemon = [];
+  const raw = ev.pokemon;
+  const pointsArr = ev.points;
+  if (Array.isArray(raw) && raw.length > 0) {
+    const first = raw[0];
+    if (typeof first === "object" && first !== null && "name" in first) {
+      raw.forEach((p) => {
+        pokemon.push({
+          name: (p.name || "").trim(),
+          imageUrl: (p.imageUrl || "").trim() || undefined,
+          points: typeof p.points === "number" ? p.points : 0,
+        });
+      });
+    } else {
+      raw.forEach((name, i) => {
+        pokemon.push({
+          name: typeof name === "string" ? name.trim() : "",
+          imageUrl: undefined,
+          points: Array.isArray(pointsArr) && typeof pointsArr[i] === "number" ? pointsArr[i] : 0,
+        });
+      });
+    }
+  }
+  return { id: ev.id, label: ev.label, icon: ev.icon || "fa-circle", pokemon };
+}
+
 export default function EVsLocationPage() {
+  const [evsEntries, setEvsEntries] = useState([]);
   const [pokedexEntries, setPokedexEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
@@ -68,18 +97,28 @@ export default function EVsLocationPage() {
   useEffect(() => {
     let cancelled = false;
     const list = Array.isArray(pokedexData?.entries) ? pokedexData.entries : [];
-    fetch(`${API_BASE}/pokedex`)
-      .then((r) => r.json())
-      .then((data) => {
+    Promise.all([
+      fetch(`${API_BASE}/evs-location?t=${Date.now()}`).then((r) => r.json()),
+      fetch(`${API_BASE}/pokedex`).then((r) => r.json()),
+    ])
+      .then(([evsData, pokedexRes]) => {
         if (cancelled) return;
-        if (data?.success && Array.isArray(data?.pokedex?.entries)) {
-          setPokedexEntries(data.pokedex.entries);
+        if (evsData?.success && Array.isArray(evsData?.evs?.entries) && evsData.evs.entries.length > 0) {
+          setEvsEntries(evsData.evs.entries.map(normalizeEvEntry));
+        } else {
+          setEvsEntries((Array.isArray(evsConfigFallback) ? evsConfigFallback : []).map(normalizeEvEntry));
+        }
+        if (pokedexRes?.success && Array.isArray(pokedexRes?.pokedex?.entries)) {
+          setPokedexEntries(pokedexRes.pokedex.entries);
         } else {
           setPokedexEntries(list);
         }
       })
       .catch(() => {
-        if (!cancelled) setPokedexEntries(list);
+        if (!cancelled) {
+          setEvsEntries((Array.isArray(evsConfigFallback) ? evsConfigFallback : []).map(normalizeEvEntry));
+          setPokedexEntries(list);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -99,7 +138,7 @@ export default function EVsLocationPage() {
             EVs par lieu
           </h1>
           <p className="evs-location-desc">
-            Table des EV basée sur les Pokémon du jeu Pokémon New World (run HopeGrave). Cliquez sur une stat pour afficher les Pokémon qui donnent cet EV.
+            Voici un tableau vous permettant de farm un EV en fonction de la zone. Table des EV basée sur les Pokémon du jeu Pokémon New World (run HopeGrave). Cliquez sur une stat pour afficher les Pokémon qui donnent cet EV.
           </p>
         </header>
 
@@ -110,7 +149,7 @@ export default function EVsLocationPage() {
           </div>
         ) : (
           <div className="evs-location-grid">
-            {evsConfig.map((ev) => {
+            {evsEntries.map((ev) => {
               const isOpen = expandedId === ev.id;
               return (
                 <article
@@ -140,9 +179,10 @@ export default function EVsLocationPage() {
                     hidden={!isOpen}
                   >
                     <div className="evs-location-pokemon-grid">
-                      {ev.pokemon.map((name, i) => {
-                        const points = (ev.points && ev.points[i]) || 0;
-                        const spriteUrl = findSprite(lookup, name) || PLACEHOLDER_SPRITE;
+                      {ev.pokemon.map((p, i) => {
+                        const name = p.name;
+                        const points = p.points ?? 0;
+                        const spriteUrl = (p.imageUrl && p.imageUrl.trim()) || findSprite(lookup, name) || PLACEHOLDER_SPRITE;
                         return (
                           <div key={`${ev.id}-${name}-${i}`} className="evs-location-pokemon-item">
                             <div className="evs-location-pokemon-sprite-wrap">

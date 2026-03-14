@@ -19,6 +19,7 @@ import GuideEditor from "../components/GuideEditor";
 import BSTEditor from "../components/BSTEditor";
 import AdminTips from "../components/AdminTips";
 import ItemLocationEditor from "../components/ItemLocationEditor";
+import EVsLocationEditor from "../components/EVsLocationEditor";
 import EmbedEditor from "../components/EmbedEditor";
 import TeamEditor from "../components/TeamEditor";
 import UnderConstructionPage from "./UnderConstructionPage";
@@ -389,12 +390,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab === 'evs' && (
-            <UnderConstructionPage
-              title="EVs Location"
-              backLabel="Retour à l'admin"
-              onBack={() => setActiveTab("dashboard")}
-              embedded
-            />
+            <EVsLocationEditor onSave={() => {}} />
           )}
           {activeTab === 'nerfs' && (
             <UnderConstructionPage

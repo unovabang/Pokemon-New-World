@@ -788,6 +788,18 @@ app.get('/api/config/:name', (req, res) => {
         configData = { members: [], thanks: [], showBackground: true };
       }
     }
+    if (!configData && name === 'evs-location') {
+      const seedPath = path.join(__dirname, '../src/config/evs-location.json');
+      if (fs.existsSync(seedPath)) {
+        try {
+          configData = fs.readJsonSync(seedPath);
+        } catch (e) {
+          configData = { entries: [] };
+        }
+      } else {
+        configData = { entries: [] };
+      }
+    }
     if (!configData) {
       return res.status(404).json({ success: false, error: `Configuration ${name} non trouvée` });
     }
@@ -1125,6 +1137,67 @@ app.put('/api/bst', (req, res) => {
     });
   } catch (error) {
     console.error('❌ Erreur API PUT /api/bst:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// === EVs LOCATION API ===
+// GET /api/evs-location - Lire la table EVs (entries)
+app.get('/api/evs-location', (req, res) => {
+  try {
+    let configData = getConfig('evs-location');
+    if (!configData) {
+      const seedPath = path.join(__dirname, '../src/config/evs-location.json');
+      if (fs.existsSync(seedPath)) {
+        try {
+          configData = fs.readJsonSync(seedPath);
+        } catch (e) {
+          configData = { entries: [] };
+        }
+      } else {
+        configData = { entries: [] };
+      }
+    }
+    const entries = Array.isArray(configData?.entries) ? configData.entries : [];
+    res.json({
+      success: true,
+      evs: { entries },
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/evs-location:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/evs-location - Sauvegarder la table EVs (écrit dans evs-location.json)
+app.put('/api/evs-location', (req, res) => {
+  try {
+    const { entries } = req.body;
+    const evsPath = path.join(CONFIG_DIR, 'evs-location.json');
+
+    let current = { entries: [] };
+    if (fs.existsSync(evsPath)) {
+      current = fs.readJsonSync(evsPath);
+    }
+
+    const updated = {
+      entries: Array.isArray(entries) ? entries : (current.entries || []),
+    };
+
+    const opts = { spaces: 2 };
+    fs.ensureDirSync(CONFIG_DIR);
+    fs.writeJsonSync(evsPath, updated, opts);
+    fs.ensureDirSync(SOURCE_CONFIG_DIR);
+    fs.writeJsonSync(path.join(SOURCE_CONFIG_DIR, 'evs-location.json'), updated, opts);
+    autoCommitConfig('evs-location.json');
+
+    res.json({
+      success: true,
+      message: 'EVs Location sauvegardée.',
+      evs: updated,
+    });
+  } catch (error) {
+    console.error('❌ Erreur API PUT /api/evs-location:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
