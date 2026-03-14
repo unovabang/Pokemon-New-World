@@ -129,6 +129,15 @@ export default function ExtradexPage() {
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
 
+  const MOBILE_BREAKPOINT = 768;
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth <= MOBILE_BREAKPOINT) setViewMode("grid");
+    };
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
   useEffect(() => {
     let cancelled = false;
     Promise.all([
