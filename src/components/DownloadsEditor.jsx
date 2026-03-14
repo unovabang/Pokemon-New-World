@@ -122,13 +122,8 @@ const DownloadsEditor = ({ onSave }) => {
   }
 
   return (
-    <div>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '2rem' 
-      }}>
+    <div className="downloads-editor">
+      <div className="downloads-editor-header">
         <h2>
           <i className="fa-solid fa-download"></i> Gestion des Téléchargements
         </h2>
@@ -145,130 +140,69 @@ const DownloadsEditor = ({ onSave }) => {
         </button>
       </div>
 
-      <div style={{ 
-        display: 'grid', 
-        gap: '2rem'
-      }}>
+      <div className="downloads-editor-grid">
         {/* Téléchargement Windows */}
-        <div style={{ 
-          background: 'rgba(255,255,255,0.05)', 
-          borderRadius: '10px', 
-          padding: '2rem',
-          border: '1px solid rgba(255,255,255,0.1)'
-        }}>
-          <h3 style={{ 
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}>
+        <div className="downloads-editor-card">
+          <h3 className="downloads-editor-card-title">
             <i className="fa-brands fa-windows" style={{ color: '#0078d4' }}></i>
             Jeu Principal (Windows)
           </h3>
           
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '0.5rem', 
-              fontWeight: 'bold' 
-            }}>
+          <div className="downloads-editor-field">
+            <label>
               <i className="fa-solid fa-link"></i> Lien de téléchargement:
             </label>
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div className="downloads-editor-input-row">
               <input
                 type="url"
                 value={windowsLink}
                 onChange={(e) => setWindowsLink(e.target.value)}
                 placeholder="https://exemple.com/pokemon-new-world.zip"
-                style={{
-                  flex: 1,
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  background: 'rgba(255,255,255,0.1)',
-                  color: 'white',
-                  fontSize: '1rem'
-                }}
+                className="downloads-editor-input"
               />
               <button
                 onClick={() => testLink(windowsLink)}
-                className="btn btn-ghost"
-                style={{ padding: '1rem' }}
+                className="btn btn-ghost downloads-editor-test-btn"
               >
                 <i className="fa-solid fa-external-link-alt"></i> Tester
               </button>
             </div>
           </div>
 
-          <div style={{ 
-            background: 'rgba(255,255,255,0.1)',
-            padding: '1rem',
-            borderRadius: '5px',
-            fontSize: '0.9rem',
-            opacity: 0.8
-          }}>
+          <div className="downloads-editor-info">
             <i className="fa-solid fa-info-circle"></i> Ce lien sera utilisé pour le bouton "Télécharger le jeu" sur votre site.
           </div>
         </div>
 
         {/* Téléchargement Patch */}
-        <div style={{ 
-          background: 'rgba(255,255,255,0.05)', 
-          borderRadius: '10px', 
-          padding: '2rem',
-          border: '1px solid rgba(255,255,255,0.1)'
-        }}>
-          <h3 style={{ 
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}>
+        <div className="downloads-editor-card">
+          <h3 className="downloads-editor-card-title">
             <i className="fa-solid fa-file-arrow-up" style={{ color: '#28a745' }}></i>
             Patch / Mise à jour
           </h3>
           
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ 
-              display: 'block', 
-              marginBottom: '0.5rem', 
-              fontWeight: 'bold' 
-            }}>
+          <div className="downloads-editor-field">
+            <label>
               <i className="fa-solid fa-link"></i> Lien du patch:
             </label>
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div className="downloads-editor-input-row">
               <input
                 type="url"
                 value={patchLink}
                 onChange={(e) => setPatchLink(e.target.value)}
                 placeholder="https://exemple.com/patch-v1.2.zip"
-                style={{
-                  flex: 1,
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  background: 'rgba(255,255,255,0.1)',
-                  color: 'white',
-                  fontSize: '1rem'
-                }}
+                className="downloads-editor-input"
               />
               <button
                 onClick={() => testLink(patchLink)}
-                className="btn btn-ghost"
-                style={{ padding: '1rem' }}
+                className="btn btn-ghost downloads-editor-test-btn"
               >
                 <i className="fa-solid fa-external-link-alt"></i> Tester
               </button>
             </div>
           </div>
 
-          <div style={{ 
-            background: 'rgba(255,255,255,0.1)',
-            padding: '1rem',
-            borderRadius: '5px',
-            fontSize: '0.9rem',
-            opacity: 0.8
-          }}>
+          <div className="downloads-editor-info">
             <i className="fa-solid fa-info-circle"></i> Ce lien sera utilisé pour le bouton "Télécharger le patch" sur votre site.
           </div>
         </div>

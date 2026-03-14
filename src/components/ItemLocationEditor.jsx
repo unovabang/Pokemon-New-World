@@ -239,15 +239,15 @@ const ItemLocationEditor = ({ onSave }) => {
                         </td>
                       </tr>
                     ) : (
-                      <tr key={item.row.id}>
-                        <td className="td-ordre">
+                      <tr key={item.row.id} className="item-location-editor-data-row">
+                        <td className="td-ordre" data-label="Ordre">
                           <div className="item-location-editor-order">
                             <button type="button" onClick={() => moveRow(item.row.id, 'up')} disabled={getEntryIndex(item.row.id) === 0} title="Monter"><i className="fa-solid fa-chevron-up" /></button>
                             <span>{displayIndexForMove(item.row.id)}</span>
                             <button type="button" onClick={() => moveRow(item.row.id, 'down')} disabled={getEntryIndex(item.row.id) === entries.length - 1} title="Descendre"><i className="fa-solid fa-chevron-down" /></button>
                           </div>
                         </td>
-                        <td>
+                        <td data-label="Zone">
                           <input
                             type="text"
                             value={item.row.zone}
@@ -256,7 +256,7 @@ const ItemLocationEditor = ({ onSave }) => {
                             className="item-location-editor-input"
                           />
                         </td>
-                        <td>
+                        <td data-label="Objet">
                           <input
                             type="text"
                             value={item.row.item}
@@ -265,7 +265,7 @@ const ItemLocationEditor = ({ onSave }) => {
                             className="item-location-editor-input"
                           />
                         </td>
-                        <td>
+                        <td data-label="Obtention">
                           <input
                             type="text"
                             value={item.row.obtention}
@@ -274,7 +274,7 @@ const ItemLocationEditor = ({ onSave }) => {
                             className="item-location-editor-input"
                           />
                         </td>
-                        <td className="td-actions">
+                        <td className="td-actions" data-label="Actions">
                           <button type="button" className="item-location-editor-delete" onClick={() => removeRow(item.row.id)} title="Supprimer">
                             <i className="fa-solid fa-trash" />
                           </button>

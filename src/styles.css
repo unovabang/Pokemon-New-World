@@ -4075,6 +4075,9 @@ a.dex-panel--active{cursor:default}
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
+@media (max-width: 768px) {
+  .admin-bst-card-ability { -webkit-line-clamp: 3; word-break: break-word; }
+}
 .admin-bst-card-delete {
   flex-shrink: 0;
   width: 32px;
@@ -5352,10 +5355,17 @@ a.dex-panel--active{cursor:default}
   .admin-dex-card { padding: .75rem; }
   .admin-dex-card-sprite { height: 64px; }
   .admin-dex-card-num, .admin-dex-card-name { font-size: .8rem; }
-  .admin-bst-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .75rem; }
-  .admin-bst-card { padding: .85rem; }
-  .admin-bst-card-sprite { height: 56px; }
-  .admin-bst-card-name, .admin-bst-card-type { font-size: .8rem; }
+  .admin-bst-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+  .admin-bst-card { padding: 1rem; flex-direction: column; align-items: stretch; }
+  .admin-bst-card-sprite { height: 64px; width: 64px; margin: 0 auto; }
+  .admin-bst-card-main { order: 1; }
+  .admin-bst-card-name, .admin-bst-card-type { font-size: .9rem; }
+  .admin-bst-card-total { margin-top: 0.35rem; }
+  .admin-bst-card-ability { margin-top: 0.5rem; }
+  .admin-bst-card-delete { position: absolute; top: 0.5rem; right: 0.5rem; }
+  .admin-pokedex-card > div[style*="flex"] { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+  .admin-pokedex-card .admin-pokedex-input { width: 100%; max-width: 100%; box-sizing: border-box; }
+  .admin-pokedex-card .admin-pokedex-btn { flex: 1; min-width: 0; }
   .admin-pokedex-modal { max-width: calc(100vw - 1.5rem); max-height: 90vh; margin: .75rem; }
   .admin-pokedex-modal-body { padding: 1rem; gap: 1rem; }
   .admin-pokedex-modal-footer { flex-wrap: wrap; gap: .5rem; padding: 1rem; }
@@ -5392,7 +5402,37 @@ a.dex-panel--active{cursor:default}
   .patchnotes-editor-webhook-input { min-width: 0; }
   .patchnotes-editor-webhook-select { min-width: 0; width: 100%; }
   .patchnotes-editor-version-item { flex-wrap: wrap; }
+  .admin-settings-unified { padding: 0.5rem 0; }
+  .admin-settings-section-header { padding: 1rem; font-size: .95rem; }
+  .admin-settings-section-body { padding: 1rem; }
+  .admin-settings-section-body > * { min-width: 0; }
+  .team-editor-head { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .team-editor-head .admin-panel-card-title { margin-bottom: 0; }
+  .team-editor-actions { flex-direction: column; }
+  .team-editor-actions .admin-panel-btn { width: 100%; justify-content: center; }
+  .team-editor-preview-link { width: 100%; justify-content: center; }
+  .team-editor-section { padding: 1rem 0; }
+  .team-editor-member-card { grid-template-columns: 1fr; gap: 1rem; padding: 1rem; }
+  .team-editor-member-order { justify-self: center; }
+  .team-editor-member-avatar-preview { justify-self: center; }
+  .team-editor-member-fields { grid-template-columns: 1fr; }
+  .team-editor-thanks-list { padding: 1rem 0; }
+  .team-editor-thanks-row { flex-wrap: wrap; }
+  .admin-panel-table-wrap { margin: 0 -0.5rem; }
+  .admin-panel-table { min-width: 320px; font-size: .8rem; }
+  .admin-panel-table th, .admin-panel-table td { padding: 0.5rem 0.6rem; }
 }
+/* Bannière actualité: boutons plus lisibles et touch-friendly */
+.admin-panel .banner-manager-card-order { gap: 0.5rem; }
+.admin-panel .banner-manager-card-order button { padding: 0.5rem 0.75rem; border-radius: 10px; min-width: 40px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; transition: background .2s, opacity .2s; }
+.admin-panel .banner-manager-card-order button:hover:not(:disabled) { background: rgba(59,130,246,0.45); }
+.admin-panel .banner-manager-card-delete { padding: 0.55rem 1rem; border-radius: 10px; font-size: .9rem; min-height: 44px; display: inline-flex; align-items: center; gap: 0.5rem; transition: background .2s, border-color .2s; }
+.admin-panel .banner-manager-card-delete:hover { background: rgba(239,68,68,0.3); }
+.admin-panel .banner-manager-rotation-dots { gap: 0.6rem; }
+.admin-panel .banner-manager-rotation-dot { padding: 0.4rem 0.75rem; border-radius: 999px; min-width: 36px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; cursor: default; transition: background .2s; }
+.admin-panel .banner-manager-rotation-dot:hover { background: rgba(255,255,255,0.28); }
+.admin-panel .banner-manager-rotation-loop { padding: 0.4rem 0.6rem; min-width: 36px; min-height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; background: rgba(255,255,255,0.1); }
+
 @media (max-width: 768px) {
   .banner-manager-header { flex-direction: column; align-items: flex-start; }
   .banner-manager-info { flex-direction: column; padding: 1rem; }
@@ -5493,6 +5533,46 @@ a.dex-panel--active{cursor:default}
 }
 .item-location-add-modal .admin-pokedex-modal-footer { padding: 1rem 1.75rem 1.5rem; gap: .75rem; border-top: 1px solid rgba(255,255,255,.1); }
 .item-location-add-modal .admin-pokedex-modal-footer .btn { padding: .65rem 1.2rem; border-radius: 12px; font-weight: 600; }
+
+/* ----- Item Location: vue cartes sur mobile ----- */
+@media (max-width: 768px) {
+  .item-location-editor-table-wrap { overflow: visible; }
+  .item-location-editor-table { display: block; min-width: 0; }
+  .item-location-editor-table thead { display: none; }
+  .item-location-editor-table .item-location-editor-zone-header td { display: block; padding: .75rem 1rem; }
+  .item-location-editor-table .item-location-editor-zone-title { padding: .5rem 0; }
+  .item-location-editor-table tbody tr.item-location-editor-data-row { display: block; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; margin-bottom: 1rem; padding: 1rem; background: rgba(255,255,255,.03); }
+  .item-location-editor-table tbody tr.item-location-editor-data-row td { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding: .5rem 0; border: none; width: 100%; }
+  .item-location-editor-table tbody tr.item-location-editor-data-row td::before { content: attr(data-label); font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); min-width: 80px; flex-shrink: 0; }
+  .item-location-editor-table tbody tr.item-location-editor-data-row td.td-ordre { flex-wrap: nowrap; }
+  .item-location-editor-table tbody tr.item-location-editor-data-row td.td-ordre::before { display: none; }
+  .item-location-editor-table tbody tr.item-location-editor-data-row td .item-location-editor-input { flex: 1; min-width: 0; }
+  .item-location-editor-table tbody tr.item-location-editor-data-row td.td-actions { justify-content: flex-end; }
+  .item-location-editor-table tbody tr.item-location-editor-data-row td.td-actions::before { display: none; }
+}
+
+/* ===== DOWNLOADS EDITOR ===== */
+.downloads-editor { max-width: 100%; }
+.downloads-editor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+.downloads-editor-header h2 { margin: 0; font-size: 1.25rem; display: flex; align-items: center; gap: .5rem; color: var(--text); }
+.downloads-editor-grid { display: grid; gap: 2rem; }
+.downloads-editor-card { background: rgba(255,255,255,.05); border-radius: 12px; padding: 1.75rem; border: 1px solid rgba(255,255,255,.1); }
+.downloads-editor-card-title { margin: 0 0 1.25rem; display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; color: var(--text); }
+.downloads-editor-field { margin-bottom: 1.25rem; }
+.downloads-editor-field label { display: block; margin-bottom: .5rem; font-weight: 600; font-size: .9rem; color: var(--text); }
+.downloads-editor-input-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+.downloads-editor-input { flex: 1; min-width: 200px; padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); color: var(--text); font-size: 1rem; box-sizing: border-box; }
+.downloads-editor-input:focus { outline: none; border-color: rgba(126,205,242,.5); }
+.downloads-editor-test-btn { padding: 1rem; flex-shrink: 0; }
+.downloads-editor-info { background: rgba(255,255,255,.08); padding: 1rem; border-radius: 8px; font-size: .9rem; color: var(--muted); }
+@media (max-width: 768px) {
+  .downloads-editor-header { flex-direction: column; align-items: stretch; margin-bottom: 1.5rem; }
+  .downloads-editor-header .btn { width: 100%; justify-content: center; }
+  .downloads-editor-card { padding: 1.25rem 1rem; }
+  .downloads-editor-input-row { flex-direction: column; align-items: stretch; }
+  .downloads-editor-input { min-width: 0; width: 100%; }
+  .downloads-editor-test-btn { width: 100%; }
+}
 
 /* ===== ADMIN PATCHNOTES EDITOR ===== */
 .patchnotes-editor { max-width: 900px; }
