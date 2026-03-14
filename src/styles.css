@@ -2789,7 +2789,6 @@ a.dex-panel--active{cursor:default}
 /* Mobile : overlay visible au clic (comme les autres sections) */
 @media (max-width:768px){
   .patreon-image-container{
-    min-height:200px;
     cursor:pointer;
   }
   .patreon-image-container .patreon-overlay{
