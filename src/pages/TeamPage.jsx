@@ -64,36 +64,39 @@ export default function TeamPage() {
           {loading ? (
             <p className="team-loading"><i className="fa-solid fa-spinner fa-spin" aria-hidden /> Chargement…</p>
           ) : (
-            members.map((member, i) => (
-              <article
-                key={member.id || member.pseudo + i}
-                className="team-card"
-                style={{ animationDelay: `${i * 0.08}s` }}
-              >
-                <div className="team-card-glow" aria-hidden />
-                <div className="team-card-avatar-wrap">
-                  <img
-                    src={member.avatar || DEFAULT_AVATAR}
-                    alt=""
-                    className="team-card-avatar"
-                    loading="lazy"
-                  />
-                </div>
-                <h3 className="team-card-pseudo">{member.pseudo || "—"}</h3>
-                <span
-                  className="team-card-role"
-                  style={{
-                    "--team-role-color": member.roleColor || DEFAULT_ROLE_COLOR,
-                    color: member.roleColor || DEFAULT_ROLE_COLOR,
-                    borderColor: member.roleColor || DEFAULT_ROLE_COLOR,
-                    backgroundColor: member.roleColor ? `${member.roleColor}22` : "rgba(126,205,242,.15)",
-                  }}
+            members.map((member, i) => {
+              const isFounder = (member.role || "").trim().toLowerCase() === "fondateur";
+              return (
+                <article
+                  key={member.id || member.pseudo + i}
+                  className={`team-card ${isFounder ? "team-card--founder" : ""}`}
+                  style={{ animationDelay: `${i * 0.08}s` }}
                 >
-                  {member.role || "—"}
-                </span>
-                {isFounder && <span className="team-card-founder-badge" aria-hidden><i className="fa-solid fa-crown" /></span>}
-              </article>
-            ); })
+                  <div className="team-card-glow" aria-hidden />
+                  <div className="team-card-avatar-wrap">
+                    <img
+                      src={member.avatar || DEFAULT_AVATAR}
+                      alt=""
+                      className="team-card-avatar"
+                      loading="lazy"
+                    />
+                  </div>
+                  <h3 className="team-card-pseudo">{member.pseudo || "—"}</h3>
+                  <span
+                    className="team-card-role"
+                    style={{
+                      "--team-role-color": member.roleColor || DEFAULT_ROLE_COLOR,
+                      color: member.roleColor || DEFAULT_ROLE_COLOR,
+                      borderColor: member.roleColor || DEFAULT_ROLE_COLOR,
+                      backgroundColor: member.roleColor ? `${member.roleColor}22` : "rgba(126,205,242,.15)",
+                    }}
+                  >
+                    {member.role || "—"}
+                  </span>
+                  {isFounder && <span className="team-card-founder-badge" aria-hidden><i className="fa-solid fa-crown" /></span>}
+                </article>
+              );
+            })
           )}
         </section>
 
