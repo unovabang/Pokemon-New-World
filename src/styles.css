@@ -2818,10 +2818,13 @@ a.dex-panel--active{cursor:default}
     width:100%;
     box-sizing:border-box;
     cursor:default;
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
-  .patreon-cta h3{font-size:1.1rem;}
-  .patreon-cta p{color:#fff; font-size:14px; margin-bottom:1rem;}
-  .patreon-btn{margin-top:0.25rem;}
+  .patreon-cta h3,
+  .patreon-cta p{display:none;}
+  .patreon-btn{margin:0;}
 }
 .patreon-cta{
   text-align:center; 
