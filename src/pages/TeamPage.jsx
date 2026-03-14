@@ -2,31 +2,42 @@ import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 
-/** Liste des membres de l'équipe : pseudo, avatar (URL ou chemin), rôle */
-const TEAM_MEMBERS = [
-  { pseudo: "Unovabang", role: "Fondateur", avatar: "" },
-  { pseudo: "Jirô", role: "DevTeam", avatar: "" },
-  // Ajoute d'autres membres ici : { pseudo: "...", role: "...", avatar: "https://..." ou "/img/..." }
-];
-
-/** Remerciements (noms ou phrases) */
-const THANKS = [
-  "La communauté Pokemon New World",
-  "Tous les testeurs et feedbackeurs",
-  "Les contributeurs du projet open source",
-  "Vous, pour jouer et nous soutenir",
-];
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
 
 const DEFAULT_AVATAR = "data:image/svg+xml," + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle fill="%23313538" cx="50" cy="50" r="50"/><circle fill="%237ecdf2" cx="50" cy="38" r="18"/><path fill="%237ecdf2" d="M20 95c0-25 13-40 30-40s30 15 30 40z"/></svg>'
 );
 
+const DEFAULT_ROLE_COLOR = "#7ecdf2";
+
 export default function TeamPage() {
   const [visible, setVisible] = useState(false);
+  const [members, setMembers] = useState([]);
+  const [thanks, setThanks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 80);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${API_BASE}/config/team?t=${Date.now()}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled || !data?.success) return;
+        const config = data.config || {};
+        setMembers(Array.isArray(config.members) ? config.members : []);
+        setThanks(Array.isArray(config.thanks) ? config.thanks : []);
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, []);
 
   return (
@@ -48,47 +59,63 @@ export default function TeamPage() {
           aria-labelledby="team-heading"
         >
           <h2 id="team-heading" className="sr-only">Membres de l’équipe</h2>
-          {TEAM_MEMBERS.map((member, i) => (
-            <article
-              key={member.pseudo + i}
-              className="team-card"
-              style={{ animationDelay: `${i * 0.08}s` }}
-            >
-              <div className="team-card-glow" aria-hidden />
-              <div className="team-card-avatar-wrap">
-                <img
-                  src={member.avatar || DEFAULT_AVATAR}
-                  alt=""
-                  className="team-card-avatar"
-                  loading="lazy"
-                />
-              </div>
-              <h3 className="team-card-pseudo">{member.pseudo}</h3>
-              <span className="team-card-role">{member.role}</span>
-            </article>
-          ))}
+          {loading ? (
+            <p className="team-loading"><i className="fa-solid fa-spinner fa-spin" aria-hidden /> Chargement…</p>
+          ) : (
+            members.map((member, i) => (
+              <article
+                key={member.id || member.pseudo + i}
+                className="team-card"
+                style={{ animationDelay: `${i * 0.08}s` }}
+              >
+                <div className="team-card-glow" aria-hidden />
+                <div className="team-card-avatar-wrap">
+                  <img
+                    src={member.avatar || DEFAULT_AVATAR}
+                    alt=""
+                    className="team-card-avatar"
+                    loading="lazy"
+                  />
+                </div>
+                <h3 className="team-card-pseudo">{member.pseudo || "—"}</h3>
+                <span
+                  className="team-card-role"
+                  style={{
+                    "--team-role-color": member.roleColor || DEFAULT_ROLE_COLOR,
+                    color: member.roleColor || DEFAULT_ROLE_COLOR,
+                    borderColor: member.roleColor || DEFAULT_ROLE_COLOR,
+                    backgroundColor: member.roleColor ? `${member.roleColor}22` : "rgba(126,205,242,.15)",
+                  }}
+                >
+                  {member.role || "—"}
+                </span>
+              </article>
+            ))
+          )}
         </section>
 
-        <section
-          className="team-thanks"
-          aria-labelledby="thanks-heading"
-        >
-          <h2 id="thanks-heading" className="team-thanks-title">
-            <i className="fa-solid fa-heart" aria-hidden />
-            Remerciements
-          </h2>
-          <p className="team-thanks-intro">
-            Un grand merci à toutes les personnes qui rendent ce projet possible.
-          </p>
-          <ul className="team-thanks-list">
-            {THANKS.map((item, i) => (
-              <li key={i} className="team-thanks-item">
-                <span className="team-thanks-bullet" aria-hidden>✦</span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </section>
+        {!loading && thanks.length > 0 && (
+          <section
+            className="team-thanks"
+            aria-labelledby="thanks-heading"
+          >
+            <h2 id="thanks-heading" className="team-thanks-title">
+              <i className="fa-solid fa-heart" aria-hidden />
+              Remerciements
+            </h2>
+            <p className="team-thanks-intro">
+              Un grand merci à toutes les personnes qui rendent ce projet possible.
+            </p>
+            <ul className="team-thanks-list">
+              {thanks.map((item, i) => (
+                <li key={i} className="team-thanks-item">
+                  <span className="team-thanks-bullet" aria-hidden>✦</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
     </main>
   );

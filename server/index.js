@@ -776,6 +776,18 @@ app.get('/api/config/:name', (req, res) => {
         configData = { entries: [] };
       }
     }
+    if (!configData && name === 'team') {
+      const seedPath = path.join(__dirname, '../src/config/team.json');
+      if (fs.existsSync(seedPath)) {
+        try {
+          configData = fs.readJsonSync(seedPath);
+        } catch (e) {
+          configData = { members: [], thanks: [] };
+        }
+      } else {
+        configData = { members: [], thanks: [] };
+      }
+    }
     if (!configData) {
       return res.status(404).json({ success: false, error: `Configuration ${name} non trouvée` });
     }

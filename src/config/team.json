@@ -1,0 +1,12 @@
+{
+  "members": [
+    { "id": "1", "pseudo": "Unovabang", "role": "Fondateur", "avatar": "", "roleColor": "#7ecdf2" },
+    { "id": "2", "pseudo": "Jirô", "role": "DevTeam", "avatar": "", "roleColor": "#a78bfa" }
+  ],
+  "thanks": [
+    "La communauté Pokemon New World",
+    "Tous les testeurs et feedbackeurs",
+    "Les contributeurs du projet open source",
+    "Vous, pour jouer et nous soutenir"
+  ]
+}

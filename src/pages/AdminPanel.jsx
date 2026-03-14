@@ -20,6 +20,7 @@ import BSTEditor from "../components/BSTEditor";
 import AdminTips from "../components/AdminTips";
 import ItemLocationEditor from "../components/ItemLocationEditor";
 import EmbedEditor from "../components/EmbedEditor";
+import TeamEditor from "../components/TeamEditor";
 import UnderConstructionPage from "./UnderConstructionPage";
 
 // Import des configurations JSON
@@ -107,7 +108,10 @@ const AdminPanel = () => {
     },
     {
       title: 'Site',
-      items: [{ id: 'settings', name: 'Paramètres', icon: 'fa-sliders', description: 'Site, Patreon, pied de page' }]
+      items: [
+        { id: 'settings', name: 'Paramètres', icon: 'fa-sliders', description: 'Site, Patreon, pied de page' },
+        { id: 'team', name: "L'équipe", icon: 'fa-users', description: "Membres de l'équipe & remerciements" }
+      ]
     },
     {
       title: 'Discord',
@@ -399,6 +403,8 @@ const AdminPanel = () => {
 
           {activeTab === 'embed' && <EmbedEditor />}
 
+          {activeTab === 'team' && <TeamEditor />}
+
           {activeTab === 'tips' && <AdminTips />}
 
           {activeTab === 'logs' && (
@@ -442,7 +448,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'dashboard' && activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' && 
-           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'itemlocation' && activeTab !== 'settings' && activeTab !== 'embed' && activeTab !== 'tips' && activeTab !== 'logs' && (
+           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'itemlocation' && activeTab !== 'settings' && activeTab !== 'team' && activeTab !== 'embed' && activeTab !== 'tips' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">
                 <h2 className="admin-panel-card-title">
