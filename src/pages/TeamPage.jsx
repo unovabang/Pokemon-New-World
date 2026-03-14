@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -15,6 +16,7 @@ const DEFAULT_AVATAR = "data:image/svg+xml," + encodeURIComponent(
 const DEFAULT_ROLE_COLOR = "#7ecdf2";
 
 export default function TeamPage() {
+  const { t } = useLanguage();
   const [visible, setVisible] = useState(false);
   const [members, setMembers] = useState([]);
   const [thanks, setThanks] = useState([]);
@@ -52,9 +54,9 @@ export default function TeamPage() {
       <div className="container team-container">
         <header className="team-hero">
           <LanguageSelector className="team-lang-selector" />
-          <p className="team-hero-subtitle">Qui fait vivre l’aventure</p>
+          <p className="team-hero-subtitle">{t("teamPage.subtitle")}</p>
           <h1 className="team-hero-title">
-            <span className="team-hero-title-inner">L’équipe Pokemon New World</span>
+            <span className="team-hero-title-inner">{t("teamPage.title")}</span>
           </h1>
           <div className="team-hero-line" />
         </header>
@@ -110,10 +112,10 @@ export default function TeamPage() {
           >
             <h2 id="thanks-heading" className="team-thanks-title">
               <i className="fa-solid fa-heart" aria-hidden />
-              Remerciements
+              {t("teamPage.thanksTitle")}
             </h2>
             <p className="team-thanks-intro">
-              Un grand merci à toutes les personnes qui rendent ce projet possible.
+              {t("teamPage.thanksIntro")}
             </p>
             <ul className="team-thanks-list">
               {thanks.map((item, i) => (

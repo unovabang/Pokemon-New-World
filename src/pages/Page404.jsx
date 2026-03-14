@@ -1,7 +1,14 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Page404 = () => {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth <= 768);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const goHome = () => {
     navigate('/');
@@ -41,7 +48,7 @@ const Page404 = () => {
         maxWidth: '600px',
         background: 'linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%)',
         borderRadius: '24px',
-        padding: window.innerWidth <= 768 ? '2rem' : '3rem',
+        padding: isMobile ? '2rem' : '3rem',
         border: '1px solid rgba(255,255,255,0.2)',
         backdropFilter: 'blur(15px)',
         boxShadow: '0 25px 50px rgba(0,0,0,0.5)'
@@ -62,7 +69,7 @@ const Page404 = () => {
 
         {/* Titre principal */}
         <h1 style={{
-          fontSize: window.innerWidth <= 768 ? '1.8rem' : '2.5rem',
+          fontSize: isMobile ? '1.8rem' : '2.5rem',
           fontWeight: '700',
           color: 'white',
           marginBottom: '1rem',
@@ -73,7 +80,7 @@ const Page404 = () => {
 
         {/* Description */}
         <p style={{
-          fontSize: window.innerWidth <= 768 ? '1rem' : '1.2rem',
+          fontSize: isMobile ? '1rem' : '1.2rem',
           color: 'rgba(255,255,255,0.7)',
           marginBottom: '2.5rem',
           lineHeight: '1.6'
@@ -89,12 +96,12 @@ const Page404 = () => {
         <button
           onClick={goHome}
           style={{
-            padding: window.innerWidth <= 768 ? '0.8rem 2rem' : '1rem 2.5rem',
+            padding: isMobile ? '0.8rem 2rem' : '1rem 2.5rem',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             border: 'none',
             borderRadius: '50px',
             color: 'white',
-            fontSize: window.innerWidth <= 768 ? '1rem' : '1.1rem',
+            fontSize: isMobile ? '1rem' : '1.1rem',
             fontWeight: '600',
             cursor: 'pointer',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',

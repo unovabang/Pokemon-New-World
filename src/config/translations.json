@@ -80,6 +80,14 @@
       "versions": "Versions",
       "loading": "Chargement…",
       "empty": "Aucune note de patch pour le moment."
+    },
+    "teamPage": {
+      "subtitle": "Qui fait vivre l'aventure",
+      "title": "L'équipe Pokemon New World",
+      "loading": "Chargement…",
+      "teamHeading": "Membres de l'équipe",
+      "thanksTitle": "Remerciements",
+      "thanksIntro": "Un grand merci à toutes les personnes qui rendent ce projet possible."
     }
   },
   "en": {
@@ -163,6 +171,14 @@
       "versions": "Versions",
       "loading": "Loading…",
       "empty": "No patch notes yet."
+    },
+    "teamPage": {
+      "subtitle": "Who brings the adventure to life",
+      "title": "The Pokemon New World Team",
+      "loading": "Loading…",
+      "teamHeading": "Team members",
+      "thanksTitle": "Acknowledgements",
+      "thanksIntro": "A big thank you to everyone who makes this project possible."
     }
   }
 }

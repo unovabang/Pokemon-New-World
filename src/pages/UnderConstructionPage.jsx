@@ -1,10 +1,16 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const CONSTRUCTION_BG = "https://media.discordapp.net/attachments/1480351076065480836/1480360418160676884/snorlax-pikachu-charmander-squirtle-bulbasaur-pokemon-4k-wallpaper-uhdpaper.com-2665d.png?ex=69af6493&is=69ae1313&hm=5c95d2e4c2b3d0a1bae5a765f3a3570500355e16c1daf303607748ac0ac70fdc&=&format=webp&quality=lossless&width=550&height=309";
 
 const UnderConstructionPage = ({ title = "En construction", backLabel = "Retour à l'accueil", onBack, embedded = false }) => {
   const navigate = useNavigate();
-  const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth <= 768);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
   const handleBack = onBack ?? (() => navigate("/"));
 
   return (
