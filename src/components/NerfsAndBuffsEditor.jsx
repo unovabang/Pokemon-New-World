@@ -410,7 +410,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
               <input type="text" className="admin-pokedex-input" value={form.typeTo} onChange={(e) => setForm((f) => ({ ...f, typeTo: e.target.value }))} placeholder="Glace/Spectre" />
             </div>
           </div>
-          <div className="admin-nerfbuff-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem", marginTop: "1rem" }}>
+          <div className="admin-nerfbuff-stats-grid">
             {STAT_KEYS.map((key) => (
               <div key={key} className="nerfbuff-admin-stat-row">
                 <label className="admin-pokedex-label"><i className={`fa-solid ${STAT_ICONS[key]}`} aria-hidden /> {STAT_LABELS[key]}</label>
