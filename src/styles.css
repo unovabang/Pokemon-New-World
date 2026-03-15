@@ -959,6 +959,8 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   align-items:center;
   justify-content:center;
   padding:1.5rem;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
   background:rgba(0,0,0,.75);
   backdrop-filter:blur(10px);
   animation:bstModalFadeIn .2s ease;
@@ -968,6 +970,10 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   position:relative;
   max-width:480px;
   width:100%;
+  max-height:90vh;
+  margin:auto 0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
   padding:2.25rem;
   background:linear-gradient(165deg, rgba(255,255,255,.1), rgba(255,255,255,.04));
   border:1px solid rgba(126,205,242,.25);

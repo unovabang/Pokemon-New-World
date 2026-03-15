@@ -142,13 +142,23 @@ function getTypeKey(label) {
   )?.[0] || label?.toLowerCase().replace(/[^a-z]/g, "") || "normal";
 }
 
+/** Couleur pour types personnalisés (hors liste) : dérivée du nom pour être stable et distincte. */
+const FALLBACK_TYPE_COLORS = ["#e91e63", "#9c27b0", "#673ab7", "#00bcd4", "#009688", "#8bc34a", "#ff9800", "#ff5722", "#795548", "#607d8b"];
+function getColorForType(label) {
+  const key = getTypeKey(label);
+  if (TYPE_COLORS[key]) return TYPE_COLORS[key];
+  let h = 0;
+  const s = (key || "").toLowerCase();
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i) | 0;
+  return FALLBACK_TYPE_COLORS[Math.abs(h) % FALLBACK_TYPE_COLORS.length];
+}
+
 function TypeBadges({ types }) {
   if (!types?.length) return <span className="bst-type-empty">—</span>;
   return (
     <span className="bst-type-badges">
       {types.map((t) => {
-        const key = getTypeKey(t);
-        const color = TYPE_COLORS[key] || TYPE_COLORS.normal;
+        const color = getColorForType(t);
         return (
           <span
             key={t}

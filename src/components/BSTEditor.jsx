@@ -98,6 +98,16 @@ function getTypeKey(label) {
     ([, v]) => v.toLowerCase() === (label || "").toLowerCase()
   )?.[0] || (label || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/g, "") || "normal";
 }
+/** Couleur pour types personnalisés : dérivée du nom (même logique que la page publique). */
+const FALLBACK_TYPE_COLORS = ["#e91e63", "#9c27b0", "#673ab7", "#00bcd4", "#009688", "#8bc34a", "#ff9800", "#ff5722", "#795548", "#607d8b"];
+function getColorForType(label) {
+  const key = getTypeKey(label);
+  if (TYPE_COLORS[key]) return TYPE_COLORS[key];
+  let h = 0;
+  const s = (key || "").toLowerCase();
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i) | 0;
+  return FALLBACK_TYPE_COLORS[Math.abs(h) % FALLBACK_TYPE_COLORS.length];
+}
 /** Parse le champ type BST (ex. "Eau/Psy") en libellés pour affichage aligné avec la page publique. */
 function parseTypeLabels(typeStr) {
   const str = (typeStr || "").trim();
@@ -447,8 +457,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                         const types = parseTypeLabels(e.type);
                         if (!types.length) return "—";
                         return types.map((t) => {
-                          const key = getTypeKey(t);
-                          const color = TYPE_COLORS[key] || TYPE_COLORS.normal;
+                          const color = getColorForType(t);
                           return (
                             <span
                               key={t}
