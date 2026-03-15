@@ -92,10 +92,9 @@ export default function EVsLocationEditor({ onSave }) {
       if (evsRes?.success && Array.isArray(evsRes?.evs?.entries)) {
         const raw = evsRes.evs.entries;
         const normalized = raw.map((ev) => {
-          const sectionZone = (ev.zone != null && String(ev.zone).trim()) ? String(ev.zone).trim() : "";
           const pokemon = (Array.isArray(ev.pokemon) ? ev.pokemon : []).map((p) => {
             const base = typeof p === "object" && p != null ? p : { name: String(p), points: 0 };
-            const zones = Array.isArray(base.zones) && base.zones.length > 0 ? base.zones : (sectionZone ? [sectionZone] : []);
+            const zones = Array.isArray(base.zones) ? base.zones : [];
             return { ...base, zones };
           });
           return { ...ev, pokemon };

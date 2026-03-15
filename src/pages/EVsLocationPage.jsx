@@ -76,13 +76,10 @@ function findSprite(lookup, displayName) {
   return null;
 }
 
-/** Parse zones: array or fallback to section zone */
-function parseZones(p, ev) {
-  if (Array.isArray(p.zones) && p.zones.length > 0) {
-    return p.zones.filter((z) => z != null && String(z).trim()).map((z) => String(z).trim());
-  }
-  const one = (p.zone != null && String(p.zone).trim()) ? String(p.zone).trim() : (ev.zone != null && String(ev.zone).trim()) ? String(ev.zone).trim() : "";
-  return one ? [one] : [];
+/** Zones du Pokémon uniquement (pas de fallback section) — badge affiché seulement si rempli */
+function parseZones(p) {
+  if (!Array.isArray(p.zones)) return [];
+  return p.zones.filter((z) => z != null && String(z).trim()).map((z) => String(z).trim());
 }
 
 /** Normalise une entrée EV : pokemon peut être string[] + points[] (legacy) ou { name, imageUrl?, points, zones? }[] */
@@ -98,7 +95,7 @@ function normalizeEvEntry(ev) {
           name: (p.name || "").trim(),
           imageUrl: (p.imageUrl || "").trim() || undefined,
           points: typeof p.points === "number" ? p.points : 0,
-          zones: parseZones(p, ev),
+          zones: parseZones(p),
         });
       });
     } else {
@@ -164,7 +161,6 @@ export default function EVsLocationPage() {
     const set = new Set();
     evsEntries.forEach((ev) => {
       ev.pokemon.forEach((p) => (p.zones || []).forEach((z) => z && set.add(z)));
-      if (ev.zone && ev.zone.trim()) set.add(ev.zone.trim());
     });
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [evsEntries]);
