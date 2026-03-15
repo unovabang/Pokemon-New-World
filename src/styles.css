@@ -3277,7 +3277,7 @@ a.dex-panel--active{cursor:default}
 .patchnotes-sidebar-item-date { font-size: .8rem; color: var(--muted); }
 .patchnotes-main { min-width: 0; }
 
-/* ===== NERFS & BUFFS PAGE (style BST) ===== */
+/* ===== NERFS & BUFFS PAGE — aligné sur All BST ===== */
 .nerfs-buffs-page { min-height: 100vh; padding-bottom: 4rem; }
 .nerfs-buffs-page .bst-header { flex-wrap: wrap; }
 .nerfs-buffs-inner {
@@ -3321,32 +3321,99 @@ a.dex-panel--active{cursor:default}
 .nerfs-section[data-kind="nerfs"] { border-left-color: #ef4444; }
 .nerfs-section[data-kind="buffs"] { border-left-color: #22c55e; }
 .nerfs-section[data-kind="ajustements"] { border-left-color: #8b5cf6; }
+
+/* Cartes type BST mais sprites plus petits (comme référence Fakemon) */
+.nerfs-buffs-page .bst-card {
+  padding: 1rem 0.85rem;
+}
+.nerfs-buffs-page .bst-card-sprite-wrap {
+  width: 88px;
+  height: 88px;
+  margin-bottom: 0.75rem;
+  border-radius: 14px;
+}
+.nerfs-buffs-page .bst-card-sprite {
+  width: 72px;
+  height: 72px;
+}
+.nerfs-buffs-page .bst-card-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
 .nerfs-grid-5.bst-grid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(5, minmax(100px, 1fr));
+  gap: 1.25rem;
 }
 .nerfs-column-empty { margin: 0; font-size: .9rem; color: var(--muted); text-align: center; padding: 1rem; grid-column: 1 / -1; }
 
-.nerfs-detail-modal.bst-modal .bst-modal-talents-wrap { margin-top: 0; }
+/* Modal détail : même structure que BST, sprite proportionné, bloc Détails = style Talents */
+.nerfs-detail-modal.bst-modal {
+  max-width: 440px;
+  padding: 2rem;
+}
+.nerfs-detail-modal .bst-modal-sprite-wrap {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 1rem;
+  border-radius: 18px;
+}
+.nerfs-detail-modal .bst-modal-sprite {
+  width: 140px;
+  height: 140px;
+}
+.nerfs-detail-modal .bst-modal-name {
+  font-size: 1.4rem;
+  margin-bottom: 0.75rem;
+}
+.nerfs-detail-modal .bst-modal-talents-wrap {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(126,205,242,.12);
+}
+.nerfs-detail-modal .bst-modal-talents-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary-2);
+  margin-bottom: 0.5rem;
+}
 .nerfs-modal-description {
-  margin: 0; font-size: .9rem; line-height: 1.6; color: var(--text);
-  white-space: pre-wrap; word-break: break-word; font-family: inherit;
-  padding: 0; background: none; border: none;
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.75);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
+  padding: 0;
+  background: none;
+  border: none;
+}
+.nerfs-detail-modal .bst-modal-talent-slot:only-of-type .nerfs-modal-description { padding-left: 0; }
+.nerfs-detail-modal .bst-modal-talent-slot {
+  padding: 0.6rem 0.75rem;
 }
 
 @media (max-width: 1100px) {
-  .nerfs-grid-5.bst-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .nerfs-grid-5.bst-grid { grid-template-columns: repeat(3, minmax(100px, 1fr)); }
 }
 @media (max-width: 900px) {
   .nerfs-columns { grid-template-columns: 1fr; }
-  .nerfs-grid-5.bst-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nerfs-grid-5.bst-grid { grid-template-columns: repeat(4, minmax(90px, 1fr)); }
 }
 @media (max-width: 700px) {
   .nerfs-buffs-inner { grid-template-columns: 1fr; }
   .nerfs-sidebar { position: static; }
-  .nerfs-grid-5.bst-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
-  .nerfs-section .bst-card-sprite-wrap { width: 80px; height: 80px; }
-  .nerfs-section .bst-card-sprite { width: 72px; height: 72px; }
+  .nerfs-grid-5.bst-grid { grid-template-columns: repeat(3, minmax(85px, 1fr)); gap: 1rem; }
+  .nerfs-buffs-page .bst-card-sprite-wrap { width: 72px; height: 72px; }
+  .nerfs-buffs-page .bst-card-sprite { width: 60px; height: 60px; }
+  .nerfs-buffs-page .bst-card { padding: 0.75rem 0.6rem; }
+  .nerfs-buffs-page .bst-card-name { font-size: 0.8rem; }
+  .nerfs-detail-modal .bst-modal-sprite-wrap { width: 140px; height: 140px; }
+  .nerfs-detail-modal .bst-modal-sprite { width: 120px; height: 120px; }
 }
 
 /* ===== ADMIN PANEL — PARAMÈTRES UNIFIÉS ===== */

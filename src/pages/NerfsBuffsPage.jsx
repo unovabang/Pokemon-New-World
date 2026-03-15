@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { createPortal } from "react-dom";
 import Sidebar from "../components/Sidebar";
@@ -53,9 +53,11 @@ function findPokedexEntry(name, entries) {
 }
 
 function EntryModal({ entry, kind, spriteUrl, onClose }) {
+  const overlayRef = useRef(null);
   const handleKeyDown = useCallback((e) => { if (e.key === "Escape") onClose(); }, [onClose]);
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
+    overlayRef.current?.focus();
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
@@ -65,8 +67,10 @@ function EntryModal({ entry, kind, spriteUrl, onClose }) {
 
   return createPortal(
     <div
+      ref={overlayRef}
       className="bst-modal-overlay"
       onClick={onClose}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-labelledby="nerfs-modal-title"
@@ -93,7 +97,7 @@ function EntryModal({ entry, kind, spriteUrl, onClose }) {
           <div className="bst-modal-talents-list">
             <div className="bst-modal-talent-slot">
               {entry.description ? (
-                <pre className="nerfs-modal-description">{entry.description}</pre>
+                <div className="nerfs-modal-description">{entry.description}</div>
               ) : (
                 <p className="bst-modal-talent-desc">Aucun détail.</p>
               )}
