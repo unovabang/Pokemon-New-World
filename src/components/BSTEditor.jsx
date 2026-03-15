@@ -79,6 +79,36 @@ function normalizeName(str) {
     .trim();
 }
 
+const TYPE_COLORS = {
+  plante: "#7ec850", feu: "#f08030", eau: "#6890f0", glace: "#98d8d8", malice: "#705898",
+  poison: "#a040a0", vol: "#a890f0", dragon: "#7038f8", sol: "#e0c068", combat: "#c03028",
+  spectre: "#705898", psy: "#f85888", electrik: "#f8d030", electr: "#f8d030", fee: "#ee99ac",
+  tenebres: "#705848", roche: "#b8a038", acier: "#b8b8d0", normal: "#a8a878", insecte: "#a8b820",
+  aspic: "#a08060", neant: "#5a5a8a",
+};
+const TYPE_LABELS = {
+  plante: "Plante", feu: "Feu", eau: "Eau", glace: "Glace", malice: "Malice",
+  poison: "Poison", vol: "Vol", dragon: "Dragon", sol: "Sol", combat: "Combat",
+  spectre: "Spectre", psy: "Psy", electrik: "Électrik", electr: "Électrik",
+  fee: "Fée", tenebres: "Ténèbres", roche: "Roche", acier: "Acier",
+  normal: "Normal", insecte: "Insecte", aspic: "Aspic", neant: "Néant",
+};
+function getTypeKey(label) {
+  return Object.entries(TYPE_LABELS).find(
+    ([, v]) => v.toLowerCase() === (label || "").toLowerCase()
+  )?.[0] || (label || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]/g, "") || "normal";
+}
+/** Parse le champ type BST (ex. "Eau/Psy") en libellés pour affichage aligné avec la page publique. */
+function parseTypeLabels(typeStr) {
+  const str = (typeStr || "").trim();
+  if (!str) return [];
+  return str
+    .split(/[/\s]+/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .map((part) => TYPE_LABELS[getTypeKey(part)] || part);
+}
+
 /** Trouve l'entrée pokedex par nom (pour récupérer l'image en fallback) */
 function findPokedexEntry(name, entries) {
   if (!name || !entries?.length) return null;
@@ -412,7 +442,29 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                   </div>
                   <div className="admin-bst-card-main">
                     <span className="admin-bst-card-name">{e.name}</span>
-                    <span className="admin-bst-card-type">{e.type || "—"}</span>
+                    <span className="admin-bst-card-type">
+                      {(() => {
+                        const types = parseTypeLabels(e.type);
+                        if (!types.length) return "—";
+                        return types.map((t) => {
+                          const key = getTypeKey(t);
+                          const color = TYPE_COLORS[key] || TYPE_COLORS.normal;
+                          return (
+                            <span
+                              key={t}
+                              className="admin-bst-type-badge"
+                              style={{
+                                background: `linear-gradient(135deg, ${color}44, ${color}22)`,
+                                borderColor: color,
+                                color,
+                              }}
+                            >
+                              {t}
+                            </span>
+                          );
+                        });
+                      })()}
+                    </span>
                     <span className="admin-bst-card-total">
                       <i className="fa-solid fa-calculator" aria-hidden /> {e.total}
                     </span>

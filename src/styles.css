@@ -4344,10 +4344,20 @@ a.dex-panel--active{cursor:default}
   margin-bottom: 0.35rem;
 }
 .admin-bst-card-type {
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
   font-size: 0.85rem;
-  color: rgba(255,255,255,.75);
   margin-bottom: 0.5rem;
+}
+.admin-bst-card-type .admin-bst-type-badge {
+  display: inline-block;
+  padding: 0.2rem 0.45rem;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid;
+  white-space: nowrap;
 }
 .admin-bst-card-total {
   display: inline-flex;

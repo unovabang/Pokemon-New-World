@@ -87,16 +87,20 @@ function findPokedexEntry(name, entries) {
   return e || null;
 }
 
-/** Extrait les types: pokedex en priorité, sinon parse "Eau/Psy" */
+/** Extrait les types: priorité au champ BST (row.type), sinon Pokédex. Même source que l'admin. */
 function getTypes(row, pokedexEntry) {
+  const str = (row.type || "").trim();
+  if (str) {
+    return str
+      .split(/[/\s]+/)
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .map((part) => TYPE_LABELS[getTypeKey(part)] || part);
+  }
   if (pokedexEntry?.types?.length) {
     return pokedexEntry.types.map((t) => TYPE_LABELS[t] || t);
   }
-  const str = row.type || "";
-  return str
-    .split(/[/\s]+/)
-    .map((t) => t.trim())
-    .filter(Boolean);
+  return [];
 }
 
 const TYPE_COLORS = {
