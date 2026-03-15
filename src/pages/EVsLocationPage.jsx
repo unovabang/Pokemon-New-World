@@ -101,7 +101,7 @@ function normalizeEvEntry(ev) {
       });
     }
   }
-  return { id: ev.id, label: ev.label, icon: ev.icon || "fa-circle", pokemon };
+  return { id: ev.id, label: ev.label, icon: ev.icon || "fa-circle", zone: (ev.zone || "").trim() || null, pokemon };
 }
 
 export default function EVsLocationPage() {
@@ -165,7 +165,7 @@ export default function EVsLocationPage() {
             EVs par lieu
           </h1>
           <p className="evs-location-desc">
-            Voici un tableau vous permettant de farm un EV en fonction de la zone. Table des EV basée sur les Pokémon du jeu Pokémon New World (run HopeGrave). Cliquez sur une stat pour afficher les Pokémon qui donnent cet EV.
+            Table des EV basée sur les Pokémon du jeu Pokémon New World (run HopeGrave). Cliquez sur une stat pour afficher les Pokémon qui donnent cet EV.
           </p>
         </header>
 
@@ -175,7 +175,44 @@ export default function EVsLocationPage() {
             <span>Chargement…</span>
           </div>
         ) : (
-          <div className="evs-location-grid">
+          <>
+            <section className="evs-location-table-section" aria-labelledby="evs-table-title">
+              <h2 id="evs-table-title" className="evs-location-table-title">
+                <i className="fa-solid fa-table" aria-hidden />
+                Farm un EV par zone
+              </h2>
+              <div className="evs-location-table-wrap">
+                <table className="evs-location-table">
+                  <thead>
+                    <tr>
+                      <th scope="col"><i className="fa-solid fa-heart-pulse" aria-hidden /> EV</th>
+                      <th scope="col"><i className="fa-solid fa-map-location-dot" aria-hidden /> Zone</th>
+                      <th scope="col"><i className="fa-solid fa-paw" aria-hidden /> Pokémons</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {evsEntries.map((ev) => (
+                      <tr key={ev.id}>
+                        <td>
+                          <span className="evs-location-table-ev">
+                            <i className={`fa-solid ${ev.icon}`} aria-hidden />
+                            {ev.label}
+                          </span>
+                        </td>
+                        <td>{ev.zone || "—"}</td>
+                        <td>
+                          <span className="evs-location-table-pokemons">
+                            {ev.pokemon.length ? ev.pokemon.map((p) => p.name).join(", ") : "—"}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <div className="evs-location-grid">
             {evsEntries.map((ev) => {
               const isOpen = expandedId === ev.id;
               return (
@@ -237,7 +274,8 @@ export default function EVsLocationPage() {
                 </article>
               );
             })}
-          </div>
+            </div>
+          </>
         )}
       </div>
     </main>

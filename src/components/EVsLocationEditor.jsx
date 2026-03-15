@@ -78,6 +78,7 @@ export default function EVsLocationEditor({ onSave }) {
   const [pokedexSearch, setPokedexSearch] = useState("");
   const [pokedexDropdownOpen, setPokedexDropdownOpen] = useState(false);
   const [evDropdownOpen, setEvDropdownOpen] = useState(false);
+  const [zoneInput, setZoneInput] = useState("");
   const pokedexDropdownRef = useRef(null);
   const evDropdownRef = useRef(null);
 
@@ -139,9 +140,13 @@ export default function EVsLocationEditor({ onSave }) {
 
   const currentEv = useMemo(() => {
     const ev = entries.find((e) => e.id === activeSection);
-    if (ev) return ev;
-    return { id: activeSection, label: EV_SECTIONS.find((s) => s.id === activeSection)?.label || activeSection, icon: EV_SECTIONS.find((s) => s.id === activeSection)?.icon || "fa-circle", pokemon: [] };
+    if (ev) return { ...ev, zone: (ev.zone != null && String(ev.zone).trim()) ? String(ev.zone).trim() : "" };
+    return { id: activeSection, label: EV_SECTIONS.find((s) => s.id === activeSection)?.label || activeSection, icon: EV_SECTIONS.find((s) => s.id === activeSection)?.icon || "fa-circle", zone: "", pokemon: [] };
   }, [entries, activeSection]);
+
+  useEffect(() => {
+    setZoneInput(currentEv.zone ?? "");
+  }, [currentEv.zone, activeSection]);
 
   const pokemonList = Array.isArray(currentEv.pokemon) ? currentEv.pokemon : [];
   const filteredPokemon = useMemo(() => {
@@ -199,7 +204,27 @@ export default function EVsLocationEditor({ onSave }) {
         id: evId,
         label: EV_SECTIONS.find((s) => s.id === evId)?.label || evId,
         icon: EV_SECTIONS.find((s) => s.id === evId)?.icon || "fa-circle",
+        zone: "",
         pokemon: newPokemonList,
+      });
+    }
+    setEntries(next);
+    saveToApi(next);
+  };
+
+  const updateEntryZone = (evId, zone) => {
+    const value = zone != null ? String(zone).trim() : "";
+    const next = entries.map((e) =>
+      e.id === evId ? { ...e, zone: value } : e
+    );
+    const existing = next.find((e) => e.id === evId);
+    if (!existing) {
+      next.push({
+        id: evId,
+        label: EV_SECTIONS.find((s) => s.id === evId)?.label || evId,
+        icon: EV_SECTIONS.find((s) => s.id === evId)?.icon || "fa-circle",
+        zone: value,
+        pokemon: [],
       });
     }
     setEntries(next);
@@ -512,6 +537,25 @@ export default function EVsLocationEditor({ onSave }) {
             <i className={`fa-solid ${s.icon}`} /> {s.label}
           </button>
         ))}
+      </div>
+
+      <div className="evs-editor-zone-row">
+        <label className="evs-editor-label" htmlFor="evs-zone-input">
+          <i className="fa-solid fa-map-location-dot" aria-hidden /> Zone de farm
+        </label>
+        <input
+          id="evs-zone-input"
+          type="text"
+          className="evs-editor-input evs-editor-zone-input"
+          value={zoneInput}
+          onChange={(e) => setZoneInput(e.target.value)}
+          onBlur={() => {
+            const val = (zoneInput ?? "").trim();
+            if (val !== (currentEv.zone ?? "")) updateEntryZone(activeSection, val);
+          }}
+          placeholder="ex. Helheim, Chemin des Larmes…"
+        />
+        <span className="evs-editor-hint">Affichée dans le tableau « Farm un EV par zone » sur la page publique.</span>
       </div>
 
       <div className="evs-editor-toolbar">
