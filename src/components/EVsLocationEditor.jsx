@@ -71,7 +71,7 @@ export default function EVsLocationEditor({ onSave }) {
   const [modalMode, setModalMode] = useState("add"); // 'add' | 'edit'
   const [addSource, setAddSource] = useState("pokedex"); // 'pokedex' | 'manual'
   const [editingIndex, setEditingIndex] = useState(null);
-  const [form, setForm] = useState({ name: "", imageUrl: "", points: 0 });
+  const [form, setForm] = useState({ name: "", imageUrl: "", points: 0, zone: "" });
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [saveMessage, setSaveMessage] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -232,7 +232,7 @@ export default function EVsLocationEditor({ onSave }) {
   };
 
   const openAdd = () => {
-    setForm({ name: "", imageUrl: "", points: 0 });
+    setForm({ name: "", imageUrl: "", points: 0, zone: currentEv.zone ?? "" });
     setModalMode("add");
     setAddSource("pokedex");
     setEditingIndex(null);
@@ -244,7 +244,7 @@ export default function EVsLocationEditor({ onSave }) {
     const name = typeof p === "object" ? (p?.name || "") : String(p);
     const imageUrl = typeof p === "object" ? (p?.imageUrl || "") : "";
     const points = typeof p === "object" && typeof p?.points === "number" ? p.points : 0;
-    setForm({ name, imageUrl, points });
+    setForm({ name, imageUrl, points, zone: currentEv.zone ?? "" });
     setModalMode("edit");
     setEditingIndex(index);
     setShowModal(true);
@@ -256,7 +256,7 @@ export default function EVsLocationEditor({ onSave }) {
     setPokedexDropdownOpen(false);
     setEvDropdownOpen(false);
     setPokedexSearch("");
-    setForm({ name: "", imageUrl: "", points: 0 });
+    setForm({ name: "", imageUrl: "", points: 0, zone: "" });
   };
 
   const submitForm = () => {
@@ -265,16 +265,33 @@ export default function EVsLocationEditor({ onSave }) {
     const imageUrl = (form.imageUrl || "").trim() || undefined;
     const points = Math.max(0, Math.min(3, Number(form.points) || 0));
     const item = { name, imageUrl, points };
+    const zoneValue = (form.zone || "").trim();
 
+    let newList;
     if (modalMode === "edit" && editingIndex !== null) {
-      const newList = pokemonList.map((p, i) =>
+      newList = pokemonList.map((p, i) =>
         i === editingIndex ? item : (typeof p === "object" ? p : { name: String(p), points: 0 })
       );
-      updateEntryPokemon(activeSection, newList);
     } else {
-      const newList = [...pokemonList.map((p) => (typeof p === "object" ? p : { name: String(p), points: 0 })), item];
-      updateEntryPokemon(activeSection, newList);
+      newList = [...pokemonList.map((p) => (typeof p === "object" ? p : { name: String(p), points: 0 })), item];
     }
+
+    const next = entries.map((e) =>
+      e.id === activeSection ? { ...e, pokemon: newList, zone: zoneValue } : e
+    );
+    const existing = next.find((e) => e.id === activeSection);
+    if (!existing) {
+      next.push({
+        id: activeSection,
+        label: EV_SECTIONS.find((s) => s.id === activeSection)?.label || activeSection,
+        icon: EV_SECTIONS.find((s) => s.id === activeSection)?.icon || "fa-circle",
+        zone: zoneValue,
+        pokemon: newList,
+      });
+    }
+    setEntries(next);
+    saveToApi(next);
+    setZoneInput(zoneValue);
     closeModal();
   };
 
@@ -438,6 +455,32 @@ export default function EVsLocationEditor({ onSave }) {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="evs-editor-form-row evs-editor-form-row--zone">
+          <label className="evs-editor-label" htmlFor="evs-modal-zone">
+            <i className="fa-solid fa-map-location-dot" aria-hidden /> Zone de farm
+          </label>
+          <div className="evs-editor-modal-zone-wrap">
+            <input
+              id="evs-modal-zone"
+              type="text"
+              className="evs-editor-input"
+              value={form.zone}
+              onChange={(e) => setForm((f) => ({ ...f, zone: e.target.value }))}
+              placeholder="ex. Helheim, Chemin des Larmes…"
+            />
+            {form.zone?.trim() ? (
+              <span
+                className="evs-editor-zone-fa evs-editor-zone-fa--modal"
+                title={`Vous pouvez le farm ici : ${form.zone.trim()}`}
+                aria-label={`Farm possible ici : ${form.zone.trim()}`}
+              >
+                <i className="fa-solid fa-map-location-dot" />
+              </span>
+            ) : null}
+          </div>
+          <span className="evs-editor-hint">Zone affichée pour cette stat sur la page publique (icône au survol).</span>
         </div>
 
         </div>

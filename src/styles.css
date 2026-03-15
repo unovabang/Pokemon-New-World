@@ -5984,6 +5984,10 @@ a.dex-panel--active{cursor:default}
 .evs-editor-input, .evs-editor-select { width: 100%; padding: .6rem .9rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--text); font-size: .9rem; box-sizing: border-box; }
 .evs-editor-input:focus, .evs-editor-select:focus { outline: none; border-color: rgba(126,205,242,.4); }
 .evs-editor-confirm-text { margin: 0; font-size: .95rem; color: var(--text); }
+.evs-editor-form-row--zone .evs-editor-modal-zone-wrap { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.evs-editor-form-row--zone .evs-editor-modal-zone-wrap .evs-editor-input { flex: 1; min-width: 180px; }
+.evs-editor-form-row--zone .evs-editor-hint { display: block; margin-top: .35rem; font-size: .8rem; color: var(--muted); }
+.evs-editor-zone-fa--modal { flex-shrink: 0; }
 
 @media (max-width: 768px) {
   .evs-location-editor { padding: 0 1rem; }
