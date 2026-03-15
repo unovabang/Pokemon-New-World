@@ -1,0 +1,246 @@
+{
+  "nerfs": [],
+  "buffs": [
+    {
+      "name": "Momartik",
+      "typeFrom": "Glace/Spectre",
+      "typeTo": "Glace/Spectre",
+      "stats": { "hp": [70, 70], "atk": [80, 65], "def": [70, 70], "spa": [80, 95], "spd": [70, 70], "spe": [110, 110] },
+      "talents": [
+        { "from": "Rideau Neige", "to": "Rideau Neige" },
+        { "from": "Rideau Neige", "to": "Corps Maudit" },
+        { "from": "Corps Maudit", "to": "Corps Condamné" }
+      ],
+      "movepool": "Ajout d'une Attaque Signature : Mistrâmes"
+    },
+    {
+      "name": "Oniglali",
+      "typeFrom": "Glace",
+      "typeTo": "Glace/Malice",
+      "stats": { "hp": [80, 87], "atk": [80, 103], "def": [80, 70], "spa": [80, 80], "spd": [80, 70], "spe": [80, 90] },
+      "talents": [
+        { "from": "Attention", "to": "Thermodynamique" },
+        { "from": "Corps Gel", "to": "Corps Gel" },
+        { "from": "Lunatique", "to": "Lunatique" }
+      ],
+      "movepool": "Ajout d'une Attaque Signature: Cornes Aquilon"
+    },
+    {
+      "name": "Elekable",
+      "typeFrom": "Electrik",
+      "typeTo": "Electrik/Combat",
+      "stats": { "hp": [75, 95], "atk": [123, 133], "def": [67, 67], "spa": [95, 95], "spd": [85, 85], "spe": [95, 95] },
+      "talents": [
+        { "from": "Motorisé", "to": "Motorisé" },
+        { "from": "Motorisé", "to": "Esprit Vital" },
+        { "from": "Esprit Vital", "to": "Entêtement" }
+      ],
+      "movepool": "Ajout de Vampipoing/Close Combat"
+    },
+    {
+      "name": "Maganon",
+      "typeFrom": "Feu",
+      "typeTo": "Feu/Malice",
+      "stats": { "hp": [75, 95], "atk": [95, 95], "def": [67, 67], "spa": [125, 135], "spd": [95, 95], "spe": [83, 83] },
+      "talents": [
+        { "from": "Corps Ardent", "to": "Corps Ardent" },
+        { "from": "Corps Ardent", "to": "Esprit Vital" },
+        { "from": "Esprit Vital", "to": "Contestation" }
+      ],
+      "movepool": "Ajout de Draco-Météore/Vibrobscur"
+    },
+    {
+      "name": "Mushana",
+      "typeFrom": "Psy",
+      "typeTo": "Psy/Fée",
+      "stats": { "hp": [116, 116], "atk": [55, 55], "def": [85, 95], "spa": [107, 107], "spd": [95, 128], "spe": [29, 29] },
+      "talents": [
+        { "from": "Prédiction", "to": "Créa-Brume" },
+        { "from": "Synchro", "to": "Créa-Brume" },
+        { "from": "Télépathe", "to": "Créa-Brume" }
+      ],
+      "movepool": ""
+    },
+    {
+      "name": "Mamanbo",
+      "typeFrom": "Eau",
+      "typeTo": "Eau/Fée",
+      "stats": { "hp": [165, 165], "atk": [75, 45], "def": [80, 80], "spa": [40, 70], "spd": [45, 80], "spe": [65, 65] },
+      "talents": [
+        { "from": "Hydration", "to": "Hydration" },
+        { "from": "Coeur soin", "to": "Coeur soin" },
+        { "from": "Régé-Force", "to": "Régé-Force" }
+      ],
+      "movepool": "Ajout de Rayon Lune/Pouvoir Lunaire"
+    },
+    {
+      "name": "Branette",
+      "typeFrom": "Spectre",
+      "typeTo": "Spectre/Ténèbres",
+      "stats": { "hp": [64, 64], "atk": [115, 119], "def": [65, 65], "spa": [83, 73], "spd": [63, 81], "spe": [65, 81] },
+      "talents": [
+        { "from": "Insomnia", "to": "Insomnia" },
+        { "from": "Fouille", "to": "Enfant Fantôme" },
+        { "from": "Corps Maudit", "to": "Corps Maudit" }
+      ],
+      "movepool": "Ajout de Frappe Frissons/Tranche-Nuit"
+    },
+    {
+      "name": "Forgelina",
+      "typeFrom": "Fée/Acier",
+      "typeTo": "Fée/Acier",
+      "stats": { "hp": [85, 85], "atk": [75, 93], "def": [77, 77], "spa": [70, 70], "spd": [105, 105], "spe": [95, 101] },
+      "talents": [
+        { "from": "Brise Moule", "to": "Brise Moule" },
+        { "from": "Tempo Perso", "to": "Tempo Perso" },
+        { "from": "Pickpocket", "to": "Pickpocket" }
+      ],
+      "movepool": ""
+    },
+    {
+      "name": "Gigalithe",
+      "typeFrom": "Roche",
+      "typeTo": "Roche",
+      "stats": { "hp": [85, 85], "atk": [135, 135], "def": [130, 130], "spa": [60, 60], "spd": [80, 80], "spe": [25, 25] },
+      "talents": [
+        { "from": "Fermeté", "to": "Fermeté" },
+        { "from": "Sable Volant", "to": "Forteresse Impériale" },
+        { "from": "Force Sable", "to": "Force Sable" }
+      ],
+      "movepool": ""
+    },
+    {
+      "name": "Floramantis",
+      "typeFrom": "Plante",
+      "typeTo": "Plante",
+      "stats": { "hp": [70, 65], "atk": [105, 114], "def": [90, 70], "spa": [80, 55], "spd": [90, 80], "spe": [45, 96] },
+      "talents": [
+        { "from": "Feuille Garde", "to": "Feuille Garde" },
+        { "from": "Feuille Garde", "to": "Feuille Garde" },
+        { "from": "Contestation", "to": "Contestation" }
+      ],
+      "movepool": "Ajout d'une Attaque Signature : Pétale Origamique"
+    },
+    {
+      "name": "Malamandre",
+      "typeFrom": "Poison/Feu",
+      "typeTo": "Poison/Feu",
+      "stats": { "hp": [68, 68], "atk": [64, 60], "def": [60, 60], "spa": [111, 120], "spd": [60, 60], "spe": [117, 121] },
+      "talents": [
+        { "from": "Corrosion", "to": "Corrosion" },
+        { "from": "Corrosion", "to": "Corrosion" },
+        { "from": "Bénêt", "to": "Reine Corrosive" }
+      ],
+      "movepool": ""
+    },
+    {
+      "name": "Altaria",
+      "typeFrom": "Dragon/Vol",
+      "typeTo": "Dragon/Fée",
+      "stats": { "hp": [75, 75], "atk": [70, 85], "def": [90, 100], "spa": [70, 85], "spd": [105, 95], "spe": [80, 75] },
+      "talents": [
+        { "from": "Médic Nature", "to": "Médic Nature" },
+        { "from": "Médic Nature", "to": "Peau Féérique" },
+        { "from": "Ciel Gris", "to": "Ciel Gris" }
+      ],
+      "movepool": "Ajout de Mégaphone"
+    },
+    {
+      "name": "Salarsen",
+      "typeFrom": "Electrik/Poison",
+      "typeTo": "Electrik/Poison",
+      "stats": { "hp": [75, 80], "atk": [98, 65], "def": [70, 75], "spa": [114, 122], "spd": [70, 75], "spe": [75, 85] },
+      "talents": [
+        { "from": "Punk Rock", "to": "Punk Rock" },
+        { "from": "Plus/Minus", "to": "Plus/Minus" },
+        { "from": "Technicien", "to": "Technicien" }
+      ],
+      "movepool": "Le type et l'effet d'Overdrive dépendent désormais de la forme du Pokémon"
+    },
+    {
+      "name": "Relicanth",
+      "typeFrom": "Eau/Roche",
+      "typeTo": "Eau/Roche",
+      "stats": { "hp": [100, 100], "atk": [90, 90], "def": [130, 130], "spa": [45, 45], "spd": [65, 65], "spe": [55, 55] },
+      "talents": [
+        { "from": "Glissade", "to": "Corps Fissuré" },
+        { "from": "Tête de Roc", "to": "Tête de Roc" },
+        { "from": "Fermeté", "to": "Fermeté" }
+      ],
+      "movepool": ""
+    },
+    {
+      "name": "Démolosse",
+      "typeFrom": "Feu/Ténèbres",
+      "typeTo": "Feu/Ténèbres",
+      "stats": { "hp": [75, 80], "atk": [90, 70], "def": [50, 80], "spa": [110, 115], "spd": [80, 60], "spe": [95, 95] },
+      "talents": [
+        { "from": "Torche", "to": "Torche" },
+        { "from": "Matinal", "to": "Chef de Meute" },
+        { "from": "Tension", "to": "Tension" }
+      ],
+      "movepool": ""
+    },
+    {
+      "name": "Elecsprint",
+      "typeFrom": "Electrik",
+      "typeTo": "Normal/Electrik",
+      "stats": { "hp": [70, 80], "atk": [75, 70], "def": [60, 60], "spa": [105, 115], "spd": [60, 60], "spe": [105, 110] },
+      "talents": [
+        { "from": "Statik", "to": "Statik" },
+        { "from": "Paratonnerre", "to": "Chef de Meute" },
+        { "from": "Moins", "to": "Paratonnerre" }
+      ],
+      "movepool": "Ajout de Bang Sonique"
+    },
+    {
+      "name": "Drascore",
+      "typeFrom": "Poison/Ténèbres",
+      "typeTo": "Poison/Ténèbres",
+      "stats": { "hp": [70, 90], "atk": [90, 100], "def": [110, 110], "spa": [60, 50], "spd": [75, 80], "spe": [95, 70] },
+      "talents": [
+        { "from": "Armurbaston", "to": "Armurbaston" },
+        { "from": "Sniper", "to": "Sniper" },
+        { "from": "Regard Vif", "to": "Chaîne Toxique" }
+      ],
+      "movepool": "Ajout de Baston"
+    },
+    {
+      "name": "Kaorine",
+      "typeFrom": "Sol/Psy",
+      "typeTo": "Sol/Psy",
+      "stats": { "hp": [60, 90], "atk": [70, 40], "def": [105, 100], "spa": [70, 110], "spd": [120, 130], "spe": [75, 40] },
+      "talents": [
+        { "from": "Lévitation", "to": "Purification Archaïque" },
+        { "from": "Lévitation", "to": "Purification Archaïque" },
+        { "from": "Lévitation", "to": "Purification Archaïque" }
+      ],
+      "movepool": "Ajout de Lumino-Impact"
+    },
+    {
+      "name": "Frison",
+      "typeFrom": "Normal",
+      "typeTo": "Normal/Malice",
+      "stats": { "hp": [95, 80], "atk": [110, 120], "def": [95, 80], "spa": [40, 20], "spd": [95, 80], "spe": [55, 110] },
+      "talents": [
+        { "from": "Téméraire", "to": "Téméraire" },
+        { "from": "Herbivore", "to": "Herbivore" },
+        { "from": "Anti-Bruit", "to": "Impudence" }
+      ],
+      "movepool": "Ajout de Destrucorne"
+    },
+    {
+      "name": "Sidérella",
+      "typeFrom": "Psy",
+      "typeTo": "Psy/Malice",
+      "stats": { "hp": [70, 100], "atk": [55, 30], "def": [95, 120], "spa": [95, 80], "spd": [110, 130], "spe": [65, 30] },
+      "talents": [
+        { "from": "Fouille", "to": "Fouille" },
+        { "from": "Battant", "to": "Battant" },
+        { "from": "Marque Ombre", "to": "Esprit Ouvert" }
+      ],
+      "movepool": "Ajout de Soin"
+    }
+  ],
+  "ajustements": []
+}

@@ -15,6 +15,7 @@ import PokedexPage from "./pages/PokedexPage";
 import ExtradexPage from "./pages/ExtradexPage";
 import GuidePage from "./pages/GuidePage";
 import BSTPage from "./pages/BSTPage";
+import NerfsAndBuffsPage from "./pages/NerfsAndBuffsPage";
 import ItemLocationPage from "./pages/ItemLocationPage";
 import EVsLocationPage from "./pages/EVsLocationPage";
 import TeamPage from "./pages/TeamPage";
@@ -37,7 +38,7 @@ export default function App() {
         <Route path="/item-location" element={<ItemLocationPage />} />
         <Route path="/equipe" element={<TeamPage />} />
         <Route path="/evs-location" element={<EVsLocationPage />} />
-        <Route path="/nerfs-and-buffs" element={<UnderConstructionPage title="Nerfs and Buffs" />} />
+        <Route path="/nerfs-and-buffs" element={<NerfsAndBuffsPage />} />
         <Route path="/admin-login" element={<LoginAdmin />} />
         <Route path="/admin" element={
           <ProtectedRoute>

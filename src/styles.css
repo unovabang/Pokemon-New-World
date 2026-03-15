@@ -1110,6 +1110,29 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   .bst-grid{grid-template-columns:repeat(auto-fill, minmax(130px, 1fr))}
 }
 
+/* ===== NERFS AND BUFFS PAGE (modal diff avant/après) ===== */
+.nerfbuff-page .bst-section[data-accent="nerfs"] .bst-section-icon{color:#a040a0}
+.nerfbuff-page .bst-section[data-accent="buffs"] .bst-section-icon{color:#7ec850}
+.nerfbuff-page .bst-section[data-accent="ajustements"] .bst-section-icon{color:#b8b8d0}
+.nerfbuff-modal-overlay .nerfbuff-modal{max-width:520px}
+.nerfbuff-modal-type-change{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:.5rem;
+}
+.nerfbuff-arrow{color:var(--muted); font-size:.85rem; margin:0 .25rem}
+.nerfbuff-arrow-inline{color:var(--primary-2); font-size:.7em; margin:0 .35rem; opacity:.9}
+.nerfbuff-modal-stats .nerfbuff-stat-values{display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:.2rem; font-variant-numeric:tabular-nums; font-weight:600}
+.nerfbuff-stat-from{color:var(--muted); text-decoration:line-through}
+.nerfbuff-stat-to{color:#7ec850; font-weight:700}
+.bst-modal-stat.nerfbuff-stat-changed{background:rgba(126,200,80,.08); border-color:rgba(126,200,80,.2)}
+.nerfbuff-talent-slot .nerfbuff-talent-from{color:var(--muted); text-decoration:line-through; margin-right:.25rem}
+.nerfbuff-talent-slot .nerfbuff-talent-to{color:rgba(255,255,255,.95); font-weight:600}
+.nerfbuff-movepool-wrap{margin-top:1rem; padding-top:.85rem; border-top:1px solid rgba(126,205,242,.12)}
+.nerfbuff-movepool-text{margin:0; font-size:.9rem; color:rgba(255,255,255,.88); line-height:1.5}
+
 /* ===== PAGE ITEM LOCATION ===== */
 .item-location-page{min-height:100vh; padding-bottom:4rem}
 .item-location-container{max-width:900px; margin:0 auto; padding-top:1.5rem}
