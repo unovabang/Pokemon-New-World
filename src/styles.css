@@ -1362,10 +1362,10 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .evs-location-filter-label i{color:var(--primary-2); opacity:.9}
 .evs-location-select,.evs-location-search{padding:.5rem .75rem; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:var(--text); font-size:.95rem; min-width:180px}
 .evs-location-search{min-width:220px}
-.evs-location-pokemon-item{position:relative}
-.evs-location-pokemon-zone-fa{position:absolute; top:4px; left:4px; z-index:4; display:inline-flex; align-items:center; justify-content:center; width:1.5rem; height:1.5rem; color:var(--primary-2); opacity:.95; cursor:help; border-radius:6px; background:rgba(0,0,0,.4)}
+.evs-location-pokemon-item{position:relative; overflow:visible}
+.evs-location-pokemon-zone-fa{position:absolute; top:4px; left:4px; z-index:4; display:inline-flex; align-items:center; justify-content:center; width:1.5rem; height:1.5rem; color:var(--primary-2); opacity:.95; cursor:help; border-radius:6px; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.08)}
 .evs-location-pokemon-zone-fa i{font-size:.8rem}
-.evs-location-pokemon-zone-fa:hover::after{content:attr(title); position:absolute; left:50%; bottom:100%; transform:translateX(-50%); margin-bottom:4px; padding:.35rem .6rem; font-size:.75rem; font-weight:600; color:var(--bg); background:var(--primary-2); border-radius:8px; white-space:normal; max-width:200px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,.3); z-index:10; pointer-events:none}
+.evs-location-pokemon-zone-fa:hover::after{content:attr(title); position:absolute; left:0; bottom:100%; margin-bottom:6px; padding:.5rem .75rem; font-size:.8rem; font-weight:500; color:#e2e8f0; background:rgba(30,41,59,.97); border:1px solid rgba(148,163,184,.25); border-radius:10px; white-space:normal; max-width:220px; text-align:left; box-shadow:0 10px 25px rgba(0,0,0,.4); z-index:15; pointer-events:none; line-height:1.35}
 .evs-location-grid{display:flex; flex-direction:column; gap:.75rem; position:relative; z-index:1}
 .evs-location-card{
   border-radius:14px; border:1px solid rgba(255,255,255,.1);
@@ -1406,10 +1406,11 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .evs-location-pokemon-item--has-pts{position:relative}
 .evs-location-pokemon-tooltip{
   position:absolute; left:50%; bottom:100%; transform:translateX(-50%); margin-bottom:6px;
-  padding:.35rem .6rem; font-size:.75rem; font-weight:600; color:var(--bg); background:var(--primary-2);
-  border-radius:8px; white-space:nowrap; box-shadow:0 4px 12px rgba(0,0,0,.3);
+  padding:.5rem .75rem; font-size:.8rem; font-weight:500; color:#e2e8f0; background:rgba(30,41,59,.97);
+  border:1px solid rgba(148,163,184,.25); border-radius:10px; white-space:nowrap;
+  box-shadow:0 10px 25px rgba(0,0,0,.4);
   opacity:0; visibility:hidden; transition:opacity .15s, visibility .15s; pointer-events:none;
-  z-index:5;
+  z-index:15;
 }
 .evs-location-pokemon-item--has-pts:hover .evs-location-pokemon-tooltip{opacity:1; visibility:visible}
 .evs-location-pokemon-item:hover{background:rgba(255,255,255,.06); border-color:rgba(126,205,242,.15)}
@@ -1418,8 +1419,8 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .evs-location-pokemon-pts{
   position:absolute; top:-2px; right:-2px; min-width:1.1rem; height:1.1rem; padding:0 .25rem;
   display:inline-flex; align-items:center; justify-content:center;
-  font-size:.7rem; font-weight:700; color:var(--bg); background:var(--primary-2);
-  border-radius:6px; line-height:1;
+  font-size:.7rem; font-weight:700; color:#e2e8f0; background:rgba(30,41,59,.95);
+  border:1px solid rgba(148,163,184,.2); border-radius:6px; line-height:1; box-shadow:0 2px 8px rgba(0,0,0,.25);
 }
 .evs-location-pokemon-name{font-size:.8rem; color:var(--text); text-align:center; line-height:1.2; word-break:break-word}
 
@@ -5893,12 +5894,10 @@ a.dex-panel--active{cursor:default}
 .evs-editor-desc { margin: 0 0 1.5rem; font-size: .9rem; color: var(--muted); line-height: 1.5; max-width: 560px; }
 .evs-editor-tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; }
 .evs-editor-tabs .admin-panel-nav-btn { width: auto; padding: .5rem 1rem; font-size: .9rem; }
-.evs-editor-zone-row { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
-.evs-editor-zone-row .evs-editor-label { margin: 0; min-width: 100px; font-size: .9rem; }
-.evs-editor-zone-row .evs-editor-label i { margin-right: .35rem; color: var(--primary-2); opacity: .9; }
-.evs-editor-zone-input { flex: 1; min-width: 180px; max-width: 280px; }
-.evs-editor-zone-fa { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; color: var(--primary-2); opacity: .9; cursor: help; border-radius: 8px; background: rgba(126,205,242,.12); }
-.evs-editor-zone-fa i { font-size: 1rem; }
+.evs-editor-zone-filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
+.evs-editor-zone-filter-row .evs-editor-label { margin: 0; min-width: 100px; font-size: .9rem; }
+.evs-editor-zone-filter-row .evs-editor-label i { margin-right: .35rem; color: var(--primary-2); opacity: .9; }
+.evs-editor-zone-select { min-width: 180px; max-width: 260px; cursor: pointer; }
 .evs-editor-toolbar { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
 .evs-editor-search { padding: .6rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--text); font-size: .95rem; width: 260px; max-width: 100%; }
 .evs-editor-search::placeholder { color: rgba(255,255,255,.45); }
@@ -5907,9 +5906,9 @@ a.dex-panel--active{cursor:default}
 .evs-editor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
 .evs-editor-empty { padding: 2rem 1.5rem; text-align: center; color: var(--muted); font-size: .95rem; grid-column: 1 / -1; }
 .evs-editor-card { position: relative; display: flex; flex-direction: column; align-items: center; padding: .75rem; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); transition: background .15s, border-color .15s; }
-.evs-editor-card-zone-fa { position: absolute; top: 4px; left: 4px; z-index: 2; display: inline-flex; align-items: center; justify-content: center; width: 1.4rem; height: 1.4rem; color: var(--primary-2); opacity: .95; cursor: help; border-radius: 6px; background: rgba(0,0,0,.4); }
+.evs-editor-card-zone-fa { position: absolute; top: 4px; left: 4px; z-index: 2; display: inline-flex; align-items: center; justify-content: center; width: 1.4rem; height: 1.4rem; color: var(--primary-2); opacity: .95; cursor: help; border-radius: 6px; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.08); }
 .evs-editor-card-zone-fa i { font-size: .75rem; }
-.evs-editor-card-zone-fa:hover::after { content: attr(title); position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 4px; padding: .35rem .6rem; font-size: .75rem; font-weight: 600; color: var(--bg); background: var(--primary-2); border-radius: 8px; white-space: normal; max-width: 180px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,.3); z-index: 10; pointer-events: none; }
+.evs-editor-card-zone-fa:hover::after { content: attr(title); position: absolute; left: 0; bottom: 100%; margin-bottom: 6px; padding: .5rem .75rem; font-size: .8rem; font-weight: 500; color: #e2e8f0; background: rgba(30,41,59,.97); border: 1px solid rgba(148,163,184,.25); border-radius: 10px; white-space: normal; max-width: 200px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,.4); z-index: 15; pointer-events: none; line-height: 1.35; }
 .evs-editor-card:hover { background: rgba(255,255,255,.06); border-color: rgba(126,205,242,.2); }
 .evs-editor-card-sprite { position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; margin-bottom: .4rem; }
 .evs-editor-card-sprite img { max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: pixelated; }

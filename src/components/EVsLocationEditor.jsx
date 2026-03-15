@@ -78,7 +78,7 @@ export default function EVsLocationEditor({ onSave }) {
   const [pokedexSearch, setPokedexSearch] = useState("");
   const [pokedexDropdownOpen, setPokedexDropdownOpen] = useState(false);
   const [evDropdownOpen, setEvDropdownOpen] = useState(false);
-  const [zoneInput, setZoneInput] = useState("");
+  const [zoneFilterAdmin, setZoneFilterAdmin] = useState("");
   const pokedexDropdownRef = useRef(null);
   const evDropdownRef = useRef(null);
 
@@ -154,15 +154,25 @@ export default function EVsLocationEditor({ onSave }) {
   }, [entries, activeSection]);
 
   useEffect(() => {
-    setZoneInput(currentEv.zone ?? "");
-  }, [currentEv.zone, activeSection]);
+    setZoneFilterAdmin("");
+  }, [activeSection]);
 
   const pokemonList = Array.isArray(currentEv.pokemon) ? currentEv.pokemon : [];
+  const sectionZones = useMemo(() => {
+    const set = new Set();
+    pokemonList.forEach((p) => (Array.isArray((p && p.zones)) ? p.zones : []).forEach((z) => z && set.add(z)));
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [pokemonList]);
+
   const filteredPokemon = useMemo(() => {
-    if (!searchQuery.trim()) return pokemonList;
+    let list = pokemonList;
+    if (zoneFilterAdmin) {
+      list = list.filter((p) => Array.isArray((p && p.zones)) && p.zones.includes(zoneFilterAdmin));
+    }
+    if (!searchQuery.trim()) return list;
     const q = searchQuery.trim().toLowerCase();
-    return pokemonList.filter((p) => (typeof p === "object" ? (p.name || "").toLowerCase().includes(q) : String(p).toLowerCase().includes(q)));
-  }, [pokemonList, searchQuery]);
+    return list.filter((p) => (typeof p === "object" ? (p.name || "").toLowerCase().includes(q) : String(p).toLowerCase().includes(q)));
+  }, [pokemonList, searchQuery, zoneFilterAdmin]);
 
   const filteredPokedexForDropdown = useMemo(() => {
     const raw = pokedexSearch.trim();
@@ -373,7 +383,7 @@ export default function EVsLocationEditor({ onSave }) {
                   value={pokedexSearch}
                   onChange={(e) => { setPokedexSearch(e.target.value); setPokedexDropdownOpen(true); }}
                   onFocus={() => setPokedexDropdownOpen(true)}
-                  placeholder="Rechercher par nom (ex: Staross Bélamie, 338…)"
+                  placeholder="Rechercher par nom (ex: Staross Belamie, 338…)"
                   autoComplete="off"
                 />
                 <button
@@ -433,7 +443,7 @@ export default function EVsLocationEditor({ onSave }) {
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             placeholder="ex. Pikachu"
-          />
+                    />
         </div>
         <div className="evs-editor-form-row">
           <label className="evs-editor-label">URL du sprite (optionnel, sinon pris du Pokédex)</label>
@@ -443,7 +453,7 @@ export default function EVsLocationEditor({ onSave }) {
             value={form.imageUrl}
             onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
             placeholder="https://..."
-          />
+                    />
         </div>
         <div className="evs-editor-form-row" ref={evDropdownRef}>
           <label className="evs-editor-label">EV par KO (0, 1, 2 ou 3)</label>
@@ -489,8 +499,8 @@ export default function EVsLocationEditor({ onSave }) {
             className="evs-editor-input"
             value={form.zones}
             onChange={(e) => setForm((f) => ({ ...f, zones: e.target.value }))}
-            placeholder="ex. Helheim, Chemin des Larmes (séparées par des virgules)"
-          />
+            placeholder="ex. Helheim, Chemin des Larmes (separées par des virgules)"
+                    />
           <span className="evs-editor-hint">Une ou plusieurs zones pour ce Pokémon (icône carte en haut à gauche sur la page publique).</span>
         </div>
 
@@ -569,7 +579,7 @@ export default function EVsLocationEditor({ onSave }) {
           <input
             type="url"
             className="evs-editor-search"
-            value={background}
+value={background}
             onChange={(e) => setBackground(e.target.value)}
             placeholder="https://… ou /image.jpg"
             style={{ flex: "1", minWidth: "200px", maxWidth: "400px" }}
@@ -593,23 +603,24 @@ export default function EVsLocationEditor({ onSave }) {
         ))}
       </div>
 
-      <div className="evs-editor-zone-row">
-        <label className="evs-editor-label" htmlFor="evs-zone-input">
-          <i className="fa-solid fa-map-location-dot" aria-hidden /> Zone par défaut (optionnel)
-        </label>
-        <input
-          id="evs-zone-input"
-          type="text"
-          className="evs-editor-input evs-editor-zone-input"
-          value={zoneInput}
-          onChange={(e) => setZoneInput(e.target.value)}
-          onBlur={() => {
-            const val = (zoneInput ?? "").trim();
-            if (val !== (currentEv.zone ?? "")) updateEntryZone(activeSection, val);
-          }}
-          placeholder="Pré-remplit les zones lors de l’ajout d’un Pokémon"
-        />
-      </div>
+      {sectionZones.length > 0 && (
+        <div className="evs-editor-zone-filter-row">
+          <label className="evs-editor-label" htmlFor="evs-admin-zone-filter">
+            <i className="fa-solid fa-map-location-dot" aria-hidden /> Filtrer par zone
+          </label>
+          <select
+            id="evs-admin-zone-filter"
+            className="evs-editor-input evs-editor-zone-select"
+            value={zoneFilterAdmin}
+          onChange={(e) => setZoneFilterAdmin(e.target.value)}
+                  >
+            <option value="">Toutes les zones</option>
+            {sectionZones.map((z) => (
+              <option key={z} value={z}>{z}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div className="evs-editor-toolbar">
         <input
@@ -618,14 +629,14 @@ export default function EVsLocationEditor({ onSave }) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Rechercher dans cette liste…"
-        />
+                />
         <span className="evs-editor-count">{filteredPokemon.length} Pokémon</span>
       </div>
 
       <div className="evs-editor-grid">
         {filteredPokemon.length === 0 ? (
           <p className="evs-editor-empty">
-            {pokemonList.length === 0 ? `Aucun Pokémon pour ${currentEv.label}. Cliquez sur « Ajouter un Pokémon ».` : `Aucun résultat pour « ${searchQuery} ».`}
+            {pokemonList.length === 0 ? `Aucun Pokémon pour ${currentEv.label}. Cliquez sur « Ajouter un Pokémon ».` : zoneFilterAdmin ? `Aucun Pokémon avec la zone « ${zoneFilterAdmin} ».` : `Aucun résultat pour « ${searchQuery} ».`}
           </p>
         ) : (
           filteredPokemon.map((p, displayIndex) => {
