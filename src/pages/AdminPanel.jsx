@@ -20,7 +20,6 @@ import BSTEditor from "../components/BSTEditor";
 import AdminTips from "../components/AdminTips";
 import ItemLocationEditor from "../components/ItemLocationEditor";
 import EVsLocationEditor from "../components/EVsLocationEditor";
-import NerfsBuffsEditor from "../components/NerfsBuffsEditor";
 import EmbedEditor from "../components/EmbedEditor";
 import TeamEditor from "../components/TeamEditor";
 import UnderConstructionPage from "./UnderConstructionPage";
@@ -394,7 +393,12 @@ const AdminPanel = () => {
             <EVsLocationEditor onSave={() => {}} />
           )}
           {activeTab === 'nerfs' && (
-            <NerfsBuffsEditor onSave={() => {}} />
+            <UnderConstructionPage
+              title="Nerfs and Buffs"
+              backLabel="Retour à l'admin"
+              onBack={() => setActiveTab("dashboard")}
+              embedded
+            />
           )}
           
           {/* Paramètres unifiés : Site + Patreon + Pied de page + Liens externes */}

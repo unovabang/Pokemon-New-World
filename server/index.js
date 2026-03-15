@@ -822,18 +822,6 @@ app.get('/api/config/:name', (req, res) => {
         configData = { entries: [] };
       }
     }
-    if (!configData && name === 'nerfs-buffs') {
-      const seedPath = path.join(__dirname, '../src/config/nerfs-buffs.json');
-      if (fs.existsSync(seedPath)) {
-        try {
-          configData = fs.readJsonSync(seedPath);
-        } catch (e) {
-          configData = { background: null, versions: [] };
-        }
-      } else {
-        configData = { background: null, versions: [] };
-      }
-    }
     if (!configData) {
       return res.status(404).json({ success: false, error: `Configuration ${name} non trouvée` });
     }
