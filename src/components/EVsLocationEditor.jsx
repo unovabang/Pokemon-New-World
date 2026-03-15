@@ -71,7 +71,7 @@ export default function EVsLocationEditor({ onSave }) {
   const [modalMode, setModalMode] = useState("add"); // 'add' | 'edit'
   const [addSource, setAddSource] = useState("pokedex"); // 'pokedex' | 'manual'
   const [editingIndex, setEditingIndex] = useState(null);
-  const [form, setForm] = useState({ name: "", imageUrl: "", points: 0, zone: "" });
+  const [form, setForm] = useState({ name: "", imageUrl: "", points: 0, zones: "" });
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [saveMessage, setSaveMessage] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -90,7 +90,17 @@ export default function EVsLocationEditor({ onSave }) {
         fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
       ]);
       if (evsRes?.success && Array.isArray(evsRes?.evs?.entries)) {
-        setEntries(evsRes.evs.entries);
+        const raw = evsRes.evs.entries;
+        const normalized = raw.map((ev) => {
+          const sectionZone = (ev.zone != null && String(ev.zone).trim()) ? String(ev.zone).trim() : "";
+          const pokemon = (Array.isArray(ev.pokemon) ? ev.pokemon : []).map((p) => {
+            const base = typeof p === "object" && p != null ? p : { name: String(p), points: 0 };
+            const zones = Array.isArray(base.zones) && base.zones.length > 0 ? base.zones : (sectionZone ? [sectionZone] : []);
+            return { ...base, zones };
+          });
+          return { ...ev, pokemon };
+        });
+        setEntries(normalized);
         setBackground(evsRes.evs.background ?? "");
       } else {
         setEntries([]);
@@ -231,8 +241,14 @@ export default function EVsLocationEditor({ onSave }) {
     saveToApi(next);
   };
 
+  function parseZonesInput(str) {
+  if (!str || typeof str !== "string") return [];
+  return str.split(",").map((z) => z.trim()).filter(Boolean);
+}
+
   const openAdd = () => {
-    setForm({ name: "", imageUrl: "", points: 0, zone: currentEv.zone ?? "" });
+    const defaultZones = (currentEv.zone && String(currentEv.zone).trim()) ? [String(currentEv.zone).trim()] : [];
+    setForm({ name: "", imageUrl: "", points: 0, zones: defaultZones.join(", ") });
     setModalMode("add");
     setAddSource("pokedex");
     setEditingIndex(null);
@@ -244,7 +260,8 @@ export default function EVsLocationEditor({ onSave }) {
     const name = typeof p === "object" ? (p?.name || "") : String(p);
     const imageUrl = typeof p === "object" ? (p?.imageUrl || "") : "";
     const points = typeof p === "object" && typeof p?.points === "number" ? p.points : 0;
-    setForm({ name, imageUrl, points, zone: currentEv.zone ?? "" });
+    const zonesArr = Array.isArray((p && p.zones)) ? p.zones : [];
+    setForm({ name, imageUrl, points, zones: zonesArr.join(", ") });
     setModalMode("edit");
     setEditingIndex(index);
     setShowModal(true);
@@ -256,7 +273,14 @@ export default function EVsLocationEditor({ onSave }) {
     setPokedexDropdownOpen(false);
     setEvDropdownOpen(false);
     setPokedexSearch("");
-    setForm({ name: "", imageUrl: "", points: 0, zone: "" });
+    setForm({ name: "", imageUrl: "", points: 0, zones: "" });
+  };
+
+  const toPokemonItem = (p) => {
+    if (typeof p === "object" && p !== null) {
+      return { name: p.name || "", imageUrl: p.imageUrl, points: typeof p.points === "number" ? p.points : 0, zones: Array.isArray(p.zones) ? p.zones : [] };
+    }
+    return { name: String(p), imageUrl: undefined, points: 0, zones: [] };
   };
 
   const submitForm = () => {
@@ -264,20 +288,20 @@ export default function EVsLocationEditor({ onSave }) {
     if (!name) return;
     const imageUrl = (form.imageUrl || "").trim() || undefined;
     const points = Math.max(0, Math.min(3, Number(form.points) || 0));
-    const item = { name, imageUrl, points };
-    const zoneValue = (form.zone || "").trim();
+    const zonesArr = parseZonesInput(form.zones);
+    const item = { name, imageUrl, points, zones: zonesArr };
 
     let newList;
     if (modalMode === "edit" && editingIndex !== null) {
       newList = pokemonList.map((p, i) =>
-        i === editingIndex ? item : (typeof p === "object" ? p : { name: String(p), points: 0 })
+        i === editingIndex ? item : toPokemonItem(p)
       );
     } else {
-      newList = [...pokemonList.map((p) => (typeof p === "object" ? p : { name: String(p), points: 0 })), item];
+      newList = [...pokemonList.map(toPokemonItem), item];
     }
 
     const next = entries.map((e) =>
-      e.id === activeSection ? { ...e, pokemon: newList, zone: zoneValue } : e
+      e.id === activeSection ? { ...e, pokemon: newList } : e
     );
     const existing = next.find((e) => e.id === activeSection);
     if (!existing) {
@@ -285,18 +309,17 @@ export default function EVsLocationEditor({ onSave }) {
         id: activeSection,
         label: EV_SECTIONS.find((s) => s.id === activeSection)?.label || activeSection,
         icon: EV_SECTIONS.find((s) => s.id === activeSection)?.icon || "fa-circle",
-        zone: zoneValue,
+        zone: "",
         pokemon: newList,
       });
     }
     setEntries(next);
     saveToApi(next);
-    setZoneInput(zoneValue);
     closeModal();
   };
 
   const handleDelete = (index) => {
-    const newList = pokemonList.filter((_, i) => i !== index).map((p) => (typeof p === "object" ? p : { name: String(p), points: 0 }));
+    const newList = pokemonList.filter((_, i) => i !== index).map((p) => toPokemonItem(p));
     updateEntryPokemon(activeSection, newList);
     setDeleteConfirm(null);
   };
@@ -458,29 +481,18 @@ export default function EVsLocationEditor({ onSave }) {
         </div>
 
         <div className="evs-editor-form-row evs-editor-form-row--zone">
-          <label className="evs-editor-label" htmlFor="evs-modal-zone">
-            <i className="fa-solid fa-map-location-dot" aria-hidden /> Zone de farm
+          <label className="evs-editor-label" htmlFor="evs-modal-zones">
+            <i className="fa-solid fa-map-location-dot" aria-hidden /> Zones de farm
           </label>
-          <div className="evs-editor-modal-zone-wrap">
-            <input
-              id="evs-modal-zone"
-              type="text"
-              className="evs-editor-input"
-              value={form.zone}
-              onChange={(e) => setForm((f) => ({ ...f, zone: e.target.value }))}
-              placeholder="ex. Helheim, Chemin des Larmes…"
-            />
-            {form.zone?.trim() ? (
-              <span
-                className="evs-editor-zone-fa evs-editor-zone-fa--modal"
-                title={`Vous pouvez le farm ici : ${form.zone.trim()}`}
-                aria-label={`Farm possible ici : ${form.zone.trim()}`}
-              >
-                <i className="fa-solid fa-map-location-dot" />
-              </span>
-            ) : null}
-          </div>
-          <span className="evs-editor-hint">Zone affichée pour cette stat sur la page publique (icône au survol).</span>
+          <input
+            id="evs-modal-zones"
+            type="text"
+            className="evs-editor-input"
+            value={form.zones}
+            onChange={(e) => setForm((f) => ({ ...f, zones: e.target.value }))}
+            placeholder="ex. Helheim, Chemin des Larmes (séparées par des virgules)"
+          />
+          <span className="evs-editor-hint">Une ou plusieurs zones pour ce Pokémon (icône carte en haut à gauche sur la page publique).</span>
         </div>
 
         </div>
@@ -584,7 +596,7 @@ export default function EVsLocationEditor({ onSave }) {
 
       <div className="evs-editor-zone-row">
         <label className="evs-editor-label" htmlFor="evs-zone-input">
-          <i className="fa-solid fa-map-location-dot" aria-hidden /> Zone
+          <i className="fa-solid fa-map-location-dot" aria-hidden /> Zone par défaut (optionnel)
         </label>
         <input
           id="evs-zone-input"
@@ -596,17 +608,8 @@ export default function EVsLocationEditor({ onSave }) {
             const val = (zoneInput ?? "").trim();
             if (val !== (currentEv.zone ?? "")) updateEntryZone(activeSection, val);
           }}
-          placeholder="ex. Helheim, Chemin des Larmes…"
+          placeholder="Pré-remplit les zones lors de l’ajout d’un Pokémon"
         />
-        {currentEv.zone ? (
-          <span
-            className="evs-editor-zone-fa"
-            title={`Vous pouvez le farm ici : ${currentEv.zone}`}
-            aria-label={`Farm possible ici : ${currentEv.zone}`}
-          >
-            <i className="fa-solid fa-map-location-dot" />
-          </span>
-        ) : null}
       </div>
 
       <div className="evs-editor-toolbar">
@@ -630,10 +633,20 @@ export default function EVsLocationEditor({ onSave }) {
             const name = typeof p === "object" ? (p?.name || "") : String(p);
             const imageUrl = typeof p === "object" ? (p?.imageUrl || "") : "";
             const points = typeof p === "object" && typeof p?.points === "number" ? p.points : 0;
+            const pokemonZones = Array.isArray((p && p.zones)) ? p.zones : [];
             const realIndex = pokemonList.indexOf(p);
             const spriteUrl = imageUrl || findPokedexSprite(pokedexEntries, name) || PLACEHOLDER_SPRITE;
             return (
               <div key={`${name}-${realIndex}`} className="evs-editor-card">
+                {pokemonZones.length > 0 && (
+                  <span
+                    className="evs-editor-card-zone-fa"
+                    title={`Vous pouvez le farm ici : ${pokemonZones.join(", ")}`}
+                    aria-label={`Farm : ${pokemonZones.join(", ")}`}
+                  >
+                    <i className="fa-solid fa-map-location-dot" />
+                  </span>
+                )}
                 <div className="evs-editor-card-sprite">
                   <img src={spriteUrl} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
                   {points > 0 && <span className="evs-editor-card-pts">{points}</span>}

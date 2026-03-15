@@ -76,7 +76,16 @@ function findSprite(lookup, displayName) {
   return null;
 }
 
-/** Normalise une entrée EV : pokemon peut être string[] + points[] (legacy) ou { name, imageUrl?, points }[] */
+/** Parse zones: array or fallback to section zone */
+function parseZones(p, ev) {
+  if (Array.isArray(p.zones) && p.zones.length > 0) {
+    return p.zones.filter((z) => z != null && String(z).trim()).map((z) => String(z).trim());
+  }
+  const one = (p.zone != null && String(p.zone).trim()) ? String(p.zone).trim() : (ev.zone != null && String(ev.zone).trim()) ? String(ev.zone).trim() : "";
+  return one ? [one] : [];
+}
+
+/** Normalise une entrée EV : pokemon peut être string[] + points[] (legacy) ou { name, imageUrl?, points, zones? }[] */
 function normalizeEvEntry(ev) {
   const pokemon = [];
   const raw = ev.pokemon;
@@ -89,6 +98,7 @@ function normalizeEvEntry(ev) {
           name: (p.name || "").trim(),
           imageUrl: (p.imageUrl || "").trim() || undefined,
           points: typeof p.points === "number" ? p.points : 0,
+          zones: parseZones(p, ev),
         });
       });
     } else {
@@ -97,6 +107,7 @@ function normalizeEvEntry(ev) {
           name: typeof name === "string" ? name.trim() : "",
           imageUrl: undefined,
           points: Array.isArray(pointsArr) && typeof pointsArr[i] === "number" ? pointsArr[i] : 0,
+          zones: [],
         });
       });
     }
@@ -152,6 +163,7 @@ export default function EVsLocationPage() {
   const zones = useMemo(() => {
     const set = new Set();
     evsEntries.forEach((ev) => {
+      ev.pokemon.forEach((p) => (p.zones || []).forEach((z) => z && set.add(z)));
       if (ev.zone && ev.zone.trim()) set.add(ev.zone.trim());
     });
     return Array.from(set).sort((a, b) => a.localeCompare(b));
@@ -160,7 +172,12 @@ export default function EVsLocationPage() {
   const filteredEntries = useMemo(() => {
     let list = evsEntries;
     if (zoneFilter) {
-      list = list.filter((ev) => (ev.zone || "").trim() === zoneFilter);
+      list = list
+        .map((ev) => ({
+          ...ev,
+          pokemon: ev.pokemon.filter((p) => (p.zones || []).includes(zoneFilter)),
+        }))
+        .filter((ev) => ev.pokemon.length > 0);
     }
     const search = (pokemonSearch || "").trim().toLowerCase();
     const searchNorm = search ? normalizeName(search) : "";
@@ -258,15 +275,6 @@ export default function EVsLocationPage() {
                       <i className={`fa-solid ${ev.icon}`} />
                     </span>
                     <span className="evs-location-card-label">{ev.label}</span>
-                    {ev.zone ? (
-                      <span
-                        className="evs-location-card-zone-fa"
-                        title={`Vous pouvez le farm ici : ${ev.zone}`}
-                        aria-label={`Farm possible ici : ${ev.zone}`}
-                      >
-                        <i className="fa-solid fa-map-location-dot" />
-                      </span>
-                    ) : null}
                     <span className="evs-location-card-count">{ev.pokemon.length} Pokémon</span>
                     <i className={`fa-solid fa-chevron-down evs-location-card-chevron ${isOpen ? "open" : ""}`} aria-hidden />
                   </button>
@@ -281,9 +289,19 @@ export default function EVsLocationPage() {
                       {ev.pokemon.map((p, i) => {
                         const name = p.name;
                         const points = p.points ?? 0;
+                        const pokemonZones = p.zones || [];
                         const spriteUrl = (p.imageUrl && p.imageUrl.trim()) || findSprite(lookup, name) || PLACEHOLDER_SPRITE;
                         return (
                           <div key={`${ev.id}-${name}-${i}`} className={`evs-location-pokemon-item ${points > 0 ? "evs-location-pokemon-item--has-pts" : ""}`}>
+                            {pokemonZones.length > 0 && (
+                              <span
+                                className="evs-location-pokemon-zone-fa"
+                                title={`Vous pouvez le farm ici : ${pokemonZones.join(", ")}`}
+                                aria-label={`Farm possible ici : ${pokemonZones.join(", ")}`}
+                              >
+                                <i className="fa-solid fa-map-location-dot" />
+                              </span>
+                            )}
                             {points > 0 && (
                               <span className="evs-location-pokemon-tooltip" role="tooltip">{points} EV par KO</span>
                             )}

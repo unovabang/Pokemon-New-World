@@ -1362,9 +1362,10 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .evs-location-filter-label i{color:var(--primary-2); opacity:.9}
 .evs-location-select,.evs-location-search{padding:.5rem .75rem; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:var(--text); font-size:.95rem; min-width:180px}
 .evs-location-search{min-width:220px}
-.evs-location-card-zone-fa{display:inline-flex; align-items:center; justify-content:center; color:var(--primary-2); opacity:.9; margin-left:.25rem; cursor:help; position:relative}
-.evs-location-card-zone-fa i{font-size:.95rem}
-.evs-location-card-zone-fa:hover::after{content:attr(title); position:absolute; left:50%; bottom:100%; transform:translateX(-50%); margin-bottom:6px; padding:.35rem .6rem; font-size:.75rem; font-weight:600; color:var(--bg); background:var(--primary-2); border-radius:8px; white-space:nowrap; box-shadow:0 4px 12px rgba(0,0,0,.3); z-index:5; pointer-events:none}
+.evs-location-pokemon-item{position:relative}
+.evs-location-pokemon-zone-fa{position:absolute; top:4px; left:4px; z-index:4; display:inline-flex; align-items:center; justify-content:center; width:1.5rem; height:1.5rem; color:var(--primary-2); opacity:.95; cursor:help; border-radius:6px; background:rgba(0,0,0,.4)}
+.evs-location-pokemon-zone-fa i{font-size:.8rem}
+.evs-location-pokemon-zone-fa:hover::after{content:attr(title); position:absolute; left:50%; bottom:100%; transform:translateX(-50%); margin-bottom:4px; padding:.35rem .6rem; font-size:.75rem; font-weight:600; color:var(--bg); background:var(--primary-2); border-radius:8px; white-space:normal; max-width:200px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,.3); z-index:10; pointer-events:none}
 .evs-location-grid{display:flex; flex-direction:column; gap:.75rem; position:relative; z-index:1}
 .evs-location-card{
   border-radius:14px; border:1px solid rgba(255,255,255,.1);
@@ -5905,7 +5906,10 @@ a.dex-panel--active{cursor:default}
 .evs-editor-count { font-size: .9rem; color: var(--muted); }
 .evs-editor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem; }
 .evs-editor-empty { padding: 2rem 1.5rem; text-align: center; color: var(--muted); font-size: .95rem; grid-column: 1 / -1; }
-.evs-editor-card { display: flex; flex-direction: column; align-items: center; padding: .75rem; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); transition: background .15s, border-color .15s; }
+.evs-editor-card { position: relative; display: flex; flex-direction: column; align-items: center; padding: .75rem; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); transition: background .15s, border-color .15s; }
+.evs-editor-card-zone-fa { position: absolute; top: 4px; left: 4px; z-index: 2; display: inline-flex; align-items: center; justify-content: center; width: 1.4rem; height: 1.4rem; color: var(--primary-2); opacity: .95; cursor: help; border-radius: 6px; background: rgba(0,0,0,.4); }
+.evs-editor-card-zone-fa i { font-size: .75rem; }
+.evs-editor-card-zone-fa:hover::after { content: attr(title); position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 4px; padding: .35rem .6rem; font-size: .75rem; font-weight: 600; color: var(--bg); background: var(--primary-2); border-radius: 8px; white-space: normal; max-width: 180px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,.3); z-index: 10; pointer-events: none; }
 .evs-editor-card:hover { background: rgba(255,255,255,.06); border-color: rgba(126,205,242,.2); }
 .evs-editor-card-sprite { position: relative; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; margin-bottom: .4rem; }
 .evs-editor-card-sprite img { max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: pixelated; }
