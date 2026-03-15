@@ -1111,9 +1111,93 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 
 /* ===== NERFS AND BUFFS PAGE (modal diff avant/après) ===== */
-.nerfbuff-page .bst-section[data-accent="nerfs"] .bst-section-icon{color:#a040a0}
-.nerfbuff-page .bst-section[data-accent="buffs"] .bst-section-icon{color:#7ec850}
-.nerfbuff-page .bst-section[data-accent="ajustements"] .bst-section-icon{color:#b8b8d0}
+.nerfbuff-last-update{
+  margin:.5rem 0 0 0;
+  font-size:.9rem;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+}
+.nerfbuff-last-update i{opacity:.85}
+.nerfbuff-toolbar{
+  margin-bottom:1.5rem;
+  padding:1rem 1.25rem;
+  background:rgba(0,0,0,.25);
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+}
+.nerfbuff-filter-label{
+  display:block;
+  font-size:.85rem;
+  font-weight:600;
+  color:var(--muted);
+  margin-bottom:.75rem;
+}
+.nerfbuff-filter-label i{margin-right:.35rem; opacity:.9}
+.nerfbuff-filter-pills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.6rem;
+}
+.nerfbuff-filter-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.6rem 1rem;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06);
+  color:var(--text);
+  font-weight:600;
+  font-size:.9rem;
+  cursor:pointer;
+  transition:background .2s, border-color .2s, transform .15s;
+}
+.nerfbuff-filter-pill:hover{
+  background:rgba(255,255,255,.1);
+  border-color:rgba(126,205,242,.3);
+}
+.nerfbuff-filter-pill.active{
+  background:rgba(126,205,242,.18);
+  border-color:rgba(126,205,242,.45);
+  color:var(--primary-2);
+}
+.nerfbuff-filter-pill[aria-pressed="true"]{box-shadow:0 0 0 2px rgba(126,205,242,.3)}
+.nerfbuff-sections-wrap{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:2rem;
+}
+@media (min-width:900px){
+  .nerfbuff-sections-wrap{grid-template-columns:repeat(3, 1fr)}
+}
+.nerfbuff-sections-wrap--single{grid-template-columns:1fr !important}
+.nerfbuff-section{
+  padding:1.75rem 1.5rem;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.1);
+  background:linear-gradient(165deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border-left-width:4px;
+}
+.nerfbuff-section[data-accent="nerfs"]{
+  border-left-color:#c03028;
+  background:linear-gradient(165deg, rgba(192,48,40,.08), rgba(192,48,40,.02));
+  box-shadow:0 4px 24px rgba(0,0,0,.2);
+}
+.nerfbuff-section[data-accent="buffs"]{
+  border-left-color:#7ec850;
+  background:linear-gradient(165deg, rgba(126,200,80,.08), rgba(126,200,80,.02));
+  box-shadow:0 4px 24px rgba(0,0,0,.2);
+}
+.nerfbuff-section[data-accent="ajustements"]{
+  border-left-color:#b8b8d0;
+  background:linear-gradient(165deg, rgba(184,184,208,.08), rgba(184,184,208,.02));
+  box-shadow:0 4px 24px rgba(0,0,0,.2);
+}
+.nerfbuff-page .nerfbuff-section[data-accent="nerfs"] .bst-section-icon{color:#c03028}
+.nerfbuff-page .nerfbuff-section[data-accent="buffs"] .bst-section-icon{color:#7ec850}
+.nerfbuff-page .nerfbuff-section[data-accent="ajustements"] .bst-section-icon{color:#b8b8d0}
 .nerfbuff-modal-overlay .nerfbuff-modal{max-width:520px}
 .nerfbuff-modal-type-change{
   display:flex;
@@ -1126,8 +1210,11 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .nerfbuff-arrow-inline{color:var(--primary-2); font-size:.7em; margin:0 .35rem; opacity:.9}
 .nerfbuff-modal-stats .nerfbuff-stat-values{display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:.2rem; font-variant-numeric:tabular-nums; font-weight:600}
 .nerfbuff-stat-from{color:var(--muted); text-decoration:line-through}
-.nerfbuff-stat-to{color:#7ec850; font-weight:700}
-.bst-modal-stat.nerfbuff-stat-changed{background:rgba(126,200,80,.08); border-color:rgba(126,200,80,.2)}
+.nerfbuff-stat-to{font-weight:700}
+.nerfbuff-stat-to--buff{color:#7ec850}
+.nerfbuff-stat-to--nerf{color:#e85a5a}
+.bst-modal-stat.nerfbuff-stat-buff{background:rgba(126,200,80,.08); border-color:rgba(126,200,80,.2)}
+.bst-modal-stat.nerfbuff-stat-nerf{background:rgba(232,90,90,.1); border-color:rgba(232,90,90,.25)}
 .nerfbuff-talent-slot .nerfbuff-talent-from{color:var(--muted); text-decoration:line-through; margin-right:.25rem}
 .nerfbuff-talent-slot .nerfbuff-talent-to{color:rgba(255,255,255,.95); font-weight:600}
 .nerfbuff-movepool-wrap{margin-top:1rem; padding-top:.85rem; border-top:1px solid rgba(126,205,242,.12)}

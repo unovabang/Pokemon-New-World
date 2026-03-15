@@ -14,10 +14,25 @@ const API_BASE = import.meta.env.VITE_API_URL
 const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Crect fill='%23222' width='96' height='96' rx='12'/%3E%3Ctext x='48' y='56' fill='%23555' font-size='24' text-anchor='middle' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E";
 
 const SECTIONS = [
-  { id: "nerfs", title: "Nerf", icon: "fa-arrow-down", accent: "tenebres" },
-  { id: "buffs", title: "Buff", icon: "fa-arrow-up", accent: "plante" },
-  { id: "ajustements", title: "Ajustement", icon: "fa-arrows-left-right", accent: "acier" },
+  { id: "nerfs", title: "Nerf", icon: "fa-arrow-down", accent: "nerf" },
+  { id: "buffs", title: "Buff", icon: "fa-arrow-up", accent: "buff" },
+  { id: "ajustements", title: "Ajustement", icon: "fa-arrows-left-right", accent: "ajustement" },
 ];
+
+const FILTER_OPTIONS = [
+  { id: "all", label: "Tout", icon: "fa-layer-group" },
+  { id: "nerfs", label: "Nerf", icon: "fa-arrow-down" },
+  { id: "buffs", label: "Buff", icon: "fa-arrow-up" },
+  { id: "ajustements", label: "Ajustement", icon: "fa-arrows-left-right" },
+];
+
+/** Formate une date ISO (YYYY-MM-DD) en français */
+function formatDateFR(iso) {
+  if (!iso) return "";
+  const d = new Date(iso + "T12:00:00");
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+}
 
 function normalizeName(str) {
   if (!str) return "";
@@ -185,9 +200,14 @@ function NerfBuffModal({ entry, pokedexList = [], onClose }) {
             const fromVal = Array.isArray(arr) ? arr[0] : arr;
             const toVal = Array.isArray(arr) ? arr[1] : arr;
             const changed = fromVal !== toVal;
+            const isNerf = changed && Number(toVal) < Number(fromVal);
+            const isBuff = changed && Number(toVal) > Number(fromVal);
             const { icon, label } = statLabels[key] || {};
             return (
-              <div key={key} className={`bst-modal-stat ${changed ? "nerfbuff-stat-changed" : ""}`}>
+              <div
+                key={key}
+                className={`bst-modal-stat ${changed ? (isNerf ? "nerfbuff-stat-nerf" : "nerfbuff-stat-buff") : ""}`}
+              >
                 <span className="bst-modal-stat-label">
                   <i className={`fa-solid ${icon}`} aria-hidden /> {label}
                 </span>
@@ -196,7 +216,9 @@ function NerfBuffModal({ entry, pokedexList = [], onClose }) {
                     <>
                       <span className="nerfbuff-stat-from">{fromVal}</span>
                       <span className="nerfbuff-arrow-inline"><i className="fa-solid fa-arrow-right" /></span>
-                      <span className="nerfbuff-stat-to">{toVal}</span>
+                      <span className={`nerfbuff-stat-to ${isNerf ? "nerfbuff-stat-to--nerf" : ""} ${isBuff ? "nerfbuff-stat-to--buff" : ""}`}>
+                        {toVal}
+                      </span>
                     </>
                   ) : (
                     <span>{toVal ?? fromVal}</span>
@@ -260,7 +282,7 @@ function NerfBuffGrid({ id, title, icon, entries, pokedexList, onSelect }) {
   }, [entries, list]);
 
   return (
-    <section className="bst-section bst-section--grid" data-accent={id}>
+    <section id={`section-${id}`} className="bst-section bst-section--grid nerfbuff-section" data-accent={id}>
       <div className="bst-section-header">
         <i className={`fa-solid ${icon} bst-section-icon`} aria-hidden />
         <h2 className="bst-section-title">{title}</h2>
@@ -302,6 +324,7 @@ function getPokedexEntriesFallback() {
 export default function NerfsAndBuffsPage() {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [pokedexList, setPokedexList] = useState(() => getPokedexEntriesFallback());
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     let cancelled = false;
@@ -317,8 +340,15 @@ export default function NerfsAndBuffsPage() {
     return () => { cancelled = true; };
   }, []);
 
-  const data = nerfsBuffsData || { nerfs: [], buffs: [], ajustements: [] };
+  const data = nerfsBuffsData || { lastModified: null, nerfs: [], buffs: [], ajustements: [] };
   const totalCount = (data.nerfs?.length || 0) + (data.buffs?.length || 0) + (data.ajustements?.length || 0);
+  const sectionsToShow = filter === "all" ? SECTIONS : SECTIONS.filter((s) => s.id === filter);
+
+  const scrollToSection = (sectionId) => {
+    setFilter(sectionId);
+    const el = document.getElementById(`section-${sectionId}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <div className="page bst-page nerfbuff-page">
@@ -343,15 +373,41 @@ export default function NerfsAndBuffsPage() {
               <i className="fa-solid fa-arrows-up-down-left-right" aria-hidden />
               Modifications des statistiques, types et talents
             </p>
+            {data.lastModified && (
+              <p className="nerfbuff-last-update">
+                <i className="fa-solid fa-clock-rotate-left" aria-hidden />
+                Dernière mise à jour : {formatDateFR(data.lastModified)}
+              </p>
+            )}
           </div>
+
+          <section className="nerfbuff-toolbar container">
+            <span className="nerfbuff-filter-label">
+              <i className="fa-solid fa-filter" aria-hidden /> Aller à
+            </span>
+            <div className="nerfbuff-filter-pills" role="group" aria-label="Filtrer par catégorie">
+              {FILTER_OPTIONS.map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  className={`nerfbuff-filter-pill ${filter === opt.id ? "active" : ""}`}
+                  onClick={() => (opt.id === "all" ? setFilter("all") : scrollToSection(opt.id))}
+                  aria-pressed={filter === opt.id}
+                >
+                  <i className={`fa-solid ${opt.icon}`} aria-hidden />
+                  <span>{opt.label}</span>
+                </button>
+              ))}
+            </div>
+          </section>
 
           <div className="bst-content-wrap container">
             <p className="bst-count">
               <i className="fa-solid fa-list-check" aria-hidden />
               {totalCount} Pokémon concerné{totalCount !== 1 ? "s" : ""}
             </p>
-            <div className="bst-content">
-              {SECTIONS.map((s) => (
+            <div className={`nerfbuff-sections-wrap ${sectionsToShow.length === 1 ? "nerfbuff-sections-wrap--single" : ""}`}>
+              {sectionsToShow.map((s) => (
                 <NerfBuffGrid
                   key={s.id}
                   id={s.id}
