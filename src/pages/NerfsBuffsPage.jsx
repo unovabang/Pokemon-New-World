@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
 import Sidebar from "../components/Sidebar";
 
 const API_BASE = import.meta.env.VITE_API_URL
@@ -17,7 +19,40 @@ const COLUMNS = [
   { id: "ajustements", label: "Ajustement", icon: "fa-sliders", iconColor: "#8b5cf6" },
 ];
 
-function EntryModal({ entry, kind, onClose }) {
+function normalizeName(str) {
+  if (!str) return "";
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s*-\s*/g, "-")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function findPokedexEntry(name, entries) {
+  if (!name || !entries?.length) return null;
+  const n = normalizeName(name);
+  let e = entries.find((x) => normalizeName(x.name) === n);
+  if (e) return e;
+  const nAlt = n.replace(/\s+/g, "-");
+  e = entries.find(
+    (x) =>
+      normalizeName(x.name) === nAlt ||
+      normalizeName(x.name).replace(/\s+/g, "-") === n
+  );
+  if (e) return e;
+  const baseName = n.replace(/^mega\s*-?\s*/i, "").trim();
+  e = entries.find((x) => normalizeName(x.name) === baseName);
+  if (e) return e;
+  e = entries.find(
+    (x) =>
+      n.includes(normalizeName(x.name)) || normalizeName(x.name).includes(n)
+  );
+  return e || null;
+}
+
+function EntryModal({ entry, kind, spriteUrl, onClose }) {
   const handleKeyDown = useCallback((e) => { if (e.key === "Escape") onClose(); }, [onClose]);
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
@@ -25,68 +60,82 @@ function EntryModal({ entry, kind, onClose }) {
   }, [handleKeyDown]);
 
   if (!entry) return null;
-  const spriteUrl = (entry.imageUrl && entry.imageUrl.trim()) ? entry.imageUrl.trim() : PLACEHOLDER_SPRITE;
   const col = COLUMNS.find((c) => c.id === kind) || COLUMNS[0];
+  const displaySprite = spriteUrl && spriteUrl.trim() ? spriteUrl.trim() : PLACEHOLDER_SPRITE;
 
-  return (
+  return createPortal(
     <div
-      className="nerfs-modal-overlay"
+      className="bst-modal-overlay"
+      onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="nerfs-modal-title"
-      onClick={onClose}
     >
-      <div className="nerfs-modal" onClick={(e) => e.stopPropagation()}>
-        <button type="button" className="nerfs-modal-close" onClick={onClose} aria-label="Fermer">
+      <div className="bst-modal nerfs-detail-modal" onClick={(e) => e.stopPropagation()}>
+        <button type="button" className="bst-modal-close" onClick={onClose} aria-label="Fermer">
           <i className="fa-solid fa-xmark" />
         </button>
-        <div className="nerfs-modal-header">
-          <div className="nerfs-modal-sprite-wrap">
-            <img src={spriteUrl} alt="" className="nerfs-modal-sprite" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
-          </div>
-          <h2 id="nerfs-modal-title" className="nerfs-modal-title" style={{ color: col.iconColor }}>
-            <i className={`fa-solid ${col.icon}`} aria-hidden /> {entry.name}
-          </h2>
+        <div className="bst-modal-sprite-wrap">
+          <img
+            src={displaySprite}
+            alt=""
+            className="bst-modal-sprite"
+            onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }}
+          />
         </div>
-        <div className="nerfs-modal-body">
-          {entry.description ? (
-            <pre className="nerfs-modal-description">{entry.description}</pre>
-          ) : (
-            <p className="nerfs-modal-empty">Aucun détail.</p>
-          )}
+        <h2 id="nerfs-modal-title" className="bst-modal-name" style={{ color: col.iconColor }}>
+          <i className={`fa-solid ${col.icon}`} aria-hidden style={{ marginRight: "0.35rem" }} /> {entry.name}
+        </h2>
+        <div className="bst-modal-talents-wrap">
+          <div className="bst-modal-talents-label">
+            <i className="fa-solid fa-file-lines" aria-hidden /> Détails
+          </div>
+          <div className="bst-modal-talents-list">
+            <div className="bst-modal-talent-slot">
+              {entry.description ? (
+                <pre className="nerfs-modal-description">{entry.description}</pre>
+              ) : (
+                <p className="bst-modal-talent-desc">Aucun détail.</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
-function Column({ column, entries, onSelect }) {
+function Column({ column, entriesWithSprites, onSelect }) {
   return (
-    <section className="nerfs-column" data-kind={column.id}>
-      <h3 className="nerfs-column-title" style={{ borderColor: column.iconColor, color: column.iconColor }}>
-        <i className={`fa-solid ${column.icon}`} aria-hidden />
-        {column.label}
-      </h3>
-      <div className="nerfs-column-grid">
-        {entries.length === 0 ? (
+    <section className="bst-section bst-section--grid nerfs-section" data-kind={column.id}>
+      <div className="bst-section-header" style={{ borderLeftColor: column.iconColor }}>
+        <i className={`fa-solid ${column.icon} bst-section-icon`} aria-hidden style={{ color: column.iconColor }} />
+        <h2 className="bst-section-title">{column.label}</h2>
+        <span className="bst-section-count"><i className="fa-solid fa-paw" aria-hidden /> {entriesWithSprites.length} Pokémon</span>
+      </div>
+      <div className="bst-grid nerfs-grid-5">
+        {entriesWithSprites.length === 0 ? (
           <p className="nerfs-column-empty">Aucun</p>
         ) : (
-          entries.map((entry, i) => (
+          entriesWithSprites.map((item, i) => (
             <button
-              key={`${entry.name}-${i}`}
+              key={`${item.name}-${i}`}
               type="button"
-              className="nerfs-column-card"
-              onClick={() => onSelect(entry, column.id)}
-              title={entry.name}
+              className="bst-card"
+              onClick={() => onSelect(item.entry, column.id, item.spriteUrl)}
+              title={item.entry.name}
             >
-              <img
-                src={(entry.imageUrl && entry.imageUrl.trim()) ? entry.imageUrl.trim() : PLACEHOLDER_SPRITE}
-                alt=""
-                className="nerfs-column-sprite"
-                loading="lazy"
-                onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }}
-              />
-              <span className="nerfs-column-name">{entry.name}</span>
+              <div className="bst-card-sprite-wrap">
+                <img
+                  src={item.spriteUrl}
+                  alt=""
+                  className="bst-card-sprite"
+                  loading="lazy"
+                  onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }}
+                />
+              </div>
+              <span className="bst-card-name">{item.entry.name}</span>
             </button>
           ))
         )}
@@ -97,17 +146,25 @@ function Column({ column, entries, onSelect }) {
 
 export default function NerfsBuffsPage() {
   const [data, setData] = useState(null);
+  const [pokedexList, setPokedexList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedVersionIndex, setSelectedVersionIndex] = useState(0);
   const [modalEntry, setModalEntry] = useState(null);
   const [modalKind, setModalKind] = useState(null);
+  const [modalSpriteUrl, setModalSpriteUrl] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`${API_BASE}/config/nerfs-buffs?t=${Date.now()}`)
-      .then((r) => r.json())
-      .then((res) => {
-        if (!cancelled && res?.success && res?.config) setData(res.config);
+    Promise.all([
+      fetch(`${API_BASE}/config/nerfs-buffs?t=${Date.now()}`).then((r) => r.json()),
+      fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
+    ])
+      .then(([configRes, pokedexRes]) => {
+        if (cancelled) return;
+        if (configRes?.success && configRes?.config) setData(configRes.config);
+        if (pokedexRes?.success && Array.isArray(pokedexRes?.pokedex?.entries)) {
+          setPokedexList(pokedexRes.pokedex.entries);
+        }
       })
       .catch(() => {})
       .finally(() => { if (!cancelled) setLoading(false); });
@@ -118,16 +175,39 @@ export default function NerfsBuffsPage() {
   const selectedVersion = versions[selectedVersionIndex] ?? versions[0];
   const pageBackground = data?.background && String(data.background).trim() ? data.background.trim() : null;
 
+  const resolveSprite = useCallback((entry) => {
+    if (entry.imageUrl && String(entry.imageUrl).trim()) return String(entry.imageUrl).trim();
+    const pokedexEntry = findPokedexEntry(entry.name, pokedexList);
+    return (pokedexEntry?.imageUrl && pokedexEntry.imageUrl.trim()) ? pokedexEntry.imageUrl.trim() : PLACEHOLDER_SPRITE;
+  }, [pokedexList]);
+
+  const nerfsWithSprites = useMemo(() => {
+    const list = selectedVersion?.nerfs || [];
+    return list.map((entry) => ({ entry, spriteUrl: resolveSprite(entry) }));
+  }, [selectedVersion?.nerfs, resolveSprite]);
+
+  const buffsWithSprites = useMemo(() => {
+    const list = selectedVersion?.buffs || [];
+    return list.map((entry) => ({ entry, spriteUrl: resolveSprite(entry) }));
+  }, [selectedVersion?.buffs, resolveSprite]);
+
+  const ajustementsWithSprites = useMemo(() => {
+    const list = selectedVersion?.ajustements || [];
+    return list.map((entry) => ({ entry, spriteUrl: resolveSprite(entry) }));
+  }, [selectedVersion?.ajustements, resolveSprite]);
+
   useEffect(() => {
     if (versions.length > 0 && selectedVersionIndex >= versions.length) setSelectedVersionIndex(0);
   }, [versions.length, selectedVersionIndex]);
 
-  const nerfs = selectedVersion?.nerfs || [];
-  const buffs = selectedVersion?.buffs || [];
-  const ajustements = selectedVersion?.ajustements || [];
+  const openModal = (entry, kind, spriteUrl) => {
+    setModalEntry(entry);
+    setModalKind(kind);
+    setModalSpriteUrl(spriteUrl || resolveSprite(entry));
+  };
 
   return (
-    <main className="page page-with-nav nerfs-buffs-page">
+    <div className={`page bst-page nerfs-buffs-page${pageBackground ? " bst-page--has-bg" : ""}`}>
       {pageBackground && (
         <>
           <div className="page-bg-layer" aria-hidden>
@@ -137,35 +217,48 @@ export default function NerfsBuffsPage() {
         </>
       )}
       <Sidebar />
-      <div className="container nerfs-buffs-container">
-        <aside className="nerfs-sidebar">
-          <h2 className="nerfs-sidebar-title">Historique</h2>
-          <nav className="nerfs-sidebar-nav" aria-label="Versions Nerfs & Buffs">
-            {versions.map((v, idx) => (
-              <button
-                key={v.version || idx}
-                type="button"
-                className={`nerfs-sidebar-item ${idx === selectedVersionIndex ? "nerfs-sidebar-item--selected" : ""}`}
-                onClick={() => setSelectedVersionIndex(idx)}
-              >
-                <span className="nerfs-sidebar-item-version">Version {v.version}</span>
-                {v.date && <span className="nerfs-sidebar-item-date">{v.date}</span>}
-              </button>
-            ))}
-          </nav>
-        </aside>
-
-        <div className="nerfs-main">
-          <header className="nerfs-header">
-            <h1 className="nerfs-title">
+      <div className="bst-bg">
+        <div className="bst-bg-grid" />
+        <div className="bst-bg-glow bst-bg-glow-1" />
+        <div className="bst-bg-glow bst-bg-glow-2" />
+      </div>
+      <main className="bst-main">
+        <header className="bst-header">
+          <Link to="/" className="bst-back">
+            <i className="fa-solid fa-arrow-left" aria-hidden />
+            Retour
+          </Link>
+          <div className="bst-title-block">
+            <h1 className="bst-title">
               <i className="fa-solid fa-scale-balanced" aria-hidden />
               Nerfs and Buffs
             </h1>
-            <p className="nerfs-desc">
+            <p className="bst-subtitle">
+              <i className="fa-solid fa-history" aria-hidden />
               Historique des modifications d’équilibrage : nerfs, buffs et ajustements par version.
             </p>
-          </header>
+          </div>
+        </header>
 
+        <div className="nerfs-buffs-inner container">
+            <aside className="nerfs-sidebar">
+              <h2 className="nerfs-sidebar-title">Historique</h2>
+              <nav className="nerfs-sidebar-nav" aria-label="Versions Nerfs & Buffs">
+                {versions.map((v, idx) => (
+                  <button
+                    key={v.version || idx}
+                    type="button"
+                    className={`nerfs-sidebar-item ${idx === selectedVersionIndex ? "nerfs-sidebar-item--selected" : ""}`}
+                    onClick={() => setSelectedVersionIndex(idx)}
+                  >
+                    <span className="nerfs-sidebar-item-version">Version {v.version}</span>
+                    {v.date && <span className="nerfs-sidebar-item-date">{v.date}</span>}
+                  </button>
+                ))}
+              </nav>
+            </aside>
+
+            <div className="nerfs-content">
           {loading ? (
             <div className="nerfs-loading">
               <i className="fa-solid fa-spinner fa-spin" aria-hidden />
@@ -183,18 +276,24 @@ export default function NerfsBuffsPage() {
                 {selectedVersion.date && <span className="nerfs-version-date">{selectedVersion.date}</span>}
               </div>
               <div className="nerfs-columns">
-                <Column column={COLUMNS[0]} entries={nerfs} onSelect={(e, k) => { setModalEntry(e); setModalKind(k); }} />
-                <Column column={COLUMNS[1]} entries={buffs} onSelect={(e, k) => { setModalEntry(e); setModalKind(k); }} />
-                <Column column={COLUMNS[2]} entries={ajustements} onSelect={(e, k) => { setModalEntry(e); setModalKind(k); }} />
+                <Column column={COLUMNS[0]} entriesWithSprites={nerfsWithSprites} onSelect={openModal} />
+                <Column column={COLUMNS[1]} entriesWithSprites={buffsWithSprites} onSelect={openModal} />
+                <Column column={COLUMNS[2]} entriesWithSprites={ajustementsWithSprites} onSelect={openModal} />
               </div>
             </>
           ) : null}
-        </div>
-      </div>
+            </div>
+          </div>
+      </main>
 
       {modalEntry && modalKind && (
-        <EntryModal entry={modalEntry} kind={modalKind} onClose={() => { setModalEntry(null); setModalKind(null); }} />
+        <EntryModal
+          entry={modalEntry}
+          kind={modalKind}
+          spriteUrl={modalSpriteUrl}
+          onClose={() => { setModalEntry(null); setModalKind(null); setModalSpriteUrl(null); }}
+        />
       )}
-    </main>
+    </div>
   );
 }

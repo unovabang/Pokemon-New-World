@@ -7,6 +7,10 @@ const API_BASE = import.meta.env.VITE_API_URL
     ? `${window.location.protocol}//${window.location.hostname}:3001/api`
     : `${window.location.origin}/api`;
 
+const PLACEHOLDER_SPRITE = "data:image/svg+xml," + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect fill="%23313538" width="96" height="96" rx="8"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%237ecdf2" font-size="10" font-family="sans-serif">?</text></svg>'
+);
+
 const KINDS = [
   { id: "nerfs", label: "Nerfs", icon: "fa-arrow-down" },
   { id: "buffs", label: "Buffs", icon: "fa-arrow-up" },
@@ -14,6 +18,26 @@ const KINDS = [
 ];
 
 const emptyEntry = () => ({ name: "", imageUrl: "", description: "" });
+
+function normalizeName(str) {
+  if (!str) return "";
+  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s*-\s*/g, "-").replace(/\s+/g, " ").trim();
+}
+
+function findPokedexEntry(name, entries) {
+  if (!name || !entries?.length) return null;
+  const n = normalizeName(name);
+  let e = entries.find((x) => normalizeName(x.name) === n);
+  if (e) return e;
+  const nAlt = n.replace(/\s+/g, "-");
+  e = entries.find((x) => normalizeName(x.name) === nAlt || normalizeName(x.name).replace(/\s+/g, "-") === n);
+  if (e) return e;
+  const baseName = n.replace(/^mega\s*-?\s*/i, "").trim();
+  e = entries.find((x) => normalizeName(x.name) === baseName);
+  if (e) return e;
+  e = entries.find((x) => n.includes(normalizeName(x.name)) || normalizeName(x.name).includes(n));
+  return e || null;
+}
 
 function normalizeVersion(v) {
   return {
@@ -34,22 +58,31 @@ export default function NerfsBuffsEditor({ onSave }) {
   const [selectedVersionIndex, setSelectedVersionIndex] = useState(0);
   const [modal, setModal] = useState(null);
   const [confirm, setConfirm] = useState(null);
+  const [pokedexEntries, setPokedexEntries] = useState([]);
 
   const load = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/config/nerfs-buffs?t=${Date.now()}`);
-      const data = await res.json();
-      if (data?.success && data?.config) {
-        const v = data.config.versions || [];
+      const [configRes, pokedexRes] = await Promise.all([
+        fetch(`${API_BASE}/config/nerfs-buffs?t=${Date.now()}`).then((r) => r.json()),
+        fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
+      ]);
+      if (configRes?.success && configRes?.config) {
+        const v = configRes.config.versions || [];
         setVersions(v.map(normalizeVersion));
-        setBackground(data.config.background ?? "");
+        setBackground(configRes.config.background ?? "");
         if (v.length > 0 && selectedVersionIndex >= v.length) setSelectedVersionIndex(0);
       } else {
         setVersions([]);
       }
+      if (pokedexRes?.success && Array.isArray(pokedexRes?.pokedex?.entries)) {
+        setPokedexEntries(pokedexRes.pokedex.entries);
+      } else {
+        setPokedexEntries([]);
+      }
     } catch {
       setVersions([]);
+      setPokedexEntries([]);
     } finally {
       setLoading(false);
     }
@@ -142,6 +175,12 @@ export default function NerfsBuffsEditor({ onSave }) {
   const removeEntry = (kind, entryIndex) => {
     const key = kind;
     setCurrentVersion((v) => ({ ...v, [key]: (v[key] || []).filter((_, i) => i !== entryIndex) }));
+  };
+
+  const resolveSprite = (entry) => {
+    if (entry.imageUrl && String(entry.imageUrl).trim()) return String(entry.imageUrl).trim();
+    const pe = findPokedexEntry(entry.name, pokedexEntries);
+    return (pe?.imageUrl && pe.imageUrl.trim()) ? pe.imageUrl.trim() : PLACEHOLDER_SPRITE;
   };
 
   const openEditModal = (kind, entryIndex) => {
@@ -259,22 +298,30 @@ export default function NerfsBuffsEditor({ onSave }) {
                   ) : (
                     <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                       {entries.map((entry, i) => (
-                        <li key={i} style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", padding: "0.5rem", background: "rgba(255,255,255,.04)", borderRadius: "8px" }}>
+                        <li key={i} className="admin-bst-card" style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap", padding: "0.75rem 1rem", position: "relative" }}>
+                          <div className="admin-bst-card-sprite" style={{ width: 48, height: 48, flexShrink: 0 }}>
+                            <img
+                              src={resolveSprite(entry)}
+                              alt=""
+                              style={{ width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }}
+                              onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }}
+                            />
+                          </div>
                           <input
                             type="text"
                             className="evs-editor-input"
                             value={entry.name}
                             onChange={(e) => updateEntry(id, i, "name", e.target.value)}
-                            placeholder="Nom"
-                            style={{ width: "120px", flexShrink: 0 }}
+                            placeholder="Nom (sprite Pokédex si vide)"
+                            style={{ width: "130px", flexShrink: 0 }}
                           />
                           <input
                             type="url"
                             className="evs-editor-input"
                             value={entry.imageUrl || ""}
                             onChange={(e) => updateEntry(id, i, "imageUrl", e.target.value)}
-                            placeholder="URL sprite"
-                            style={{ flex: "1", minWidth: "150px" }}
+                            placeholder="URL sprite (optionnel)"
+                            style={{ flex: "1", minWidth: "140px" }}
                           />
                           <button type="button" className="admin-panel-nav-btn" onClick={() => openEditModal(id, i)} title="Éditer le détail"><i className="fa-solid fa-pen" /></button>
                           <button type="button" className="admin-panel-nav-btn" style={{ color: "var(--accent-warm)" }} onClick={() => removeEntry(id, i)} title="Supprimer"><i className="fa-solid fa-trash" /></button>
@@ -298,27 +345,27 @@ export default function NerfsBuffsEditor({ onSave }) {
             </div>
             <div className="admin-pokedex-modal-body">
               <div className="evs-editor-form-row" style={{ marginBottom: "0.75rem" }}>
-                <label className="evs-editor-label">Nom</label>
+                <label className="evs-editor-label"><i className="fa-solid fa-tag" aria-hidden style={{ marginRight: "0.35rem", opacity: 0.9 }} /> Nom</label>
                 <input
                   type="text"
                   className="evs-editor-input"
                   value={modal.name}
                   onChange={(e) => setModal((m) => ({ ...m, name: e.target.value }))}
-                  placeholder="Nom du Pokémon"
+                  placeholder="Nom du Pokémon (sprite depuis Pokédex si URL vide)"
                 />
               </div>
               <div className="evs-editor-form-row" style={{ marginBottom: "0.75rem" }}>
-                <label className="evs-editor-label">URL du sprite</label>
+                <label className="evs-editor-label"><i className="fa-solid fa-image" aria-hidden style={{ marginRight: "0.35rem", opacity: 0.9 }} /> URL du sprite</label>
                 <input
                   type="url"
                   className="evs-editor-input"
                   value={modal.imageUrl}
                   onChange={(e) => setModal((m) => ({ ...m, imageUrl: e.target.value }))}
-                  placeholder="https://…"
+                  placeholder="Optionnel : le sprite est pris du Pokédex si vide"
                 />
               </div>
               <div className="evs-editor-form-row">
-                <label className="evs-editor-label">Description (Type, Stats, Talents, Movepool…)</label>
+                <label className="evs-editor-label"><i className="fa-solid fa-file-lines" aria-hidden style={{ marginRight: "0.35rem", opacity: 0.9 }} /> Description (Type, Stats, Talents, Movepool…)</label>
                 <textarea
                   className="evs-editor-input"
                   value={modal.description}
