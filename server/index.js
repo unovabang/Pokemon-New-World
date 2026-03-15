@@ -1110,6 +1110,76 @@ app.put('/api/extradex', (req, res) => {
   }
 });
 
+// === NERFS AND BUFFS API ===
+// GET /api/nerfs-and-buffs - Lire les données Nerfs & Buffs
+app.get('/api/nerfs-and-buffs', (req, res) => {
+  try {
+    let data = getConfig('nerfs-and-buffs');
+    if (!data) {
+      const seedPath = path.join(__dirname, '../src/config/nerfs-and-buffs.json');
+      if (fs.existsSync(seedPath)) {
+        try {
+          data = fs.readJsonSync(seedPath);
+        } catch (e) {
+          data = { lastModified: null, nerfs: [], buffs: [], ajustements: [], background: null };
+        }
+      } else {
+        data = { lastModified: null, nerfs: [], buffs: [], ajustements: [], background: null };
+      }
+    }
+    res.json({
+      success: true,
+      nerfsBuffs: {
+        lastModified: data.lastModified ?? null,
+        nerfs: Array.isArray(data.nerfs) ? data.nerfs : [],
+        buffs: Array.isArray(data.buffs) ? data.buffs : [],
+        ajustements: Array.isArray(data.ajustements) ? data.ajustements : [],
+        background: data.background ?? null,
+      },
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/nerfs-and-buffs:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/nerfs-and-buffs - Sauvegarder Nerfs & Buffs
+app.put('/api/nerfs-and-buffs', (req, res) => {
+  try {
+    const { lastModified, nerfs, buffs, ajustements, background } = req.body;
+    const configPath = path.join(CONFIG_DIR, 'nerfs-and-buffs.json');
+
+    let current = { lastModified: null, nerfs: [], buffs: [], ajustements: [], background: null };
+    if (fs.existsSync(configPath)) {
+      current = fs.readJsonSync(configPath);
+    }
+
+    const updated = {
+      lastModified: lastModified !== undefined ? (lastModified && String(lastModified).trim() ? String(lastModified).trim() : new Date().toISOString().slice(0, 10)) : (current.lastModified || new Date().toISOString().slice(0, 10)),
+      nerfs: Array.isArray(nerfs) ? nerfs : (current.nerfs || []),
+      buffs: Array.isArray(buffs) ? buffs : (current.buffs || []),
+      ajustements: Array.isArray(ajustements) ? ajustements : (current.ajustements || []),
+      background: background !== undefined ? (background && String(background).trim() ? String(background).trim() : null) : (current.background ?? null),
+    };
+
+    const opts = { spaces: 2 };
+    fs.ensureDirSync(CONFIG_DIR);
+    fs.writeJsonSync(configPath, updated, opts);
+    fs.ensureDirSync(SOURCE_CONFIG_DIR);
+    fs.writeJsonSync(path.join(SOURCE_CONFIG_DIR, 'nerfs-and-buffs.json'), updated, opts);
+    autoCommitConfig('nerfs-and-buffs.json');
+
+    res.json({
+      success: true,
+      message: 'Nerfs and Buffs sauvegardés.',
+      nerfsBuffs: updated,
+    });
+  } catch (error) {
+    console.error('❌ Erreur API PUT /api/nerfs-and-buffs:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // === BST API (All BST + Abilities) ===
 // GET /api/bst - Lire les données BST (fakemon, megas, speciaux)
 app.get('/api/bst', (req, res) => {

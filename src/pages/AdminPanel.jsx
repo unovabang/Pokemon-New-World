@@ -17,6 +17,7 @@ import PokedexEditor from "../components/PokedexEditor";
 import ExtradexEditor from "../components/ExtradexEditor";
 import GuideEditor from "../components/GuideEditor";
 import BSTEditor from "../components/BSTEditor";
+import NerfsAndBuffsEditor from "../components/NerfsAndBuffsEditor";
 import AdminTips from "../components/AdminTips";
 import ItemLocationEditor from "../components/ItemLocationEditor";
 import EVsLocationEditor from "../components/EVsLocationEditor";
@@ -36,6 +37,7 @@ import externalConfig from "../config/external.json";
 import extradexData from "../config/extradex.json";
 import guideData from "../config/guide.json";
 import bstData from "../config/bst.json";
+import nerfsBuffsData from "../config/nerfs-and-buffs.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   || (import.meta.env.DEV ? `${window.location.protocol}//${window.location.hostname}:3001` : window.location.origin);
@@ -393,11 +395,10 @@ const AdminPanel = () => {
             <EVsLocationEditor onSave={() => {}} />
           )}
           {activeTab === 'nerfs' && (
-            <UnderConstructionPage
-              title="Nerfs and Buffs"
-              backLabel="Retour à l'admin"
-              onBack={() => setActiveTab("dashboard")}
-              embedded
+            <NerfsAndBuffsEditor
+              initialData={nerfsBuffsData || { lastModified: null, nerfs: [], buffs: [], ajustements: [], background: null }}
+              initialPokedexEntries={pokedexData?.entries ?? []}
+              onSave={() => {}}
             />
           )}
           

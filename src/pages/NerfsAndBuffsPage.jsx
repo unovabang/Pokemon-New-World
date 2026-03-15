@@ -325,23 +325,38 @@ export default function NerfsAndBuffsPage() {
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [pokedexList, setPokedexList] = useState(() => getPokedexEntriesFallback());
   const [filter, setFilter] = useState("all");
+  const [dataSource, setDataSource] = useState(() => ({
+    lastModified: nerfsBuffsData?.lastModified ?? null,
+    nerfs: nerfsBuffsData?.nerfs ?? [],
+    buffs: nerfsBuffsData?.buffs ?? [],
+    ajustements: nerfsBuffsData?.ajustements ?? [],
+    background: nerfsBuffsData?.background ?? null,
+  }));
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`${API_BASE}/pokedex?t=${Date.now()}`)
-      .then((r) => r.json())
-      .then((pokedexRes) => {
-        if (cancelled) return;
-        if (pokedexRes?.success && pokedexRes?.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
-          setPokedexList(pokedexRes.pokedex.entries);
-        }
-      })
-      .catch(() => {});
+    Promise.all([
+      fetch(`${API_BASE}/nerfs-and-buffs?t=${Date.now()}`).then((r) => r.json()),
+      fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
+    ]).then(([nbRes, pokedexRes]) => {
+      if (cancelled) return;
+      if (nbRes?.success && nbRes?.nerfsBuffs) {
+        setDataSource({
+          lastModified: nbRes.nerfsBuffs.lastModified ?? null,
+          nerfs: Array.isArray(nbRes.nerfsBuffs.nerfs) ? nbRes.nerfsBuffs.nerfs : [],
+          buffs: Array.isArray(nbRes.nerfsBuffs.buffs) ? nbRes.nerfsBuffs.buffs : [],
+          ajustements: Array.isArray(nbRes.nerfsBuffs.ajustements) ? nbRes.nerfsBuffs.ajustements : [],
+          background: nbRes.nerfsBuffs.background ?? null,
+        });
+      }
+      if (pokedexRes?.success && pokedexRes?.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
+        setPokedexList(pokedexRes.pokedex.entries);
+      }
+    }).catch(() => {});
     return () => { cancelled = true; };
   }, []);
 
-  const data = nerfsBuffsData || { lastModified: null, nerfs: [], buffs: [], ajustements: [] };
-  const totalCount = (data.nerfs?.length || 0) + (data.buffs?.length || 0) + (data.ajustements?.length || 0);
+  const totalCount = (dataSource.nerfs?.length || 0) + (dataSource.buffs?.length || 0) + (dataSource.ajustements?.length || 0);
   const sectionsToShow = filter === "all" ? SECTIONS : SECTIONS.filter((s) => s.id === filter);
 
   const scrollToSection = (sectionId) => {
@@ -350,8 +365,18 @@ export default function NerfsAndBuffsPage() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const pageBackground = dataSource.background && String(dataSource.background).trim() ? dataSource.background.trim() : null;
+
   return (
-    <div className="page bst-page nerfbuff-page">
+    <div className={`page bst-page nerfbuff-page${pageBackground ? " bst-page--has-bg" : ""}`}>
+      {pageBackground && (
+        <>
+          <div className="page-bg-layer" aria-hidden>
+            <img src={pageBackground} alt="" />
+          </div>
+          <div className="page-overlay-layer" aria-hidden />
+        </>
+      )}
       <Sidebar />
       <div className="bst-bg">
         <div className="bst-bg-grid" />
@@ -373,10 +398,10 @@ export default function NerfsAndBuffsPage() {
               <i className="fa-solid fa-arrows-up-down-left-right" aria-hidden />
               Modifications des statistiques, types et talents
             </p>
-            {data.lastModified && (
+            {dataSource.lastModified && (
               <p className="nerfbuff-last-update">
                 <i className="fa-solid fa-clock-rotate-left" aria-hidden />
-                Dernière mise à jour : {formatDateFR(data.lastModified)}
+                Dernière mise à jour : {formatDateFR(dataSource.lastModified)}
               </p>
             )}
           </div>
@@ -413,7 +438,7 @@ export default function NerfsAndBuffsPage() {
                   id={s.id}
                   title={s.title}
                   icon={s.icon}
-                  entries={data[s.id]}
+                  entries={dataSource[s.id]}
                   pokedexList={pokedexList}
                   onSelect={setSelectedEntry}
                 />
