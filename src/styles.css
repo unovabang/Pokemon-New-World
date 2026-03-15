@@ -1361,6 +1361,9 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .evs-location-filter-label{font-size:.9rem; color:var(--muted); display:flex; align-items:center; gap:.4rem}
 .evs-location-filter-label i{color:var(--primary-2); opacity:.9}
 .evs-location-select,.evs-location-search{padding:.5rem .75rem; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:var(--text); font-size:.95rem; min-width:180px}
+.evs-location-select{background:rgba(30,41,59,.95); border-color:rgba(148,163,184,.25); color:#e2e8f0; font-weight:500; cursor:pointer; padding:.55rem .85rem}
+.evs-location-select:hover,.evs-location-select:focus{background:rgba(30,41,59,.98); border-color:rgba(126,205,242,.35); outline:none}
+.evs-location-select option{background:#1e293b; color:#e2e8f0; padding:.4rem; font-weight:500}
 .evs-location-search{min-width:220px}
 .evs-location-pokemon-item{position:relative; overflow:visible}
 .evs-location-pokemon-zone-fa{position:absolute; top:4px; left:4px; z-index:4; display:inline-flex; align-items:center; justify-content:center; width:1.5rem; height:1.5rem; color:var(--primary-2); opacity:.95; cursor:help; border-radius:6px; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.08)}
@@ -5897,7 +5900,17 @@ a.dex-panel--active{cursor:default}
 .evs-editor-zone-filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
 .evs-editor-zone-filter-row .evs-editor-label { margin: 0; min-width: 100px; font-size: .9rem; }
 .evs-editor-zone-filter-row .evs-editor-label i { margin-right: .35rem; color: var(--primary-2); opacity: .9; }
-.evs-editor-zone-select { min-width: 180px; max-width: 260px; cursor: pointer; }
+.evs-editor-zone-select {
+  min-width: 180px; max-width: 260px; cursor: pointer;
+  background: rgba(30,41,59,.95); border-color: rgba(148,163,184,.25); color: #e2e8f0; font-weight: 500;
+  padding: .55rem .85rem; font-size: .95rem;
+}
+.evs-editor-zone-select:hover, .evs-editor-zone-select:focus {
+  background: rgba(30,41,59,.98); border-color: rgba(126,205,242,.35); outline: none;
+}
+.evs-editor-zone-select option {
+  background: #1e293b; color: #e2e8f0; padding: .4rem; font-weight: 500;
+}
 .evs-editor-toolbar { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
 .evs-editor-search { padding: .6rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--text); font-size: .95rem; width: 260px; max-width: 100%; }
 .evs-editor-search::placeholder { color: rgba(255,255,255,.45); }
