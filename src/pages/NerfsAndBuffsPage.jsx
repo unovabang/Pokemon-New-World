@@ -140,7 +140,7 @@ function NerfBuffModal({ entry, pokedexList = [], onClose }) {
   if (!entry) return null;
   const list = Array.isArray(pokedexList) ? pokedexList : [];
   const dexEntry = findPokedexEntry(entry.name, list);
-  const sprite = dexEntry?.imageUrl || PLACEHOLDER_SPRITE;
+  const sprite = entry.imageUrl || dexEntry?.imageUrl || PLACEHOLDER_SPRITE;
   const typesDisplay = parseTypeLabel(entry.typeTo);
   const typeChanged = (entry.typeFrom || "") !== (entry.typeTo || "");
   const statKeys = ["hp", "atk", "def", "spa", "spd", "spe"];
@@ -274,7 +274,7 @@ function NerfBuffGrid({ id, title, icon, entries, pokedexList, onSelect }) {
   const rows = useMemo(() => {
     return (entries || []).map((entry) => {
       const dexEntry = findPokedexEntry(entry.name, list);
-      const sprite = dexEntry?.imageUrl || PLACEHOLDER_SPRITE;
+      const sprite = entry.imageUrl || dexEntry?.imageUrl || PLACEHOLDER_SPRITE;
       const types = parseTypeLabel(entry.typeTo);
       const total = totalFromStats(entry.stats);
       return { ...entry, sprite, types, total };

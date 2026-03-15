@@ -17,6 +17,14 @@ const SECTIONS = [
 
 const STAT_KEYS = ["hp", "atk", "def", "spa", "spd", "spe"];
 const STAT_LABELS = { hp: "PV", atk: "ATK", def: "DEF", spa: "ATK SPE", spd: "DEF SPE", spe: "SPE" };
+const STAT_ICONS = {
+  hp: "fa-heart-pulse",
+  atk: "fa-hand-fist",
+  def: "fa-shield",
+  spa: "fa-wand-magic-sparkles",
+  spd: "fa-gem",
+  spe: "fa-gauge-high",
+};
 
 function normalizeName(str) {
   if (!str) return "";
@@ -52,6 +60,7 @@ function emptyEntry() {
   STAT_KEYS.forEach((k) => { stats[k] = [0, 0]; });
   return {
     name: "",
+    imageUrl: "",
     typeFrom: "",
     typeTo: "",
     stats,
@@ -71,6 +80,7 @@ function entryToForm(entry) {
   while (talents.length < 3) talents.push({ from: "", to: "" });
   return {
     name: entry.name || "",
+    imageUrl: entry.imageUrl || "",
     typeFrom: entry.typeFrom || "",
     typeTo: entry.typeTo || "",
     stats,
@@ -88,6 +98,7 @@ function formToEntry(form) {
   const talents = (form.talents || []).slice(0, 3).filter((t) => (t.from || "").trim() || (t.to || "").trim()).map((t) => ({ from: (t.from || "").trim(), to: (t.to || "").trim() }));
   return {
     name: (form.name || "").trim(),
+    imageUrl: (form.imageUrl || "").trim() || undefined,
     typeFrom: (form.typeFrom || "").trim(),
     typeTo: (form.typeTo || "").trim(),
     stats,
@@ -260,6 +271,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
     setForm((f) => ({
       ...f,
       name: entry.name || f.name,
+      imageUrl: (entry.imageUrl || "").trim() || f.imageUrl,
       typeFrom: typeFrom || f.typeFrom,
     }));
     setPokedexDropdownOpen(false);
@@ -272,6 +284,18 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
       next.stats = { ...(next.stats || {}) };
       const arr = [...(next.stats[key] || [0, 0])];
       arr[index] = value === "" ? "" : Number(value);
+      next.stats[key] = arr;
+      return next;
+    });
+  };
+
+  const stepFormStat = (key, index, delta) => {
+    setForm((f) => {
+      const next = { ...f };
+      next.stats = { ...(next.stats || {}) };
+      const arr = [...(next.stats[key] || [0, 0])];
+      const current = Number(arr[index]) || 0;
+      arr[index] = Math.max(0, current + delta);
       next.stats[key] = arr;
       return next;
     });
@@ -340,7 +364,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
                       {filteredPokedex.length === 0 ? (
                         <div className="evs-editor-pokedex-list-empty">Aucun Pokémon trouvé.</div>
                       ) : (
-                        filteredPokedex.slice(0, 80).map((entry) => (
+                        filteredPokedex.map((entry) => (
                           <button
                             key={entry.num || entry.name}
                             type="button"
@@ -364,49 +388,68 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
           )}
 
           <div>
-            <label className="admin-pokedex-label">Nom *</label>
+            <label className="admin-pokedex-label"><i className="fa-solid fa-tag" aria-hidden /> Nom *</label>
             <input type="text" className="admin-pokedex-input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Momartik" />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+          <div style={{ marginTop: "0.75rem" }}>
+            <label className="admin-pokedex-label"><i className="fa-solid fa-image" aria-hidden /> URL du sprite (si absent du Pokédex)</label>
+            <input type="url" className="admin-pokedex-input" value={form.imageUrl} onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))} placeholder="https://… (optionnel)" />
+            {form.imageUrl && (
+              <div className="admin-bst-modal-preview" style={{ marginTop: "0.5rem" }}>
+                <img src={form.imageUrl} alt="" onError={(e) => { e.target.style.display = "none"; }} style={{ maxWidth: "64px", maxHeight: "64px", imageRendering: "pixelated" }} />
+              </div>
+            )}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginTop: "0.75rem" }}>
             <div>
-              <label className="admin-pokedex-label">Type (avant)</label>
+              <label className="admin-pokedex-label"><i className="fa-solid fa-arrow-left" aria-hidden /> Type (avant)</label>
               <input type="text" className="admin-pokedex-input" value={form.typeFrom} onChange={(e) => setForm((f) => ({ ...f, typeFrom: e.target.value }))} placeholder="Glace/Spectre" />
             </div>
             <div>
-              <label className="admin-pokedex-label">Type (après)</label>
+              <label className="admin-pokedex-label"><i className="fa-solid fa-arrow-right" aria-hidden /> Type (après)</label>
               <input type="text" className="admin-pokedex-input" value={form.typeTo} onChange={(e) => setForm((f) => ({ ...f, typeTo: e.target.value }))} placeholder="Glace/Spectre" />
             </div>
           </div>
-          <div className="admin-nerfbuff-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.5rem", marginTop: "0.75rem" }}>
+          <div className="admin-nerfbuff-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem", marginTop: "1rem" }}>
             {STAT_KEYS.map((key) => (
-              <div key={key} style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
-                <label className="admin-pokedex-label">{STAT_LABELS[key]}</label>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
-                  <input
-                    type="number"
-                    min="0"
-                    className="admin-pokedex-input"
-                    style={{ width: "4rem" }}
-                    value={form.stats?.[key]?.[0] ?? ""}
-                    onChange={(e) => updateFormStat(key, 0, e.target.value)}
-                    placeholder="Avant"
-                  />
-                  <span style={{ color: "var(--muted)", fontSize: "0.85rem" }}>→</span>
-                  <input
-                    type="number"
-                    min="0"
-                    className="admin-pokedex-input"
-                    style={{ width: "4rem" }}
-                    value={form.stats?.[key]?.[1] ?? ""}
-                    onChange={(e) => updateFormStat(key, 1, e.target.value)}
-                    placeholder="Après"
-                  />
+              <div key={key} className="nerfbuff-admin-stat-row">
+                <label className="admin-pokedex-label"><i className={`fa-solid ${STAT_ICONS[key]}`} aria-hidden /> {STAT_LABELS[key]}</label>
+                <div className="nerfbuff-admin-stat-inputs">
+                  <div className="nerfbuff-admin-stat-cell">
+                    <input
+                      type="number"
+                      min="0"
+                      className="admin-pokedex-input nerfbuff-admin-stat-input"
+                      value={form.stats?.[key]?.[0] ?? ""}
+                      onChange={(e) => updateFormStat(key, 0, e.target.value)}
+                      placeholder="Avant"
+                    />
+                    <div className="nerfbuff-admin-stat-btns">
+                      <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => stepFormStat(key, 0, 1)} aria-label="Augmenter"><i className="fa-solid fa-chevron-up" /></button>
+                      <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => stepFormStat(key, 0, -1)} aria-label="Diminuer"><i className="fa-solid fa-chevron-down" /></button>
+                    </div>
+                  </div>
+                  <span className="nerfbuff-admin-stat-arrow" aria-hidden><i className="fa-solid fa-arrow-right" /></span>
+                  <div className="nerfbuff-admin-stat-cell">
+                    <input
+                      type="number"
+                      min="0"
+                      className="admin-pokedex-input nerfbuff-admin-stat-input"
+                      value={form.stats?.[key]?.[1] ?? ""}
+                      onChange={(e) => updateFormStat(key, 1, e.target.value)}
+                      placeholder="Après"
+                    />
+                    <div className="nerfbuff-admin-stat-btns">
+                      <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => stepFormStat(key, 1, 1)} aria-label="Augmenter"><i className="fa-solid fa-chevron-up" /></button>
+                      <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => stepFormStat(key, 1, -1)} aria-label="Diminuer"><i className="fa-solid fa-chevron-down" /></button>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
           <div className="admin-bst-talents-block" style={{ marginTop: "1rem" }}>
-            <span className="admin-bst-talents-title"><i className="fa-solid fa-star" /> Talents (avant → après)</span>
+            <span className="admin-bst-talents-title"><i className="fa-solid fa-star" aria-hidden /> Talents (avant → après)</span>
             {[0, 1, 2].map((i) => (
               <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", marginTop: "0.5rem" }}>
                 <input
@@ -433,7 +476,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
             ))}
           </div>
           <div style={{ marginTop: "1rem" }}>
-            <label className="admin-pokedex-label">Movepool (changements)</label>
+            <label className="admin-pokedex-label"><i className="fa-solid fa-book-open" aria-hidden /> Movepool (changements)</label>
             <textarea className="admin-pokedex-textarea" value={form.movepool} onChange={(e) => setForm((f) => ({ ...f, movepool: e.target.value }))} placeholder="Ajout de Mistrâmes…" rows={2} />
           </div>
         </div>
@@ -471,14 +514,17 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
             <i className="fa-solid fa-list" aria-hidden /> Liste ({entries.length})
           </h3>
           <div className="admin-pokedex-toolbar-actions" style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
-            <input
-              type="search"
-              className="admin-pokedex-input"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Rechercher par nom…"
-              style={{ width: "200px" }}
-            />
+            <span style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+              <i className="fa-solid fa-magnifying-glass" aria-hidden style={{ color: "var(--muted)" }} />
+              <input
+                type="search"
+                className="admin-pokedex-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Rechercher par nom…"
+                style={{ width: "200px" }}
+              />
+            </span>
             <button type="button" onClick={openAdd} className="admin-pokedex-btn admin-pokedex-btn-primary">
               <i className="fa-solid fa-plus" /> Ajouter
             </button>
@@ -493,7 +539,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
             </button>
           </div>
           <div className="admin-bst-background-row" style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", width: "100%" }}>
-            <label style={{ minWidth: "140px" }}>URL image de fond (page publique)</label>
+            <label style={{ minWidth: "140px" }}><i className="fa-solid fa-image" aria-hidden /> URL image de fond (page publique)</label>
             <input
               type="url"
               className="admin-pokedex-input"
@@ -512,7 +558,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
             filteredEntries.map((e, displayIndex) => {
               const globalIndex = entries.indexOf(e);
               const dexEntry = findPokedexEntry(e.name, pokedexEntries);
-              const spriteUrl = dexEntry?.imageUrl || PLACEHOLDER_SPRITE;
+              const spriteUrl = e.imageUrl || dexEntry?.imageUrl || PLACEHOLDER_SPRITE;
               const total = totalFromStats(e.stats);
               return (
                 <div

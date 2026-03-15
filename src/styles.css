@@ -4390,6 +4390,38 @@ a.dex-panel--active{cursor:default}
   image-rendering: crisp-edges;
 }
 
+/* NerfsAndBuffs admin: champs stats avec boutons +/- */
+.nerfbuff-admin-stat-row { display: flex; flex-direction: column; gap: 0.35rem; }
+.nerfbuff-admin-stat-row .admin-pokedex-label { display: flex; align-items: center; gap: 0.4rem; }
+.nerfbuff-admin-stat-inputs {
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+}
+.nerfbuff-admin-stat-cell {
+  display: flex; align-items: stretch; border-radius: 10px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.15); background: rgba(0,0,0,.25);
+}
+.nerfbuff-admin-stat-input {
+  width: 4.5rem; min-width: 4.5rem; padding: 0.5rem 0.4rem 0.5rem 0.6rem;
+  font-size: 1rem; font-variant-numeric: tabular-nums; text-align: center;
+  border: none; background: transparent; color: var(--text);
+}
+.nerfbuff-admin-stat-input:focus { outline: none; }
+.nerfbuff-admin-stat-btns {
+  display: flex; flex-direction: column; flex-shrink: 0;
+  border-left: 1px solid rgba(255,255,255,.1);
+}
+.nerfbuff-admin-stat-btn {
+  width: 28px; height: 50%; min-height: 22px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: rgba(255,255,255,.06); color: var(--muted);
+  cursor: pointer; transition: background .15s, color .15s;
+}
+.nerfbuff-admin-stat-btn:hover { background: rgba(126,205,242,.2); color: var(--primary-2); }
+.nerfbuff-admin-stat-btn i { font-size: 0.7rem; }
+.nerfbuff-admin-stat-arrow { color: var(--muted); font-size: 0.8rem; }
+.nerfbuff-admin-modal .evs-editor-pokedex-list { max-height: 420px; }
+.nerfbuff-admin-modal .evs-editor-pokedex-list-body { max-height: 360px; overflow-y: auto; }
+
 /* Bloc 3 talents (admin) */
 .admin-bst-talents-block {
   margin-top: 0.5rem;
