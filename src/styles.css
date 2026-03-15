@@ -1368,7 +1368,8 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .evs-location-pokemon-item{position:relative; overflow:visible}
 .evs-location-pokemon-zone-fa{position:absolute; top:4px; left:4px; z-index:4; display:inline-flex; align-items:center; justify-content:center; width:1.5rem; height:1.5rem; color:var(--primary-2); opacity:.95; cursor:help; border-radius:6px; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.08)}
 .evs-location-pokemon-zone-fa i{font-size:.8rem}
-.evs-location-pokemon-zone-fa:hover::after{content:attr(title); position:absolute; right:100%; margin-right:8px; top:50%; transform:translateY(-50%); padding:.5rem .75rem; font-size:.8rem; font-weight:500; color:#e2e8f0; background:rgba(30,41,59,.97); border:1px solid rgba(148,163,184,.25); border-radius:10px; white-space:nowrap; text-align:left; box-shadow:0 10px 25px rgba(0,0,0,.4); z-index:25; pointer-events:none; line-height:1.3}
+.evs-location-pokemon-zone-fa::after{content:attr(title); position:absolute; right:100%; margin-right:8px; top:50%; transform:translateY(-50%); padding:.5rem .75rem; font-size:.8rem; font-weight:500; color:#e2e8f0; background:rgba(30,41,59,.97); border:1px solid rgba(148,163,184,.25); border-radius:10px; white-space:nowrap; text-align:left; box-shadow:0 10px 25px rgba(0,0,0,.4); z-index:25; pointer-events:none; line-height:1.3; opacity:0; visibility:hidden; transition:opacity .15s, visibility .15s}
+.evs-location-pokemon-zone-fa:hover::after,.evs-location-pokemon-item:hover .evs-location-pokemon-zone-fa::after{opacity:1; visibility:visible}
 .evs-location-grid{display:flex; flex-direction:column; gap:.75rem; position:relative; z-index:1}
 .evs-location-card{
   border-radius:14px; border:1px solid rgba(255,255,255,.1);
