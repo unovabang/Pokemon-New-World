@@ -1356,6 +1356,15 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .evs-location-desc{margin:0; font-size:1rem; color:var(--muted); line-height:1.5}
 .evs-location-loading{text-align:center; padding:3rem; color:var(--muted); display:flex; align-items:center; justify-content:center; gap:.75rem}
 .evs-location-loading i{font-size:1.25rem}
+.evs-location-filters{display:flex; flex-wrap:wrap; align-items:flex-end; gap:1rem; margin-bottom:1.25rem; position:relative; z-index:1}
+.evs-location-filter-group{display:flex; flex-direction:column; gap:.35rem}
+.evs-location-filter-label{font-size:.9rem; color:var(--muted); display:flex; align-items:center; gap:.4rem}
+.evs-location-filter-label i{color:var(--primary-2); opacity:.9}
+.evs-location-select,.evs-location-search{padding:.5rem .75rem; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:var(--text); font-size:.95rem; min-width:180px}
+.evs-location-search{min-width:220px}
+.evs-location-card-zone-fa{display:inline-flex; align-items:center; justify-content:center; color:var(--primary-2); opacity:.9; margin-left:.25rem; cursor:help; position:relative}
+.evs-location-card-zone-fa i{font-size:.95rem}
+.evs-location-card-zone-fa:hover::after{content:attr(title); position:absolute; left:50%; bottom:100%; transform:translateX(-50%); margin-bottom:6px; padding:.35rem .6rem; font-size:.75rem; font-weight:600; color:var(--bg); background:var(--primary-2); border-radius:8px; white-space:nowrap; box-shadow:0 4px 12px rgba(0,0,0,.3); z-index:5; pointer-events:none}
 .evs-location-grid{display:flex; flex-direction:column; gap:.75rem; position:relative; z-index:1}
 .evs-location-card{
   border-radius:14px; border:1px solid rgba(255,255,255,.1);
@@ -1419,6 +1428,8 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   .evs-location-header{margin-bottom:1.5rem}
   .evs-location-title{font-size:1.35rem; flex-wrap:wrap; justify-content:center}
   .evs-location-desc{font-size:.95rem}
+  .evs-location-filters{flex-direction:column; align-items:stretch}
+  .evs-location-select,.evs-location-search{min-width:0; width:100%}
   .evs-location-card-head{padding:.85rem 1rem; gap:.75rem; flex-wrap:wrap}
   .evs-location-card-body{padding:1rem}
   .evs-location-pokemon-grid{grid-template-columns:repeat(auto-fill, minmax(80px, 1fr)); gap:.75rem}
@@ -5881,6 +5892,12 @@ a.dex-panel--active{cursor:default}
 .evs-editor-desc { margin: 0 0 1.5rem; font-size: .9rem; color: var(--muted); line-height: 1.5; max-width: 560px; }
 .evs-editor-tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; }
 .evs-editor-tabs .admin-panel-nav-btn { width: auto; padding: .5rem 1rem; font-size: .9rem; }
+.evs-editor-zone-row { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
+.evs-editor-zone-row .evs-editor-label { margin: 0; min-width: 100px; font-size: .9rem; }
+.evs-editor-zone-row .evs-editor-label i { margin-right: .35rem; color: var(--primary-2); opacity: .9; }
+.evs-editor-zone-input { flex: 1; min-width: 180px; max-width: 280px; }
+.evs-editor-zone-fa { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; color: var(--primary-2); opacity: .9; cursor: help; border-radius: 8px; background: rgba(126,205,242,.12); }
+.evs-editor-zone-fa i { font-size: 1rem; }
 .evs-editor-toolbar { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
 .evs-editor-search { padding: .6rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--text); font-size: .95rem; width: 260px; max-width: 100%; }
 .evs-editor-search::placeholder { color: rgba(255,255,255,.45); }

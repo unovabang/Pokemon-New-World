@@ -101,7 +101,7 @@ function normalizeEvEntry(ev) {
       });
     }
   }
-  return { id: ev.id, label: ev.label, icon: ev.icon || "fa-circle", pokemon };
+  return { id: ev.id, label: ev.label, icon: ev.icon || "fa-circle", zone: (ev.zone != null && String(ev.zone).trim()) ? String(ev.zone).trim() : "", pokemon };
 }
 
 export default function EVsLocationPage() {
@@ -110,6 +110,8 @@ export default function EVsLocationPage() {
   const [pageBackground, setPageBackground] = useState(null);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
+  const [zoneFilter, setZoneFilter] = useState("");
+  const [pokemonSearch, setPokemonSearch] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -147,6 +149,33 @@ export default function EVsLocationPage() {
 
   const lookup = useMemo(() => buildPokedexLookup(pokedexEntries), [pokedexEntries]);
 
+  const zones = useMemo(() => {
+    const set = new Set();
+    evsEntries.forEach((ev) => {
+      if (ev.zone && ev.zone.trim()) set.add(ev.zone.trim());
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [evsEntries]);
+
+  const filteredEntries = useMemo(() => {
+    let list = evsEntries;
+    if (zoneFilter) {
+      list = list.filter((ev) => (ev.zone || "").trim() === zoneFilter);
+    }
+    const search = (pokemonSearch || "").trim().toLowerCase();
+    const searchNorm = search ? normalizeName(search) : "";
+    if (!searchNorm) return list;
+    return list
+      .map((ev) => {
+        const matching = ev.pokemon.filter((p) =>
+          normalizeName(p.name).includes(searchNorm)
+        );
+        if (matching.length === 0) return null;
+        return { ...ev, pokemon: matching };
+      })
+      .filter(Boolean);
+  }, [evsEntries, zoneFilter, pokemonSearch]);
+
   return (
     <main className="page page-with-nav evs-location-page">
       {pageBackground && (
@@ -175,8 +204,42 @@ export default function EVsLocationPage() {
             <span>Chargement…</span>
           </div>
         ) : (
-          <div className="evs-location-grid">
-            {evsEntries.map((ev) => {
+          <>
+            <div className="evs-location-filters">
+              <div className="evs-location-filter-group">
+                <label htmlFor="evs-zone-filter" className="evs-location-filter-label">
+                  <i className="fa-solid fa-map-location-dot" aria-hidden /> Zone
+                </label>
+                <select
+                  id="evs-zone-filter"
+                  className="evs-location-select"
+                  value={zoneFilter}
+                  onChange={(e) => setZoneFilter(e.target.value)}
+                >
+                  <option value="">Toutes les zones</option>
+                  {zones.map((z) => (
+                    <option key={z} value={z}>{z}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="evs-location-filter-group">
+                <label htmlFor="evs-pokemon-search" className="evs-location-filter-label">
+                  <i className="fa-solid fa-magnifying-glass" aria-hidden /> Pokémon
+                </label>
+                <input
+                  id="evs-pokemon-search"
+                  type="search"
+                  className="evs-location-search"
+                  value={pokemonSearch}
+                  onChange={(e) => setPokemonSearch(e.target.value)}
+                  placeholder="Rechercher un Pokémon…"
+                  autoComplete="off"
+                />
+              </div>
+            </div>
+
+            <div className="evs-location-grid">
+            {filteredEntries.map((ev) => {
               const isOpen = expandedId === ev.id;
               return (
                 <article
@@ -195,6 +258,15 @@ export default function EVsLocationPage() {
                       <i className={`fa-solid ${ev.icon}`} />
                     </span>
                     <span className="evs-location-card-label">{ev.label}</span>
+                    {ev.zone ? (
+                      <span
+                        className="evs-location-card-zone-fa"
+                        title={`Vous pouvez le farm ici : ${ev.zone}`}
+                        aria-label={`Farm possible ici : ${ev.zone}`}
+                      >
+                        <i className="fa-solid fa-map-location-dot" />
+                      </span>
+                    ) : null}
                     <span className="evs-location-card-count">{ev.pokemon.length} Pokémon</span>
                     <i className={`fa-solid fa-chevron-down evs-location-card-chevron ${isOpen ? "open" : ""}`} aria-hidden />
                   </button>
@@ -237,7 +309,8 @@ export default function EVsLocationPage() {
                 </article>
               );
             })}
-          </div>
+            </div>
+          </>
         )}
       </div>
     </main>
