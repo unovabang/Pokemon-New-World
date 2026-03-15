@@ -422,14 +422,14 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
                       className="admin-pokedex-input nerfbuff-admin-stat-input"
                       value={form.stats?.[key]?.[0] ?? ""}
                       onChange={(e) => updateFormStat(key, 0, e.target.value)}
-                      placeholder="Avant"
+                      placeholder="0"
                     />
                     <div className="nerfbuff-admin-stat-btns">
                       <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => stepFormStat(key, 0, 1)} aria-label="Augmenter"><i className="fa-solid fa-chevron-up" /></button>
                       <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => stepFormStat(key, 0, -1)} aria-label="Diminuer"><i className="fa-solid fa-chevron-down" /></button>
                     </div>
                   </div>
-                  <span className="nerfbuff-admin-stat-arrow" aria-hidden><i className="fa-solid fa-arrow-right" /></span>
+                  <span className="nerfbuff-admin-stat-arrow" aria-hidden><i className="fa-solid fa-arrow-down" /></span>
                   <div className="nerfbuff-admin-stat-cell">
                     <input
                       type="number"
@@ -437,7 +437,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
                       className="admin-pokedex-input nerfbuff-admin-stat-input"
                       value={form.stats?.[key]?.[1] ?? ""}
                       onChange={(e) => updateFormStat(key, 1, e.target.value)}
-                      placeholder="Après"
+                      placeholder="0"
                     />
                     <div className="nerfbuff-admin-stat-btns">
                       <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => stepFormStat(key, 1, 1)} aria-label="Augmenter"><i className="fa-solid fa-chevron-up" /></button>
