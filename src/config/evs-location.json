@@ -4,7 +4,6 @@
       "id": "pv",
       "label": "PV",
       "icon": "fa-heart",
-      "zone": "Helheim",
       "pokemon": [
         { "name": "Axoloto", "points": 0 },
         { "name": "Baudrive", "points": 0 },
@@ -22,7 +21,6 @@
       "id": "atk",
       "label": "ATK",
       "icon": "fa-hand-fist",
-      "zone": "Chemin des Larmes",
       "pokemon": [
         { "name": "Abella", "points": 0 },
         { "name": "Absol", "points": 0 },
@@ -73,7 +71,6 @@
       "id": "def",
       "label": "DEF",
       "icon": "fa-shield-halved",
-      "zone": "Helheim",
       "pokemon": [
         { "name": "Carapuce", "points": 0 },
         { "name": "Caratroc", "points": 0 },
@@ -102,7 +99,6 @@
       "id": "atk-spe",
       "label": "ATK SPÉ",
       "icon": "fa-wand-magic-sparkles",
-      "zone": "Havre Blanc",
       "pokemon": [
         { "name": "Abra", "points": 0 },
         { "name": "Absol", "points": 0 },
@@ -136,7 +132,6 @@
       "id": "def-spe",
       "label": "DEF SPÉ",
       "icon": "fa-shield",
-      "zone": "Félindra",
       "pokemon": [
         { "name": "Corayon de Galar", "points": 0 },
         { "name": "Mélo", "points": 0 },
@@ -153,7 +148,6 @@
       "id": "speed",
       "label": "SPEED",
       "icon": "fa-gauge-high",
-      "zone": "Félindra",
       "pokemon": [
         { "name": "Anchwatt", "points": 0 },
         { "name": "Arcko", "points": 0 },
