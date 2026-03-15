@@ -1198,6 +1198,31 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .nerfbuff-page .nerfbuff-section[data-accent="nerfs"] .bst-section-icon{color:#c03028}
 .nerfbuff-page .nerfbuff-section[data-accent="buffs"] .bst-section-icon{color:#7ec850}
 .nerfbuff-page .nerfbuff-section[data-accent="ajustements"] .bst-section-icon{color:#b8b8d0}
+/* 4 Pokémon par ligne + sprites réduits */
+.nerfbuff-page .nerfbuff-section .bst-grid{
+  grid-template-columns:repeat(4, 1fr);
+  gap:.85rem;
+}
+.nerfbuff-page .nerfbuff-section .bst-card{
+  padding:.85rem .6rem;
+}
+.nerfbuff-page .nerfbuff-section .bst-card-sprite-wrap{
+  width:64px;
+  height:64px;
+  margin-bottom:.5rem;
+  border-radius:12px;
+}
+.nerfbuff-page .nerfbuff-section .bst-card-sprite{
+  width:56px;
+  height:56px;
+}
+.nerfbuff-page .nerfbuff-section .bst-card-name{font-size:.88rem; margin-bottom:.35rem}
+.nerfbuff-page .nerfbuff-section .bst-card-types{margin-bottom:.4rem}
+.nerfbuff-page .nerfbuff-section .bst-card-types .bst-type-badge{font-size:.62rem; padding:.15rem .35rem}
+.nerfbuff-page .nerfbuff-section .bst-card-total{font-size:.85rem; padding:.15rem .45rem}
+@media (max-width:500px){
+  .nerfbuff-page .nerfbuff-section .bst-grid{grid-template-columns:repeat(2, 1fr)}
+}
 .nerfbuff-modal-overlay .nerfbuff-modal{max-width:520px}
 .nerfbuff-modal-type-change{
   display:flex;
