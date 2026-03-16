@@ -48,7 +48,7 @@ function renderMarkdown(text) {
     let m;
     while ((m = boldRe.exec(str)) !== null) {
       if (m.index > last) result.push(...parseItalic(str.slice(last, m.index)));
-      result.push(<strong key={`b${keyId++}`}>{...parseItalic(m[1])}</strong>);
+      result.push(<strong key={`b${keyId++}`}>{parseItalic(m[1])}</strong>);
       last = m.index + m[0].length;
     }
     if (last < str.length) result.push(...parseItalic(str.slice(last)));
