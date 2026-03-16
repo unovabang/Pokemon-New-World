@@ -560,9 +560,15 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
               </div>
               <div className="admin-bst-talents-block">
                 <span className="admin-bst-talents-title"><i className="fa-solid fa-star" aria-hidden /> Talents (jusqu’à 3)</span>
-                {[0, 1, 2].map((i) => (
+                {[0, 1, 2].map((i) => {
+                  const isHidden = i === 2;
+                  const talentLabel = isHidden ? "Talent Caché" : `Talent ${i + 1}`;
+                  const descLabel = isHidden ? "Description talent caché" : `Description talent ${i + 1}`;
+                  const namePlaceholder = isHidden ? "Nom du talent caché" : `Nom du talent ${i + 1}`;
+                  const descPlaceholder = isHidden ? "Description ou variante (caché)" : `Description ou variante ${i + 1}`;
+                  return (
                   <div key={i} className="admin-bst-talent-slot">
-                    <label className="admin-pokedex-label">Talent {i + 1}</label>
+                    <label className="admin-pokedex-label">{talentLabel}</label>
                     <input
                       type="text"
                       className="admin-pokedex-input"
@@ -571,9 +577,9 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                         ...f,
                         abilities: [...(f.abilities || ["", "", ""])].map((a, j) => (j === i ? e.target.value : a)),
                       }))}
-                      placeholder={`Nom du talent ${i + 1}`}
+                      placeholder={namePlaceholder}
                     />
-                    <label className="admin-pokedex-label admin-pokedex-label--sub">Description talent {i + 1}</label>
+                    <label className="admin-pokedex-label admin-pokedex-label--sub">{descLabel}</label>
                     <textarea
                       className="admin-pokedex-textarea"
                       value={form.abilityDescs?.[i] ?? ""}
@@ -581,11 +587,12 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                         ...f,
                         abilityDescs: [...(f.abilityDescs || ["", "", ""])].map((d, j) => (j === i ? e.target.value : d)),
                       }))}
-                      placeholder={`Description ou variante ${i + 1}`}
+                      placeholder={descPlaceholder}
                       rows={2}
                     />
                   </div>
-                ))}
+                  );
+                })}
               </div>
               <div>
                 <label className="admin-pokedex-label">Détails des attaques / notes</label>
