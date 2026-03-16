@@ -266,6 +266,7 @@ const DownloadsEditor = ({ onSave }) => {
   const [patchLink, setPatchLink] = useState('');
   const [launcherLink, setLauncherLink] = useState('');
   const [patchVideo, setPatchVideo] = useState('');
+  const [gameVersion, setGameVersion] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -295,6 +296,7 @@ const DownloadsEditor = ({ onSave }) => {
         setPatchLink(data.downloads.patch || '');
         setLauncherLink(data.downloads.launcher || '');
         setPatchVideo(data.downloads.patchVideo || '');
+        setGameVersion(data.downloads.gameVersion || '');
       }
     } catch (error) {
       console.error('Erreur lors du chargement des téléchargements:', error);
@@ -371,7 +373,8 @@ const DownloadsEditor = ({ onSave }) => {
             windows: windowsLink,
             patch: patchLink,
             launcher: launcherLink,
-            patchVideo: patchVideo
+            patchVideo: patchVideo,
+            gameVersion: gameVersion
           };
           
           const response = await fetch(`${API_BASE}/downloads`, {
@@ -454,6 +457,62 @@ const DownloadsEditor = ({ onSave }) => {
       </div>
 
       <div className="downloads-editor-grid">
+        {/* Version du jeu — utilisée par le Launcher pour détecter les mises à jour */}
+        <div style={{
+          background: 'rgba(255, 193, 7, 0.1)',
+          borderRadius: '10px',
+          padding: '2rem',
+          border: '1px solid rgba(255, 193, 7, 0.3)',
+        }}>
+          <h3 style={{
+            marginBottom: '1.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#ffc107',
+          }}>
+            <i className="fa-solid fa-code-branch"></i>
+            Version du jeu
+          </h3>
+
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              <i className="fa-solid fa-tag"></i> Version actuelle (semver) :
+            </label>
+            <input
+              type="text"
+              value={gameVersion}
+              onChange={(e) => setGameVersion(e.target.value)}
+              placeholder="0.52"
+              style={{
+                width: '100%',
+                padding: '1rem',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                background: 'rgba(255,255,255,0.1)',
+                color: 'white',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                fontFamily: 'monospace',
+                boxSizing: 'border-box',
+                letterSpacing: '0.05em',
+              }}
+            />
+          </div>
+
+          <div style={{
+            background: 'rgba(255, 193, 7, 0.15)',
+            padding: '1rem',
+            borderRadius: '5px',
+            fontSize: '0.9rem',
+            opacity: 0.9,
+          }}>
+            <i className="fa-solid fa-triangle-exclamation" style={{ color: '#ffc107' }}></i>{' '}
+            <strong>Important :</strong> Incrémentez ce numéro à chaque nouvelle mise à jour du jeu.
+            Le Launcher compare cette version avec celle installée localement pour déclencher les mises à jour automatiques.
+          </div>
+        </div>
+
         {/* Jeu Principal — téléchargé automatiquement par le Launcher */}
         <UploadZone
           label="Jeu Principal (fichier .zip)"
@@ -687,6 +746,27 @@ const DownloadsEditor = ({ onSave }) => {
               </p>
             </div>
             
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                marginBottom: '0.5rem',
+                padding: '0.5rem 1rem',
+                background: 'rgba(255, 193, 7, 0.15)',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 193, 7, 0.3)',
+                fontFamily: 'monospace',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+              }}>
+                v{gameVersion || '???'}
+              </div>
+              <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>
+                {gameVersion ? '✅ Version définie' : '❌ Version manquante'}
+              </p>
+              <p style={{ fontSize: '0.7rem', opacity: 0.5, margin: '0.2rem 0 0' }}>
+                (manifest du Launcher)
+              </p>
+            </div>
+
             {patchVideo && (
               <div style={{ textAlign: 'center' }}>
                 <button className="btn btn-ghost" style={{ marginBottom: '0.5rem' }}>
