@@ -2,5 +2,6 @@
 {
   "windows": "#",
   "patch": "#",
+  "launcher": "",
   "patchVideo": "https://www.youtube.com/embed/VIDEO_ID"
 }

@@ -3989,12 +3989,17 @@ a.dex-panel--active{cursor:default}
   background:linear-gradient(160deg, rgba(168,130,255,.1) 0%, rgba(128,90,213,.08) 100%);
   border:1px solid rgba(168,130,255,.25);
 }
+.dl-modal-card--launcher{
+  background:linear-gradient(160deg, rgba(155,89,182,.1) 0%, rgba(142,68,173,.08) 100%);
+  border:1px solid rgba(155,89,182,.25);
+}
 .dl-modal-card:hover{
   transform:translateY(-3px);
   box-shadow:0 8px 24px rgba(0,0,0,.25);
 }
 .dl-modal-card--game:hover{border-color:rgba(126,205,242,.5)}
 .dl-modal-card--patch:hover{border-color:rgba(168,130,255,.5)}
+.dl-modal-card--launcher:hover{border-color:rgba(155,89,182,.5)}
 .dl-modal-card-icon{
   width:48px; height:48px; border-radius:14px;
   display:flex; align-items:center; justify-content:center;
@@ -4005,6 +4010,9 @@ a.dex-panel--active{cursor:default}
 }
 .dl-modal-card--patch .dl-modal-card-icon{
   background:rgba(168,130,255,.12); color:#a882ff;
+}
+.dl-modal-card--launcher .dl-modal-card-icon{
+  background:rgba(155,89,182,.12); color:#9b59b6;
 }
 .dl-modal-card-title{
   font-size:0.88rem; font-weight:700; color:#fff;
@@ -4025,6 +4033,9 @@ a.dex-panel--active{cursor:default}
 }
 .dl-modal-card--patch .dl-modal-card-arrow{
   background:rgba(168,130,255,.1); color:#a882ff;
+}
+.dl-modal-card--launcher .dl-modal-card-arrow{
+  background:rgba(155,89,182,.1); color:#9b59b6;
 }
 .dl-modal-card:hover .dl-modal-card-arrow{
   transform:translateY(2px);

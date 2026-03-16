@@ -8,6 +8,7 @@ import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import { initDb } from './db.js';
 import authRoutes from './auth.js';
+import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -905,6 +906,135 @@ app.post('/api/config/:name', (req, res) => {
     });
   } catch (error) {
     console.error(`❌ Erreur API /api/config/${req.params.name}:`, error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// === CLOUDFLARE R2 UPLOAD API ===
+const r2Client = process.env.R2_ACCOUNT_ID ? new S3Client({
+  region: 'auto',
+  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+  },
+}) : null;
+
+const R2_BUCKET = process.env.R2_BUCKET_NAME || 'pokemon-new-world';
+const R2_PUBLIC_URL = (process.env.R2_PUBLIC_URL || '').replace(/\/$/, '');
+
+// POST /api/r2/start-upload — Initiate multipart upload
+app.post('/api/r2/start-upload', async (req, res) => {
+  try {
+    if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
+    const { filename, contentType } = req.body;
+    if (!filename) return res.status(400).json({ success: false, error: 'filename requis' });
+
+    const key = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const cmd = new CreateMultipartUploadCommand({
+      Bucket: R2_BUCKET,
+      Key: key,
+      ContentType: contentType || 'application/octet-stream',
+    });
+    const result = await r2Client.send(cmd);
+    res.json({ success: true, uploadId: result.UploadId, key });
+  } catch (error) {
+    console.error('R2 start-upload error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/r2/upload-part — Upload a single part (body = raw binary)
+app.put('/api/r2/upload-part', express.raw({ type: '*/*', limit: '110mb' }), async (req, res) => {
+  try {
+    if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
+    const { key, uploadid: uploadId, partnum } = req.headers;
+    if (!key || !uploadId || !partnum) {
+      return res.status(400).json({ success: false, error: 'headers key, uploadid, partnum requis' });
+    }
+
+    const cmd = new UploadPartCommand({
+      Bucket: R2_BUCKET,
+      Key: key,
+      UploadId: uploadId,
+      PartNumber: parseInt(partnum, 10),
+      Body: req.body,
+    });
+    const result = await r2Client.send(cmd);
+    res.json({ success: true, etag: result.ETag });
+  } catch (error) {
+    console.error('R2 upload-part error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST /api/r2/complete-upload — Complete multipart upload
+app.post('/api/r2/complete-upload', async (req, res) => {
+  try {
+    if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
+    const { key, uploadId, parts } = req.body;
+    if (!key || !uploadId || !parts) {
+      return res.status(400).json({ success: false, error: 'key, uploadId, parts requis' });
+    }
+
+    const cmd = new CompleteMultipartUploadCommand({
+      Bucket: R2_BUCKET,
+      Key: key,
+      UploadId: uploadId,
+      MultipartUpload: {
+        Parts: parts.map(p => ({ PartNumber: p.partNumber, ETag: p.etag })),
+      },
+    });
+    await r2Client.send(cmd);
+    const publicUrl = R2_PUBLIC_URL ? `${R2_PUBLIC_URL}/${key}` : key;
+    res.json({ success: true, url: publicUrl, key });
+  } catch (error) {
+    console.error('R2 complete-upload error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// POST /api/r2/abort-upload — Abort a multipart upload
+app.post('/api/r2/abort-upload', async (req, res) => {
+  try {
+    if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
+    const { key, uploadId } = req.body;
+    if (!key || !uploadId) return res.status(400).json({ success: false, error: 'key, uploadId requis' });
+
+    await r2Client.send(new AbortMultipartUploadCommand({ Bucket: R2_BUCKET, Key: key, UploadId: uploadId }));
+    res.json({ success: true });
+  } catch (error) {
+    console.error('R2 abort-upload error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// DELETE /api/r2/object/:key — Delete an object from R2
+app.delete('/api/r2/object/:key', async (req, res) => {
+  try {
+    if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
+    await r2Client.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: req.params.key }));
+    res.json({ success: true });
+  } catch (error) {
+    console.error('R2 delete error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET /api/r2/list — List objects in the bucket
+app.get('/api/r2/list', async (req, res) => {
+  try {
+    if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
+    const result = await r2Client.send(new ListObjectsV2Command({ Bucket: R2_BUCKET, MaxKeys: 100 }));
+    const objects = (result.Contents || []).map(o => ({
+      key: o.Key,
+      size: o.Size,
+      lastModified: o.LastModified,
+      url: R2_PUBLIC_URL ? `${R2_PUBLIC_URL}/${o.Key}` : o.Key,
+    }));
+    res.json({ success: true, objects });
+  } catch (error) {
+    console.error('R2 list error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });

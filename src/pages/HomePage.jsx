@@ -443,6 +443,18 @@ const HomePage = () => {
                 <span className="dl-modal-card-sub">{isEn ? "Latest update" : "Dernière mise à jour"}</span>
                 <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
               </a>
+              {content.downloads.launcher && (
+                <a
+                  className="dl-modal-card dl-modal-card--launcher"
+                  href={content.downloads.launcher}
+                  onClick={() => setOpenDownload(false)}
+                >
+                  <span className="dl-modal-card-icon"><i className="fa-solid fa-rocket" /></span>
+                  <span className="dl-modal-card-title">{isEn ? "Download Launcher" : "Télécharger le Launcher"}</span>
+                  <span className="dl-modal-card-sub">{isEn ? "Auto-update launcher" : "Launcher avec mise à jour auto"}</span>
+                  <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
+                </a>
+              )}
             </div>
             <div className="dl-modal-info">
               <div className="dl-modal-info-icon"><i className="fa-solid fa-circle-info" /></div>
