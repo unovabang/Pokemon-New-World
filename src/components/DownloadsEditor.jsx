@@ -513,6 +513,101 @@ const DownloadsEditor = ({ onSave }) => {
           </div>
         </div>
 
+        {/* Fichiers sur R2 */}
+        {r2Objects.length > 0 && (
+          <div style={{
+            background: 'rgba(155, 89, 182, 0.1)',
+            borderRadius: '10px',
+            padding: '2rem',
+            border: '1px solid rgba(155, 89, 182, 0.3)',
+          }}>
+            <h3 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#9b59b6' }}>
+              <i className="fa-solid fa-cloud"></i>
+              Fichiers sur le stockage R2
+            </h3>
+            {(() => {
+              const R2_LIMIT_GB = 10;
+              const totalBytes = r2Objects.reduce((sum, o) => sum + (o.size || 0), 0);
+              const usedGB = totalBytes / (1024 * 1024 * 1024);
+              const isOverLimit = usedGB > R2_LIMIT_GB;
+              return (
+                <>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '0.5rem',
+                    marginBottom: '1rem',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    background: isOverLimit ? 'rgba(220, 53, 69, 0.15)' : 'rgba(255,255,255,0.05)',
+                    border: `1px solid ${isOverLimit ? 'rgba(220, 53, 69, 0.4)' : 'rgba(255,255,255,0.1)'}`,
+                  }}>
+                    <span style={{ fontWeight: '600', fontSize: '1rem' }}>
+                      Stockage utilisé : <span style={{ color: isOverLimit ? '#dc3545' : 'inherit' }}>{usedGB.toFixed(2)} Go</span> / {R2_LIMIT_GB} Go
+                    </span>
+                    {isOverLimit && (
+                      <span style={{ fontSize: '0.85rem', color: '#dc3545' }}>
+                        <i className="fa-solid fa-triangle-exclamation"></i> Limite dépassée
+                      </span>
+                    )}
+                  </div>
+                  <p style={{ fontSize: '0.85rem', opacity: 0.85, marginBottom: '1rem', marginTop: 0 }}>
+                    <i className="fa-solid fa-info-circle"></i> Au-delà de {R2_LIMIT_GB} Go, facturation selon votre plan Cloudflare.
+                  </p>
+                </>
+              );
+            })()}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {r2Objects.map((obj) => (
+                <div key={obj.key} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.75rem 1rem',
+                  background: 'rgba(255,255,255,0.05)',
+                  borderRadius: '8px',
+                  gap: '1rem',
+                  flexWrap: 'wrap',
+                }}>
+                  <div style={{ flex: 1, minWidth: '150px' }}>
+                    <div style={{ fontWeight: '500', wordBreak: 'break-all' }}>{obj.key}</div>
+                    <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>{formatFileSize(obj.size)}</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(obj.url).then(() => showMessage('Copié !', 'Lien copié dans le presse-papier.', 'success'))}
+                      className="btn btn-ghost"
+                      style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}
+                    >
+                      <i className="fa-solid fa-copy"></i> Copier le lien
+                    </button>
+                    <button
+                      onClick={() => handleDeleteR2Object(obj.key)}
+                      className="btn btn-ghost"
+                      style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem', color: '#dc3545' }}
+                    >
+                      <i className="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Launcher — bouton "Télécharger le jeu" sur le site */}
+        <UploadZone
+          label="Launcher (.exe) — Bouton du site"
+          icon="fa-solid fa-rocket"
+          iconColor="#9b59b6"
+          currentLink={launcherLink}
+          onLinkChange={setLauncherLink}
+          onUploadComplete={(url) => { setLauncherLink(url); loadR2Objects(); }}
+          infoText='Ce fichier sera proposé quand un visiteur clique sur "Télécharger le Jeu" sur le site.'
+        />
+
         {/* Jeu Principal — téléchargé automatiquement par le Launcher */}
         <UploadZone
           label="Jeu Principal (fichier .zip)"
@@ -533,17 +628,6 @@ const DownloadsEditor = ({ onSave }) => {
           onLinkChange={setPatchLink}
           onUploadComplete={(url) => { setPatchLink(url); loadR2Objects(); }}
           infoText='Ce lien sera utilisé pour le bouton "Télécharger le patch" sur votre site.'
-        />
-
-        {/* Launcher — bouton "Télécharger le jeu" sur le site */}
-        <UploadZone
-          label="Launcher (.exe) — Bouton du site"
-          icon="fa-solid fa-rocket"
-          iconColor="#9b59b6"
-          currentLink={launcherLink}
-          onLinkChange={setLauncherLink}
-          onUploadComplete={(url) => { setLauncherLink(url); loadR2Objects(); }}
-          infoText='Ce fichier sera proposé quand un visiteur clique sur "Télécharger le Jeu" sur le site.'
         />
 
         {/* Vidéo tutoriel */}
@@ -633,90 +717,6 @@ const DownloadsEditor = ({ onSave }) => {
                   >
                     <i className="fa-solid fa-xmark"></i> Abandonner
                   </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Fichiers sur R2 */}
-        {r2Objects.length > 0 && (
-          <div style={{
-            background: 'rgba(155, 89, 182, 0.1)',
-            borderRadius: '10px',
-            padding: '2rem',
-            border: '1px solid rgba(155, 89, 182, 0.3)',
-          }}>
-            <h3 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#9b59b6' }}>
-              <i className="fa-solid fa-cloud"></i>
-              Fichiers sur le stockage R2
-            </h3>
-            {(() => {
-              const R2_LIMIT_GB = 10;
-              const totalBytes = r2Objects.reduce((sum, o) => sum + (o.size || 0), 0);
-              const usedGB = totalBytes / (1024 * 1024 * 1024);
-              const isOverLimit = usedGB > R2_LIMIT_GB;
-              return (
-                <>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '0.5rem',
-                    marginBottom: '1rem',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '8px',
-                    background: isOverLimit ? 'rgba(220, 53, 69, 0.15)' : 'rgba(255,255,255,0.05)',
-                    border: `1px solid ${isOverLimit ? 'rgba(220, 53, 69, 0.4)' : 'rgba(255,255,255,0.1)'}`,
-                  }}>
-                    <span style={{ fontWeight: '600', fontSize: '1rem' }}>
-                      Stockage utilisé : <span style={{ color: isOverLimit ? '#dc3545' : 'inherit' }}>{usedGB.toFixed(2)} Go</span> / {R2_LIMIT_GB} Go
-                    </span>
-                    {isOverLimit && (
-                      <span style={{ fontSize: '0.85rem', color: '#dc3545' }}>
-                        <i className="fa-solid fa-triangle-exclamation"></i> Limite dépassée
-                      </span>
-                    )}
-                  </div>
-                  <p style={{ fontSize: '0.85rem', opacity: 0.85, marginBottom: '1rem', marginTop: 0 }}>
-                    <i className="fa-solid fa-info-circle"></i> Au-delà de {R2_LIMIT_GB} Go, facturation selon votre plan Cloudflare.
-                  </p>
-                </>
-              );
-            })()}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {r2Objects.map((obj) => (
-                <div key={obj.key} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0.75rem 1rem',
-                  background: 'rgba(255,255,255,0.05)',
-                  borderRadius: '8px',
-                  gap: '1rem',
-                  flexWrap: 'wrap',
-                }}>
-                  <div style={{ flex: 1, minWidth: '150px' }}>
-                    <div style={{ fontWeight: '500', wordBreak: 'break-all' }}>{obj.key}</div>
-                    <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>{formatFileSize(obj.size)}</div>
-                  </div>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
-                    <button
-                      onClick={() => navigator.clipboard.writeText(obj.url).then(() => showMessage('Copié !', 'Lien copié dans le presse-papier.', 'success'))}
-                      className="btn btn-ghost"
-                      style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}
-                    >
-                      <i className="fa-solid fa-copy"></i> Copier le lien
-                    </button>
-                    <button
-                      onClick={() => handleDeleteR2Object(obj.key)}
-                      className="btn btn-ghost"
-                      style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem', color: '#dc3545' }}
-                    >
-                      <i className="fa-solid fa-trash"></i>
-                    </button>
-                  </div>
                 </div>
               ))}
             </div>
