@@ -1039,6 +1039,29 @@ app.get('/api/r2/list', async (req, res) => {
   }
 });
 
+// GET /api/downloads/manifest — Manifest JSON pour le launcher (format compatible)
+app.get('/api/downloads/manifest', (req, res) => {
+  try {
+    const dl = getConfig('downloads') || {};
+    const manifest = {
+      name: 'Pokemon New World',
+      version: dl.gameVersion || '0.52',
+      releaseDate: dl.gameReleaseDate || new Date().toISOString(),
+      minimumLauncherVersion: '1.0.0',
+      changelog: { fr: dl.gameChangelog || '', en: dl.gameChangelogEn || '' },
+      downloadUrl: dl.windows || '',
+      downloadSize: 0,
+      files: [],
+      requirements: { minimumRAM: 2048, diskSpace: 500000000 },
+      integrity: { archiveHash: 'sha256:pending', archiveSize: 0 },
+    };
+    res.json(manifest);
+  } catch (error) {
+    console.error('❌ Erreur API /api/downloads/manifest:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // API spécifique pour les téléchargements
 app.get('/api/downloads', (req, res) => {
   try {

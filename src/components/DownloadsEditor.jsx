@@ -397,15 +397,15 @@ const DownloadsEditor = ({ onSave }) => {
       </div>
 
       <div className="downloads-editor-grid">
-        {/* Jeu Principal */}
+        {/* Jeu Principal — téléchargé automatiquement par le Launcher */}
         <UploadZone
-          label="Jeu Principal (Windows)"
+          label="Jeu Principal (fichier .zip)"
           icon="fa-brands fa-windows"
           iconColor="#0078d4"
           currentLink={windowsLink}
           onLinkChange={setWindowsLink}
           onUploadComplete={(url) => { setWindowsLink(url); loadR2Objects(); }}
-          infoText='Ce lien sera utilisé pour le bouton "Télécharger le jeu" sur votre site.'
+          infoText="Ce fichier sera téléchargé automatiquement par le Launcher quand un joueur l'installe."
         />
 
         {/* Patch */}
@@ -419,15 +419,15 @@ const DownloadsEditor = ({ onSave }) => {
           infoText='Ce lien sera utilisé pour le bouton "Télécharger le patch" sur votre site.'
         />
 
-        {/* Launcher */}
+        {/* Launcher — bouton "Télécharger le jeu" sur le site */}
         <UploadZone
-          label="Launcher (.exe)"
+          label="Launcher (.exe) — Bouton du site"
           icon="fa-solid fa-rocket"
           iconColor="#9b59b6"
           currentLink={launcherLink}
           onLinkChange={setLauncherLink}
           onUploadComplete={(url) => { setLauncherLink(url); loadR2Objects(); }}
-          infoText='Ce lien sera utilisé pour le bouton "Télécharger le Launcher" sur votre site.'
+          infoText='Ce fichier sera proposé quand un visiteur clique sur "Télécharger le Jeu" sur le site.'
         />
 
         {/* Vidéo tutoriel */}
@@ -557,14 +557,17 @@ const DownloadsEditor = ({ onSave }) => {
             justifyContent: 'center'
           }}>
             <div style={{ textAlign: 'center' }}>
-              <button className="btn btn-primary" style={{ marginBottom: '0.5rem' }}>
-                <i className="fa-solid fa-download"></i> Télécharger le jeu
+              <button className="btn btn-primary" style={{ marginBottom: '0.5rem', background: '#9b59b6' }}>
+                <i className="fa-solid fa-rocket"></i> Télécharger le Jeu
               </button>
               <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>
-                {windowsLink ? '✅ Lien configuré' : '❌ Lien manquant'}
+                {launcherLink ? '✅ Launcher configuré' : '❌ Launcher manquant'}
+              </p>
+              <p style={{ fontSize: '0.7rem', opacity: 0.5, margin: '0.2rem 0 0' }}>
+                (bouton sur le site → Launcher)
               </p>
             </div>
-            
+
             <div style={{ textAlign: 'center' }}>
               <button className="btn btn-primary" style={{ marginBottom: '0.5rem' }}>
                 <i className="fa-solid fa-file-arrow-up"></i> Télécharger le patch
@@ -575,11 +578,14 @@ const DownloadsEditor = ({ onSave }) => {
             </div>
 
             <div style={{ textAlign: 'center' }}>
-              <button className="btn btn-primary" style={{ marginBottom: '0.5rem', background: '#9b59b6' }}>
-                <i className="fa-solid fa-rocket"></i> Télécharger le Launcher
+              <button className="btn btn-primary" style={{ marginBottom: '0.5rem', background: '#0078d4' }}>
+                <i className="fa-brands fa-windows"></i> Jeu Principal (.zip)
               </button>
               <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>
-                {launcherLink ? '✅ Lien configuré' : '❌ Lien manquant'}
+                {windowsLink ? '✅ Fichier configuré' : '❌ Fichier manquant'}
+              </p>
+              <p style={{ fontSize: '0.7rem', opacity: 0.5, margin: '0.2rem 0 0' }}>
+                (téléchargé par le Launcher)
               </p>
             </div>
             

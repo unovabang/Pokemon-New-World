@@ -423,16 +423,18 @@ const HomePage = () => {
         >
           <div className="dl-modal">
             <div className="dl-modal-cards">
-              <a
-                className="dl-modal-card dl-modal-card--game"
-                href={content.downloads.windows}
-                onClick={() => setOpenDownload(false)}
-              >
-                <span className="dl-modal-card-icon"><i className="fa-solid fa-gamepad" /></span>
-                <span className="dl-modal-card-title">{t('buttons.downloadGame')}</span>
-                <span className="dl-modal-card-sub">{isEn ? "Full game (Windows)" : "Jeu complet (Windows)"}</span>
-                <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
-              </a>
+              {content.downloads.launcher && (
+                <a
+                  className="dl-modal-card dl-modal-card--launcher"
+                  href={content.downloads.launcher}
+                  onClick={() => setOpenDownload(false)}
+                >
+                  <span className="dl-modal-card-icon"><i className="fa-solid fa-rocket" /></span>
+                  <span className="dl-modal-card-title">{isEn ? "Download the Game" : "Télécharger le Jeu"}</span>
+                  <span className="dl-modal-card-sub">{isEn ? "Launcher with auto-updates" : "Launcher avec mises à jour auto"}</span>
+                  <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
+                </a>
+              )}
               <a
                 className="dl-modal-card dl-modal-card--patch"
                 href={content.downloads.patch}
@@ -443,18 +445,6 @@ const HomePage = () => {
                 <span className="dl-modal-card-sub">{isEn ? "Latest update" : "Dernière mise à jour"}</span>
                 <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
               </a>
-              {content.downloads.launcher && (
-                <a
-                  className="dl-modal-card dl-modal-card--launcher"
-                  href={content.downloads.launcher}
-                  onClick={() => setOpenDownload(false)}
-                >
-                  <span className="dl-modal-card-icon"><i className="fa-solid fa-rocket" /></span>
-                  <span className="dl-modal-card-title">{isEn ? "Download Launcher" : "Télécharger le Launcher"}</span>
-                  <span className="dl-modal-card-sub">{isEn ? "Auto-update launcher" : "Launcher avec mise à jour auto"}</span>
-                  <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
-                </a>
-              )}
             </div>
             <div className="dl-modal-info">
               <div className="dl-modal-info-icon"><i className="fa-solid fa-circle-info" /></div>
