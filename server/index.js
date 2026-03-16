@@ -905,7 +905,10 @@ app.get('/api/lore', (req, res) => {
     }
     res.json({
       success: true,
-      lore: { stories: Array.isArray(loreData.stories) ? loreData.stories : [] }
+      lore: {
+        stories: Array.isArray(loreData.stories) ? loreData.stories : [],
+        pageBackground: loreData.pageBackground || "",
+      }
     });
   } catch (error) {
     console.error('❌ Erreur API /api/lore:', error);
@@ -916,11 +919,15 @@ app.get('/api/lore', (req, res) => {
 // PUT /api/lore - Sauvegarder les chapitres du lore
 app.put('/api/lore', (req, res) => {
   try {
-    const { stories } = req.body;
+    const { stories, pageBackground } = req.body;
     if (!Array.isArray(stories)) {
       return res.status(400).json({ success: false, error: 'stories (tableau) requis' });
     }
-    const updated = { stories };
+    const current = getConfig('lore') || {};
+    const updated = {
+      stories,
+      pageBackground: pageBackground !== undefined ? (pageBackground || "") : (current.pageBackground || ""),
+    };
     if (!saveConfig('lore', updated)) {
       return res.status(500).json({ success: false, error: 'Échec écriture lore.json' });
     }

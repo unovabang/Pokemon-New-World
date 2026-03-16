@@ -23,14 +23,8 @@ const MIN_VOLUME = 1;
 
 function loadYoutubeAPI() {
   return new Promise((resolve) => {
-    if (window.YT?.Player) {
-      resolve();
-      return;
-    }
-    if (window.YT) {
-      resolve();
-      return;
-    }
+    if (window.YT?.Player) { resolve(); return; }
+    if (window.YT) { resolve(); return; }
     window.onYouTubeIframeAPIReady = () => resolve();
     const tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
@@ -42,6 +36,35 @@ function loadYoutubeAPI() {
 function getBanner(story, index) {
   if (story?.backgroundImage && story.backgroundImage.trim()) return story.backgroundImage.trim();
   return CHAPTER_BANNER_IMAGES[index >= 0 ? index % CHAPTER_BANNER_IMAGES.length : 0];
+}
+
+function renderMarkdown(text) {
+  if (!text) return text;
+  const parts = [];
+  const regex = /(\*\*(.+?)\*\*|\*(.+?)\*)/g;
+  let lastIndex = 0;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    if (match[2]) parts.push(<strong key={match.index}>{match[2]}</strong>);
+    else if (match[3]) parts.push(<em key={match.index}>{match[3]}</em>);
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts.length ? parts : text;
+}
+
+function RenderContent({ paragraphs }) {
+  if (!Array.isArray(paragraphs)) return null;
+  return paragraphs.map((p, i) => {
+    if (typeof p === "string" && p.startsWith("![")) {
+      const m = p.match(/!\[.*?\]\((.*?)\)/);
+      const src = m ? m[1] : "";
+      if (src) return <img key={i} src={src} alt="" className="lore-story-image" />;
+      return null;
+    }
+    return <p key={i} className="lore-story-p">{renderMarkdown(p)}</p>;
+  });
 }
 
 export default function LoreStoryPage() {
@@ -57,9 +80,7 @@ export default function LoreStoryPage() {
     fetch(`${API_BASE}/lore?t=${Date.now()}`)
       .then((r) => r.json())
       .then((d) => {
-        if (d?.success && Array.isArray(d.lore?.stories)) {
-          setStories(d.lore.stories);
-        }
+        if (d?.success && Array.isArray(d.lore?.stories)) setStories(d.lore.stories);
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
@@ -67,8 +88,7 @@ export default function LoreStoryPage() {
 
   const story = stories.find((s) => s.slug === slug);
   const storyIndex = stories.findIndex((s) => s.slug === slug);
-  const bannerImage =
-    locationState?.bannerImage || getBanner(story, storyIndex);
+  const bannerImage = locationState?.bannerImage || getBanner(story, storyIndex);
 
   const playerRef = useRef(null);
   const containerRef = useRef(null);
@@ -80,68 +100,33 @@ export default function LoreStoryPage() {
   const nextStory = storyIndex >= 0 && storyIndex < stories.length - 1 ? stories[storyIndex + 1] : null;
   const prevBanner = prevStory ? getBanner(prevStory, storyIndex - 1) : null;
   const nextBanner = nextStory ? getBanner(nextStory, storyIndex + 1) : null;
+  const hasBoth = prevStory && nextStory;
+  const hasOne = prevStory || nextStory;
 
   useEffect(() => {
     if (!story?.musicYoutubeId || !containerRef.current) return;
-    let player = null;
     loadYoutubeAPI().then(() => {
       const el = document.getElementById("lore-story-youtube-player");
       if (!el) return;
-      player = new window.YT.Player(el, {
+      new window.YT.Player(el, {
         videoId: story.musicYoutubeId,
-        playerVars: {
-          autoplay: 1,
-          loop: 1,
-          playlist: story.musicYoutubeId,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          modestbranding: 1,
-          playsinline: 1,
-        },
+        playerVars: { autoplay: 1, loop: 1, playlist: story.musicYoutubeId, controls: 0, disablekb: 1, fs: 0, modestbranding: 1, playsinline: 1 },
         events: {
-          onReady(e) {
-            playerRef.current = e.target;
-            e.target.setVolume(0);
-          },
+          onReady(e) { playerRef.current = e.target; e.target.setVolume(0); },
         },
       });
     });
-    return () => {
-      if (playerRef.current?.stopVideo) playerRef.current.stopVideo();
-      playerRef.current = null;
-    };
+    return () => { if (playerRef.current?.stopVideo) playerRef.current.stopVideo(); playerRef.current = null; };
   }, [story?.slug, story?.musicYoutubeId]);
 
-  const setPlayerVolume = (v) => {
-    const val = Math.max(0, Math.min(100, v));
-    setVolume(val);
-    if (playerRef.current?.setVolume) playerRef.current.setVolume(val);
-  };
+  const setPlayerVolume = (v) => { const val = Math.max(0, Math.min(100, v)); setVolume(val); if (playerRef.current?.setVolume) playerRef.current.setVolume(val); };
 
   const toggleMute = () => {
-    if (muted) {
-      const v = Math.max(MIN_VOLUME, volumeBeforeMute);
-      setVolume(v);
-      if (playerRef.current?.setVolume) playerRef.current.setVolume(v);
-      setMuted(false);
-    } else {
-      setVolumeBeforeMute(volume);
-      setVolume(0);
-      if (playerRef.current?.setVolume) playerRef.current.setVolume(0);
-      setMuted(true);
-    }
+    if (muted) { const v = Math.max(MIN_VOLUME, volumeBeforeMute); setVolume(v); if (playerRef.current?.setVolume) playerRef.current.setVolume(v); setMuted(false); }
+    else { setVolumeBeforeMute(volume); setVolume(0); if (playerRef.current?.setVolume) playerRef.current.setVolume(0); setMuted(true); }
   };
-
-  const volumeDown = () => {
-    if (muted) return;
-    const next = Math.max(MIN_VOLUME, volume - VOLUME_STEP);
-    setPlayerVolume(next);
-  };
-  const volumeUp = () => {
-    if (muted) return;
-    setPlayerVolume(Math.min(100, volume + VOLUME_STEP));
-  };
+  const volumeDown = () => { if (muted) return; setPlayerVolume(Math.max(MIN_VOLUME, volume - VOLUME_STEP)); };
+  const volumeUp = () => { if (muted) return; setPlayerVolume(Math.min(100, volume + VOLUME_STEP)); };
 
   if (!story) {
     return (
@@ -149,15 +134,10 @@ export default function LoreStoryPage() {
         <Sidebar />
         <div className="lore-story-container">
           <p className="lore-story-notfound">
-            {loaded
-              ? (isEn ? "Story not found." : "Histoire introuvable.")
-              : (isEn ? "Loading..." : "Chargement...")}
+            {loaded ? (isEn ? "Story not found." : "Histoire introuvable.") : (isEn ? "Loading..." : "Chargement...")}
           </p>
           {loaded && (
-            <Link to="/lore" className="lore-story-back">
-              <i className="fa-solid fa-arrow-left" aria-hidden />
-              {isEn ? "Back to Lore" : "Retour au Lore"}
-            </Link>
+            <Link to="/lore" className="lore-story-back"><i className="fa-solid fa-arrow-left" aria-hidden />{isEn ? "Back to Lore" : "Retour au Lore"}</Link>
           )}
         </div>
       </main>
@@ -170,21 +150,11 @@ export default function LoreStoryPage() {
   const intro = isEn && story.introEn ? story.introEn : story.intro;
   const paragraphs = isEn && story.contentEn ? story.contentEn : story.content;
 
-  const wordCount =
-    (intro?.split(/\s+/).length || 0) +
-    (Array.isArray(paragraphs) ? paragraphs.join(" ").split(/\s+/).length : 0);
+  const wordCount = (intro?.split(/\s+/).length || 0) + (Array.isArray(paragraphs) ? paragraphs.filter((p) => typeof p === "string" && !p.startsWith("![")).join(" ").split(/\s+/).length : 0);
   const readingTime = Math.max(1, Math.round(wordCount / 200));
 
-  const prevTitle = prevStory
-    ? isEn && prevStory.titleEn
-      ? prevStory.titleEn
-      : prevStory.title
-    : "";
-  const nextTitle = nextStory
-    ? isEn && nextStory.titleEn
-      ? nextStory.titleEn
-      : nextStory.title
-    : "";
+  const prevTitle = prevStory ? (isEn && prevStory.titleEn ? prevStory.titleEn : prevStory.title) : "";
+  const nextTitle = nextStory ? (isEn && nextStory.titleEn ? nextStory.titleEn : nextStory.title) : "";
 
   return (
     <main key={slug} className="page page-with-sidebar lore-story-page">
@@ -196,136 +166,68 @@ export default function LoreStoryPage() {
 
       {story.musicYoutubeId && (
         <>
-          <div
-            id="lore-story-youtube-player"
-            ref={containerRef}
-            className="lore-story-music-iframe"
-            aria-hidden
-            title="Musique de fond"
-          />
+          <div id="lore-story-youtube-player" ref={containerRef} className="lore-story-music-iframe" aria-hidden title="Musique de fond" />
           <div className="lore-story-music-tooltip" role="group" aria-label="Contrôle du son">
             <span className="lore-story-music-label">{isEn ? "Sound" : "Son"}</span>
-            <button
-              type="button"
-              className="lore-story-music-btn"
-              onClick={toggleMute}
-              title={muted ? (isEn ? "Unmute (min volume)" : "Réactiver le son (volume min)") : (isEn ? "Mute" : "Couper le son")}
-              aria-label={muted ? "Réactiver le son" : "Couper le son"}
-            >
+            <button type="button" className="lore-story-music-btn" onClick={toggleMute} title={muted ? (isEn ? "Unmute" : "Réactiver le son") : (isEn ? "Mute" : "Couper le son")}>
               <i className={muted ? "fa-solid fa-volume-xmark" : "fa-solid fa-volume-low"} aria-hidden />
             </button>
-            <button
-              type="button"
-              className="lore-story-music-btn"
-              onClick={volumeDown}
-              disabled={muted || volume <= MIN_VOLUME}
-              title={isEn ? "Lower volume" : "Baisser le son"}
-              aria-label="Baisser le son"
-            >
+            <button type="button" className="lore-story-music-btn" onClick={volumeDown} disabled={muted || volume <= MIN_VOLUME} title={isEn ? "Lower" : "Baisser"}>
               <i className="fa-solid fa-minus" aria-hidden />
             </button>
-            <button
-              type="button"
-              className="lore-story-music-btn"
-              onClick={volumeUp}
-              disabled={muted || volume >= 100}
-              title={isEn ? "Raise volume" : "Augmenter le son"}
-              aria-label="Augmenter le son"
-            >
+            <button type="button" className="lore-story-music-btn" onClick={volumeUp} disabled={muted || volume >= 100} title={isEn ? "Raise" : "Augmenter"}>
               <i className="fa-solid fa-plus" aria-hidden />
             </button>
           </div>
         </>
       )}
 
-      <header
-        className="lore-story-hero"
-        style={{ backgroundImage: `url(${bannerImage})` }}
-      >
+      <header className="lore-story-hero" style={{ backgroundImage: `url(${bannerImage})` }}>
         <div className="lore-story-hero-overlay" aria-hidden />
         <div className="lore-story-hero-inner">
           <h1 className="lore-story-hero-title">{title}</h1>
-          {description && (
-            <p className="lore-story-hero-description">{description}</p>
-          )}
+          {description && <p className="lore-story-hero-description">{description}</p>}
         </div>
       </header>
 
       <div className="lore-story-content-wrap">
         <div className="lore-story-content">
           <div className="lore-story-toolbar">
-            <Link to="/lore" className="lore-story-back">
-              <i className="fa-solid fa-arrow-left" aria-hidden />
-              {isEn ? "Back to Lore" : "Retour au Lore"}
-            </Link>
-            <span className="lore-story-reading-time" aria-hidden>
-              <i className="fa-regular fa-clock" aria-hidden />
-              {readingTime} min {isEn ? "read" : "lecture"}
-            </span>
+            <Link to="/lore" className="lore-story-back"><i className="fa-solid fa-arrow-left" aria-hidden />{isEn ? "Back to Lore" : "Retour au Lore"}</Link>
+            <span className="lore-story-reading-time" aria-hidden><i className="fa-regular fa-clock" aria-hidden />{readingTime} min {isEn ? "read" : "lecture"}</span>
           </div>
 
-          <span className="lore-story-chapter-label">
-            {isEn ? "Chapter" : "Chapitre"}
-          </span>
+          <span className="lore-story-chapter-label">{isEn ? "Chapter" : "Chapitre"}</span>
           <h2 className="lore-story-content-title">{title}</h2>
           <div className="lore-story-meta">
             <p className="lore-story-intro">{intro}</p>
-            <p className="lore-story-author">
-              {isEn ? "Reported by" : "Rapporté par"} {author}.
-            </p>
+            <p className="lore-story-author">{isEn ? "Reported by" : "Rapporté par"} {author}.</p>
           </div>
           <div className="lore-story-body">
-            {Array.isArray(paragraphs) &&
-              paragraphs.map((paragraph, i) => (
-                <p key={i} className="lore-story-p">
-                  {paragraph}
-                </p>
-              ))}
+            <RenderContent paragraphs={paragraphs} />
           </div>
-          <footer className="lore-story-footer">
-            <div className="lore-story-footer-cards">
-              {prevStory ? (
-                <Link
-                  to={`/lore/${prevStory.slug}`}
-                  className="lore-story-footer-card lore-story-footer-card-prev"
-                  state={{ bannerImage: prevBanner }}
-                >
-                  <div
-                    className="lore-story-footer-card-bg"
-                    style={{ backgroundImage: `url(${prevBanner})` }}
-                    aria-hidden
-                  />
-                  <span className="lore-story-footer-card-label">
-                    {isEn ? "Previous" : "Précédent"}
-                  </span>
-                  <span className="lore-story-footer-card-title">{prevTitle}</span>
-                  <i className="fa-solid fa-arrow-left" aria-hidden />
-                </Link>
-              ) : (
-                <div className="lore-story-footer-card lore-story-footer-card-empty" aria-hidden />
-              )}
-              {nextStory ? (
-                <Link
-                  to={`/lore/${nextStory.slug}`}
-                  className="lore-story-footer-card lore-story-footer-card-next"
-                  state={{ bannerImage: nextBanner }}
-                >
-                  <div
-                    className="lore-story-footer-card-bg"
-                    style={{ backgroundImage: `url(${nextBanner})` }}
-                    aria-hidden
-                  />
-                  <span className="lore-story-footer-card-label">
-                    {isEn ? "Next" : "Suivant"}
-                  </span>
-                  <span className="lore-story-footer-card-title">{nextTitle}</span>
-                  <i className="fa-solid fa-arrow-right" aria-hidden />
-                </Link>
-              ) : (
-                <div className="lore-story-footer-card lore-story-footer-card-empty" aria-hidden />
-              )}
-            </div>
-          </footer>
+          {hasOne && (
+            <footer className="lore-story-footer">
+              <div className={`lore-story-footer-cards${hasBoth ? "" : " lore-story-footer-cards--single"}`}>
+                {prevStory && (
+                  <Link to={`/lore/${prevStory.slug}`} className="lore-story-footer-card lore-story-footer-card-prev" state={{ bannerImage: prevBanner }}>
+                    <div className="lore-story-footer-card-bg" style={{ backgroundImage: `url(${prevBanner})` }} aria-hidden />
+                    <span className="lore-story-footer-card-label">{isEn ? "Previous" : "Précédent"}</span>
+                    <span className="lore-story-footer-card-title">{prevTitle}</span>
+                    <i className="fa-solid fa-arrow-left" aria-hidden />
+                  </Link>
+                )}
+                {nextStory && (
+                  <Link to={`/lore/${nextStory.slug}`} className="lore-story-footer-card lore-story-footer-card-next" state={{ bannerImage: nextBanner }}>
+                    <div className="lore-story-footer-card-bg" style={{ backgroundImage: `url(${nextBanner})` }} aria-hidden />
+                    <span className="lore-story-footer-card-label">{isEn ? "Next" : "Suivant"}</span>
+                    <span className="lore-story-footer-card-title">{nextTitle}</span>
+                    <i className="fa-solid fa-arrow-right" aria-hidden />
+                  </Link>
+                )}
+              </div>
+            </footer>
+          )}
         </div>
       </div>
       <LanguageSelector className="lore-story-lang" />

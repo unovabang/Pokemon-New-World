@@ -11,7 +11,7 @@ const API_BASE = import.meta.env.VITE_API_URL
     ? `${window.location.protocol}//${window.location.hostname}:3001/api`
     : `${window.location.origin}/api`;
 
-const LORE_PAGE_BACKGROUND =
+const DEFAULT_LORE_BG =
   "https://cdn.discordapp.com/attachments/418440039652130816/1482703693680873584/photo-1749062671992-ea1d9676487e.png?ex=69b7eaeb&is=69b6996b&hm=90deaeaf1108be720d0f0ef1c5e2a70c905c764e5b9d3c6821791720cb55ce77&";
 
 const CHAPTER_BANNER_IMAGES = [
@@ -24,13 +24,15 @@ export default function LorePage() {
   const { t, language } = useLanguage();
   const isEn = language === "en";
   const [stories, setStories] = useState(loreDataFallback.stories || []);
+  const [pageBg, setPageBg] = useState(DEFAULT_LORE_BG);
 
   useEffect(() => {
     fetch(`${API_BASE}/lore?t=${Date.now()}`)
       .then((r) => r.json())
       .then((d) => {
-        if (d?.success && Array.isArray(d.lore?.stories)) {
-          setStories(d.lore.stories);
+        if (d?.success) {
+          if (Array.isArray(d.lore?.stories)) setStories(d.lore.stories);
+          if (d.lore?.pageBackground) setPageBg(d.lore.pageBackground);
         }
       })
       .catch(() => {});
@@ -39,7 +41,7 @@ export default function LorePage() {
   return (
     <main
       className="page page-with-sidebar lore-page"
-      style={{ backgroundImage: `url(${LORE_PAGE_BACKGROUND})` }}
+      style={{ backgroundImage: `url(${pageBg})` }}
     >
       <div className="lore-page-bg-overlay" aria-hidden />
       <Sidebar />
@@ -80,21 +82,13 @@ export default function LorePage() {
                   />
                   <div className="lore-banner-overlay" aria-hidden />
                   {story.musicYoutubeId && (
-                    <span
-                      className="lore-banner-music"
-                      title={isEn ? "Background music" : "Fond sonore"}
-                      aria-label={isEn ? "Background music" : "Fond sonore"}
-                    >
+                    <span className="lore-banner-music" title={isEn ? "Background music" : "Fond sonore"}>
                       <i className="fa-solid fa-music" aria-hidden />
                     </span>
                   )}
                   {story.isNew && (
-                    <span
-                      className="lore-banner-new"
-                      title={isEn ? "New chapter" : "Nouveau chapitre"}
-                      aria-label={isEn ? "New chapter" : "Nouveau chapitre"}
-                    >
-                      <i className="fa-solid fa-certificate" aria-hidden />
+                    <span className="lore-banner-new" title={isEn ? "New chapter" : "Nouveau chapitre"}>
+                      <i className="fa-solid fa-bolt" aria-hidden />
                     </span>
                   )}
                   <div className="lore-banner-content">
