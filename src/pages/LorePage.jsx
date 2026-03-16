@@ -1,8 +1,15 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
-import loreData from "../config/lore.json";
+import loreDataFallback from "../config/lore.json";
+
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
 
 const LORE_PAGE_BACKGROUND =
   "https://cdn.discordapp.com/attachments/418440039652130816/1482703693680873584/photo-1749062671992-ea1d9676487e.png?ex=69b7eaeb&is=69b6996b&hm=90deaeaf1108be720d0f0ef1c5e2a70c905c764e5b9d3c6821791720cb55ce77&";
@@ -15,8 +22,19 @@ const CHAPTER_BANNER_IMAGES = [
 
 export default function LorePage() {
   const { t, language } = useLanguage();
-  const stories = loreData.stories || [];
   const isEn = language === "en";
+  const [stories, setStories] = useState(loreDataFallback.stories || []);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/lore?t=${Date.now()}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.success && Array.isArray(d.lore?.stories)) {
+          setStories(d.lore.stories);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <main
@@ -43,7 +61,9 @@ export default function LorePage() {
           {stories.map((story, index) => {
             const title = isEn && story.titleEn ? story.titleEn : story.title;
             const description = isEn && story.descriptionEn ? story.descriptionEn : story.description;
-            const bannerImage = CHAPTER_BANNER_IMAGES[index % CHAPTER_BANNER_IMAGES.length];
+            const bannerImage = (story.backgroundImage && story.backgroundImage.trim())
+              ? story.backgroundImage.trim()
+              : CHAPTER_BANNER_IMAGES[index % CHAPTER_BANNER_IMAGES.length];
 
             return (
               <article key={story.slug} className="lore-banner-wrap">

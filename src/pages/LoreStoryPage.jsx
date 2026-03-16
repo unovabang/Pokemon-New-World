@@ -3,7 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
-import loreData from "../config/lore.json";
+import loreDataFallback from "../config/lore.json";
+
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
 
 const CHAPTER_BANNER_IMAGES = [
   "https://i.ibb.co/0VVYY8Kr/background-administrateur4.jpg",
@@ -33,17 +39,36 @@ function loadYoutubeAPI() {
   });
 }
 
+function getBanner(story, index) {
+  if (story?.backgroundImage && story.backgroundImage.trim()) return story.backgroundImage.trim();
+  return CHAPTER_BANNER_IMAGES[index >= 0 ? index % CHAPTER_BANNER_IMAGES.length : 0];
+}
+
 export default function LoreStoryPage() {
   const { slug } = useParams();
   const { state: locationState } = useLocation();
   const { language } = useLanguage();
   const isEn = language === "en";
-  const stories = loreData.stories || [];
+
+  const [stories, setStories] = useState(loreDataFallback.stories || []);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/lore?t=${Date.now()}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.success && Array.isArray(d.lore?.stories)) {
+          setStories(d.lore.stories);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoaded(true));
+  }, []);
+
   const story = stories.find((s) => s.slug === slug);
   const storyIndex = stories.findIndex((s) => s.slug === slug);
   const bannerImage =
-    locationState?.bannerImage ||
-    CHAPTER_BANNER_IMAGES[storyIndex >= 0 ? storyIndex % CHAPTER_BANNER_IMAGES.length : 0];
+    locationState?.bannerImage || getBanner(story, storyIndex);
 
   const playerRef = useRef(null);
   const containerRef = useRef(null);
@@ -53,12 +78,8 @@ export default function LoreStoryPage() {
 
   const prevStory = storyIndex > 0 ? stories[storyIndex - 1] : null;
   const nextStory = storyIndex >= 0 && storyIndex < stories.length - 1 ? stories[storyIndex + 1] : null;
-  const prevBanner = prevStory
-    ? CHAPTER_BANNER_IMAGES[(storyIndex - 1) % CHAPTER_BANNER_IMAGES.length]
-    : null;
-  const nextBanner = nextStory
-    ? CHAPTER_BANNER_IMAGES[(storyIndex + 1) % CHAPTER_BANNER_IMAGES.length]
-    : null;
+  const prevBanner = prevStory ? getBanner(prevStory, storyIndex - 1) : null;
+  const nextBanner = nextStory ? getBanner(nextStory, storyIndex + 1) : null;
 
   useEffect(() => {
     if (!story?.musicYoutubeId || !containerRef.current) return;
@@ -128,12 +149,16 @@ export default function LoreStoryPage() {
         <Sidebar />
         <div className="lore-story-container">
           <p className="lore-story-notfound">
-            {isEn ? "Story not found." : "Histoire introuvable."}
+            {loaded
+              ? (isEn ? "Story not found." : "Histoire introuvable.")
+              : (isEn ? "Loading..." : "Chargement...")}
           </p>
-          <Link to="/lore" className="lore-story-back">
-            <i className="fa-solid fa-arrow-left" aria-hidden />
-            {isEn ? "Back to Lore" : "Retour au Lore"}
-          </Link>
+          {loaded && (
+            <Link to="/lore" className="lore-story-back">
+              <i className="fa-solid fa-arrow-left" aria-hidden />
+              {isEn ? "Back to Lore" : "Retour au Lore"}
+            </Link>
+          )}
         </div>
       </main>
     );
