@@ -88,6 +88,10 @@
       "teamHeading": "Membres de l'équipe",
       "thanksTitle": "Remerciements",
       "thanksIntro": "Un grand merci à toutes les personnes qui rendent ce projet possible."
+    },
+    "lorePage": {
+      "subtitle": "L'histoire et l'univers de Pokémon New World.",
+      "placeholder": "Le contenu du lore sera ajouté ici."
     }
   },
   "en": {
@@ -179,6 +183,10 @@
       "teamHeading": "Team members",
       "thanksTitle": "Acknowledgements",
       "thanksIntro": "A big thank you to everyone who makes this project possible."
+    },
+    "lorePage": {
+      "subtitle": "The story and universe of Pokémon New World.",
+      "placeholder": "Lore content will be added here."
     }
   }
 }

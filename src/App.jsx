@@ -14,6 +14,7 @@ import PatchNotesPage from "./pages/PatchNotesPage";
 import PokedexPage from "./pages/PokedexPage";
 import ExtradexPage from "./pages/ExtradexPage";
 import GuidePage from "./pages/GuidePage";
+import LorePage from "./pages/LorePage";
 import BSTPage from "./pages/BSTPage";
 import NerfsAndBuffsPage from "./pages/NerfsAndBuffsPage";
 import ItemLocationPage from "./pages/ItemLocationPage";
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/pokedex" element={<PokedexPage />} />
         <Route path="/extradex" element={<ExtradexPage />} />
         <Route path="/guide" element={<GuidePage />} />
+        <Route path="/lore" element={<LorePage />} />
         <Route path="/bst" element={<BSTPage />} />
         <Route path="/item-location" element={<ItemLocationPage />} />
         <Route path="/equipe" element={<TeamPage />} />

@@ -6,6 +6,7 @@ const SIDEBAR_ITEMS = [
   { id: "accueil", label: "Accueil", icon: "fa-house", to: "/" },
   { id: "pokedex", label: "Pokedex", icon: "fa-book", to: "/pokedex" },
   { id: "guide", label: "Guide", icon: "fa-book-open", to: "/guide" },
+  { id: "lore", label: "Le Lore", icon: "fa-scroll", to: "/lore", highlight: true },
   { id: "patchnotes", label: "PatchNotes", icon: "fa-file-lines", to: "/patchnotes" },
   { id: "items", label: "Items locations", icon: "fa-location-dot", to: "/item-location" },
   { id: "evs", label: "EVs locations", icon: "fa-location-dot", to: "/evs-location" },
@@ -64,12 +65,13 @@ const Sidebar = () => {
           </div>
 
           <nav className="sidebar-nav">
-            {SIDEBAR_ITEMS.map((item) =>
-              item.to.startsWith("/") ? (
+            {SIDEBAR_ITEMS.map((item) => {
+              const linkClass = `sidebar-link${item.highlight ? " sidebar-link--lore" : ""}`;
+              return item.to.startsWith("/") ? (
                 <Link
                   key={item.id}
                   to={item.to}
-                  className="sidebar-link"
+                  className={linkClass}
                   onClick={close}
                 >
                   <i className={`fa-solid ${item.icon}`} aria-hidden />
@@ -79,14 +81,14 @@ const Sidebar = () => {
                 <a
                   key={item.id}
                   href={item.to}
-                  className="sidebar-link"
+                  className={linkClass}
                   onClick={close}
                 >
                   <i className={`fa-solid ${item.icon}`} aria-hidden />
                   <span>{item.label}</span>
                 </a>
-              )
-            )}
+              );
+            })}
           </nav>
         </div>
       </aside>
