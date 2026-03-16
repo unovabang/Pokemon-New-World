@@ -440,8 +440,10 @@ const HomePage = () => {
                   onClick={() => setOpenDownload(false)}
                 >
                   <span className="dl-modal-card-icon"><i className="fa-solid fa-rocket" /></span>
-                  <span className="dl-modal-card-title">{isEn ? "Download the Game" : "Télécharger le Jeu"}</span>
-                  <span className="dl-modal-card-sub">{isEn ? "Launcher with auto-updates" : "Launcher avec mises à jour auto"}</span>
+                  <span className="dl-modal-card-body">
+                    <span className="dl-modal-card-title">{isEn ? "Download the Game" : "Télécharger le Jeu"}</span>
+                    <span className="dl-modal-card-sub">{isEn ? "Launcher with auto-updates" : "Launcher avec mises à jour auto"}</span>
+                  </span>
                   <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
                 </a>
               )}
@@ -452,8 +454,10 @@ const HomePage = () => {
                   onClick={() => setOpenDownload(false)}
                 >
                   <span className="dl-modal-card-icon"><i className="fa-solid fa-file-zipper" /></span>
-                  <span className="dl-modal-card-title">{t('buttons.downloadPatch')}</span>
-                  <span className="dl-modal-card-sub">{isEn ? "Latest update" : "Dernière mise à jour"}</span>
+                  <span className="dl-modal-card-body">
+                    <span className="dl-modal-card-title">{t('buttons.downloadPatch')}</span>
+                    <span className="dl-modal-card-sub">{isEn ? "Latest update" : "Dernière mise à jour"}</span>
+                  </span>
                   <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
                 </a>
               )}

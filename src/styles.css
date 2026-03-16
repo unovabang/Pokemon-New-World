@@ -3968,110 +3968,141 @@ a.dex-panel--active{cursor:default}
 
 /* Modal Téléchargement redesign */
 .dl-modal{
-  display:flex; flex-direction:column; gap:1.5rem;
+  display:flex; flex-direction:column; gap:1.25rem;
 }
+
+/* --- Cartes téléchargement --- */
 .dl-modal-cards{
-  display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;
-}
-.dl-modal-cards .dl-modal-card:only-child{
-  grid-column:1 / -1;
-  max-width:360px; margin:0 auto;
+  display:flex; flex-direction:column; gap:0.75rem;
 }
 .dl-modal-card{
-  display:flex; flex-direction:column; align-items:center;
-  gap:0.5rem; padding:1.5rem 1rem;
+  display:flex; align-items:center; gap:1.1rem;
+  padding:1.25rem 1.5rem;
   border-radius:16px; text-decoration:none;
   transition:transform .25s, box-shadow .25s, border-color .25s;
   position:relative; overflow:hidden;
-  text-align:center;
 }
-.dl-modal-card--game{
-  background:linear-gradient(160deg, rgba(126,205,242,.1) 0%, rgba(46,89,198,.08) 100%);
-  border:1px solid rgba(126,205,242,.25);
+.dl-modal-card::before{
+  content:""; position:absolute; inset:0; opacity:0;
+  transition:opacity .3s;
 }
+.dl-modal-card:hover::before{opacity:1}
+.dl-modal-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(0,0,0,.3);
+}
+
+.dl-modal-card--launcher{
+  background:linear-gradient(135deg, rgba(155,89,182,.12) 0%, rgba(142,68,173,.06) 100%);
+  border:1px solid rgba(155,89,182,.3);
+}
+.dl-modal-card--launcher::before{
+  background:linear-gradient(135deg, rgba(155,89,182,.18) 0%, rgba(142,68,173,.08) 100%);
+}
+.dl-modal-card--launcher:hover{border-color:rgba(155,89,182,.55)}
+
 .dl-modal-card--patch{
-  background:linear-gradient(160deg, rgba(168,130,255,.1) 0%, rgba(128,90,213,.08) 100%);
+  background:linear-gradient(135deg, rgba(168,130,255,.1) 0%, rgba(128,90,213,.06) 100%);
   border:1px solid rgba(168,130,255,.25);
 }
-.dl-modal-card--launcher{
-  background:linear-gradient(160deg, rgba(155,89,182,.1) 0%, rgba(142,68,173,.08) 100%);
-  border:1px solid rgba(155,89,182,.25);
+.dl-modal-card--patch::before{
+  background:linear-gradient(135deg, rgba(168,130,255,.16) 0%, rgba(128,90,213,.08) 100%);
 }
-.dl-modal-card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 8px 24px rgba(0,0,0,.25);
+.dl-modal-card--patch:hover{border-color:rgba(168,130,255,.5)}
+
+.dl-modal-card--game{
+  background:linear-gradient(135deg, rgba(126,205,242,.1) 0%, rgba(46,89,198,.06) 100%);
+  border:1px solid rgba(126,205,242,.25);
+}
+.dl-modal-card--game::before{
+  background:linear-gradient(135deg, rgba(126,205,242,.16) 0%, rgba(46,89,198,.08) 100%);
 }
 .dl-modal-card--game:hover{border-color:rgba(126,205,242,.5)}
-.dl-modal-card--patch:hover{border-color:rgba(168,130,255,.5)}
-.dl-modal-card--launcher:hover{border-color:rgba(155,89,182,.5)}
+
 .dl-modal-card-icon{
-  width:48px; height:48px; border-radius:14px;
+  width:52px; height:52px; border-radius:14px;
   display:flex; align-items:center; justify-content:center;
-  font-size:1.25rem;
+  font-size:1.3rem; flex-shrink:0;
 }
-.dl-modal-card--game .dl-modal-card-icon{
-  background:rgba(126,205,242,.12); color:#7ecdf2;
+.dl-modal-card--launcher .dl-modal-card-icon{
+  background:rgba(155,89,182,.15); color:#c084fc;
 }
 .dl-modal-card--patch .dl-modal-card-icon{
   background:rgba(168,130,255,.12); color:#a882ff;
 }
-.dl-modal-card--launcher .dl-modal-card-icon{
-  background:rgba(155,89,182,.12); color:#9b59b6;
+.dl-modal-card--game .dl-modal-card-icon{
+  background:rgba(126,205,242,.12); color:#7ecdf2;
+}
+
+.dl-modal-card-body{
+  flex:1; min-width:0;
 }
 .dl-modal-card-title{
-  font-size:0.88rem; font-weight:700; color:#fff;
-  text-transform:uppercase; letter-spacing:0.04em;
+  font-size:0.95rem; font-weight:700; color:#fff;
+  text-transform:uppercase; letter-spacing:0.03em;
+  margin-bottom:0.15rem;
 }
 .dl-modal-card-sub{
-  font-size:0.75rem; color:rgba(255,255,255,.45);
+  font-size:0.78rem; color:rgba(255,255,255,.45);
 }
 .dl-modal-card-arrow{
-  margin-top:0.25rem;
-  width:32px; height:32px; border-radius:50%;
+  width:36px; height:36px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
-  font-size:0.8rem;
+  font-size:0.85rem; flex-shrink:0;
   transition:background .2s, transform .2s;
 }
-.dl-modal-card--game .dl-modal-card-arrow{
-  background:rgba(126,205,242,.1); color:#7ecdf2;
+.dl-modal-card--launcher .dl-modal-card-arrow{
+  background:rgba(155,89,182,.12); color:#c084fc;
 }
 .dl-modal-card--patch .dl-modal-card-arrow{
   background:rgba(168,130,255,.1); color:#a882ff;
 }
-.dl-modal-card--launcher .dl-modal-card-arrow{
-  background:rgba(155,89,182,.1); color:#9b59b6;
+.dl-modal-card--game .dl-modal-card-arrow{
+  background:rgba(126,205,242,.1); color:#7ecdf2;
 }
 .dl-modal-card:hover .dl-modal-card-arrow{
   transform:translateY(2px);
 }
+
+/* --- Séparateur --- */
+.dl-modal-separator{
+  display:flex; align-items:center; gap:0.75rem;
+  color:rgba(255,255,255,.2); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em;
+}
+.dl-modal-separator::before,
+.dl-modal-separator::after{
+  content:""; flex:1; height:1px; background:rgba(255,255,255,.08);
+}
+
+/* --- Bloc info --- */
 .dl-modal-info{
   display:flex; gap:0.85rem; align-items:flex-start;
-  padding:1.15rem 1.25rem;
+  padding:1.1rem 1.25rem;
   border-radius:14px;
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.06);
 }
 .dl-modal-info-icon{
-  flex-shrink:0; width:32px; height:32px; border-radius:8px;
+  flex-shrink:0; width:30px; height:30px; border-radius:8px;
   display:flex; align-items:center; justify-content:center;
-  background:rgba(126,205,242,.08); color:rgba(126,205,242,.7);
-  font-size:0.9rem;
+  background:rgba(126,205,242,.08); color:rgba(126,205,242,.6);
+  font-size:0.85rem;
 }
 .dl-modal-info-body h4{
-  margin:0 0 0.4rem; font-size:0.85rem; font-weight:700; color:var(--text);
+  margin:0 0 0.35rem; font-size:0.82rem; font-weight:700; color:var(--text);
 }
 .dl-modal-info-body p{
-  margin:0 0 0.35rem; font-size:0.82rem; color:rgba(255,255,255,.55); line-height:1.55;
+  margin:0 0 0.3rem; font-size:0.78rem; color:rgba(255,255,255,.5); line-height:1.6;
 }
 .dl-modal-info-note{
-  font-style:italic; opacity:0.8;
+  font-style:italic; opacity:0.75;
 }
 .dl-modal-video-btn{
   display:inline-flex; align-items:center; gap:0.45rem;
-  margin-top:0.6rem; padding:0.5rem 1rem;
+  margin-top:0.5rem; padding:0.45rem 0.9rem;
   border-radius:10px; border:1px solid rgba(255,255,255,.1);
-  background:rgba(255,255,255,.04); color:rgba(255,255,255,.75);
-  font-size:0.8rem; font-weight:600; cursor:pointer; font-family:inherit;
+  background:rgba(255,255,255,.04); color:rgba(255,255,255,.7);
+  font-size:0.78rem; font-weight:600; cursor:pointer; font-family:inherit;
   transition:background .2s, border-color .2s, color .2s;
 }
 .dl-modal-video-btn:hover{
@@ -4079,8 +4110,7 @@ a.dex-panel--active{cursor:default}
 }
 .dl-modal-video-btn i{font-size:0.7rem}
 @media (max-width:480px){
-  .dl-modal-cards{grid-template-columns:1fr}
-  .dl-modal-card{padding:1.25rem .85rem}
+  .dl-modal-card{padding:1rem 1.1rem; gap:0.85rem}
 }
 
 /* Styles spécifiques pour le contenu des explications */
