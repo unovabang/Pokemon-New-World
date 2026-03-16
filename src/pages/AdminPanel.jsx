@@ -23,6 +23,7 @@ import ItemLocationEditor from "../components/ItemLocationEditor";
 import EVsLocationEditor from "../components/EVsLocationEditor";
 import EmbedEditor from "../components/EmbedEditor";
 import TeamEditor from "../components/TeamEditor";
+import LoreEditor from "../components/LoreEditor";
 import UnderConstructionPage from "./UnderConstructionPage";
 
 // Import des configurations JSON
@@ -107,7 +108,8 @@ const AdminPanel = () => {
         { id: 'evs', name: 'EVs Location', icon: 'fa-map-location-dot', description: 'Emplacements des EVs' },
         { id: 'nerfs', name: 'Nerfs and Buffs', icon: 'fa-balance-scale', description: 'Nerfs et buffs' },
         { id: 'downloads', name: 'Téléchargements', icon: 'fa-download', description: 'Liens de téléchargement' },
-        { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-lines', description: 'Patch notes' }
+        { id: 'patchnotes', name: 'Notes de Patch', icon: 'fa-file-lines', description: 'Patch notes' },
+        { id: 'lore', name: 'Le Lore', icon: 'fa-scroll', description: 'Chapitres & histoires' }
       ]
     },
     {
@@ -417,6 +419,8 @@ const AdminPanel = () => {
 
           {activeTab === 'team' && <TeamEditor />}
 
+          {activeTab === 'lore' && <LoreEditor />}
+
           {activeTab === 'tips' && <AdminTips />}
 
           {activeTab === 'logs' && (
@@ -460,7 +464,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'dashboard' && activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'patchnotes' &&
-           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'itemlocation' && activeTab !== 'evs' && activeTab !== 'nerfs' && activeTab !== 'settings' && activeTab !== 'team' && activeTab !== 'embed' && activeTab !== 'tips' && activeTab !== 'logs' && (
+           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'itemlocation' && activeTab !== 'evs' && activeTab !== 'nerfs' && activeTab !== 'settings' && activeTab !== 'team' && activeTab !== 'lore' && activeTab !== 'embed' && activeTab !== 'tips' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">
                 <h2 className="admin-panel-card-title">

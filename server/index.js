@@ -890,6 +890,48 @@ app.post('/api/downloads', (req, res) => {
   }
 });
 
+// === LORE API ===
+// GET /api/lore - Lire les chapitres du lore
+app.get('/api/lore', (req, res) => {
+  try {
+    let loreData = getConfig('lore');
+    if (!loreData) {
+      const seedPath = path.join(__dirname, '../src/config/lore.json');
+      if (fs.existsSync(seedPath)) {
+        try { loreData = fs.readJsonSync(seedPath); } catch { loreData = { stories: [] }; }
+      } else {
+        loreData = { stories: [] };
+      }
+    }
+    res.json({
+      success: true,
+      lore: { stories: Array.isArray(loreData.stories) ? loreData.stories : [] }
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/lore:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/lore - Sauvegarder les chapitres du lore
+app.put('/api/lore', (req, res) => {
+  try {
+    const { stories } = req.body;
+    if (!Array.isArray(stories)) {
+      return res.status(400).json({ success: false, error: 'stories (tableau) requis' });
+    }
+    const updated = { stories };
+    if (!saveConfig('lore', updated)) {
+      return res.status(500).json({ success: false, error: 'Échec écriture lore.json' });
+    }
+    autoCommitConfig('lore.json');
+    res.json({ success: true, message: 'Lore sauvegardé.', lore: updated });
+  } catch (error) {
+    console.error('❌ Erreur API PUT /api/lore:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // === POKÉDEX API ===
 // GET /api/pokedex - Lire le Pokédex (entries + background + customTypes)
 app.get('/api/pokedex', (req, res) => {
