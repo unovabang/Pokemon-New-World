@@ -647,10 +647,44 @@ const DownloadsEditor = ({ onSave }) => {
             padding: '2rem',
             border: '1px solid rgba(155, 89, 182, 0.3)',
           }}>
-            <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#9b59b6' }}>
+            <h3 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#9b59b6' }}>
               <i className="fa-solid fa-cloud"></i>
               Fichiers sur le stockage R2
             </h3>
+            {(() => {
+              const R2_LIMIT_GB = 10;
+              const totalBytes = r2Objects.reduce((sum, o) => sum + (o.size || 0), 0);
+              const usedGB = totalBytes / (1024 * 1024 * 1024);
+              const isOverLimit = usedGB > R2_LIMIT_GB;
+              return (
+                <>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '0.5rem',
+                    marginBottom: '1rem',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    background: isOverLimit ? 'rgba(220, 53, 69, 0.15)' : 'rgba(255,255,255,0.05)',
+                    border: `1px solid ${isOverLimit ? 'rgba(220, 53, 69, 0.4)' : 'rgba(255,255,255,0.1)'}`,
+                  }}>
+                    <span style={{ fontWeight: '600', fontSize: '1rem' }}>
+                      Stockage utilisé : <span style={{ color: isOverLimit ? '#dc3545' : 'inherit' }}>{usedGB.toFixed(2)} Go</span> / {R2_LIMIT_GB} Go
+                    </span>
+                    {isOverLimit && (
+                      <span style={{ fontSize: '0.85rem', color: '#dc3545' }}>
+                        <i className="fa-solid fa-triangle-exclamation"></i> Limite dépassée
+                      </span>
+                    )}
+                  </div>
+                  <p style={{ fontSize: '0.85rem', opacity: 0.85, marginBottom: '1rem', marginTop: 0 }}>
+                    <i className="fa-solid fa-info-circle"></i> Au-delà de {R2_LIMIT_GB} Go, facturation selon votre plan Cloudflare.
+                  </p>
+                </>
+              );
+            })()}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {r2Objects.map((obj) => (
                 <div key={obj.key} style={{
