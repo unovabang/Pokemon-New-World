@@ -20,13 +20,17 @@ const HomePage = () => {
   const [siteConfigFromApi, setSiteConfigFromApi] = useState(null);
   const [newsConfigFromApi, setNewsConfigFromApi] = useState(null);
   const [externalConfigFromApi, setExternalConfigFromApi] = useState(null);
+  const [downloadsFromApi, setDownloadsFromApi] = useState(null);
 
   const baseContent = siteConfigFromApi ? { ...content, ...siteConfigFromApi } : content;
   const contentWithExternal = externalConfigFromApi ? { ...baseContent, ...externalConfigFromApi } : baseContent;
   const effectiveContent = newsConfigFromApi
     ? { ...contentWithExternal, news: { ...(contentWithExternal.news || {}), ...newsConfigFromApi } }
     : contentWithExternal;
-  const { backgrounds, heroVideo, game, carousel, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = effectiveContent;
+  const effectiveContentWithDownloads = downloadsFromApi != null
+    ? { ...effectiveContent, downloads: { ...(effectiveContent.downloads || {}), ...downloadsFromApi } }
+    : effectiveContent;
+  const { backgrounds, heroVideo, game, carousel, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = effectiveContentWithDownloads;
   // Lien Discord : peut être une string (config external) ou un objet legacy { invite } (config site)
   const discord = typeof effectiveContent.discord === 'string'
     ? effectiveContent.discord
@@ -86,18 +90,20 @@ const HomePage = () => {
   const [openPatchNotes, setOpenPatchNotes] = useState(false);
   const [patchNotesFromApi, setPatchNotesFromApi] = useState(null);
 
-  // Charger les configs site, external (liens Discord, etc.), news et patchnotes depuis l'API
+  // Charger les configs site, external, news, downloads et patchnotes depuis l'API
   useEffect(() => {
     let cancelled = false;
     Promise.all([
       fetch(`${API_BASE}/config/site?t=${Date.now()}`).then((r) => r.json()),
       fetch(`${API_BASE}/config/external?t=${Date.now()}`).then((r) => r.json()),
       fetch(`${API_BASE}/config/news?t=${Date.now()}`).then((r) => r.json()),
+      fetch(`${API_BASE}/downloads?t=${Date.now()}`).then((r) => r.json()),
       fetch(`${API_BASE}/patchnotes/${language}?t=${Date.now()}`).then((r) => r.json())
-    ]).then(([siteData, externalData, newsData, patchData]) => {
+    ]).then(([siteData, externalData, newsData, downloadsData, patchData]) => {
       if (!cancelled && siteData?.success && siteData?.config) setSiteConfigFromApi(siteData.config);
       if (!cancelled && externalData?.success && externalData?.config) setExternalConfigFromApi(externalData.config);
       if (!cancelled && newsData?.success && newsData?.config) setNewsConfigFromApi(newsData.config);
+      if (!cancelled && downloadsData?.success && downloadsData?.downloads) setDownloadsFromApi(downloadsData.downloads);
       if (!cancelled && patchData?.success && patchData?.patchnotes) setPatchNotesFromApi(patchData.patchnotes);
     }).catch(() => {});
     return () => { cancelled = true; };
@@ -415,7 +421,7 @@ const HomePage = () => {
           </div>
         </Modal>
 
-        {/* Modal de téléchargement */}
+        {/* Modal de téléchargement — données depuis l'API (launcher + patch si configuré) */}
         <Modal
           open={openDownload}
           onClose={() => setOpenDownload(false)}
@@ -423,10 +429,10 @@ const HomePage = () => {
         >
           <div className="dl-modal">
             <div className="dl-modal-cards">
-              {content.downloads.launcher && (
+              {(downloads?.launcher?.trim() && downloads.launcher !== '#') && (
                 <a
                   className="dl-modal-card dl-modal-card--launcher"
-                  href={content.downloads.launcher}
+                  href={downloads.launcher.trim()}
                   onClick={() => setOpenDownload(false)}
                 >
                   <span className="dl-modal-card-icon"><i className="fa-solid fa-rocket" /></span>
@@ -435,16 +441,18 @@ const HomePage = () => {
                   <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
                 </a>
               )}
-              <a
-                className="dl-modal-card dl-modal-card--patch"
-                href={content.downloads.patch}
-                onClick={() => setOpenDownload(false)}
-              >
-                <span className="dl-modal-card-icon"><i className="fa-solid fa-file-zipper" /></span>
-                <span className="dl-modal-card-title">{t('buttons.downloadPatch')}</span>
-                <span className="dl-modal-card-sub">{isEn ? "Latest update" : "Dernière mise à jour"}</span>
-                <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
-              </a>
+              {(downloads?.patch?.trim() && downloads.patch !== '#') && (
+                <a
+                  className="dl-modal-card dl-modal-card--patch"
+                  href={downloads.patch.trim()}
+                  onClick={() => setOpenDownload(false)}
+                >
+                  <span className="dl-modal-card-icon"><i className="fa-solid fa-file-zipper" /></span>
+                  <span className="dl-modal-card-title">{t('buttons.downloadPatch')}</span>
+                  <span className="dl-modal-card-sub">{isEn ? "Latest update" : "Dernière mise à jour"}</span>
+                  <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
+                </a>
+              )}
             </div>
             <div className="dl-modal-info">
               <div className="dl-modal-info-icon"><i className="fa-solid fa-circle-info" /></div>
