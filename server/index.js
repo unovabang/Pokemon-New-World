@@ -778,6 +778,48 @@ const saveConfig = (configName, data) => {
   }
 };
 
+/** Lecture contact-webhook comme les autres configs : CONFIG_DIR puis seed (src/config). */
+function getContactWebhookData() {
+  let data = getConfig('contact-webhook');
+  if (!data) {
+    const seedPath = path.join(SOURCE_CONFIG_DIR, 'contact-webhook.json');
+    if (fs.existsSync(seedPath)) {
+      try { data = fs.readJsonSync(seedPath); } catch {}
+    }
+  }
+  return data || {};
+}
+
+app.get('/api/config/contact-webhook', (req, res) => {
+  try {
+    const data = getContactWebhookData();
+    const webhookUrl = (data.webhookUrl || '').trim();
+    const backgroundImage = (data.backgroundImage || '').trim();
+    res.json({ success: true, webhookUrl, backgroundImage });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+app.put('/api/config/contact-webhook', (req, res) => {
+  try {
+    let { webhookUrl, backgroundImage } = req.body || {};
+    webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
+    backgroundImage = typeof backgroundImage === 'string' ? backgroundImage.trim() : '';
+    if (webhookUrl && !webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+      return res.status(400).json({ success: false, error: 'URL de webhook Discord invalide.' });
+    }
+    const payload = { webhookUrl, backgroundImage };
+    if (!saveConfig('contact-webhook', payload)) {
+      return res.status(500).json({ success: false, error: 'Erreur sauvegarde.' });
+    }
+    autoCommitConfig('contact-webhook.json');
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 // GET /api/config/:name - Lire une configuration
 app.get('/api/config/:name', (req, res) => {
   try {
@@ -995,48 +1037,6 @@ app.post('/api/contact', async (req, res) => {
   } catch (error) {
     console.error('❌ Erreur API /api/contact:', error);
     res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-/** Lecture contact-webhook comme les autres configs : CONFIG_DIR puis seed (src/config). */
-function getContactWebhookData() {
-  let data = getConfig('contact-webhook');
-  if (!data) {
-    const seedPath = path.join(SOURCE_CONFIG_DIR, 'contact-webhook.json');
-    if (fs.existsSync(seedPath)) {
-      try { data = fs.readJsonSync(seedPath); } catch {}
-    }
-  }
-  return data || {};
-}
-
-app.get('/api/config/contact-webhook', (req, res) => {
-  try {
-    const data = getContactWebhookData();
-    const webhookUrl = (data.webhookUrl || '').trim();
-    const backgroundImage = (data.backgroundImage || '').trim();
-    res.json({ success: true, webhookUrl, backgroundImage });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-app.put('/api/config/contact-webhook', (req, res) => {
-  try {
-    let { webhookUrl, backgroundImage } = req.body || {};
-    webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
-    backgroundImage = typeof backgroundImage === 'string' ? backgroundImage.trim() : '';
-    if (webhookUrl && !webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
-      return res.status(400).json({ success: false, error: 'URL de webhook Discord invalide.' });
-    }
-    const payload = { webhookUrl, backgroundImage };
-    if (!saveConfig('contact-webhook', payload)) {
-      return res.status(500).json({ success: false, error: 'Erreur sauvegarde.' });
-    }
-    autoCommitConfig('contact-webhook.json');
-    res.json({ success: true });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
   }
 });
 
