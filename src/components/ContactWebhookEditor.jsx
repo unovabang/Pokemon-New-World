@@ -8,6 +8,7 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 export default function ContactWebhookEditor() {
   const [webhookUrl, setWebhookUrl] = useState("");
+  const [backgroundImage, setBackgroundImage] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
@@ -15,7 +16,12 @@ export default function ContactWebhookEditor() {
   useEffect(() => {
     fetch(`${API_BASE}/config/contact-webhook?t=${Date.now()}`)
       .then((r) => r.json())
-      .then((d) => { if (d?.success) setWebhookUrl(d.webhookUrl || ""); })
+      .then((d) => {
+        if (d?.success) {
+          setWebhookUrl(d.webhookUrl || "");
+          setBackgroundImage(d.backgroundImage || "");
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -27,11 +33,11 @@ export default function ContactWebhookEditor() {
       const res = await fetch(`${API_BASE}/config/contact-webhook`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ webhookUrl: webhookUrl.trim() }),
+        body: JSON.stringify({ webhookUrl: webhookUrl.trim(), backgroundImage: backgroundImage.trim() }),
       });
       const data = await res.json();
       if (data?.success) {
-        setMessage({ type: "success", text: webhookUrl.trim() ? "Webhook contact sauvegardé." : "Webhook contact supprimé." });
+        setMessage({ type: "success", text: "Configuration contact sauvegardée." });
       } else {
         setMessage({ type: "error", text: data?.error || "Erreur." });
       }
@@ -50,18 +56,15 @@ export default function ContactWebhookEditor() {
       <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.55)", margin: 0 }}>
         Les messages envoyés via le formulaire de contact seront transmis à ce webhook Discord sous forme d'embeds colorés par catégorie.
       </p>
-      <label style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
-        <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.65)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-          URL du Webhook Discord
-        </span>
-        <input
-          type="text"
-          value={webhookUrl}
-          onChange={(e) => setWebhookUrl(e.target.value)}
-          placeholder="https://discord.com/api/webhooks/..."
-          style={{ padding: "0.55rem 0.75rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: "0.95rem", outline: "none", width: "100%", boxSizing: "border-box" }}
-        />
+      <label style={labelStyle}>
+        <span style={spanStyle}>URL du Webhook Discord</span>
+        <input type="text" value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://discord.com/api/webhooks/..." style={inputStyle} />
       </label>
+      <label style={labelStyle}>
+        <span style={spanStyle}>Image de fond de la page Contact (URL)</span>
+        <input type="text" value={backgroundImage} onChange={(e) => setBackgroundImage(e.target.value)} placeholder="https://exemple.com/contact-bg.jpg" style={inputStyle} />
+      </label>
+      {backgroundImage && <img src={backgroundImage} alt="" style={{ maxWidth: 240, maxHeight: 100, borderRadius: 8, objectFit: "cover" }} />}
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button type="button" onClick={save} disabled={saving} className="admin-panel-btn admin-panel-btn--primary">
           <i className={saving ? "fa-solid fa-spinner fa-spin" : "fa-solid fa-save"} /> Sauvegarder
@@ -70,3 +73,7 @@ export default function ContactWebhookEditor() {
     </div>
   );
 }
+
+const labelStyle = { display: "flex", flexDirection: "column", gap: "0.3rem" };
+const spanStyle = { fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.65)", textTransform: "uppercase", letterSpacing: "0.06em" };
+const inputStyle = { padding: "0.55rem 0.75rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: "0.95rem", outline: "none", width: "100%", boxSizing: "border-box" };

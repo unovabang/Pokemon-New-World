@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -27,6 +27,14 @@ export default function ContactPage() {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState(null);
+  const [bgImage, setBgImage] = useState("");
+
+  useEffect(() => {
+    fetch(`${API_BASE}/config/contact-webhook?t=${Date.now()}`)
+      .then((r) => r.json())
+      .then((d) => { if (d?.backgroundImage) setBgImage(d.backgroundImage); })
+      .catch(() => {});
+  }, []);
 
   const canSubmit = category && contact.trim() && subject.trim() && message.trim() && !sending;
 
@@ -59,7 +67,7 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="page page-with-sidebar contact-page">
+    <main className="page page-with-sidebar contact-page" style={bgImage ? { backgroundImage: `url(${bgImage})` } : undefined}>
       <Sidebar />
       <div className="contact-page-inner">
         <LanguageSelector className="contact-lang" />

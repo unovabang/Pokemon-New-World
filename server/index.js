@@ -1009,9 +1009,9 @@ app.get('/api/config/contact-webhook', (req, res) => {
     const p = path.join(CONFIG_DIR, 'contact-webhook.json');
     if (fs.existsSync(p)) {
       const data = fs.readJsonSync(p);
-      return res.json({ success: true, webhookUrl: data?.webhookUrl || '' });
+      return res.json({ success: true, webhookUrl: data?.webhookUrl || '', backgroundImage: data?.backgroundImage || '' });
     }
-    res.json({ success: true, webhookUrl: '' });
+    res.json({ success: true, webhookUrl: '', backgroundImage: '' });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
@@ -1019,13 +1019,14 @@ app.get('/api/config/contact-webhook', (req, res) => {
 
 app.put('/api/config/contact-webhook', (req, res) => {
   try {
-    let { webhookUrl } = req.body || {};
+    let { webhookUrl, backgroundImage } = req.body || {};
     webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
+    backgroundImage = typeof backgroundImage === 'string' ? backgroundImage.trim() : '';
     if (webhookUrl && !webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
       return res.status(400).json({ success: false, error: 'URL de webhook Discord invalide.' });
     }
     fs.ensureDirSync(CONFIG_DIR);
-    fs.writeJsonSync(path.join(CONFIG_DIR, 'contact-webhook.json'), { webhookUrl }, { spaces: 2 });
+    fs.writeJsonSync(path.join(CONFIG_DIR, 'contact-webhook.json'), { webhookUrl, backgroundImage }, { spaces: 2 });
     res.json({ success: true });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
