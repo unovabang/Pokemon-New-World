@@ -9,6 +9,7 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 const STORAGE_GUIDE = "admin_guide_data";
 const PLACEHOLDER_IMG = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+const DEFAULT_IMAGE = PLACEHOLDER_IMG;
 
 function splitByHighlights(text, highlight = []) {
   if (!text || !Array.isArray(highlight) || highlight.length === 0) {
