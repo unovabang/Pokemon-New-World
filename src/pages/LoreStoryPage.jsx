@@ -11,7 +11,7 @@ const CHAPTER_BANNER_IMAGES = [
   "https://i.ibb.co/SDW19HLT/background-administrateur2.jpg",
 ];
 
-const DEFAULT_VOLUME = 5;
+const DEFAULT_VOLUME = 1;
 const VOLUME_STEP = 10;
 
 function loadYoutubeAPI() {
@@ -159,7 +159,7 @@ export default function LoreStoryPage() {
     : "";
 
   return (
-    <main className="page page-with-sidebar lore-story-page">
+    <main key={slug} className="page page-with-sidebar lore-story-page">
       <Sidebar />
       <aside className="lore-story-sidebar" aria-hidden>
         <span className="lore-story-sidebar-title">{title}</span>

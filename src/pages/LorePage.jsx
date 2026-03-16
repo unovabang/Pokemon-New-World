@@ -59,15 +59,20 @@ export default function LorePage() {
                     aria-hidden
                   />
                   <div className="lore-banner-overlay" aria-hidden />
+                  {story.musicYoutubeId && (
+                    <span
+                      className="lore-banner-music"
+                      title={isEn ? "Background music" : "Fond sonore"}
+                      aria-label={isEn ? "Background music" : "Fond sonore"}
+                    >
+                      <i className="fa-solid fa-music" aria-hidden />
+                    </span>
+                  )}
                   <div className="lore-banner-content">
                     {story.isNew && (
-                      <span className="lore-banner-tag">
-                        {t("lorePage.newTag") || "NOUVELLE"}
-                      </span>
-                    )}
-                    {story.musicYoutubeId && (
-                      <span className="lore-banner-fa" title={isEn ? "Background music" : "Fond sonore"}>
-                        FA
+                      <span className="lore-banner-tag" title={isEn ? "New chapter" : "Nouveau chapitre"}>
+                        <i className="fa-solid fa-sparkles" aria-hidden />
+                        <span>{t("lorePage.newTag") || "NOUVELLE"}</span>
                       </span>
                     )}
                     <h2 className="lore-banner-title">{title}</h2>
