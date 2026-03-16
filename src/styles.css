@@ -7272,6 +7272,24 @@ a.dex-panel--active{cursor:default}
   box-shadow: 0 0 0 3px rgba(126,205,242,.2);
   background: rgba(255,255,255,.11) !important;
 }
+.item-location-zone-select {
+  flex: 1;
+  appearance: none;
+  -webkit-appearance: none;
+  padding: .75rem 2.2rem .75rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.22) !important;
+  background: rgba(255,255,255,.09) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,.5)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 1rem center !important;
+  color: #fff;
+  font-size: .95rem;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, background-color .2s;
+}
+.item-location-zone-select:hover { border-color: rgba(255,255,255,.3) !important; background-color: rgba(255,255,255,.12) !important; }
+.item-location-zone-select:focus { outline: none; border-color: rgba(126,205,242,.6) !important; box-shadow: 0 0 0 3px rgba(126,205,242,.2); }
+.item-location-zone-select option { background: #1a1d2e; color: #fff; }
+.item-location-new-zone-btn { flex-shrink: 0; width: 40px; height: 40px; padding: 0 !important; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: rgba(255,255,255,.7); font-size: .9rem; cursor: pointer; transition: all .2s; }
+.item-location-new-zone-btn:hover { background: rgba(126,205,242,.15); border-color: rgba(126,205,242,.4); color: #7ecdf2; }
 .item-location-add-modal .admin-pokedex-modal-footer { padding: 1rem 1.75rem 1.5rem; gap: .75rem; border-top: 1px solid rgba(255,255,255,.1); }
 .item-location-add-modal .admin-pokedex-modal-footer .btn { padding: .65rem 1.2rem; border-radius: 12px; font-weight: 600; }
 

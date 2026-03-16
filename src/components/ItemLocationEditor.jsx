@@ -15,7 +15,7 @@ const ItemLocationEditor = ({ onSave }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({ title: '', message: '', type: 'info', onConfirm: null });
   const [showAddModal, setShowAddModal] = useState(false);
-  const [addForm, setAddForm] = useState({ zone: '', item: '', obtention: '' });
+  const [addForm, setAddForm] = useState({ zone: '', item: '', obtention: '', isNewZone: false, newZone: '' });
   const [searchQuery, setSearchQuery] = useState('');
 
   const nextId = useRef(typeof window !== 'undefined' ? Date.now() : 0);
@@ -63,8 +63,18 @@ const ItemLocationEditor = ({ onSave }) => {
     });
   };
 
+  const existingZones = useMemo(() => {
+    const seen = new Set();
+    const zones = [];
+    for (const e of entries) {
+      const z = (e.zone || '').trim();
+      if (z && !seen.has(z)) { seen.add(z); zones.push(z); }
+    }
+    return zones;
+  }, [entries]);
+
   const openAddModal = () => {
-    setAddForm({ zone: '', item: '', obtention: '' });
+    setAddForm({ zone: existingZones[0] || '', item: '', obtention: '', isNewZone: existingZones.length === 0, newZone: '' });
     setShowAddModal(true);
   };
 
@@ -72,12 +82,25 @@ const ItemLocationEditor = ({ onSave }) => {
 
   const closeAddModal = () => {
     setShowAddModal(false);
-    setAddForm({ zone: '', item: '', obtention: '' });
+    setAddForm({ zone: '', item: '', obtention: '', isNewZone: false, newZone: '' });
   };
 
   const submitAddRow = async () => {
-    const newEntry = { id: getNewId(), zone: addForm.zone.trim(), item: addForm.item.trim(), obtention: addForm.obtention.trim() };
-    const newEntries = [...entries, newEntry];
+    const zoneName = addForm.isNewZone ? addForm.newZone.trim() : addForm.zone.trim();
+    if (!zoneName) return;
+    const newEntry = { id: getNewId(), zone: zoneName, item: addForm.item.trim(), obtention: addForm.obtention.trim() };
+
+    let insertIndex = -1;
+    for (let i = entries.length - 1; i >= 0; i--) {
+      if ((entries[i].zone || '').trim() === zoneName) { insertIndex = i + 1; break; }
+    }
+
+    let newEntries;
+    if (insertIndex === -1) {
+      newEntries = [...entries, newEntry];
+    } else {
+      newEntries = [...entries.slice(0, insertIndex), newEntry, ...entries.slice(insertIndex)];
+    }
     setEntries(newEntries);
     closeAddModal();
     await saveConfig(newEntries);
@@ -315,13 +338,46 @@ const ItemLocationEditor = ({ onSave }) => {
             <div className="admin-pokedex-modal-body">
               <label className="item-location-add-modal-label">
                 <span><i className="fa-solid fa-map-pin" /> Zone</span>
-                <input
-                  type="text"
-                  value={addForm.zone}
-                  onChange={(e) => setAddForm((f) => ({ ...f, zone: e.target.value }))}
-                  placeholder="ex. Liora"
-                  className="item-location-editor-input"
-                />
+                {existingZones.length > 0 && !addForm.isNewZone ? (
+                  <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
+                    <select
+                      value={addForm.zone}
+                      onChange={(e) => setAddForm((f) => ({ ...f, zone: e.target.value }))}
+                      className="item-location-editor-input item-location-zone-select"
+                    >
+                      {existingZones.map((z) => <option key={z} value={z}>{z}</option>)}
+                    </select>
+                    <button
+                      type="button"
+                      className="btn btn-ghost item-location-new-zone-btn"
+                      onClick={() => setAddForm((f) => ({ ...f, isNewZone: true, newZone: '' }))}
+                      title="Créer une nouvelle zone"
+                    >
+                      <i className="fa-solid fa-plus" />
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
+                    <input
+                      type="text"
+                      value={addForm.newZone}
+                      onChange={(e) => setAddForm((f) => ({ ...f, newZone: e.target.value }))}
+                      placeholder="Nom de la nouvelle zone"
+                      className="item-location-editor-input"
+                      autoFocus
+                    />
+                    {existingZones.length > 0 && (
+                      <button
+                        type="button"
+                        className="btn btn-ghost item-location-new-zone-btn"
+                        onClick={() => setAddForm((f) => ({ ...f, isNewZone: false, zone: existingZones[0] || '' }))}
+                        title="Choisir une zone existante"
+                      >
+                        <i className="fa-solid fa-list" />
+                      </button>
+                    )}
+                  </div>
+                )}
               </label>
               <label className="item-location-add-modal-label">
                 <span><i className="fa-solid fa-cube" /> Objet</span>
