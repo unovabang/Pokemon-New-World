@@ -74,7 +74,7 @@ export default function LorePage() {
                       title={isEn ? "New chapter" : "Nouveau chapitre"}
                       aria-label={isEn ? "New chapter" : "Nouveau chapitre"}
                     >
-                      <i className="fa-solid fa-sparkles" aria-hidden />
+                      <i className="fa-solid fa-certificate" aria-hidden />
                     </span>
                   )}
                   <div className="lore-banner-content">
