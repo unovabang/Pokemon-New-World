@@ -1708,6 +1708,26 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   text-align: center;
   padding: 2rem 0 2.5rem;
 }
+.lore-hero-card {
+  display: inline-block;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  backdrop-filter: saturate(160%) blur(16px);
+  border: 1px solid var(--lore-gold-border);
+  border-radius: 20px;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 40px -10px rgba(212, 175, 55, 0.15);
+}
+.lore-hero-card .lore-title {
+  margin-bottom: 0.5rem;
+}
+.lore-hero-card .lore-subtitle {
+  margin: 0;
+}
 .lore-lang-selector {
   position: absolute;
   top: 1rem;
@@ -1873,6 +1893,10 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   transform: translateX(5px);
 }
 @media (max-width: 640px) {
+  .lore-hero-card {
+    padding: 1.5rem 1.25rem;
+    border-radius: 16px;
+  }
   .lore-banner {
     min-height: 300px;
     padding: 2.25rem 1.5rem;
@@ -1880,6 +1904,10 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   }
   .lore-banner-title {
     font-size: 1.25rem;
+  }
+  .lore-story-content {
+    padding: 2rem 1.25rem 3rem;
+    border-radius: 12px;
   }
 }
 
@@ -1924,16 +1952,22 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 /* Contenu du chapitre (scroll, tout centré au milieu de la page) */
 .lore-story-content-wrap {
   width: 100%;
-  margin-left: 0;
+  margin-left: 0 !important;
   display: flex;
   justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+.lore-story-content-wrap.lore-story-container {
+  margin-left: 0 !important;
 }
 .lore-story-content {
   max-width: 720px;
   width: 100%;
-  margin: 0;
-  padding: 3rem 1.5rem 4rem;
+  margin: 0 auto;
+  padding: 3rem 2rem 4rem;
   text-align: center;
+  box-sizing: border-box;
 }
 .lore-story-content .lore-story-back {
   display: inline-flex;
@@ -1962,6 +1996,22 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   margin-left: auto;
   margin-right: auto;
   max-width: 60ch;
+}
+/* Encadré visuel du contenu chapitre (centré page) */
+.lore-story-content {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+.lore-story-content .lore-story-content-title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  margin: 1rem auto 0;
+  background: linear-gradient(90deg, transparent, var(--lore-gold), transparent);
+  border-radius: 2px;
 }
 .lore-story-sidebar {
   position: fixed;
@@ -2007,6 +2057,9 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 @media (min-width: 900px) {
   .lore-story-container {
     margin-left: 140px;
+  }
+  .lore-story-content-wrap.lore-story-container {
+    margin-left: 0 !important;
   }
 }
 .lore-story-inner {

@@ -27,13 +27,15 @@ export default function LorePage() {
       <div className="lore-page-inner">
         <header className="lore-hero">
           <LanguageSelector className="lore-lang-selector" />
-          <h1 className="lore-title">
-            <i className="fa-solid fa-scroll" aria-hidden />
-            <span>Le Lore</span>
-          </h1>
-          <p className="lore-subtitle">
-            {t("lorePage.subtitle") || "L'histoire et l'univers de Pokémon New World."}
-          </p>
+          <div className="lore-hero-card">
+            <h1 className="lore-title">
+              <i className="fa-solid fa-scroll" aria-hidden />
+              <span>Le Lore</span>
+            </h1>
+            <p className="lore-subtitle">
+              {t("lorePage.subtitle") || "L'histoire et l'univers de Pokémon New World."}
+            </p>
+          </div>
         </header>
 
         <section className="lore-banners">
