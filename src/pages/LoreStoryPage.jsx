@@ -40,9 +40,15 @@ export default function LoreStoryPage() {
   }
 
   const title = isEn && story.titleEn ? story.titleEn : story.title;
+  const description = isEn && story.descriptionEn ? story.descriptionEn : story.description;
   const author = isEn && story.authorEn ? story.authorEn : story.author;
   const intro = isEn && story.introEn ? story.introEn : story.intro;
   const paragraphs = isEn && story.contentEn ? story.contentEn : story.content;
+
+  const wordCount =
+    (intro?.split(/\s+/).length || 0) +
+    (Array.isArray(paragraphs) ? paragraphs.join(" ").split(/\s+/).length : 0);
+  const readingTime = Math.max(1, Math.round(wordCount / 200));
 
   return (
     <main className="page page-with-sidebar lore-story-page">
@@ -62,15 +68,30 @@ export default function LoreStoryPage() {
 
       <div className="lore-story-content-wrap">
         <div className="lore-story-content">
-          <Link to="/lore" className="lore-story-back">
-            <i className="fa-solid fa-arrow-left" aria-hidden />
-            {isEn ? "Back to Lore" : "Retour au Lore"}
-          </Link>
+          <div className="lore-story-toolbar">
+            <Link to="/lore" className="lore-story-back">
+              <i className="fa-solid fa-arrow-left" aria-hidden />
+              {isEn ? "Back to Lore" : "Retour au Lore"}
+            </Link>
+            <span className="lore-story-reading-time" aria-hidden>
+              <i className="fa-regular fa-clock" aria-hidden />
+              {readingTime} min {isEn ? "read" : "lecture"}
+            </span>
+          </div>
+
+          <span className="lore-story-chapter-label">
+            {isEn ? "Chapter" : "Chapitre"}
+          </span>
           <h2 className="lore-story-content-title">{title}</h2>
-          <p className="lore-story-intro">{intro}</p>
-          <p className="lore-story-author">
-            {isEn ? "Reported by" : "Rapporté par"} {author}.
-          </p>
+          {description && (
+            <p className="lore-story-description">{description}</p>
+          )}
+          <div className="lore-story-meta">
+            <p className="lore-story-intro">{intro}</p>
+            <p className="lore-story-author">
+              {isEn ? "Reported by" : "Rapporté par"} {author}.
+            </p>
+          </div>
           <div className="lore-story-body">
             {Array.isArray(paragraphs) &&
               paragraphs.map((paragraph, i) => (
@@ -79,6 +100,12 @@ export default function LoreStoryPage() {
                 </p>
               ))}
           </div>
+          <footer className="lore-story-footer">
+            <Link to="/lore" className="lore-story-back-footer">
+              <i className="fa-solid fa-arrow-left" aria-hidden />
+              {isEn ? "Back to Lore" : "Retour au Lore"}
+            </Link>
+          </footer>
         </div>
       </div>
       <LanguageSelector className="lore-story-lang" />
