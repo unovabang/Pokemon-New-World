@@ -54,6 +54,7 @@ const HomePage = () => {
     ? `url(${bgHome}), url(${defaultBg})`
     : `url(${defaultBg})`;
   const { t, language } = useLanguage();
+  const isEn = language === "en";
   
   // Fonction pour obtenir le contenu Patreon traduit
   const getPatreonContent = () => {
@@ -309,99 +310,76 @@ const HomePage = () => {
 
         {/* Footer */}
         <footer className="site-footer">
-          <div className="container footer-grid">
-            <div className="footer-col">
-              <div className="footer-brand">
-                <img src={logoUrl} alt="Logo Pokémon New World" />
-                <strong>Pokémon New World</strong>
-              </div>
-              <p style={{ marginTop: 8, color: "var(--muted)" }}>
-                {t('footer.description')}
-              </p>
-              <div className="social">
-                <a
-                  href={discord || "#"}
-                  target="_blank"
-                  rel="noreferrer"
-                  title="Discord"
-                >
-                  <i className="fa-brands fa-discord"></i>
-                </a>
-                <button 
-                  onClick={() => setOpenDownload(true)}
-                  style={{ 
-                    background: "none", 
-                    border: "1px solid rgba(255,255,255,.18)", 
-                    color: "inherit", 
-                    cursor: "pointer", 
-                    padding: 0, 
-                    font: "inherit",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "36px",
-                    height: "36px",
-                    borderRadius: "10px"
-                  }}
-                  title={t('buttons.download')}
-                >
-                  <i className="fa-solid fa-download"></i>
-                </button>
-              </div>
-            </div>
-            <div className="footer-col">
-              <h4>{t('navigation.navigation')}</h4>
-              <ul>
-                <li>
-                  <a href="#news">
-                    <i className="fa-solid fa-newspaper"></i> {t('navigation.news')}
+          <div className="container footer-top">
+            <div className="footer-grid">
+              <div className="footer-col footer-col--brand">
+                <div className="footer-brand">
+                  <img src={logoUrl} alt="Logo Pokémon New World" />
+                  <strong>Pokémon New World</strong>
+                </div>
+                <p className="footer-desc">{t('footer.description')}</p>
+                <div className="social">
+                  <a href={discord || "#"} target="_blank" rel="noreferrer" title="Discord">
+                    <i className="fa-brands fa-discord" />
                   </a>
-                </li>
-                <li>
-                  <button 
+                  <button
+                    type="button"
                     onClick={() => setOpenDownload(true)}
-                    style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", padding: 0, font: "inherit" }}
+                    className="social-btn"
+                    title={t('buttons.download')}
                   >
-                    <i className="fa-solid fa-cloud-arrow-down"></i> {t('navigation.download')}
+                    <i className="fa-solid fa-download" />
                   </button>
-                </li>
-              </ul>
-            </div>
-            <div className="footer-col">
-              <h4>{t('navigation.legal')}</h4>
-              <ul>
-                <li>{t('footer.legal.disclaimer1')}</li>
-                <li>{t('footer.legal.disclaimer2')}</li>
-              </ul>
-            </div>
-            {footer?.links && footer.links.length > 0 && (
+                </div>
+              </div>
               <div className="footer-col">
-                <h4>Liens du Footer</h4>
+                <h4>{t('navigation.navigation')}</h4>
                 <ul>
-                  {footer.links.map((link, index) => (
-                    <li key={link.id || index}>
-                      <a href={link.url} target="_blank" rel="noreferrer">
-                        {link.icon && <i className={link.icon} style={{marginRight: '8px'}}></i>}
-                        {link.name}
-                      </a>
-                    </li>
-                  ))}
+                  <li><a href="#news"><i className="fa-solid fa-newspaper" /> {t('navigation.news')}</a></li>
+                  <li>
+                    <button type="button" onClick={() => setOpenDownload(true)} className="footer-link-btn">
+                      <i className="fa-solid fa-cloud-arrow-down" /> {t('navigation.download')}
+                    </button>
+                  </li>
+                  <li><a href="/lore"><i className="fa-solid fa-scroll" /> Lore</a></li>
+                  <li><a href="/pokedex"><i className="fa-solid fa-book" /> Pokédex</a></li>
                 </ul>
               </div>
-            )}
+              <div className="footer-col">
+                <h4>{t('navigation.legal')}</h4>
+                <ul>
+                  <li>{t('footer.legal.disclaimer1')}</li>
+                  <li>{t('footer.legal.disclaimer2')}</li>
+                </ul>
+              </div>
+              {footer?.links && footer.links.length > 0 && (
+                <div className="footer-col">
+                  <h4>Liens</h4>
+                  <ul>
+                    {footer.links.map((link, index) => (
+                      <li key={link.id || index}>
+                        <a href={link.url} target="_blank" rel="noreferrer">
+                          {link.icon && <i className={link.icon} />} {link.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            <div className="footer-contact-wrap">
+              <a href="/contact" className="footer-contact-btn">
+                <i className="fa-solid fa-envelope" />
+                <span>{isEn ? "Contact the team" : "Contacter l'équipe"}</span>
+              </a>
+            </div>
           </div>
           <div className="container footnote">
-            {footer?.copyright ? footer.copyright.replace('{year}', new Date().getFullYear()) : `© ${new Date().getFullYear()} Pokémon New World — ${t('footer.copyright')}`}
-            {footer?.developedBy && (
-              <span style={{marginLeft: '10px', opacity: 0.7}}>
-                Développé par : {footer.developedBy}
-              </span>
-            )}
-            {footer?.version && (
-              <span style={{marginLeft: '10px', opacity: 0.7}}>
-                {footer.version}
-              </span>
-            )}
+            <span>{footer?.copyright ? footer.copyright.replace('{year}', new Date().getFullYear()) : `© ${new Date().getFullYear()} Pokémon New World — ${t('footer.copyright')}`}</span>
+            {footer?.developedBy && <span className="footnote-sep">·</span>}
+            {footer?.developedBy && <span>Développé par : {footer.developedBy}</span>}
+            {footer?.version && <span className="footnote-sep">·</span>}
+            {footer?.version && <span>{footer.version}</span>}
           </div>
         </footer>
 
