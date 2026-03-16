@@ -25,11 +25,11 @@ app.use('/api/auth', authRoutes);
 // Health check (pour Railway / load balancers)
 app.get('/health', (req, res) => res.status(200).json({ ok: true }));
 
-// Chemins vers les dossiers (volume persistant monté sur /app/data)
-const DATA_DIR = '/app/data';
+// Chemins vers les dossiers (volume persistant en prod ; en dev, config dans le projet)
+const PROJECT_ROOT = path.join(__dirname, '..');
+const DATA_DIR = process.env.DATA_DIR || (process.env.NODE_ENV === 'production' ? '/app/data' : path.join(PROJECT_ROOT, 'data'));
 const NEWS_IMAGES_DIR = path.join(DATA_DIR, 'news-images');
 const CONFIG_DIR = path.join(DATA_DIR, 'config');
-const PROJECT_ROOT = path.join(__dirname, '..');
 const SOURCE_CONFIG_DIR = path.join(PROJECT_ROOT, 'src/config');
 const SOURCE_NEWS_IMAGES_DIR = path.join(PROJECT_ROOT, 'public/news-images');
 
@@ -964,13 +964,17 @@ app.post('/api/contact', async (req, res) => {
     }
     const cat = CONTACT_CATEGORY_LABELS[category] || { label: category, color: 0x95a5a6 };
 
-    const contactWebhookPath = path.join(CONFIG_DIR, 'contact-webhook.json');
     let webhookUrl = null;
-    if (fs.existsSync(contactWebhookPath)) {
-      try {
-        const data = fs.readJsonSync(contactWebhookPath);
-        webhookUrl = data?.webhookUrl?.trim() || null;
-      } catch {}
+    const contactVolumePath = path.join(CONFIG_DIR, 'contact-webhook.json');
+    const contactSeedPath = path.join(SOURCE_CONFIG_DIR, 'contact-webhook.json');
+    for (const p of [contactVolumePath, contactSeedPath]) {
+      if (fs.existsSync(p)) {
+        try {
+          const data = fs.readJsonSync(p);
+          webhookUrl = data?.webhookUrl?.trim() || null;
+          if (webhookUrl) break;
+        } catch {}
+      }
     }
 
     if (webhookUrl && webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
@@ -1006,17 +1010,19 @@ app.post('/api/contact', async (req, res) => {
 
 app.get('/api/config/contact-webhook', (req, res) => {
   try {
-    let data = null;
-    const p = path.join(CONFIG_DIR, 'contact-webhook.json');
-    if (fs.existsSync(p)) {
-      data = fs.readJsonSync(p);
-    } else {
-      const seedPath = path.join(__dirname, '../src/config/contact-webhook.json');
-      if (fs.existsSync(seedPath)) {
-        try { data = fs.readJsonSync(seedPath); } catch {}
-      }
+    let fromVolume = null;
+    let fromSeed = null;
+    const volumePath = path.join(CONFIG_DIR, 'contact-webhook.json');
+    const seedPath = path.join(SOURCE_CONFIG_DIR, 'contact-webhook.json');
+    if (fs.existsSync(volumePath)) {
+      try { fromVolume = fs.readJsonSync(volumePath); } catch {}
     }
-    res.json({ success: true, webhookUrl: data?.webhookUrl || '', backgroundImage: data?.backgroundImage || '' });
+    if (fs.existsSync(seedPath)) {
+      try { fromSeed = fs.readJsonSync(seedPath); } catch {}
+    }
+    const webhookUrl = (fromVolume?.webhookUrl || fromSeed?.webhookUrl || '').trim();
+    const backgroundImage = (fromVolume?.backgroundImage || fromSeed?.backgroundImage || '').trim();
+    res.json({ success: true, webhookUrl, backgroundImage });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
@@ -1034,9 +1040,13 @@ app.put('/api/config/contact-webhook', (req, res) => {
     const opts = { spaces: 2 };
     fs.ensureDirSync(CONFIG_DIR);
     fs.writeJsonSync(path.join(CONFIG_DIR, 'contact-webhook.json'), payload, opts);
-    fs.ensureDirSync(SOURCE_CONFIG_DIR);
-    fs.writeJsonSync(path.join(SOURCE_CONFIG_DIR, 'contact-webhook.json'), payload, opts);
-    autoCommitConfig('contact-webhook.json');
+    try {
+      fs.ensureDirSync(SOURCE_CONFIG_DIR);
+      fs.writeJsonSync(path.join(SOURCE_CONFIG_DIR, 'contact-webhook.json'), payload, opts);
+      autoCommitConfig('contact-webhook.json');
+    } catch (repoErr) {
+      console.warn('Contact webhook: écriture repo ignorée:', repoErr.message);
+    }
     res.json({ success: true });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });

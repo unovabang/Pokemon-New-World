@@ -129,6 +129,9 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Dossier config locale (dev) — en prod on utilise DATA_DIR / volume
+/data/
+
 # Config JSON : maintenant versionnés (source de vérité = Git, comme BDD JSON).
 # Les modifier via l'admin en local puis commit/push pour persister.
 # (Décommenter les lignes ci-dessous pour revenir à "chaque env garde sa config")
