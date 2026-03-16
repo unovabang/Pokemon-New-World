@@ -65,6 +65,11 @@ export default function LorePage() {
                         {t("lorePage.newTag") || "NOUVELLE"}
                       </span>
                     )}
+                    {story.musicYoutubeId && (
+                      <span className="lore-banner-fa" title={isEn ? "Background music" : "Fond sonore"}>
+                        FA
+                      </span>
+                    )}
                     <h2 className="lore-banner-title">{title}</h2>
                     <p className="lore-banner-desc">{description}</p>
                     <span className="lore-banner-btn">
