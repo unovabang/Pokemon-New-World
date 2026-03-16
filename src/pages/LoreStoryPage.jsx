@@ -39,35 +39,40 @@ function getBanner(story, index) {
 }
 
 function renderMarkdown(text) {
-  if (!text) return text;
-  let keyId = 0;
-  function parseInline(str) {
-    const result = [];
-    const boldRe = /\*\*(.+?)\*\*/g;
-    let last = 0;
-    let m;
-    while ((m = boldRe.exec(str)) !== null) {
-      if (m.index > last) result.push(...parseItalic(str.slice(last, m.index)));
-      result.push(<strong key={`b${keyId++}`}>{parseItalic(m[1])}</strong>);
-      last = m.index + m[0].length;
+  if (!text || typeof text !== "string") return text;
+  let k = 0;
+
+  function parseBold(str) {
+    const out = [];
+    let rest = str;
+    while (rest) {
+      const a = rest.indexOf("**");
+      if (a === -1) { out.push(...parseItalic(rest)); break; }
+      const b = rest.indexOf("**", a + 2);
+      if (b === -1) { out.push(...parseItalic(rest)); break; }
+      if (a > 0) out.push(...parseItalic(rest.slice(0, a)));
+      out.push(<strong key={`b${k++}`}>{parseItalic(rest.slice(a + 2, b))}</strong>);
+      rest = rest.slice(b + 2);
     }
-    if (last < str.length) result.push(...parseItalic(str.slice(last)));
-    return result;
+    return out;
   }
+
   function parseItalic(str) {
-    const result = [];
-    const italicRe = /\*(.+?)\*/g;
-    let last = 0;
-    let m;
-    while ((m = italicRe.exec(str)) !== null) {
-      if (m.index > last) result.push(str.slice(last, m.index));
-      result.push(<em key={`i${keyId++}`}>{m[1]}</em>);
-      last = m.index + m[0].length;
+    const out = [];
+    let rest = str;
+    while (rest) {
+      const a = rest.indexOf("*");
+      if (a === -1) { if (rest) out.push(rest); break; }
+      const b = rest.indexOf("*", a + 1);
+      if (b === -1) { out.push(rest); break; }
+      if (a > 0) out.push(rest.slice(0, a));
+      out.push(<em key={`i${k++}`}>{rest.slice(a + 1, b)}</em>);
+      rest = rest.slice(b + 1);
     }
-    if (last < str.length) result.push(str.slice(last));
-    return result;
+    return out;
   }
-  const parts = parseInline(text);
+
+  const parts = parseBold(text);
   return parts.length ? parts : text;
 }
 
