@@ -1976,26 +1976,14 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
   padding: 0 1.5rem;
 }
-/* Contenu du chapitre : centrage absolu au milieu de la page (technique 100vw) */
-.lore-story-page {
-  padding-left: 0;
-  padding-right: 0;
-  overflow-x: hidden;
-}
+/* Contenu du chapitre : cadre centré au milieu de la page */
 .lore-story-content-wrap {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: auto;
-  margin-left: -50vw;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
   display: flex;
   justify-content: center;
-  padding-left: 0;
-  padding-right: 0;
   box-sizing: border-box;
-}
-.lore-story-content-wrap.lore-story-container {
-  margin-left: -50vw !important;
 }
 .lore-story-content {
   max-width: 720px;
@@ -2004,7 +1992,6 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   padding: 3rem 2rem 4rem;
   text-align: center;
   box-sizing: border-box;
-  flex-shrink: 0;
 }
 .lore-story-content .lore-story-back {
   display: inline-flex;
@@ -2107,10 +2094,6 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 @media (min-width: 900px) {
   .lore-story-container {
     margin-left: 140px;
-  }
-  .lore-story-content-wrap.lore-story-container {
-    margin-left: -50vw !important;
-    left: 50%;
   }
 }
 .lore-story-inner {

@@ -60,7 +60,7 @@ export default function LoreStoryPage() {
         <h1 className="lore-story-hero-title">{title}</h1>
       </header>
 
-      <div className="lore-story-container lore-story-content-wrap">
+      <div className="lore-story-content-wrap">
         <div className="lore-story-content">
           <Link to="/lore" className="lore-story-back">
             <i className="fa-solid fa-arrow-left" aria-hidden />
