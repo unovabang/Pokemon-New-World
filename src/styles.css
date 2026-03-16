@@ -1860,6 +1860,29 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   border-color: var(--lore-gold-border);
   transform: scale(1.05);
 }
+/* Icône Nouveau en haut à gauche de la carte */
+.lore-banner-new {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: var(--lore-gold);
+  font-size: 1rem;
+  transition: background 0.25s, border-color 0.25s, transform 0.25s;
+}
+.lore-banner:hover .lore-banner-new {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: var(--lore-gold-border);
+  transform: scale(1.05);
+}
 .lore-banner-content {
   position: relative;
   z-index: 1;
@@ -1963,6 +1986,13 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   .lore-banner-music {
     top: 1rem;
     right: 1rem;
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+  .lore-banner-new {
+    top: 1rem;
+    left: 1rem;
     width: 36px;
     height: 36px;
     font-size: 0.9rem;
@@ -2167,38 +2197,50 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   z-index: 100;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.5rem 0.65rem;
-  background: rgba(5, 9, 20, 0.92);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(5, 9, 20, 0.94);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+}
+.lore-story-music-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  margin-right: 0.15rem;
 }
 .lore-story-music-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   padding: 0;
   border: none;
-  border-radius: 8px;
-  background: rgba(212, 175, 55, 0.12);
+  border-radius: 10px;
+  background: rgba(212, 175, 55, 0.1);
   color: var(--lore-gold);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
 }
 .lore-story-music-btn:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.25);
+  background: rgba(212, 175, 55, 0.22);
   color: #f0e6c4;
+  transform: scale(1.05);
+}
+.lore-story-music-btn:active:not(:disabled) {
+  transform: scale(0.98);
 }
 .lore-story-music-btn:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 .lore-story-music-btn i {
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 /* Footer : cartes chapitre précédent / suivant */
 .lore-story-footer-cards {

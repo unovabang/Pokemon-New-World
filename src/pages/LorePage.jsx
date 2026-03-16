@@ -68,13 +68,16 @@ export default function LorePage() {
                       <i className="fa-solid fa-music" aria-hidden />
                     </span>
                   )}
+                  {story.isNew && (
+                    <span
+                      className="lore-banner-new"
+                      title={isEn ? "New chapter" : "Nouveau chapitre"}
+                      aria-label={isEn ? "New chapter" : "Nouveau chapitre"}
+                    >
+                      <i className="fa-solid fa-sparkles" aria-hidden />
+                    </span>
+                  )}
                   <div className="lore-banner-content">
-                    {story.isNew && (
-                      <span className="lore-banner-tag" title={isEn ? "New chapter" : "Nouveau chapitre"}>
-                        <i className="fa-solid fa-sparkles" aria-hidden />
-                        <span>{t("lorePage.newTag") || "NOUVELLE"}</span>
-                      </span>
-                    )}
                     <h2 className="lore-banner-title">{title}</h2>
                     <p className="lore-banner-desc">{description}</p>
                     <span className="lore-banner-btn">

@@ -12,7 +12,8 @@ const CHAPTER_BANNER_IMAGES = [
 ];
 
 const DEFAULT_VOLUME = 1;
-const VOLUME_STEP = 10;
+const VOLUME_STEP = 5;
+const MIN_VOLUME = 1;
 
 function loadYoutubeAPI() {
   return new Promise((resolve) => {
@@ -47,7 +48,7 @@ export default function LoreStoryPage() {
   const playerRef = useRef(null);
   const containerRef = useRef(null);
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
   const [volumeBeforeMute, setVolumeBeforeMute] = useState(DEFAULT_VOLUME);
 
   const prevStory = storyIndex > 0 ? stories[storyIndex - 1] : null;
@@ -80,7 +81,7 @@ export default function LoreStoryPage() {
         events: {
           onReady(e) {
             playerRef.current = e.target;
-            e.target.setVolume(DEFAULT_VOLUME);
+            e.target.setVolume(0);
           },
         },
       });
@@ -99,8 +100,9 @@ export default function LoreStoryPage() {
 
   const toggleMute = () => {
     if (muted) {
-      setVolume(volumeBeforeMute);
-      if (playerRef.current?.setVolume) playerRef.current.setVolume(volumeBeforeMute);
+      const v = Math.max(MIN_VOLUME, volumeBeforeMute);
+      setVolume(v);
+      if (playerRef.current?.setVolume) playerRef.current.setVolume(v);
       setMuted(false);
     } else {
       setVolumeBeforeMute(volume);
@@ -112,11 +114,12 @@ export default function LoreStoryPage() {
 
   const volumeDown = () => {
     if (muted) return;
-    setPlayerVolume(volume - VOLUME_STEP);
+    const next = Math.max(MIN_VOLUME, volume - VOLUME_STEP);
+    setPlayerVolume(next);
   };
   const volumeUp = () => {
     if (muted) return;
-    setPlayerVolume(volume + VOLUME_STEP);
+    setPlayerVolume(Math.min(100, volume + VOLUME_STEP));
   };
 
   if (!story) {
@@ -176,11 +179,12 @@ export default function LoreStoryPage() {
             title="Musique de fond"
           />
           <div className="lore-story-music-tooltip" role="group" aria-label="Contrôle du son">
+            <span className="lore-story-music-label">{isEn ? "Sound" : "Son"}</span>
             <button
               type="button"
               className="lore-story-music-btn"
               onClick={toggleMute}
-              title={muted ? (isEn ? "Unmute" : "Réactiver le son") : (isEn ? "Mute" : "Couper le son")}
+              title={muted ? (isEn ? "Unmute (min volume)" : "Réactiver le son (volume min)") : (isEn ? "Mute" : "Couper le son")}
               aria-label={muted ? "Réactiver le son" : "Couper le son"}
             >
               <i className={muted ? "fa-solid fa-volume-xmark" : "fa-solid fa-volume-low"} aria-hidden />
@@ -189,21 +193,21 @@ export default function LoreStoryPage() {
               type="button"
               className="lore-story-music-btn"
               onClick={volumeDown}
-              disabled={muted || volume <= 0}
-              title={isEn ? "Volume down" : "Baisser le son"}
+              disabled={muted || volume <= MIN_VOLUME}
+              title={isEn ? "Lower volume" : "Baisser le son"}
               aria-label="Baisser le son"
             >
-              <i className="fa-solid fa-volume-off" aria-hidden />
+              <i className="fa-solid fa-minus" aria-hidden />
             </button>
             <button
               type="button"
               className="lore-story-music-btn"
               onClick={volumeUp}
               disabled={muted || volume >= 100}
-              title={isEn ? "Volume up" : "Augmenter le son"}
+              title={isEn ? "Raise volume" : "Augmenter le son"}
               aria-label="Augmenter le son"
             >
-              <i className="fa-solid fa-volume-high" aria-hidden />
+              <i className="fa-solid fa-plus" aria-hidden />
             </button>
           </div>
         </>
