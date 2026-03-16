@@ -40,17 +40,34 @@ function getBanner(story, index) {
 
 function renderMarkdown(text) {
   if (!text) return text;
-  const parts = [];
-  const regex = /(\*\*(.+?)\*\*|\*(.+?)\*)/g;
-  let lastIndex = 0;
-  let match;
-  while ((match = regex.exec(text)) !== null) {
-    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
-    if (match[2]) parts.push(<strong key={match.index}>{match[2]}</strong>);
-    else if (match[3]) parts.push(<em key={match.index}>{match[3]}</em>);
-    lastIndex = match.index + match[0].length;
+  let keyId = 0;
+  function parseInline(str) {
+    const result = [];
+    const boldRe = /\*\*(.+?)\*\*/g;
+    let last = 0;
+    let m;
+    while ((m = boldRe.exec(str)) !== null) {
+      if (m.index > last) result.push(...parseItalic(str.slice(last, m.index)));
+      result.push(<strong key={`b${keyId++}`}>{...parseItalic(m[1])}</strong>);
+      last = m.index + m[0].length;
+    }
+    if (last < str.length) result.push(...parseItalic(str.slice(last)));
+    return result;
   }
-  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  function parseItalic(str) {
+    const result = [];
+    const italicRe = /\*(.+?)\*/g;
+    let last = 0;
+    let m;
+    while ((m = italicRe.exec(str)) !== null) {
+      if (m.index > last) result.push(str.slice(last, m.index));
+      result.push(<em key={`i${keyId++}`}>{m[1]}</em>);
+      last = m.index + m[0].length;
+    }
+    if (last < str.length) result.push(str.slice(last));
+    return result;
+  }
+  const parts = parseInline(text);
   return parts.length ? parts : text;
 }
 
