@@ -81,8 +81,7 @@ const Sidebar = () => {
       >
         <div className="sidebar-inner" style={innerStyle}>
           <div className="sidebar-header">
-            <img src="/logo.png" alt="" className="sidebar-logo" />
-            <span className="sidebar-title">Menu</span>
+            <img src="/logo.png" alt="Pokémon New World" className="sidebar-logo" />
             <button
               type="button"
               className="sidebar-close"

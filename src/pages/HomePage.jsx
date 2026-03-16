@@ -421,38 +421,43 @@ const HomePage = () => {
           onClose={() => setOpenDownload(false)}
           title={t('modals.download.title')}
         >
-          <div className="download-modal-content">
-            <div className="modal-buttons">
-              <a 
-                className="btn btn-primary" 
-                href={content.downloads.windows} 
+          <div className="dl-modal">
+            <div className="dl-modal-cards">
+              <a
+                className="dl-modal-card dl-modal-card--game"
+                href={content.downloads.windows}
                 onClick={() => setOpenDownload(false)}
               >
-                <i className="fa-solid fa-download"></i> {t('buttons.downloadGame')}
+                <span className="dl-modal-card-icon"><i className="fa-solid fa-gamepad" /></span>
+                <span className="dl-modal-card-title">{t('buttons.downloadGame')}</span>
+                <span className="dl-modal-card-sub">{isEn ? "Full game (Windows)" : "Jeu complet (Windows)"}</span>
+                <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
               </a>
-              <a 
-                className="btn btn-primary" 
-                href={content.downloads.patch} 
+              <a
+                className="dl-modal-card dl-modal-card--patch"
+                href={content.downloads.patch}
                 onClick={() => setOpenDownload(false)}
               >
-                <i className="fa-solid fa-file-arrow-up"></i> {t('buttons.downloadPatch')}
+                <span className="dl-modal-card-icon"><i className="fa-solid fa-file-zipper" /></span>
+                <span className="dl-modal-card-title">{t('buttons.downloadPatch')}</span>
+                <span className="dl-modal-card-sub">{isEn ? "Latest update" : "Dernière mise à jour"}</span>
+                <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
               </a>
             </div>
-            <div className="patch-instructions">
-              <h3>{t('modals.download.patchInstructions.title')}</h3>
-              <p>
-                {t('modals.download.patchInstructions.description')}
-              </p>
-              <p>{t('modals.download.patchInstructions.videoNote')}</p>
-              <button 
-                className="btn btn-ghost" 
-                onClick={() => {
-                  setOpenExplanations(true);
-                  setOpenDownload(false); 
-                }}
-              >
-                <i className="fa-solid fa-play"></i> {t('buttons.watchVideo')}
-              </button>
+            <div className="dl-modal-info">
+              <div className="dl-modal-info-icon"><i className="fa-solid fa-circle-info" /></div>
+              <div className="dl-modal-info-body">
+                <h4>{t('modals.download.patchInstructions.title')}</h4>
+                <p>{t('modals.download.patchInstructions.description')}</p>
+                <p className="dl-modal-info-note">{t('modals.download.patchInstructions.videoNote')}</p>
+                <button
+                  type="button"
+                  className="dl-modal-video-btn"
+                  onClick={() => { setOpenExplanations(true); setOpenDownload(false); }}
+                >
+                  <i className="fa-solid fa-play" /> {t('buttons.watchVideo')}
+                </button>
+              </div>
             </div>
           </div>
         </Modal>
