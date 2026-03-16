@@ -1632,7 +1632,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   background:rgba(0,0,0,.15);
   position:relative;
 }
-.sidebar-logo{height:48px; width:auto; object-fit:contain; filter:drop-shadow(0 0 12px rgba(126,205,242,.2))}
+.sidebar-logo{height:72px; width:auto; object-fit:contain; filter:drop-shadow(0 0 14px rgba(126,205,242,.25))}
 .sidebar-close{
   position:absolute;
   top:1rem; right:1rem;
