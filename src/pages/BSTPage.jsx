@@ -237,13 +237,13 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
           if (slots.length === 0) return null;
           return (
             <div className="bst-modal-talents-wrap">
-              <div className="bst-modal-talents-label"><i className="fa-solid fa-star" aria-hidden /> Talents jusqu'à Talent Caché</div>
+              <div className="bst-modal-talents-label"><i className="fa-solid fa-star" aria-hidden /> Talents</div>
               <div className="bst-modal-talents-list">
                 {slots.map((slot, i) => {
-                  const talentTitle = i === 2 ? "Talent Caché" : `Talent ${i + 1}`;
+                  const talentTitle = i === 2 ? <><i className="fa-solid fa-sparkles" aria-hidden /> Talent Caché</> : <><i className={`fa-solid fa-${i + 1}`} aria-hidden /> Talent {i + 1}</>;
                   return (
                     <div key={i} className="bst-modal-talent-slot">
-                      <div className="bst-modal-talent-title"><i className="fa-solid fa-sparkles" aria-hidden /> {talentTitle}</div>
+                      <div className="bst-modal-talent-title">{talentTitle}</div>
                       {slot.name && <div className="bst-modal-talent-name"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> {slot.name}</div>}
                       {slot.desc && <div className="bst-modal-talent-desc">{slot.desc}</div>}
                     </div>
