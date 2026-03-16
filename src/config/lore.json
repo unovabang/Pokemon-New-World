@@ -1,0 +1,79 @@
+{
+  "stories": [
+    {
+      "slug": "chant-des-origines",
+      "title": "Le chant des origines",
+      "titleEn": "The Song of Origins",
+      "description": "Aux premiers jours de Bélamie, une légende raconte comment les terres et les Pokémon trouvèrent leur harmonie. Un récit fondateur qui lie le passé au présent.",
+      "descriptionEn": "In the early days of Bélamie, a legend tells how the land and Pokémon found their harmony. A founding tale that binds the past to the present.",
+      "backgroundImage": "",
+      "isNew": true,
+      "author": "Chroniques de Bélamie",
+      "authorEn": "Bélamie Chronicles",
+      "intro": "Ceci est le premier des récits recueillis par les gardiens de la mémoire de la région.",
+      "introEn": "This is the first of the tales collected by the guardians of the region's memory.",
+      "content": [
+        "Bélamie n’a pas toujours été ce qu’elle est aujourd’hui. Avant les villes et les routes, avant les Dresseurs et les arènes, il n’y avait que le vent, les forêts et une mélodie que seuls les plus anciens des Pokémon se souviennent encore.",
+        "On dit que cette mélodie — le Chant des origines — résonna un matin où la brume enveloppait encore les vallées. Elle venait de nulle part et de partout à la fois, comme si la terre elle-même avait voulu se raconter.",
+        "Les premiers habitants de la région l’entendirent et comprirent que ce lieu était différent. Ici, les Pokémon et les humains n’étaient pas destinés à se conquérir, mais à coexister. Le Chant des origines scella cette promesse.",
+        "Aujourd’hui, les Dresseurs qui parcourent Bélamie ignorent souvent cette histoire. Pourtant, dans les moments de silence — au sommet d’une montagne, au bord d’un lac à l’aube — certains jurent entendre encore, très loin, un écho de ce chant."
+      ],
+      "contentEn": [
+        "Bélamie was not always what it is today. Before the cities and the roads, before the Trainers and the Gyms, there was only the wind, the forests, and a melody that only the oldest Pokémon still remember.",
+        "They say this melody — the Song of Origins — rang out one morning when the mist still shrouded the valleys. It came from nowhere and everywhere at once, as if the land itself had wanted to tell its story.",
+        "The first inhabitants of the region heard it and understood that this place was different. Here, Pokémon and humans were not meant to conquer each other, but to coexist. The Song of Origins sealed that promise.",
+        "Today, Trainers who travel through Bélamie often ignore this story. Yet in moments of silence — atop a mountain, by a lake at dawn — some swear they still hear, far away, an echo of that song."
+      ]
+    },
+    {
+      "slug": "un-echange-equitable",
+      "title": "Un échange équitable",
+      "titleEn": "A Fair Exchange",
+      "description": "Dans un village isolé de Bélamie, un vieux forgeron et un Pokémon de type Aspic ont scellé un pacte qui dépasse la simple capture. Une histoire de don et de confiance.",
+      "descriptionEn": "In an isolated village of Bélamie, an old blacksmith and an Aspic-type Pokémon sealed a pact that goes beyond mere capture. A story of giving and trust.",
+      "backgroundImage": "",
+      "isNew": false,
+      "author": "Récits des artisans",
+      "authorEn": "Artisans' Tales",
+      "intro": "Rapporté par les habitants du hameau de Rochecreuse.",
+      "introEn": "As told by the inhabitants of the hamlet of Rochecreuse.",
+      "content": [
+        "Le forgeron ne cherchait pas de Pokémon. Il cherchait du minerai, et ce jour-là, au fond d’une grotte humide, il en avait trouvé — mais aussi un être blessé, recroquevillé contre la paroi.",
+        "Plutôt que de s’enfuir ou de brandir une Poké Ball, le forgeron posa son marteau, sortit de l’eau et un peu de pain, et les laissa à portée. Il ne regarda pas l’autre en face ; il attendit.",
+        "Le Pokémon — un Aspic des cavernes — finit par s’approcher. Il mangea, but, et au lieu de disparaître, il déposa aux pieds du forgeron un éclat de pierre lumineuse, rare et précieuse.",
+        "Depuis ce jour, le forgeron et ce Pokémon travaillent côte à côte. Pas comme maître et captif : comme partenaires. « Un échange équitable », dit le vieil homme à quiconque lui demande le secret de sa lame. « J’ai donné ce que j’avais. Il m’a rendu ce qu’il pouvait. »"
+      ],
+      "contentEn": [
+        "The blacksmith was not looking for a Pokémon. He was looking for ore, and that day, in the depths of a damp cave, he had found some — but also a wounded creature, curled against the wall.",
+        "Rather than flee or raise a Poké Ball, the blacksmith set down his hammer, brought out water and a little bread, and left them within reach. He did not look the other in the eye; he waited.",
+        "The Pokémon — a cave Aspic — eventually approached. It ate, drank, and instead of disappearing, it laid at the blacksmith's feet a shard of luminous stone, rare and precious.",
+        "Since that day, the blacksmith and this Pokémon have worked side by side. Not as master and captive: as partners. \"A fair exchange,\" the old man says to anyone who asks the secret of his blade. \"I gave what I had. He gave back what he could.\""
+      ]
+    },
+    {
+      "slug": "les-ombres-de-malice",
+      "title": "Les ombres de Malice",
+      "titleEn": "The Shadows of Malice",
+      "description": "La région de Bélamie abrite un type redouté : le type Malice. Ce chapitre explore les mythes et les malentendus qui entourent ces Pokémon.",
+      "descriptionEn": "The Bélamie region is home to a feared type: the Malice type. This chapter explores the myths and misunderstandings surrounding these Pokémon.",
+      "backgroundImage": "",
+      "isNew": true,
+      "author": "Archives de l’Ordre des Sages",
+      "authorEn": "Archives of the Order of Sages",
+      "intro": "Extrait des manuscrits conservés à la Grande Bibliothèque de Bélamie.",
+      "introEn": "Excerpt from manuscripts kept at the Great Library of Bélamie.",
+      "content": [
+        "Malice. Un mot qui fait frémir les voyageurs et que les enfants utilisent pour se faire peur. Pourtant, les Sages de Bélamie ont toujours soutenu que ce type ne désigne pas le mal en soi, mais une énergie ancienne, sombre et mal comprise.",
+        "Les Pokémon de type Malice ne naissent pas du désir de nuire. Ils sont le reflet d’émotions que les humains préfèrent cacher : la jalousie, la colère, la tristesse. En les affrontant, les Dresseurs apprennent à se connaître.",
+        "La légende dit qu’au cœur des terres Malice, une clairière existe où ces Pokémon se rassemblent lors des nuits sans lune. Là, ils ne se battent pas ; ils écoutent. Ceux qui y sont entrés par erreur en sont ressortis changés — non pas corrompus, mais apaisés.",
+        "Les ombres de Malice ne sont donc pas des ennemies. Elles sont un miroir. Et comme tout miroir, elles ne montrent que ce que l’on porte déjà en soi."
+      ],
+      "contentEn": [
+        "Malice. A word that makes travellers shudder and that children use to scare themselves. Yet the Sages of Bélamie have always argued that this type does not denote evil itself, but an ancient, dark and misunderstood energy.",
+        "Malice-type Pokémon are not born from a desire to harm. They are the reflection of emotions that humans prefer to hide: jealousy, anger, sorrow. By facing them, Trainers learn about themselves.",
+        "Legend has it that at the heart of the Malice lands, a clearing exists where these Pokémon gather on moonless nights. There, they do not fight; they listen. Those who have entered by mistake have left changed — not corrupted, but at peace.",
+        "The shadows of Malice are therefore not enemies. They are a mirror. And like any mirror, they only show what one already carries within."
+      ]
+    }
+  ]
+}

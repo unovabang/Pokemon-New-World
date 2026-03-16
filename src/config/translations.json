@@ -91,7 +91,9 @@
     },
     "lorePage": {
       "subtitle": "L'histoire et l'univers de Pokémon New World.",
-      "placeholder": "Le contenu du lore sera ajouté ici."
+      "placeholder": "Le contenu du lore sera ajouté ici.",
+      "newTag": "NOUVELLE",
+      "readStory": "LIRE L'HISTOIRE"
     }
   },
   "en": {
@@ -186,7 +188,9 @@
     },
     "lorePage": {
       "subtitle": "The story and universe of Pokémon New World.",
-      "placeholder": "Lore content will be added here."
+      "placeholder": "Lore content will be added here.",
+      "newTag": "NEW",
+      "readStory": "READ THE STORY"
     }
   }
 }

@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 // Mêmes intitulés que le launcher (pnw-launcher) — to = route ou #id
 const SIDEBAR_ITEMS = [
   { id: "accueil", label: "Accueil", icon: "fa-house", to: "/" },
+  { id: "lore", label: "Le Lore", icon: "fa-scroll", to: "/lore", highlight: true },
   { id: "pokedex", label: "Pokedex", icon: "fa-book", to: "/pokedex" },
   { id: "guide", label: "Guide", icon: "fa-book-open", to: "/guide" },
-  { id: "lore", label: "Le Lore", icon: "fa-scroll", to: "/lore", highlight: true },
   { id: "patchnotes", label: "PatchNotes", icon: "fa-file-lines", to: "/patchnotes" },
   { id: "items", label: "Items locations", icon: "fa-location-dot", to: "/item-location" },
   { id: "evs", label: "EVs locations", icon: "fa-location-dot", to: "/evs-location" },
