@@ -8,7 +8,7 @@ import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import { initDb } from './db.js';
 import authRoutes from './auth.js';
-import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command, ListMultipartUploadsCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -977,17 +977,27 @@ app.post('/api/r2/complete-upload', async (req, res) => {
   try {
     if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
     const { key, uploadId, parts } = req.body;
-    if (!key || !uploadId || !parts) {
+    if (!key || !uploadId || !parts || !Array.isArray(parts)) {
       return res.status(400).json({ success: false, error: 'key, uploadId, parts requis' });
     }
+
+    // R2/S3 exige des ETag entre guillemets et les parts triées par PartNumber
+    const normalizeEtag = (etag) => {
+      const s = String(etag || '').trim();
+      if (!s) return '""';
+      return s.startsWith('"') && s.endsWith('"') ? s : `"${s}"`;
+    };
+    const sortedParts = [...parts].sort((a, b) => (a.partNumber || 0) - (b.partNumber || 0));
+    const uploadParts = sortedParts.map(p => ({
+      PartNumber: Number(p.partNumber),
+      ETag: normalizeEtag(p.etag),
+    }));
 
     const cmd = new CompleteMultipartUploadCommand({
       Bucket: R2_BUCKET,
       Key: key,
       UploadId: uploadId,
-      MultipartUpload: {
-        Parts: parts.map(p => ({ PartNumber: p.partNumber, ETag: p.etag })),
-      },
+      MultipartUpload: { Parts: uploadParts },
     });
     await r2Client.send(cmd);
     const publicUrl = R2_PUBLIC_URL ? `${R2_PUBLIC_URL}/${key}` : key;
@@ -1009,6 +1019,23 @@ app.post('/api/r2/abort-upload', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('R2 abort-upload error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// GET /api/r2/list-multipart-uploads — Liste les uploads multipart en cours (incomplets)
+app.get('/api/r2/list-multipart-uploads', async (req, res) => {
+  try {
+    if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
+    const result = await r2Client.send(new ListMultipartUploadsCommand({ Bucket: R2_BUCKET, MaxUploads: 100 }));
+    const uploads = (result.Uploads || []).map(u => ({
+      key: u.Key,
+      uploadId: u.UploadId,
+      initiated: u.Initiated,
+    }));
+    res.json({ success: true, uploads });
+  } catch (error) {
+    console.error('R2 list-multipart-uploads error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });

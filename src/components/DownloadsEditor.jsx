@@ -265,6 +265,7 @@ const DownloadsEditor = ({ onSave }) => {
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [r2Objects, setR2Objects] = useState([]);
+  const [r2IncompleteUploads, setR2IncompleteUploads] = useState([]);
   const [modalConfig, setModalConfig] = useState({
     title: '',
     message: '',
@@ -275,6 +276,7 @@ const DownloadsEditor = ({ onSave }) => {
   useEffect(() => {
     loadDownloads();
     loadR2Objects();
+    loadR2IncompleteUploads();
   }, []);
 
   const loadDownloads = async () => {
@@ -303,6 +305,39 @@ const DownloadsEditor = ({ onSave }) => {
       const data = await res.json();
       if (data.success) setR2Objects(data.objects || []);
     } catch { /* R2 non configuré, on ignore */ }
+  };
+
+  const loadR2IncompleteUploads = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/r2/list-multipart-uploads`);
+      const data = await res.json();
+      if (data.success) setR2IncompleteUploads(data.uploads || []);
+    } catch { /* R2 non configuré, on ignore */ }
+  };
+
+  const handleAbortMultipartUpload = (key, uploadId) => {
+    showConfirm(
+      'Abandonner l\'upload',
+      `Supprimer l\'upload incomplet "${key}" ? Les parties déjà envoyées seront libérées.`,
+      async () => {
+        try {
+          const res = await fetch(`${API_BASE}/r2/abort-upload`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key, uploadId }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            showMessage('Succès', 'Upload incomplet abandonné.', 'success');
+            loadR2IncompleteUploads();
+          } else {
+            throw new Error(data.error);
+          }
+        } catch (error) {
+          showMessage('Erreur', `Impossible d'abandonner: ${error.message}`, 'error');
+        }
+      }
+    );
   };
 
   const showMessage = (title, message, type = 'info') => {
@@ -498,6 +533,47 @@ const DownloadsEditor = ({ onSave }) => {
             https://www.youtube.com/embed/ID_VIDEO
           </div>
         </div>
+
+        {/* Uploads incomplets (multipart non finalisés) */}
+        {r2IncompleteUploads.length > 0 && (
+          <div style={{
+            background: 'rgba(220, 53, 69, 0.1)',
+            borderRadius: '10px',
+            padding: '2rem',
+            border: '1px solid rgba(220, 53, 69, 0.3)',
+          }}>
+            <h3 style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#dc3545' }}>
+              <i className="fa-solid fa-triangle-exclamation"></i>
+              Uploads incomplets
+            </h3>
+            <p style={{ fontSize: '0.85rem', opacity: 0.8, marginBottom: '1rem' }}>
+              Ces uploads ont été commencés mais pas finalisés. Abandonnez-les pour libérer l’espace et pouvoir réessayer.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {r2IncompleteUploads.map((u) => (
+                <div key={u.uploadId} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.75rem 1rem',
+                  background: 'rgba(255,255,255,0.05)',
+                  borderRadius: '8px',
+                  gap: '1rem',
+                  flexWrap: 'wrap',
+                }}>
+                  <div style={{ flex: 1, minWidth: '150px', wordBreak: 'break-all' }}>{u.key}</div>
+                  <button
+                    onClick={() => handleAbortMultipartUpload(u.key, u.uploadId)}
+                    className="btn btn-ghost"
+                    style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem', color: '#dc3545' }}
+                  >
+                    <i className="fa-solid fa-xmark"></i> Abandonner
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Fichiers sur R2 */}
         {r2Objects.length > 0 && (
