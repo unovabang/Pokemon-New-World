@@ -7,7 +7,8 @@ const API_BASE = import.meta.env.VITE_API_URL
     ? `${window.location.protocol}//${window.location.hostname}:3001/api`
     : `${window.location.origin}/api`;
 
-const CHUNK_SIZE = 100 * 1024 * 1024; // 100 MB per part
+const CHUNK_SIZE = 10 * 1024 * 1024; // 10 MB per part (S3 minimum = 5 MB)
+const MAX_RETRIES = 3;
 
 function formatFileSize(bytes) {
   if (!bytes) return '0 B';
@@ -16,6 +17,20 @@ function formatFileSize(bytes) {
   let size = bytes;
   while (size >= 1024 && i < units.length - 1) { size /= 1024; i++; }
   return `${size.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
+}
+
+async function uploadPartWithRetry(url, chunk, retries = MAX_RETRIES) {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, { method: 'PUT', body: chunk });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const etag = res.headers.get('ETag');
+      return etag;
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise(r => setTimeout(r, 1000 * attempt));
+    }
+  }
 }
 
 function useR2Upload() {
@@ -31,6 +46,7 @@ function useR2Upload() {
     setStatus('Initialisation...');
 
     try {
+      // 1. Start multipart upload (via notre serveur)
       const startRes = await fetch(`${API_BASE}/r2/start-upload`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -41,8 +57,19 @@ function useR2Upload() {
 
       const { uploadId, key } = startData;
       const totalParts = Math.ceil(file.size / CHUNK_SIZE);
-      const parts = [];
 
+      // 2. Get presigned URLs for all parts (via notre serveur)
+      setStatus('Préparation des URLs...');
+      const urlsRes = await fetch(`${API_BASE}/r2/get-presigned-urls`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, uploadId, totalParts }),
+      });
+      const urlsData = await urlsRes.json();
+      if (!urlsData.success) throw new Error(urlsData.error || 'Échec génération URLs');
+
+      // 3. Upload each part directly to R2 (browser → R2, no server proxy)
+      const parts = [];
       for (let i = 0; i < totalParts; i++) {
         if (abortRef.current) {
           await fetch(`${API_BASE}/r2/abort-upload`, {
@@ -57,26 +84,16 @@ function useR2Upload() {
         const end = Math.min(start + CHUNK_SIZE, file.size);
         const chunk = file.slice(start, end);
         const partNum = i + 1;
+        const presignedUrl = urlsData.urls[i].url;
 
-        setStatus(`Envoi partie ${partNum}/${totalParts} (${formatFileSize(end - start)})...`);
+        setStatus(`Envoi ${partNum}/${totalParts} (${formatFileSize(end - start)}) — ${formatFileSize(file.size)} total`);
 
-        const partRes = await fetch(`${API_BASE}/r2/upload-part`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/octet-stream',
-            key,
-            uploadid: uploadId,
-            partnum: String(partNum),
-          },
-          body: chunk,
-        });
-        const partData = await partRes.json();
-        if (!partData.success) throw new Error(partData.error || `Échec partie ${partNum}`);
-
-        parts.push({ partNumber: partNum, etag: partData.etag });
+        const etag = await uploadPartWithRetry(presignedUrl, chunk);
+        parts.push({ partNumber: partNum, etag });
         setProgress(Math.round(((i + 1) / totalParts) * 100));
       }
 
+      // 4. Complete multipart upload (via notre serveur)
       setStatus('Finalisation...');
       const completeRes = await fetch(`${API_BASE}/r2/complete-upload`, {
         method: 'POST',

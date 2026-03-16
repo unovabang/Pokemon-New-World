@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import { initDb } from './db.js';
 import authRoutes from './auth.js';
 import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -944,26 +945,29 @@ app.post('/api/r2/start-upload', async (req, res) => {
   }
 });
 
-// PUT /api/r2/upload-part — Upload a single part (body = raw binary)
-app.put('/api/r2/upload-part', express.raw({ type: '*/*', limit: '110mb' }), async (req, res) => {
+// POST /api/r2/get-presigned-urls — Generate presigned URLs for direct browser→R2 upload
+app.post('/api/r2/get-presigned-urls', async (req, res) => {
   try {
     if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
-    const { key, uploadid: uploadId, partnum } = req.headers;
-    if (!key || !uploadId || !partnum) {
-      return res.status(400).json({ success: false, error: 'headers key, uploadid, partnum requis' });
+    const { key, uploadId, totalParts } = req.body;
+    if (!key || !uploadId || !totalParts) {
+      return res.status(400).json({ success: false, error: 'key, uploadId, totalParts requis' });
     }
 
-    const cmd = new UploadPartCommand({
-      Bucket: R2_BUCKET,
-      Key: key,
-      UploadId: uploadId,
-      PartNumber: parseInt(partnum, 10),
-      Body: req.body,
-    });
-    const result = await r2Client.send(cmd);
-    res.json({ success: true, etag: result.ETag });
+    const urls = [];
+    for (let i = 1; i <= totalParts; i++) {
+      const cmd = new UploadPartCommand({
+        Bucket: R2_BUCKET,
+        Key: key,
+        UploadId: uploadId,
+        PartNumber: i,
+      });
+      const url = await getSignedUrl(r2Client, cmd, { expiresIn: 3600 });
+      urls.push({ partNumber: i, url });
+    }
+    res.json({ success: true, urls });
   } catch (error) {
-    console.error('R2 upload-part error:', error);
+    console.error('R2 get-presigned-urls error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
