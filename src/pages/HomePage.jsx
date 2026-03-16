@@ -91,21 +91,25 @@ const HomePage = () => {
   const [patchNotesFromApi, setPatchNotesFromApi] = useState(null);
 
   // Charger les configs site, external, news, downloads et patchnotes depuis l'API
+  // Chaque fetch est indépendant : un échec n'empêche pas les autres de charger
   useEffect(() => {
     let cancelled = false;
+    const safeFetch = (url) => fetch(url).then((r) => r.json()).catch(() => null);
+
     Promise.all([
-      fetch(`${API_BASE}/config/site?t=${Date.now()}`).then((r) => r.json()),
-      fetch(`${API_BASE}/config/external?t=${Date.now()}`).then((r) => r.json()),
-      fetch(`${API_BASE}/config/news?t=${Date.now()}`).then((r) => r.json()),
-      fetch(`${API_BASE}/downloads?t=${Date.now()}`).then((r) => r.json()),
-      fetch(`${API_BASE}/patchnotes/${language}?t=${Date.now()}`).then((r) => r.json())
+      safeFetch(`${API_BASE}/config/site?t=${Date.now()}`),
+      safeFetch(`${API_BASE}/config/external?t=${Date.now()}`),
+      safeFetch(`${API_BASE}/config/news?t=${Date.now()}`),
+      safeFetch(`${API_BASE}/downloads?t=${Date.now()}`),
+      safeFetch(`${API_BASE}/patchnotes/${language}?t=${Date.now()}`)
     ]).then(([siteData, externalData, newsData, downloadsData, patchData]) => {
-      if (!cancelled && siteData?.success && siteData?.config) setSiteConfigFromApi(siteData.config);
-      if (!cancelled && externalData?.success && externalData?.config) setExternalConfigFromApi(externalData.config);
-      if (!cancelled && newsData?.success && newsData?.config) setNewsConfigFromApi(newsData.config);
-      if (!cancelled && downloadsData?.success && downloadsData?.downloads) setDownloadsFromApi(downloadsData.downloads);
-      if (!cancelled && patchData?.success && patchData?.patchnotes) setPatchNotesFromApi(patchData.patchnotes);
-    }).catch(() => {});
+      if (cancelled) return;
+      if (siteData?.success && siteData?.config) setSiteConfigFromApi(siteData.config);
+      if (externalData?.success && externalData?.config) setExternalConfigFromApi(externalData.config);
+      if (newsData?.success && newsData?.config) setNewsConfigFromApi(newsData.config);
+      if (downloadsData?.success && downloadsData?.downloads) setDownloadsFromApi(downloadsData.downloads);
+      if (patchData?.success && patchData?.patchnotes) setPatchNotesFromApi(patchData.patchnotes);
+    });
     return () => { cancelled = true; };
   }, [language]);
 

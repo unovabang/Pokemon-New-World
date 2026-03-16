@@ -1096,7 +1096,13 @@ app.get('/api/downloads/manifest', (req, res) => {
 // API spécifique pour les téléchargements
 app.get('/api/downloads', (req, res) => {
   try {
-    const downloadsData = getConfig('downloads');
+    let downloadsData = getConfig('downloads');
+    if (!downloadsData) {
+      const seedPath = path.join(SOURCE_CONFIG_DIR, 'downloads.json');
+      if (fs.existsSync(seedPath)) {
+        try { downloadsData = fs.readJsonSync(seedPath); } catch (_) { /* ignore */ }
+      }
+    }
     res.json({ success: true, downloads: downloadsData || {} });
   } catch (error) {
     console.error('❌ Erreur API /api/downloads:', error);
