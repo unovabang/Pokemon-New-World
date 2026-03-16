@@ -67,6 +67,16 @@ export default function SidebarEditor({ onSave }) {
     setItems((prev) => prev.map((item, i) => (i === index ? { ...item, [key]: value } : item)));
   };
 
+  const moveItem = (index, dir) => {
+    const j = index + dir;
+    if (j < 0 || j >= items.length) return;
+    setItems((prev) => {
+      const arr = [...prev];
+      [arr[index], arr[j]] = [arr[j], arr[index]];
+      return arr;
+    });
+  };
+
   if (loading) return <p style={{ color: "rgba(255,255,255,0.5)", padding: "1rem 0" }}><i className="fa-solid fa-spinner fa-spin" /> Chargement...</p>;
 
   return (
@@ -120,6 +130,14 @@ export default function SidebarEditor({ onSave }) {
                 />
                 <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)", flexShrink: 0 }}>{item.to}</span>
               </div>
+              <div style={{ display: "flex", gap: "0.25rem", flexShrink: 0 }}>
+                <button type="button" onClick={() => moveItem(i, -1)} disabled={i === 0} className="admin-panel-btn admin-panel-btn--secondary" style={arrowBtnStyle} title="Monter">
+                  <i className="fa-solid fa-arrow-up" />
+                </button>
+                <button type="button" onClick={() => moveItem(i, 1)} disabled={i === items.length - 1} className="admin-panel-btn admin-panel-btn--secondary" style={arrowBtnStyle} title="Descendre">
+                  <i className="fa-solid fa-arrow-down" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -138,3 +156,4 @@ const labelStyle = { display: "flex", flexDirection: "column", gap: "0.3rem" };
 const spanStyle = { fontSize: "0.8rem", fontWeight: 600, color: "rgba(255,255,255,0.65)", textTransform: "uppercase", letterSpacing: "0.06em" };
 const inputStyle = { padding: "0.5rem 0.7rem", borderRadius: 8, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" };
 const rowCard = { display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.55rem 0.7rem", borderRadius: 10, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" };
+const arrowBtnStyle = { padding: "0.35rem 0.5rem", fontSize: "0.75rem", minWidth: 0 };
