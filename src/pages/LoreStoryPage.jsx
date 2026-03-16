@@ -208,7 +208,7 @@ export default function LoreStoryPage() {
         <div className="lore-story-hero-overlay" aria-hidden />
         <div className="lore-story-hero-inner">
           <h1 className="lore-story-hero-title">{title}</h1>
-          {description && <p className="lore-story-hero-description">{description}</p>}
+          {description && <p className="lore-story-hero-description">{renderMarkdown(description)}</p>}
         </div>
       </header>
 
@@ -222,7 +222,7 @@ export default function LoreStoryPage() {
           <span className="lore-story-chapter-label">{isEn ? "Chapter" : "Chapitre"}</span>
           <h2 className="lore-story-content-title">{title}</h2>
           <div className="lore-story-meta">
-            <p className="lore-story-intro">{intro}</p>
+            <p className="lore-story-intro">{renderMarkdown(intro)}</p>
             <p className="lore-story-author">{isEn ? "Reported by" : "Rapporté par"} {author}.</p>
           </div>
           <div className="lore-story-body">
