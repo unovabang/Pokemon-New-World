@@ -1094,6 +1094,18 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   border-radius: 10px;
   border: 1px solid rgba(126,205,242,.1);
 }
+.bst-modal-talent-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--primary-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.bst-modal-talent-title i { opacity: .9; font-size: .65rem; }
 .bst-modal-talent-name {
   font-size: 0.85rem;
   font-weight: 600;
