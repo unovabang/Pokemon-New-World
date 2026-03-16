@@ -1696,9 +1696,20 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   background-position: center;
   background-repeat: no-repeat;
   background-color: var(--bg);
+  position: relative;
+}
+.lore-page-bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: rgba(5, 9, 20, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
 }
 .lore-page-inner {
   position: relative;
+  z-index: 1;
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
@@ -1710,23 +1721,29 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 .lore-hero-card {
   display: inline-block;
-  max-width: 560px;
+  width: 100%;
+  max-width: 820px;
   margin: 0 auto;
-  padding: 2rem 2.5rem;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  padding: 2.25rem 3rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
   backdrop-filter: saturate(160%) blur(16px);
+  -webkit-backdrop-filter: saturate(160%) blur(16px);
   border: 1px solid var(--lore-gold-border);
   border-radius: 20px;
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-    0 0 40px -10px rgba(212, 175, 55, 0.15);
 }
 .lore-hero-card .lore-title {
   margin-bottom: 0.5rem;
 }
 .lore-hero-card .lore-subtitle {
   margin: 0;
+}
+.lore-hero-card {
+  position: relative;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 40px -10px rgba(212, 175, 55, 0.15),
+    0 0 80px -20px rgba(212, 175, 55, 0.08);
 }
 .lore-lang-selector {
   position: absolute;
@@ -1751,11 +1768,21 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   color: rgba(255, 255, 255, 0.75);
   font-weight: 500;
 }
+.lore-hero + .lore-banners::before {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 2px;
+  margin: 0 auto 2rem;
+  background: linear-gradient(90deg, transparent, var(--lore-gold), transparent);
+  border-radius: 2px;
+  opacity: 0.8;
+}
 .lore-banners {
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
-  margin-top: 2.5rem;
+  margin-top: 0;
 }
 .lore-banner-wrap {
   display: block;
@@ -1949,17 +1976,26 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
   padding: 0 1.5rem;
 }
-/* Contenu du chapitre (scroll, tout centré au milieu de la page) */
+/* Contenu du chapitre : centrage absolu au milieu de la page (technique 100vw) */
+.lore-story-page {
+  padding-left: 0;
+  padding-right: 0;
+  overflow-x: hidden;
+}
 .lore-story-content-wrap {
-  width: 100%;
-  margin-left: 0 !important;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: auto;
+  margin-left: -50vw;
   display: flex;
   justify-content: center;
   padding-left: 0;
   padding-right: 0;
+  box-sizing: border-box;
 }
 .lore-story-content-wrap.lore-story-container {
-  margin-left: 0 !important;
+  margin-left: -50vw !important;
 }
 .lore-story-content {
   max-width: 720px;
@@ -1968,6 +2004,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   padding: 3rem 2rem 4rem;
   text-align: center;
   box-sizing: border-box;
+  flex-shrink: 0;
 }
 .lore-story-content .lore-story-back {
   display: inline-flex;
@@ -1999,10 +2036,23 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 /* Encadré visuel du contenu chapitre (centré page) */
 .lore-story-content {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.25);
   border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  animation: lore-story-fade-in 0.5s ease-out;
+}
+@keyframes lore-story-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .lore-story-content .lore-story-content-title::after {
   content: "";
@@ -2059,7 +2109,8 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
     margin-left: 140px;
   }
   .lore-story-content-wrap.lore-story-container {
-    margin-left: 0 !important;
+    margin-left: -50vw !important;
+    left: 50%;
   }
 }
 .lore-story-inner {

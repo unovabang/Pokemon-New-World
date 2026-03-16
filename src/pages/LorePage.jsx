@@ -23,6 +23,7 @@ export default function LorePage() {
       className="page page-with-sidebar lore-page"
       style={{ backgroundImage: `url(${LORE_PAGE_BACKGROUND})` }}
     >
+      <div className="lore-page-bg-overlay" aria-hidden />
       <Sidebar />
       <div className="lore-page-inner">
         <header className="lore-hero">
