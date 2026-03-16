@@ -119,6 +119,13 @@ const Sidebar = () => {
               );
             })}
           </nav>
+
+          <div className="sidebar-contact-wrap">
+            <Link to="/contact" className="sidebar-contact-btn" onClick={close}>
+              <i className="fa-solid fa-envelope" aria-hidden />
+              <span>Contacter l'équipe</span>
+            </Link>
+          </div>
         </div>
       </aside>
     </>

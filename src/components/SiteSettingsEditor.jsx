@@ -4,10 +4,12 @@ import PatreonEditor from "./PatreonEditor";
 import FooterEditor from "./FooterEditor";
 import ExternalLinksEditor from "./ExternalLinksEditor";
 import SidebarEditor from "./SidebarEditor";
+import ContactWebhookEditor from "./ContactWebhookEditor";
 
 const SECTIONS = [
   { id: "site", label: "Site", icon: "fa-cog" },
   { id: "sidebar", label: "Sidebar (menu)", icon: "fa-bars" },
+  { id: "contact", label: "Webhook Contact", icon: "fa-envelope" },
   { id: "patreon", label: "Patreon", icon: "fa-heart" },
   { id: "footer", label: "Pied de page", icon: "fa-window-minimize" },
   { id: "external", label: "Liens externes", icon: "fa-external-link" },
@@ -38,6 +40,7 @@ export default function SiteSettingsEditor({ onSave }) {
             <div className="admin-settings-section-body">
               {id === "site" && <SiteEditor onSave={(c) => onSave("site", c)} />}
               {id === "sidebar" && <SidebarEditor onSave={onSave} />}
+              {id === "contact" && <ContactWebhookEditor />}
               {id === "patreon" && <PatreonEditor onSave={(c) => onSave("patreon", c)} />}
               {id === "footer" && <FooterEditor onSave={(c) => onSave("footer", c)} />}
               {id === "external" && <ExternalLinksEditor onSave={(c) => onSave("external", c)} />}

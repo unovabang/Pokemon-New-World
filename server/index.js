@@ -947,6 +947,91 @@ app.put('/api/lore', (req, res) => {
   }
 });
 
+// === CONTACT FORM API ===
+const CONTACT_CATEGORY_LABELS = {
+  bug: { label: 'Bug / Problème technique', color: 0xe74c3c },
+  suggestion: { label: 'Suggestion', color: 0xf1c40f },
+  recrutement: { label: 'Recrutement', color: 0x3498db },
+  question: { label: 'Question générale', color: 0x9b59b6 },
+  autre: { label: 'Autre', color: 0x95a5a6 },
+};
+
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { category, contact, subject, message } = req.body;
+    if (!category || !contact || !subject || !message) {
+      return res.status(400).json({ success: false, error: 'Tous les champs sont requis.' });
+    }
+    const cat = CONTACT_CATEGORY_LABELS[category] || { label: category, color: 0x95a5a6 };
+
+    const contactWebhookPath = path.join(CONFIG_DIR, 'contact-webhook.json');
+    let webhookUrl = null;
+    if (fs.existsSync(contactWebhookPath)) {
+      try {
+        const data = fs.readJsonSync(contactWebhookPath);
+        webhookUrl = data?.webhookUrl?.trim() || null;
+      } catch {}
+    }
+
+    if (webhookUrl && webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+      const embed = {
+        author: { name: 'Formulaire de contact', icon_url: DISCORD_LOGO_URL },
+        title: subject,
+        color: cat.color,
+        fields: [
+          { name: 'Catégorie', value: cat.label, inline: true },
+          { name: 'Contact', value: contact, inline: true },
+          { name: 'Message', value: message.length > 1024 ? message.slice(0, 1021) + '…' : message, inline: false },
+        ],
+        timestamp: new Date().toISOString(),
+        footer: { text: `Catégorie : ${cat.label}` },
+      };
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ embeds: [embed] }),
+        });
+      } catch (e) {
+        console.warn('Contact webhook error:', e.message);
+      }
+    }
+
+    res.json({ success: true, message: 'Message envoyé.' });
+  } catch (error) {
+    console.error('❌ Erreur API /api/contact:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/config/contact-webhook', (req, res) => {
+  try {
+    const p = path.join(CONFIG_DIR, 'contact-webhook.json');
+    if (fs.existsSync(p)) {
+      const data = fs.readJsonSync(p);
+      return res.json({ success: true, webhookUrl: data?.webhookUrl || '' });
+    }
+    res.json({ success: true, webhookUrl: '' });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+app.put('/api/config/contact-webhook', (req, res) => {
+  try {
+    let { webhookUrl } = req.body || {};
+    webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
+    if (webhookUrl && !webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+      return res.status(400).json({ success: false, error: 'URL de webhook Discord invalide.' });
+    }
+    fs.ensureDirSync(CONFIG_DIR);
+    fs.writeJsonSync(path.join(CONFIG_DIR, 'contact-webhook.json'), { webhookUrl }, { spaces: 2 });
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 // === POKÉDEX API ===
 // GET /api/pokedex - Lire le Pokédex (entries + background + customTypes)
 app.get('/api/pokedex', (req, res) => {
