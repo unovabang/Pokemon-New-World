@@ -810,6 +810,14 @@ app.get('/api/config/:name', (req, res) => {
         configData = { members: [], thanks: [], showBackground: true };
       }
     }
+    if (!configData && name === 'sidebar') {
+      const seedPath = path.join(__dirname, '../src/config/sidebar.json');
+      if (fs.existsSync(seedPath)) {
+        try { configData = fs.readJsonSync(seedPath); } catch (e) { configData = { items: [], backgroundImage: "" }; }
+      } else {
+        configData = { items: [], backgroundImage: "" };
+      }
+    }
     if (!configData && name === 'evs-location') {
       const seedPath = path.join(__dirname, '../src/config/evs-location.json');
       if (fs.existsSync(seedPath)) {

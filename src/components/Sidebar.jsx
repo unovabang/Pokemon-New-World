@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-// Mêmes intitulés que le launcher (pnw-launcher) — to = route ou #id
-const SIDEBAR_ITEMS = [
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : import.meta.env.DEV
+    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
+    : `${window.location.origin}/api`;
+
+const DEFAULT_ITEMS = [
   { id: "accueil", label: "Accueil", icon: "fa-house", to: "/" },
   { id: "lore", label: "Le Lore", icon: "fa-scroll", to: "/lore", highlight: true },
   { id: "pokedex", label: "Pokedex", icon: "fa-book", to: "/pokedex" },
@@ -15,14 +20,40 @@ const SIDEBAR_ITEMS = [
   { id: "equipe", label: "L'équipe", icon: "fa-users", to: "/equipe" },
 ];
 
+let cachedConfig = null;
+
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
+  const [items, setItems] = useState(cachedConfig?.items || DEFAULT_ITEMS);
+  const [bgUrl, setBgUrl] = useState(cachedConfig?.backgroundImage || "");
+
+  useEffect(() => {
+    if (cachedConfig) return;
+    fetch(`${API_BASE}/config/sidebar?t=${Date.now()}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.success && d?.config) {
+          const cfg = d.config;
+          cachedConfig = cfg;
+          if (Array.isArray(cfg.items) && cfg.items.length) setItems(cfg.items);
+          if (typeof cfg.backgroundImage === "string") setBgUrl(cfg.backgroundImage);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const close = () => setOpen(false);
 
+  const innerStyle = bgUrl
+    ? {
+        backgroundImage: `linear-gradient(180deg, rgba(8,14,28,.85) 0%, rgba(5,9,20,.9) 100%), url(${bgUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }
+    : undefined;
+
   return (
     <>
-      {/* Bouton pour ouvrir la sidebar (toujours visible) */}
       <button
         type="button"
         className="sidebar-toggle"
@@ -33,7 +64,6 @@ const Sidebar = () => {
         <i className="fa-solid fa-bars" />
       </button>
 
-      {/* Overlay pour fermer au clic (mobile / quand ouverte) */}
       {open && (
         <div
           className="sidebar-overlay"
@@ -45,12 +75,11 @@ const Sidebar = () => {
         />
       )}
 
-      {/* Sidebar latérale */}
       <aside
         className={`sidebar ${open ? "sidebar-open" : ""}`}
         aria-hidden={!open}
       >
-        <div className="sidebar-inner">
+        <div className="sidebar-inner" style={innerStyle}>
           <div className="sidebar-header">
             <img src="/logo.png" alt="" className="sidebar-logo" />
             <span className="sidebar-title">Menu</span>
@@ -65,7 +94,7 @@ const Sidebar = () => {
           </div>
 
           <nav className="sidebar-nav">
-            {SIDEBAR_ITEMS.map((item) => {
+            {items.map((item) => {
               const linkClass = `sidebar-link${item.highlight ? " sidebar-link--lore" : ""}`;
               return item.to.startsWith("/") ? (
                 <Link
