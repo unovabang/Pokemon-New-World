@@ -25,6 +25,11 @@ async function uploadPartWithRetry(url, chunk, retries = MAX_RETRIES) {
       const res = await fetch(url, { method: 'PUT', body: chunk });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const etag = res.headers.get('ETag');
+      if (!etag || !etag.trim()) {
+        throw new Error(
+          'ETag manquant dans la réponse R2. Ajoutez "ExposeHeaders": ["ETag"] dans la CORS du bucket R2 (Settings > CORS).'
+        );
+      }
       return etag;
     } catch (err) {
       if (attempt === retries) throw err;
