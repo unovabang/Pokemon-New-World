@@ -4,13 +4,25 @@ import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
 import loreData from "../config/lore.json";
 
+const LORE_PAGE_BACKGROUND =
+  "https://cdn.discordapp.com/attachments/418440039652130816/1482703693680873584/photo-1749062671992-ea1d9676487e.png?ex=69b7eaeb&is=69b6996b&hm=90deaeaf1108be720d0f0ef1c5e2a70c905c764e5b9d3c6821791720cb55ce77&";
+
+const CHAPTER_BANNER_IMAGES = [
+  "https://i.ibb.co/0VVYY8Kr/background-administrateur4.jpg",
+  "https://i.ibb.co/5hTQRLsT/background-login-admin.jpg",
+  "https://i.ibb.co/SDW19HLT/background-administrateur2.jpg",
+];
+
 export default function LorePage() {
   const { t, language } = useLanguage();
   const stories = loreData.stories || [];
   const isEn = language === "en";
 
   return (
-    <main className="page page-with-sidebar lore-page">
+    <main
+      className="page page-with-sidebar lore-page"
+      style={{ backgroundImage: `url(${LORE_PAGE_BACKGROUND})` }}
+    >
       <Sidebar />
       <div className="lore-page-inner">
         <header className="lore-hero">
@@ -28,21 +40,19 @@ export default function LorePage() {
           {stories.map((story, index) => {
             const title = isEn && story.titleEn ? story.titleEn : story.title;
             const description = isEn && story.descriptionEn ? story.descriptionEn : story.description;
-            const hasBg = Boolean(story.backgroundImage && story.backgroundImage.trim());
+            const bannerImage = CHAPTER_BANNER_IMAGES[index % CHAPTER_BANNER_IMAGES.length];
 
             return (
               <article key={story.slug} className="lore-banner-wrap">
                 {index > 0 && <div className="lore-banner-sep" aria-hidden />}
-                <Link to={`/lore/${story.slug}`} className="lore-banner">
+                <Link
+                  to={`/lore/${story.slug}`}
+                  className="lore-banner"
+                  state={{ bannerImage }}
+                >
                   <div
                     className="lore-banner-bg"
-                    style={
-                      hasBg
-                        ? { backgroundImage: `url(${story.backgroundImage})` }
-                        : {
-                            background: `linear-gradient(135deg, rgba(15, 25, 45, 0.97) 0%, rgba(8, 14, 28, 0.98) 50%, rgba(20, 15, 35, 0.97) 100%)`,
-                          }
-                    }
+                    style={{ backgroundImage: `url(${bannerImage})` }}
                     aria-hidden
                   />
                   <div className="lore-banner-overlay" aria-hidden />
