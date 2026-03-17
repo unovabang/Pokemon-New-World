@@ -124,7 +124,7 @@ function useR2Upload() {
   return { upload, abort, progress, uploading, status };
 }
 
-const UploadZone = ({ label, icon, iconColor, currentLink, onLinkChange, onUploadComplete, infoText, extraContent }) => {
+const UploadZone = ({ label, icon, iconColor, currentLink, onLinkChange, onUploadComplete, infoText, extraContent, topContent }) => {
   const fileInputRef = useRef(null);
   const { upload, abort, progress, uploading, status } = useR2Upload();
   const [dragOver, setDragOver] = useState(false);
@@ -152,6 +152,7 @@ const UploadZone = ({ label, icon, iconColor, currentLink, onLinkChange, onUploa
         <i className={icon} style={{ color: iconColor }}></i>
         {label}
       </h3>
+      {topContent}
 
       {/* Zone de drop / upload */}
       <div
@@ -269,6 +270,7 @@ const DownloadsEditor = ({ onSave }) => {
   const [patchVideo, setPatchVideo] = useState('');
   const [gameVersion, setGameVersion] = useState('');
   const [launcherBackgroundUrl, setLauncherBackgroundUrl] = useState('');
+  const [launcherDownloadEnabled, setLauncherDownloadEnabled] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -300,6 +302,7 @@ const DownloadsEditor = ({ onSave }) => {
         setPatchVideo(data.downloads.patchVideo || '');
         setGameVersion(data.downloads.gameVersion || '');
         setLauncherBackgroundUrl(data.downloads.launcherBackgroundUrl || '');
+        setLauncherDownloadEnabled(data.downloads.launcherDownloadEnabled !== false);
       }
     } catch (error) {
       console.error('Erreur lors du chargement des téléchargements:', error);
@@ -378,7 +381,8 @@ const DownloadsEditor = ({ onSave }) => {
             launcher: launcherLink,
             patchVideo: patchVideo,
             gameVersion: gameVersion,
-            launcherBackgroundUrl: launcherBackgroundUrl.trim() || undefined
+            launcherBackgroundUrl: launcherBackgroundUrl.trim() || undefined,
+            launcherDownloadEnabled: launcherDownloadEnabled
           };
           
           const response = await fetch(`${API_BASE}/downloads`, {
@@ -617,6 +621,20 @@ const DownloadsEditor = ({ onSave }) => {
           onLinkChange={setLauncherLink}
           onUploadComplete={(url) => { setLauncherLink(url); loadR2Objects(); }}
           infoText='Ce fichier sera proposé quand un visiteur clique sur "Télécharger le Jeu" sur le site.'
+          topContent={
+            <div className="downloads-launcher-toggle-wrap">
+              <span className="downloads-launcher-toggle-label">Proposer le téléchargement du Launcher sur l&apos;accueil</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={launcherDownloadEnabled}
+                className={`downloads-launcher-toggle ${launcherDownloadEnabled ? 'downloads-launcher-toggle--on' : ''}`}
+                onClick={() => setLauncherDownloadEnabled((v) => !v)}
+              >
+                <span className="downloads-launcher-toggle-thumb" />
+              </button>
+            </div>
+          }
           extraContent={
             <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ marginBottom: '0.75rem' }}>

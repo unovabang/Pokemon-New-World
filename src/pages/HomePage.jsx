@@ -433,7 +433,7 @@ const HomePage = () => {
         >
           <div className="dl-modal">
             <div className="dl-modal-cards">
-              {(downloads?.launcher?.trim() && downloads.launcher !== '#') && (
+              {(downloads?.launcherDownloadEnabled !== false && downloads?.launcher?.trim() && downloads.launcher !== '#') ? (
                 <a
                   className="dl-modal-card dl-modal-card--launcher"
                   href={downloads.launcher.trim()}
@@ -446,6 +446,14 @@ const HomePage = () => {
                   </span>
                   <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
                 </a>
+              ) : (
+                <div className="dl-modal-card dl-modal-card--launcher dl-modal-card--disabled">
+                  <span className="dl-modal-card-icon"><i className="fa-solid fa-pause-circle" /></span>
+                  <span className="dl-modal-card-body">
+                    <span className="dl-modal-card-title">{isEn ? "Download disabled for now!" : "Téléchargement désactivé pour l'instant !"}</span>
+                    <span className="dl-modal-card-sub">{isEn ? "The Launcher will be available again soon." : "Le Launcher sera à nouveau disponible bientôt."}</span>
+                  </span>
+                </div>
               )}
               {(downloads?.patch?.trim() && downloads.patch !== '#') && (
                 <a
