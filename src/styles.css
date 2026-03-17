@@ -3911,15 +3911,19 @@ a.dex-panel--active{cursor:default}
 
 /* ===== Modal (si utilisé) ===== */
 .modal{position:fixed; inset:0; display:none; z-index:80}
-.modal.open{display:block}
+.modal.open{
+  display:flex; align-items:center; justify-content:center;
+  padding:2rem; box-sizing:border-box;
+}
 .modal .backdrop{position:absolute; inset:0; background:rgba(3,6,14,.65); backdrop-filter:blur(6px)}
 .modal .dialog{
-  position:relative; margin:2vh auto; width:min(650px,calc(100vw - 2rem)); max-width:95%;
+  position:relative; margin:0; width:min(650px,calc(100vw - 2rem)); max-width:95%; max-height:90vh;
   border-radius:24px; overflow:hidden;
   background:linear-gradient(145deg, rgba(15,26,51,.95), rgba(11,18,34,.98)); 
   backdrop-filter:saturate(130%) blur(16px); 
   border:1px solid rgba(126,205,242,.25); 
   box-shadow:0 25px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(126,205,242,.1);
+  display:flex; flex-direction:column;
 }
 .modal header{
   display:flex; align-items:center; justify-content:space-between; 
@@ -3943,9 +3947,10 @@ a.dex-panel--active{cursor:default}
 .modal header h3::before{
   content:"📥"; font-size:20px;
 }
-.modal .body{padding:28px; min-height:auto; max-height:80vh; overflow-y:auto}
+.modal .body{padding:28px; min-height:auto; max-height:80vh; overflow-y:auto; flex:1; min-height:0}
 @media (max-width:640px){
-  .modal .dialog{margin:1rem auto; width:calc(100vw - 1.5rem)}
+  .modal.open{padding:1rem}
+  .modal .dialog{width:calc(100vw - 1.5rem)}
   .modal header{padding:1rem 1.25rem}
   .modal header h3{font-size:1.1rem}
   .modal .body{padding:1.25rem}
