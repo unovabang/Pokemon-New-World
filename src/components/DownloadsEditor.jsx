@@ -573,7 +573,14 @@ const DownloadsEditor = ({ onSave }) => {
                 }}>
                   <div style={{ flex: 1, minWidth: '150px' }}>
                     <div style={{ fontWeight: '500', wordBreak: 'break-all' }}>{obj.key}</div>
-                    <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>{formatFileSize(obj.size)}</div>
+                    <div style={{ fontSize: '0.8rem', opacity: 0.6 }}>
+                      {formatFileSize(obj.size)}
+                      {obj.lastModified && (
+                        <span style={{ marginLeft: '0.75rem' }}>
+                          · Dernière MAJ : {new Date(obj.lastModified).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })} à {new Date(obj.lastModified).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
                     <button
