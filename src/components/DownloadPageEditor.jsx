@@ -32,6 +32,7 @@ export default function DownloadPageEditor({ onSave }) {
     description: "",
     descriptionEn: "",
     heroImage: "",
+    pageBackground: "",
     gallery: [],
     videoUrl: "",
     videoTitle: "",
@@ -51,6 +52,7 @@ export default function DownloadPageEditor({ onSave }) {
             description: d.description ?? "",
             descriptionEn: d.descriptionEn ?? "",
             heroImage: d.heroImage ?? "",
+            pageBackground: d.pageBackground ?? "",
             gallery: Array.isArray(d.gallery) ? d.gallery : [],
             videoUrl: d.videoUrl ?? "",
             videoTitle: d.videoTitle ?? "",
@@ -158,6 +160,10 @@ export default function DownloadPageEditor({ onSave }) {
             <div className="dp-editor-field">
               <label>Image hero (URL)</label>
               <input type="url" value={form.heroImage} onChange={(e) => update("heroImage", e.target.value)} placeholder="https://…" />
+            </div>
+            <div className="dp-editor-field">
+              <label>Fond de page (URL image)</label>
+              <input type="url" value={form.pageBackground} onChange={(e) => update("pageBackground", e.target.value)} placeholder="https://… (image de fond de la page)" />
             </div>
           </div>
         </SectionCard>

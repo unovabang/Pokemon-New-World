@@ -34,10 +34,15 @@ export default function DownloadPage() {
   const gallery = pageContent?.gallery || [];
   const heroImage = pageContent?.heroImage?.trim() || "";
   const videoUrl = pageContent?.videoUrl?.trim() || "";
+  const pageBackground = pageContent?.pageBackground?.trim() || "";
 
   return (
     <main className="page page-with-sidebar download-page">
-      <div className="download-page-bg" aria-hidden />
+      <div
+        className={`download-page-bg${pageBackground ? " download-page-bg--image" : ""}`}
+        aria-hidden
+        style={pageBackground ? { backgroundImage: `url(${pageBackground})` } : undefined}
+      />
       <Sidebar />
       <div className="download-page-inner">
         <header className="download-hero">
@@ -56,67 +61,7 @@ export default function DownloadPage() {
           </div>
         </header>
 
-        {description && (
-          <section className="download-section download-description">
-            <div className="download-card">
-              <p className="download-description-text">{description}</p>
-            </div>
-          </section>
-        )}
-
-        {gallery.length > 0 && (
-          <section className="download-section download-gallery-section">
-            <h2 className="download-section-title">
-              <i className="fa-solid fa-images" aria-hidden />
-              {isEn ? "Gallery" : "Galerie"}
-            </h2>
-            <div className="download-gallery">
-              {gallery.map((url, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className="download-gallery-item"
-                  onClick={() => setGalleryIndex(i)}
-                  style={{ backgroundImage: `url(${url})` }}
-                >
-                  <span className="sr-only">{isEn ? "View image" : "Voir l'image"}</span>
-                </button>
-              ))}
-            </div>
-            {gallery.length > 0 && (
-              <div className="download-gallery-lightbox" onClick={() => setGalleryIndex(-1)} role="dialog" aria-modal="true" aria-label={isEn ? "Gallery" : "Galerie"} style={{ display: galleryIndex >= 0 ? "flex" : "none" }}>
-                <button type="button" className="download-gallery-lightbox-close" aria-label="Fermer">
-                  <i className="fa-solid fa-xmark" />
-                </button>
-                <img src={gallery[galleryIndex]} alt="" onClick={(e) => e.stopPropagation()} />
-              </div>
-            )}
-          </section>
-        )}
-
-        {videoUrl && (
-          <section className="download-section download-video-section">
-            <h2 className="download-section-title">
-              <i className="fa-solid fa-play-circle" aria-hidden />
-              {videoTitle || (isEn ? "Installation video" : "Vidéo d'installation")}
-            </h2>
-            <div className="download-video-wrap">
-              {/\.(mp4|webm|ogg)(\?|$)/i.test(videoUrl) ? (
-                <video src={videoUrl} controls playsInline className="download-video-native">
-                  <track kind="captions" />
-                </video>
-              ) : (
-                <iframe
-                  src={videoUrl}
-                  title={videoTitle || "Tutoriel"}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              )}
-            </div>
-          </section>
-        )}
-
+        {/* 1. Téléchargements tout en haut */}
         <section className="download-section download-actions">
           <h2 className="download-section-title">
             <i className="fa-solid fa-download" aria-hidden />
@@ -154,9 +99,70 @@ export default function DownloadPage() {
           </div>
           <p className="download-actions-note">
             <i className="fa-solid fa-circle-info" aria-hidden />
-            {isEn ? "Extract the patch to your game root folder. See the video above for details." : "Extrayez le patch à la racine du jeu. Voir la vidéo ci-dessus pour plus de détails."}
+            {isEn ? "Extract the patch to your game root folder. See the video below for details." : "Extrayez le patch à la racine du jeu. Voir la vidéo ci-dessous pour plus de détails."}
           </p>
         </section>
+
+        {description && (
+          <section className="download-section download-description">
+            <div className="download-card download-card--glass">
+              <p className="download-description-text">{description}</p>
+            </div>
+          </section>
+        )}
+
+        {videoUrl && (
+          <section className="download-section download-video-section">
+            <h2 className="download-section-title">
+              <i className="fa-solid fa-play-circle" aria-hidden />
+              {videoTitle || (isEn ? "Installation video" : "Vidéo d'installation")}
+            </h2>
+            <div className="download-video-wrap download-video-wrap--glass">
+              {/\.(mp4|webm|ogg)(\?|$)/i.test(videoUrl) ? (
+                <video src={videoUrl} controls playsInline className="download-video-native">
+                  <track kind="captions" />
+                </video>
+              ) : (
+                <iframe
+                  src={videoUrl}
+                  title={videoTitle || "Tutoriel"}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              )}
+            </div>
+          </section>
+        )}
+
+        {gallery.length > 0 && (
+          <section className="download-section download-gallery-section">
+            <h2 className="download-section-title">
+              <i className="fa-solid fa-images" aria-hidden />
+              {isEn ? "Gallery" : "Galerie"}
+            </h2>
+            <div className="download-gallery">
+              {gallery.map((url, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className="download-gallery-item"
+                  onClick={() => setGalleryIndex(i)}
+                  style={{ backgroundImage: `url(${url})` }}
+                >
+                  <span className="sr-only">{isEn ? "View image" : "Voir l'image"}</span>
+                </button>
+              ))}
+            </div>
+            {gallery.length > 0 && (
+              <div className="download-gallery-lightbox" onClick={() => setGalleryIndex(-1)} role="dialog" aria-modal="true" aria-label={isEn ? "Gallery" : "Galerie"} style={{ display: galleryIndex >= 0 ? "flex" : "none" }}>
+                <button type="button" className="download-gallery-lightbox-close" aria-label="Fermer">
+                  <i className="fa-solid fa-xmark" />
+                </button>
+                <img src={gallery[galleryIndex]} alt="" onClick={(e) => e.stopPropagation()} />
+              </div>
+            )}
+          </section>
+        )}
 
         <footer className="download-footer">
           <Link to="/" className="download-footer-link">

@@ -1166,6 +1166,7 @@ app.put('/api/download-page', (req, res) => {
       description: body.description ?? '',
       descriptionEn: body.descriptionEn ?? '',
       heroImage: body.heroImage ?? '',
+      pageBackground: body.pageBackground ?? '',
       gallery: Array.isArray(body.gallery) ? body.gallery : [],
       videoUrl: body.videoUrl ?? '',
       videoTitle: body.videoTitle ?? '',
