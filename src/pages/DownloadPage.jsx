@@ -97,10 +97,12 @@ export default function DownloadPage() {
               </a>
             )}
           </div>
-          <p className="download-actions-note">
-            <i className="fa-solid fa-circle-info" aria-hidden />
-            {isEn ? "Extract the patch to your game root folder. See the video below for details." : "Extrayez le patch à la racine du jeu. Voir la vidéo ci-dessous pour plus de détails."}
-          </p>
+          {(downloads?.patch?.trim() && downloads.patch !== "#") && (
+            <p className="download-actions-note">
+              <i className="fa-solid fa-circle-info" aria-hidden />
+              {isEn ? "Extract the patch to your game root folder. See the video below for details." : "Extrayez le patch à la racine du jeu. Voir la vidéo ci-dessous pour plus de détails."}
+            </p>
+          )}
         </section>
 
         {description && (
