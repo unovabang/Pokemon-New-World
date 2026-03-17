@@ -124,7 +124,7 @@ function useR2Upload() {
   return { upload, abort, progress, uploading, status };
 }
 
-const UploadZone = ({ label, icon, iconColor, currentLink, onLinkChange, onUploadComplete, infoText }) => {
+const UploadZone = ({ label, icon, iconColor, currentLink, onLinkChange, onUploadComplete, infoText, extraContent }) => {
   const fileInputRef = useRef(null);
   const { upload, abort, progress, uploading, status } = useR2Upload();
   const [dragOver, setDragOver] = useState(false);
@@ -257,6 +257,7 @@ const UploadZone = ({ label, icon, iconColor, currentLink, onLinkChange, onUploa
       <div className="downloads-editor-info">
         <i className="fa-solid fa-info-circle"></i> {infoText}
       </div>
+      {extraContent}
     </div>
   );
 };
@@ -607,58 +608,7 @@ const DownloadsEditor = ({ onSave }) => {
           </div>
         )}
 
-        {/* Image de fond du Launcher */}
-        <div style={{
-          background: 'rgba(126, 205, 242, 0.08)',
-          borderRadius: '10px',
-          padding: '2rem',
-          border: '1px solid rgba(126, 205, 242, 0.25)',
-        }}>
-          <h3 style={{
-            marginBottom: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            color: 'var(--primary-2, #7ecdf2)',
-          }}>
-            <i className="fa-solid fa-image"></i>
-            Image de fond du Launcher
-          </h3>
-          <div style={{ marginBottom: '0.75rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-              <i className="fa-solid fa-link"></i> URL de l&apos;image :
-            </label>
-            <input
-              type="url"
-              value={launcherBackgroundUrl}
-              onChange={(e) => setLauncherBackgroundUrl(e.target.value)}
-              placeholder="https://exemple.com/fond-launcher.jpg"
-              style={{
-                width: '100%',
-                padding: '1rem',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.3)',
-                background: 'rgba(255,255,255,0.1)',
-                color: 'white',
-                fontSize: '1rem',
-                boxSizing: 'border-box',
-              }}
-            />
-          </div>
-          <div style={{
-            background: 'rgba(255,255,255,0.06)',
-            padding: '1rem',
-            borderRadius: '5px',
-            fontSize: '0.9rem',
-            opacity: 0.9,
-          }}>
-            <i className="fa-solid fa-info-circle"></i>{' '}
-            Cette image sera appliquée comme arrière-plan dans le Launcher (au prochain rafraîchissement ou au lancement).
-            Laissez vide pour garder le fond par défaut.
-          </div>
-        </div>
-
-        {/* Launcher — bouton "Télécharger le jeu" sur le site */}
+        {/* Launcher (.exe) + image de fond */}
         <UploadZone
           label="Launcher (.exe) — Bouton du site"
           icon="fa-solid fa-rocket"
@@ -667,6 +617,41 @@ const DownloadsEditor = ({ onSave }) => {
           onLinkChange={setLauncherLink}
           onUploadComplete={(url) => { setLauncherLink(url); loadR2Objects(); }}
           infoText='Ce fichier sera proposé quand un visiteur clique sur "Télécharger le Jeu" sur le site.'
+          extraContent={
+            <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ marginBottom: '0.75rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 'bold', color: 'var(--primary-2, #7ecdf2)' }}>
+                  <i className="fa-solid fa-image"></i> Image de fond du Launcher
+                </label>
+                <input
+                  type="url"
+                  value={launcherBackgroundUrl}
+                  onChange={(e) => setLauncherBackgroundUrl(e.target.value)}
+                  placeholder="https://exemple.com/fond-launcher.jpg"
+                  style={{
+                    width: '100%',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    background: 'rgba(255,255,255,0.1)',
+                    color: 'white',
+                    fontSize: '1rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+              <div style={{
+                background: 'rgba(255,255,255,0.06)',
+                padding: '1rem',
+                borderRadius: '5px',
+                fontSize: '0.9rem',
+                opacity: 0.9,
+              }}>
+                <i className="fa-solid fa-info-circle"></i>{' '}
+                Cette image sera appliquée comme arrière-plan dans le Launcher (au prochain rafraîchissement ou au lancement). Laissez vide pour garder le fond par défaut.
+              </div>
+            </div>
+          }
         />
 
         {/* Jeu Principal — téléchargé automatiquement par le Launcher */}
