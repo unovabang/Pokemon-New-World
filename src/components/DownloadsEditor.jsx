@@ -267,6 +267,7 @@ const DownloadsEditor = ({ onSave }) => {
   const [launcherLink, setLauncherLink] = useState('');
   const [patchVideo, setPatchVideo] = useState('');
   const [gameVersion, setGameVersion] = useState('');
+  const [launcherBackgroundUrl, setLauncherBackgroundUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -297,6 +298,7 @@ const DownloadsEditor = ({ onSave }) => {
         setLauncherLink(data.downloads.launcher || '');
         setPatchVideo(data.downloads.patchVideo || '');
         setGameVersion(data.downloads.gameVersion || '');
+        setLauncherBackgroundUrl(data.downloads.launcherBackgroundUrl || '');
       }
     } catch (error) {
       console.error('Erreur lors du chargement des téléchargements:', error);
@@ -374,7 +376,8 @@ const DownloadsEditor = ({ onSave }) => {
             patch: patchLink,
             launcher: launcherLink,
             patchVideo: patchVideo,
-            gameVersion: gameVersion
+            gameVersion: gameVersion,
+            launcherBackgroundUrl: launcherBackgroundUrl.trim() || undefined
           };
           
           const response = await fetch(`${API_BASE}/downloads`, {
@@ -604,6 +607,57 @@ const DownloadsEditor = ({ onSave }) => {
           </div>
         )}
 
+        {/* Image de fond du Launcher */}
+        <div style={{
+          background: 'rgba(126, 205, 242, 0.08)',
+          borderRadius: '10px',
+          padding: '2rem',
+          border: '1px solid rgba(126, 205, 242, 0.25)',
+        }}>
+          <h3 style={{
+            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: 'var(--primary-2, #7ecdf2)',
+          }}>
+            <i className="fa-solid fa-image"></i>
+            Image de fond du Launcher
+          </h3>
+          <div style={{ marginBottom: '0.75rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              <i className="fa-solid fa-link"></i> URL de l&apos;image :
+            </label>
+            <input
+              type="url"
+              value={launcherBackgroundUrl}
+              onChange={(e) => setLauncherBackgroundUrl(e.target.value)}
+              placeholder="https://exemple.com/fond-launcher.jpg"
+              style={{
+                width: '100%',
+                padding: '1rem',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                background: 'rgba(255,255,255,0.1)',
+                color: 'white',
+                fontSize: '1rem',
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+          <div style={{
+            background: 'rgba(255,255,255,0.06)',
+            padding: '1rem',
+            borderRadius: '5px',
+            fontSize: '0.9rem',
+            opacity: 0.9,
+          }}>
+            <i className="fa-solid fa-info-circle"></i>{' '}
+            Cette image sera appliquée comme arrière-plan dans le Launcher (au prochain rafraîchissement ou au lancement).
+            Laissez vide pour garder le fond par défaut.
+          </div>
+        </div>
+
         {/* Launcher — bouton "Télécharger le jeu" sur le site */}
         <UploadZone
           label="Launcher (.exe) — Bouton du site"
@@ -805,6 +859,22 @@ const DownloadsEditor = ({ onSave }) => {
               </p>
               <p style={{ fontSize: '0.7rem', opacity: 0.5, margin: '0.2rem 0 0' }}>
                 (manifest du Launcher)
+              </p>
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                marginBottom: '0.5rem',
+                padding: '0.5rem 1rem',
+                background: 'rgba(126, 205, 242, 0.15)',
+                borderRadius: '8px',
+                border: '1px solid rgba(126, 205, 242, 0.3)',
+                fontSize: '0.9rem',
+              }}>
+                <i className="fa-solid fa-image"></i> Fond Launcher
+              </div>
+              <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>
+                {launcherBackgroundUrl ? '✅ Image configurée' : '— Optionnel'}
               </p>
             </div>
 
