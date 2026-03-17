@@ -4192,15 +4192,20 @@ a.dex-panel--active{cursor:default}
   display:grid; grid-template-columns:1fr; gap:0;
 }
 .download-page-inner--with-aside{
-  grid-template-columns:1fr 380px; gap:2.25rem; align-items:start;
+  grid-template-columns:1fr 380px; gap:3rem; align-items:start;
+  max-width:1280px;
 }
 @media (max-width:1023px){
-  .download-page-inner--with-aside{ grid-template-columns:1fr; }
+  .download-page-inner--with-aside{ grid-template-columns:1fr; max-width:1200px; }
 }
 .download-page-main{ min-width:0; max-width:920px; }
 .download-page-inner--with-aside .download-page-main{ max-width:none; }
-.download-page-aside{ min-width:0; width:100%; max-width:380px; justify-self:end; }
-.download-soundcloud-sticky{ position:sticky; top:2rem; }
+.download-page-aside{ min-width:0; width:100%; max-width:380px; justify-self:end; margin-right:0; }
+.download-soundcloud-sticky{ position:sticky; top:2rem; margin-top:22.5rem; }
+.download-page-inner--with-aside .download-soundcloud-sticky{ margin-top:22.5rem; }
+@media (max-width:1023px){
+  .download-soundcloud-sticky{ margin-top:0; }
+}
 .download-soundcloud-title{ margin-top:0; }
 
 .download-hero{
