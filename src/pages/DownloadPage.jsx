@@ -101,12 +101,18 @@ export default function DownloadPage() {
               {videoTitle || (isEn ? "Installation video" : "Vidéo d'installation")}
             </h2>
             <div className="download-video-wrap">
-              <iframe
-                src={videoUrl}
-                title={videoTitle || "Tutoriel"}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
+              {/\.(mp4|webm|ogg)(\?|$)/i.test(videoUrl) ? (
+                <video src={videoUrl} controls playsInline className="download-video-native">
+                  <track kind="captions" />
+                </video>
+              ) : (
+                <iframe
+                  src={videoUrl}
+                  title={videoTitle || "Tutoriel"}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              )}
             </div>
           </section>
         )}
