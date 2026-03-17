@@ -9,6 +9,7 @@ import NewsBanner from "../components/NewsBanner";
 import LanguageSelector from "../components/LanguageSelector";
 import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
+import { Link } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -485,6 +486,19 @@ const HomePage = () => {
                 </button>
               </div>
             </div>
+
+            <Link
+              to="/telechargement"
+              className="dl-modal-cta"
+              onClick={() => setOpenDownload(false)}
+            >
+              <span className="dl-modal-cta-icon"><i className="fa-solid fa-arrow-right-to-bracket" aria-hidden /></span>
+              <div className="dl-modal-cta-body">
+                <span className="dl-modal-cta-heading">{t('modals.download.pageCta.heading')}</span>
+                <span className="dl-modal-cta-desc">{t('modals.download.pageCta.description')}</span>
+              </div>
+              <span className="dl-modal-cta-label">{t('modals.download.pageCta.link')} <i className="fa-solid fa-arrow-right" /></span>
+            </Link>
           </div>
         </Modal>
 

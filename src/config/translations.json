@@ -54,6 +54,11 @@
     "modals": {
       "download": {
         "title": "Téléchargement",
+        "pageCta": {
+          "heading": "Tout sur l'installation et les mises à jour",
+          "description": "Vidéo tutoriel, galerie et instructions détaillées sur notre page dédiée.",
+          "link": "Voir la page téléchargement"
+        },
         "patchInstructions": {
           "title": "Note sur les patchs :",
           "description": "Pour installer un patch, assurez-vous d'avoir la version précédente installée. Placez le fichier patch.zip à la racine de votre jeu, extrayez-le, et il mettra à jour les anciens dossiers.",
@@ -151,6 +156,11 @@
     "modals": {
       "download": {
         "title": "Download",
+        "pageCta": {
+          "heading": "Everything about installation & updates",
+          "description": "Tutorial video, gallery and full instructions on our dedicated page.",
+          "link": "Go to download page"
+        },
         "patchInstructions": {
           "title": "Note about patches:",
           "description": "To install a patch, make sure you have the previous version installed. Place the patch.zip file at the root of your game, extract it, and it will update the old folders.",
