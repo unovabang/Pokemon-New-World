@@ -1085,6 +1085,7 @@ app.get('/api/downloads/manifest', (req, res) => {
       files: [],
       requirements: { minimumRAM: 2048, diskSpace: 500000000 },
       integrity: { archiveHash: 'sha256:pending', archiveSize: 0 },
+      ...(dl.launcherBackgroundUrl && { launcherBackgroundUrl: dl.launcherBackgroundUrl }),
     };
     res.json(manifest);
   } catch (error) {
