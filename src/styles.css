@@ -6165,6 +6165,90 @@ a.dex-panel--active{cursor:default}
 .admin-bst-talent-slot .admin-pokedex-label { font-size: 0.85rem; color: rgba(255,255,255,.85); }
 .admin-pokedex-label--sub { margin-top: 0.6rem; opacity: 0.9; }
 
+/* Section talents équilibrage : style Fakemon (titre + nom avec icône + description) */
+.admin-bst-talents-block--fakemon {
+  margin-top: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(0,0,0,.25);
+  border-radius: 14px;
+  border: 1px solid rgba(126,205,242,.18);
+}
+.admin-bst-talents-block--fakemon .admin-bst-talents-header {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary-2);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.admin-bst-talents-block--fakemon .admin-bst-talents-header i { opacity: .9; }
+.admin-bst-talents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.admin-bst-talent-slot--fakemon {
+  text-align: left;
+  padding: 0.6rem 0.85rem;
+  background: rgba(0,0,0,.22);
+  border-radius: 10px;
+  border: 1px solid rgba(126,205,242,.1);
+}
+.admin-bst-talent-slot--fakemon .admin-bst-talent-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--primary-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.admin-bst-talent-slot--fakemon .admin-bst-talent-title i { opacity: .9; font-size: .65rem; }
+.admin-bst-talent-name-row {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.95);
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.admin-bst-talent-name-row i { color: var(--primary-2); opacity: .9; font-size: .75rem; flex-shrink: 0; }
+.admin-bst-talent-name-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(126,205,242,.25);
+  color: rgba(255,255,255,.95);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.2rem 0;
+  outline: none;
+}
+.admin-bst-talent-name-input::placeholder { color: rgba(255,255,255,.4); }
+.admin-bst-talent-name-input:focus { border-bottom-color: var(--primary-2); }
+.admin-bst-talent-desc-row { margin-top: 0.25rem; }
+.admin-bst-talent-desc-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.75);
+  line-height: 1.4;
+  padding: 0.5rem 0.65rem;
+  background: rgba(0,0,0,.2);
+  border: 1px solid rgba(126,205,242,.12);
+  border-radius: 8px;
+  resize: vertical;
+  outline: none;
+  font-family: inherit;
+}
+.admin-bst-talent-desc-textarea::placeholder { color: rgba(255,255,255,.35); }
+.admin-bst-talent-desc-textarea:focus { border-color: rgba(126,205,242,.35); }
+
 /* ===== ADMIN GUIDE EDITOR ===== */
 .admin-guide {
   max-width: 100%;
