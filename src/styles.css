@@ -4193,7 +4193,7 @@ a.dex-panel--active{cursor:default}
 
 .download-hero{
   position:relative; border-radius:28px; overflow:hidden;
-  min-height:240px; display:flex; align-items:flex-end; padding:2.5rem 2.75rem;
+  min-height:280px; display:flex; align-items:flex-end; padding:2.5rem 2.75rem 2.75rem;
   margin-bottom:2.75rem;
   box-shadow:0 24px 64px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06) inset;
   border:1px solid rgba(126,205,242,.18);
@@ -4207,16 +4207,20 @@ a.dex-panel--active{cursor:default}
 }
 .download-hero-bg::after{
   content:""; position:absolute; inset:0;
-  background:linear-gradient(180deg, transparent 25%, rgba(0,0,0,.88) 100%);
+  background:linear-gradient(180deg, transparent 15%, rgba(0,0,0,.75) 60%, rgba(0,0,0,.92) 100%);
 }
-.download-hero-content{ position:relative; z-index:2; }
+.download-hero-content{ position:relative; z-index:2; max-width:720px; }
 .download-title{
-  margin:0 0 .4em; font-size:clamp(1.85rem, 4.2vw, 2.4rem); font-weight:800;
+  margin:0 0 .35em; font-size:clamp(1.85rem, 4.2vw, 2.4rem); font-weight:800;
   color:#fff; display:flex; align-items:center; gap:.65rem;
   text-shadow:0 2px 16px rgba(0,0,0,.5); letter-spacing:-0.02em;
 }
 .download-title i{ color:var(--primary-2); opacity:.95; }
 .download-subtitle{ margin:0; font-size:1.08rem; color:rgba(255,255,255,.88); font-weight:500; line-height:1.4; }
+.download-hero-desc{
+  margin:.9em 0 0; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.85);
+  max-width:640px; text-shadow:0 1px 4px rgba(0,0,0,.4);
+}
 .download-lang-selector{ position:absolute; top:1rem; right:1rem; z-index:3; }
 
 .download-section{ margin-bottom:2.75rem; }
@@ -4272,6 +4276,16 @@ a.dex-panel--active{cursor:default}
   box-shadow:0 16px 48px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.05) inset;
   border:1px solid rgba(126,205,242,.25);
 }
+
+.download-soundcloud-wrap{
+  border-radius:18px; overflow:hidden;
+  background:rgba(0,0,0,.35); border:1px solid rgba(126,205,242,.22);
+  box-shadow:0 14px 44px rgba(0,0,0,.4);
+}
+.download-soundcloud-wrap iframe{
+  display:block; width:100%; height:450px; border:0;
+}
+
 .download-video-wrap iframe,
 .download-video-wrap .download-video-native{ width:100%; height:100%; display:block; border:0; object-fit:contain; }
 .download-video-wrap .download-video-native{ background:#000; }

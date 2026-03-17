@@ -1170,7 +1170,8 @@ app.put('/api/download-page', (req, res) => {
       gallery: Array.isArray(body.gallery) ? body.gallery : [],
       videoUrl: body.videoUrl ?? '',
       videoTitle: body.videoTitle ?? '',
-      videoTitleEn: body.videoTitleEn ?? ''
+      videoTitleEn: body.videoTitleEn ?? '',
+      soundcloudPlaylistUrl: body.soundcloudPlaylistUrl ?? ''
     };
     const success = saveConfig('downloadPage', data);
     if (!success) return res.status(500).json({ success: false, error: 'Erreur sauvegarde' });

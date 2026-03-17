@@ -35,6 +35,7 @@ export default function DownloadPage() {
   const heroImage = pageContent?.heroImage?.trim() || "";
   const videoUrl = pageContent?.videoUrl?.trim() || "";
   const pageBackground = pageContent?.pageBackground?.trim() || "";
+  const soundcloudPlaylistUrl = pageContent?.soundcloudPlaylistUrl?.trim() || "";
 
   return (
     <main className="page page-with-sidebar download-page">
@@ -58,6 +59,7 @@ export default function DownloadPage() {
               <span>{title}</span>
             </h1>
             {subtitle && <p className="download-subtitle">{subtitle}</p>}
+            {description && <p className="download-hero-desc">{description}</p>}
           </div>
         </header>
 
@@ -105,14 +107,6 @@ export default function DownloadPage() {
           )}
         </section>
 
-        {description && (
-          <section className="download-section download-description">
-            <div className="download-card download-card--glass">
-              <p className="download-description-text">{description}</p>
-            </div>
-          </section>
-        )}
-
         {videoUrl && (
           <section className="download-section download-video-section">
             <h2 className="download-section-title">
@@ -132,6 +126,26 @@ export default function DownloadPage() {
                   allowFullScreen
                 />
               )}
+            </div>
+          </section>
+        )}
+
+        {soundcloudPlaylistUrl && (
+          <section className="download-section download-soundcloud-section">
+            <h2 className="download-section-title">
+              <i className="fa-solid fa-music" aria-hidden />
+              {isEn ? "Some PNW soundtracks" : "Quelques bande son de PNW"}
+            </h2>
+            <div className="download-soundcloud-wrap">
+              <iframe
+                title={isEn ? "PNW soundtracks" : "Bande son PNW"}
+                width="100%"
+                height="450"
+                scrolling="no"
+                frameBorder="no"
+                allow="autoplay"
+                src={`https://w.soundcloud.com/player/?url=${encodeURIComponent(soundcloudPlaylistUrl)}&color=%239ca8bc&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
+              />
             </div>
           </section>
         )}

@@ -36,7 +36,8 @@ export default function DownloadPageEditor({ onSave }) {
     gallery: [],
     videoUrl: "",
     videoTitle: "",
-    videoTitleEn: ""
+    videoTitleEn: "",
+    soundcloudPlaylistUrl: ""
   });
 
   useEffect(() => {
@@ -56,7 +57,8 @@ export default function DownloadPageEditor({ onSave }) {
             gallery: Array.isArray(d.gallery) ? d.gallery : [],
             videoUrl: d.videoUrl ?? "",
             videoTitle: d.videoTitle ?? "",
-            videoTitleEn: d.videoTitleEn ?? ""
+            videoTitleEn: d.videoTitleEn ?? "",
+            soundcloudPlaylistUrl: d.soundcloudPlaylistUrl ?? ""
           });
         }
       })
@@ -213,6 +215,16 @@ export default function DownloadPageEditor({ onSave }) {
             <div className="dp-editor-field">
               <label>Titre de la section vidéo (EN)</label>
               <input type="text" value={form.videoTitleEn} onChange={(e) => update("videoTitleEn", e.target.value)} placeholder="Installation video" />
+            </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard icon="fa-music" iconColor="#a78bfa" title="Bande son (SoundCloud)">
+          <p className="dp-editor-hint">URL de la playlist SoundCloud (ex. https://soundcloud.com/…/sets/…). La section « Quelques bande son de PNW » s'affiche avec un lecteur play/pause et volume. Laissez vide pour masquer.</p>
+          <div className="dp-editor-fields">
+            <div className="dp-editor-field">
+              <label>URL playlist SoundCloud</label>
+              <input type="url" value={form.soundcloudPlaylistUrl} onChange={(e) => update("soundcloudPlaylistUrl", e.target.value)} placeholder="https://soundcloud.com/…/sets/…" />
             </div>
           </div>
         </SectionCard>
