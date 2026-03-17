@@ -4188,8 +4188,20 @@ a.dex-panel--active{cursor:default}
   pointer-events:none;
 }
 .download-page-inner{
-  position:relative; z-index:1; padding:2.5rem 2rem 4rem; max-width:920px; margin:0 auto;
+  position:relative; z-index:1; padding:2.5rem 2rem 4rem; max-width:1200px; margin:0 auto;
+  display:grid; grid-template-columns:1fr; gap:0;
 }
+.download-page-inner--with-aside{
+  grid-template-columns:1fr 380px; gap:2.25rem; align-items:start;
+}
+@media (max-width:1023px){
+  .download-page-inner--with-aside{ grid-template-columns:1fr; }
+}
+.download-page-main{ min-width:0; max-width:920px; }
+.download-page-inner--with-aside .download-page-main{ max-width:none; }
+.download-page-aside{ min-width:0; width:100%; max-width:380px; justify-self:end; }
+.download-soundcloud-sticky{ position:sticky; top:2rem; }
+.download-soundcloud-title{ margin-top:0; }
 
 .download-hero{
   position:relative; border-radius:28px; overflow:hidden;
@@ -4207,7 +4219,7 @@ a.dex-panel--active{cursor:default}
 }
 .download-hero-bg::after{
   content:""; position:absolute; inset:0;
-  background:linear-gradient(180deg, transparent 15%, rgba(0,0,0,.75) 60%, rgba(0,0,0,.92) 100%);
+  background:linear-gradient(180deg, rgba(0,0,0,.4) 0%, rgba(0,0,0,.7) 40%, rgba(0,0,0,.88) 75%, rgba(0,0,0,.94) 100%);
 }
 .download-hero-content{ position:relative; z-index:2; max-width:720px; }
 .download-title{
@@ -4218,8 +4230,9 @@ a.dex-panel--active{cursor:default}
 .download-title i{ color:var(--primary-2); opacity:.95; }
 .download-subtitle{ margin:0; font-size:1.08rem; color:rgba(255,255,255,.88); font-weight:500; line-height:1.4; }
 .download-hero-desc{
-  margin:.9em 0 0; font-size:.95rem; line-height:1.6; color:rgba(255,255,255,.85);
-  max-width:640px; text-shadow:0 1px 4px rgba(0,0,0,.4);
+  margin:.9em 0 0; font-size:.98rem; line-height:1.65; color:rgba(255,255,255,.9);
+  max-width:640px; text-shadow:0 1px 6px rgba(0,0,0,.5);
+  font-family:"Lora", Georgia, serif; font-weight:500;
 }
 .download-lang-selector{ position:absolute; top:1rem; right:1rem; z-index:3; }
 
