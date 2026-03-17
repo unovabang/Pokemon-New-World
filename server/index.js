@@ -1131,6 +1131,55 @@ app.post('/api/downloads', (req, res) => {
   }
 });
 
+// === PAGE TÉLÉCHARGEMENT (contenu éditable: galerie, vidéo, description) ===
+function getDownloadPageConfig() {
+  let data = getConfig('downloadPage');
+  if (!data || !Object.keys(data).length) {
+    const seedPath = path.join(SOURCE_CONFIG_DIR, 'downloadPage.json');
+    if (fs.existsSync(seedPath)) {
+      try { data = fs.readJsonSync(seedPath); } catch (_) { data = {}; }
+    } else {
+      data = {};
+    }
+  }
+  return data;
+}
+
+app.get('/api/download-page', (req, res) => {
+  try {
+    const data = getDownloadPageConfig();
+    res.json({ success: true, ...data });
+  } catch (error) {
+    console.error('❌ Erreur API /api/download-page:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.put('/api/download-page', (req, res) => {
+  try {
+    const body = req.body || {};
+    const data = {
+      title: body.title ?? '',
+      titleEn: body.titleEn ?? '',
+      subtitle: body.subtitle ?? '',
+      subtitleEn: body.subtitleEn ?? '',
+      description: body.description ?? '',
+      descriptionEn: body.descriptionEn ?? '',
+      heroImage: body.heroImage ?? '',
+      gallery: Array.isArray(body.gallery) ? body.gallery : [],
+      videoUrl: body.videoUrl ?? '',
+      videoTitle: body.videoTitle ?? '',
+      videoTitleEn: body.videoTitleEn ?? ''
+    };
+    const success = saveConfig('downloadPage', data);
+    if (!success) return res.status(500).json({ success: false, error: 'Erreur sauvegarde' });
+    res.json({ success: true, message: 'Page téléchargement mise à jour' });
+  } catch (error) {
+    console.error('❌ Erreur API PUT /api/download-page:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // === LORE API ===
 // GET /api/lore - Lire les chapitres du lore
 app.get('/api/lore', (req, res) => {

@@ -24,6 +24,7 @@ import TeamPage from "./pages/TeamPage";
 import UnderConstructionPage from "./pages/UnderConstructionPage";
 import LoginAdmin from "./pages/LoginAdmin";
 import ContactPage from "./pages/ContactPage";
+import DownloadPage from "./pages/DownloadPage";
 import Page404 from "./pages/Page404";
 import { useLanguage } from "./contexts/LanguageContext";
 
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/evs-location" element={<EVsLocationPage />} />
         <Route path="/nerfs-and-buffs" element={<NerfsAndBuffsPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/telechargement" element={<DownloadPage />} />
         <Route path="/admin-login" element={<LoginAdmin />} />
         <Route path="/admin" element={
           <ProtectedRoute>
