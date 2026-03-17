@@ -4336,6 +4336,44 @@ a.dex-panel--active{cursor:default}
   display:block; width:100%; height:450px; border:0;
 }
 
+/* ----- Responsive page téléchargement ----- */
+@media (max-width:768px){
+  .download-page-inner{ padding:1.5rem 1rem 3rem; }
+  .download-page-inner--with-aside{ padding-left:1rem; padding-right:1rem; }
+  .download-hero{ min-height:240px; padding:2rem 1.5rem 2rem; margin-bottom:2rem; border-radius:20px; }
+  .download-hero-content{ max-width:100%; }
+  .download-title{ font-size:clamp(1.5rem, 5vw, 2rem); gap:.5rem; }
+  .download-subtitle{ font-size:1rem; }
+  .download-hero-desc{ font-size:.9rem; margin-top:.75em; max-width:100%; }
+  .download-section{ margin-bottom:2rem; }
+  .download-section-title{ font-size:.7rem; padding:.5rem .9rem; gap:.5rem; letter-spacing:.1em; margin-bottom:1.1rem; }
+  .download-section-title i{ width:1.35em; height:1.35em; }
+  .download-card-btn{ padding:1.2rem 1.35rem; gap:1rem; border-radius:14px; }
+  .download-card-btn-icon{ width:48px; height:48px; border-radius:12px; font-size:1.25rem; }
+  .download-card-btn-title{ font-size:.9rem; }
+  .download-card-btn-sub{ font-size:.8rem; }
+  .download-actions-note{ padding:.9rem 1.1rem; font-size:.85rem; }
+  .download-video-wrap{ border-radius:14px; }
+  .download-soundcloud-sticky{ padding:1rem; border-radius:16px; }
+  .download-soundcloud-wrap iframe{ height:380px; }
+  .download-footer{ margin-top:2.5rem; padding-top:1.5rem; }
+  .download-footer-link{ font-size:.95rem; }
+}
+@media (max-width:480px){
+  .download-page-inner{ padding:1.25rem .75rem 2.5rem; }
+  .download-hero{ min-height:200px; padding:1.5rem 1.25rem 1.75rem; margin-bottom:1.5rem; border-radius:16px; }
+  .download-title{ font-size:1.4rem; }
+  .download-hero-desc{ font-size:.88rem; }
+  .download-section-title{ font-size:.65rem; padding:.45rem .75rem; margin-bottom:1rem; }
+  .download-gallery-section .download-gallery{ grid-template-columns:repeat(2, 1fr); gap:1rem; }
+  .download-gallery-item{ border-radius:12px; }
+  .download-card-btn{ padding:1rem 1.15rem; gap:.85rem; }
+  .download-card-btn-icon{ width:44px; height:44px; font-size:1.1rem; }
+  .download-soundcloud-wrap iframe{ height:320px; }
+  .download-gallery-lightbox{ padding:1rem; }
+  .download-gallery-lightbox-close{ top:.75rem; right:.75rem; width:44px; height:44px; font-size:1.1rem; }
+}
+
 .download-video-wrap iframe,
 .download-video-wrap .download-video-native{ width:100%; height:100%; display:block; border:0; object-fit:contain; }
 .download-video-wrap .download-video-native{ background:#000; }
