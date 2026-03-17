@@ -251,6 +251,7 @@ function NerfBuffModal({ entry, pokedexList = [], onClose }) {
                   ) : (
                     <div className="bst-modal-talent-name"><i className="fa-solid fa-sparkles" aria-hidden /> {t.to}</div>
                   )}
+                  {t.desc && t.desc.trim() && <div className="bst-modal-talent-desc">{t.desc}</div>}
                 </div>
               ))}
             </div>

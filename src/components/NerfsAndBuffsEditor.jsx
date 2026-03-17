@@ -64,7 +64,7 @@ function emptyEntry() {
     typeFrom: "",
     typeTo: "",
     stats,
-    talents: [{ from: "", to: "" }, { from: "", to: "" }, { from: "", to: "" }],
+    talents: [{ from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }],
     movepool: "",
   };
 }
@@ -77,14 +77,14 @@ function entryToForm(entry) {
     stats[k] = Array.isArray(v) ? [Number(v[0]) || 0, Number(v[1]) ?? Number(v[0]) ?? 0] : [0, 0];
   });
   const talents = Array.isArray(entry.talents) ? entry.talents.slice(0, 3) : [];
-  while (talents.length < 3) talents.push({ from: "", to: "" });
+  while (talents.length < 3) talents.push({ from: "", to: "", desc: "" });
   return {
     name: entry.name || "",
     imageUrl: entry.imageUrl || "",
     typeFrom: entry.typeFrom || "",
     typeTo: entry.typeTo || "",
     stats,
-    talents: talents.map((t) => ({ from: t.from || "", to: t.to || "" })),
+    talents: talents.map((t) => ({ from: t.from || "", to: t.to || "", desc: t.desc ?? "" })),
     movepool: entry.movepool || "",
   };
 }
@@ -95,14 +95,14 @@ function formToEntry(form) {
     const a = form.stats?.[k];
     stats[k] = Array.isArray(a) ? [Number(a[0]) || 0, Number(a[1]) ?? Number(a[0]) ?? 0] : [0, 0];
   });
-  const talents = (form.talents || []).slice(0, 3).filter((t) => (t.from || "").trim() || (t.to || "").trim()).map((t) => ({ from: (t.from || "").trim(), to: (t.to || "").trim() }));
+  const talents = (form.talents || []).slice(0, 3).filter((t) => (t.from || "").trim() || (t.to || "").trim()).map((t) => ({ from: (t.from || "").trim(), to: (t.to || "").trim(), desc: (t.desc || "").trim() }));
   return {
     name: (form.name || "").trim(),
     imageUrl: (form.imageUrl || "").trim() || undefined,
     typeFrom: (form.typeFrom || "").trim(),
     typeTo: (form.typeTo || "").trim(),
     stats,
-    talents: talents.length ? talents : [{ from: "", to: "" }],
+    talents: talents.length ? talents : [{ from: "", to: "", desc: "" }],
     movepool: (form.movepool || "").trim(),
   };
 }
@@ -451,26 +451,46 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
           <div className="admin-bst-talents-block" style={{ marginTop: "1rem" }}>
             <span className="admin-bst-talents-title"><i className="fa-solid fa-star" aria-hidden /> Talents (avant → après)</span>
             {[0, 1, 2].map((i) => (
-              <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", marginTop: "0.5rem" }}>
-                <input
-                  type="text"
-                  className="admin-pokedex-input"
-                  value={form.talents?.[i]?.from ?? ""}
+              <div key={i} className="admin-bst-talent-slot" style={{ marginTop: "0.75rem" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                  <div>
+                    <label className="admin-pokedex-label admin-pokedex-label--sub">Talent {i + 1} (avant)</label>
+                    <input
+                      type="text"
+                      className="admin-pokedex-input"
+                      value={form.talents?.[i]?.from ?? ""}
+                      onChange={(e) => setForm((f) => ({
+                        ...f,
+                        talents: [...(f.talents || [{ from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }])].map((t, j) => j === i ? { ...t, from: e.target.value } : t),
+                      }))}
+                      placeholder={`Nom du talent avant`}
+                    />
+                  </div>
+                  <div>
+                    <label className="admin-pokedex-label admin-pokedex-label--sub">Talent {i + 1} (après)</label>
+                    <input
+                      type="text"
+                      className="admin-pokedex-input"
+                      value={form.talents?.[i]?.to ?? ""}
+                      onChange={(e) => setForm((f) => ({
+                        ...f,
+                        talents: [...(f.talents || [{ from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }])].map((t, j) => j === i ? { ...t, to: e.target.value } : t),
+                      }))}
+                      placeholder={`Nom du nouveau talent`}
+                    />
+                  </div>
+                </div>
+                <label className="admin-pokedex-label admin-pokedex-label--sub" style={{ marginTop: "0.35rem", display: "block" }}>Description du talent (après)</label>
+                <textarea
+                  className="admin-pokedex-textarea"
+                  value={form.talents?.[i]?.desc ?? ""}
                   onChange={(e) => setForm((f) => ({
                     ...f,
-                    talents: [...(f.talents || [{ from: "", to: "" }, { from: "", to: "" }, { from: "", to: "" }])].map((t, j) => j === i ? { ...t, from: e.target.value } : t),
+                    talents: [...(f.talents || [{ from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }])].map((t, j) => j === i ? { ...t, desc: e.target.value } : t),
                   }))}
-                  placeholder={`Talent ${i + 1} (avant)`}
-                />
-                <input
-                  type="text"
-                  className="admin-pokedex-input"
-                  value={form.talents?.[i]?.to ?? ""}
-                  onChange={(e) => setForm((f) => ({
-                    ...f,
-                    talents: [...(f.talents || [{ from: "", to: "" }, { from: "", to: "" }, { from: "", to: "" }])].map((t, j) => j === i ? { ...t, to: e.target.value } : t),
-                  }))}
-                  placeholder={`Talent ${i + 1} (après)`}
+                  placeholder="Description du nouveau talent (optionnel)"
+                  rows={2}
+                  style={{ marginTop: "0.25rem" }}
                 />
               </div>
             ))}
