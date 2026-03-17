@@ -270,6 +270,7 @@ const DownloadsEditor = ({ onSave }) => {
   const [patchVideo, setPatchVideo] = useState('');
   const [gameVersion, setGameVersion] = useState('');
   const [launcherBackgroundUrl, setLauncherBackgroundUrl] = useState('');
+  const [launcherSidebarImageUrl, setLauncherSidebarImageUrl] = useState('');
   const [launcherDownloadEnabled, setLauncherDownloadEnabled] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -302,6 +303,7 @@ const DownloadsEditor = ({ onSave }) => {
         setPatchVideo(data.downloads.patchVideo || '');
         setGameVersion(data.downloads.gameVersion || '');
         setLauncherBackgroundUrl(data.downloads.launcherBackgroundUrl || '');
+        setLauncherSidebarImageUrl(data.downloads.launcherSidebarImageUrl || '');
         setLauncherDownloadEnabled(data.downloads.launcherDownloadEnabled !== false);
       }
     } catch (error) {
@@ -382,6 +384,7 @@ const DownloadsEditor = ({ onSave }) => {
             patchVideo: patchVideo,
             gameVersion: gameVersion,
             launcherBackgroundUrl: launcherBackgroundUrl.trim() || undefined,
+            launcherSidebarImageUrl: launcherSidebarImageUrl.trim() || undefined,
             launcherDownloadEnabled: launcherDownloadEnabled
           };
           
@@ -667,6 +670,38 @@ const DownloadsEditor = ({ onSave }) => {
               }}>
                 <i className="fa-solid fa-info-circle"></i>{' '}
                 Cette image sera appliquée comme arrière-plan dans le Launcher (au prochain rafraîchissement ou au lancement). Laissez vide pour garder le fond par défaut.
+              </div>
+              <div style={{ marginTop: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 'bold', color: 'var(--primary-2, #7ecdf2)' }}>
+                  <i className="fa-solid fa-bars"></i> Image de la barre latérale du Launcher
+                </label>
+                <input
+                  type="url"
+                  value={launcherSidebarImageUrl}
+                  onChange={(e) => setLauncherSidebarImageUrl(e.target.value)}
+                  placeholder="https://exemple.com/sidebar-launcher.jpg"
+                  style={{
+                    width: '100%',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    background: 'rgba(255,255,255,0.1)',
+                    color: 'white',
+                    fontSize: '1rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <div style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  padding: '1rem',
+                  borderRadius: '5px',
+                  fontSize: '0.9rem',
+                  opacity: 0.9,
+                  marginTop: '0.5rem',
+                }}>
+                  <i className="fa-solid fa-info-circle"></i>{' '}
+                  Image de fond de la barre latérale (menu) du Launcher. Laissez vide pour le fond par défaut.
+                </div>
               </div>
             </div>
           }
