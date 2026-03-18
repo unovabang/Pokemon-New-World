@@ -222,7 +222,7 @@ export default function LoreStoryPage() {
           <h2 className="lore-story-content-title">{title}</h2>
           <div className="lore-story-meta">
             <p className="lore-story-intro">{renderMarkdown(intro)}</p>
-            <p className="lore-story-author">{isEn ? "Reported by" : "Rapporté par"} {author}.</p>
+            <p className="lore-story-author">{isEn ? "Reported by" : "Rapporté par"} {author}</p>
           </div>
           <div className="lore-story-body">
             <RenderContent paragraphs={paragraphs} />
