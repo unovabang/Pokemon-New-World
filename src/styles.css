@@ -4240,14 +4240,14 @@ a.dex-panel--active{cursor:default}
   width:100%; box-sizing:border-box;
 }
 .download-page-inner--with-aside{
-  display:flex; flex-direction:row; align-items:flex-start; gap:2rem;
-  max-width:100%; padding-left:2rem; padding-right:0.75rem;
+  display:flex; flex-direction:row; align-items:flex-start; justify-content:center; gap:2rem;
+  max-width:100%; padding-left:2rem; padding-right:2rem;
 }
 .download-page-col-main{
   width:100%; min-width:0; display:flex; flex-direction:column; gap:0;
-  flex:1;
+  flex:0 1 auto;
 }
-.download-page-inner--with-aside .download-page-col-main{ max-width:920px; }
+.download-page-inner--with-aside .download-page-col-main{ max-width:920px; flex:0 1 920px; }
 .download-page-aside{
   flex-shrink:0; width:380px; min-width:0;
   position:sticky; top:2rem; align-self:flex-start;
