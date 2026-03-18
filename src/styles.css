@@ -4240,8 +4240,8 @@ a.dex-panel--active{cursor:default}
   width:100%; box-sizing:border-box;
 }
 .download-page-inner--with-aside{
-  display:flex; flex-direction:row; align-items:flex-start; justify-content:center; gap:2rem;
-  max-width:100%; padding-left:2rem; padding-right:2rem;
+  display:flex; flex-direction:row; align-items:flex-start; justify-content:flex-end; gap:2rem;
+  max-width:100%; padding-left:2rem; padding-right:0.5rem;
 }
 .download-page-col-main{
   width:100%; min-width:0; display:flex; flex-direction:column; gap:0;
