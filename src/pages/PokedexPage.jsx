@@ -1,8 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import pokedexData from "../config/pokedex.json";
-import extradexData from "../config/extradex.json";
 import content from "../config/index.js";
 import pokedexBgImg from "../assets/pokedex-background.jpg";
 
@@ -125,18 +123,18 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
   );
 }
 
-/** Pas de localStorage en priorité : on utilise les JSON (pokedex.json) en fallback. */
-
 export default function PokedexPage() {
   const [search, setSearch] = useState("");
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
-  const [entries, setEntries] = useState(() => Array.isArray(pokedexData?.entries) ? pokedexData.entries : []);
+  const [entries, setEntries] = useState([]);
   const [pokedexBgSrc, setPokedexBgSrc] = useState(pokedexBgImg);
   const [customTypes, setCustomTypes] = useState([]);
   const [pokedexCount, setPokedexCount] = useState(null);
   const [extradexCount, setExtradexCount] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const MOBILE_BREAKPOINT = 768;
   useEffect(() => {
@@ -149,6 +147,7 @@ export default function PokedexPage() {
   }, []);
   useEffect(() => {
     let cancelled = false;
+    setLoadError(false);
     Promise.all([
       fetch(`${API_BASE}/pokedex`).then((res) => res.json()),
       fetch(`${API_BASE}/extradex?t=${Date.now()}`).then((res) => res.json()),
@@ -161,25 +160,16 @@ export default function PokedexPage() {
         setPokedexBgSrc(pokedexRes.pokedex.background && pokedexRes.pokedex.background.trim() ? pokedexRes.pokedex.background.trim() : pokedexBgImg);
         setCustomTypes(Array.isArray(pokedexRes.pokedex.customTypes) ? pokedexRes.pokedex.customTypes : []);
       } else {
-        const list = Array.isArray(pokedexData?.entries) ? pokedexData.entries : [];
-        setEntries(list);
-        setPokedexCount(list.length);
-        setPokedexBgSrc(pokedexBgImg);
-        setCustomTypes([]);
+        setLoadError(true);
       }
       if (extradexRes.success && extradexRes.extradex && Array.isArray(extradexRes.extradex.entries)) {
         setExtradexCount(extradexRes.extradex.entries.length);
-      } else {
-        setExtradexCount(Array.isArray(extradexData?.entries) ? extradexData.entries.length : 0);
       }
+      setIsReady(true);
     }).catch(() => {
       if (cancelled) return;
-      const list = Array.isArray(pokedexData?.entries) ? pokedexData.entries : [];
-      setEntries(list);
-      setPokedexCount(list.length);
-      setPokedexBgSrc(pokedexBgImg);
-      setCustomTypes([]);
-      setExtradexCount(Array.isArray(extradexData?.entries) ? extradexData.entries.length : 0);
+      setLoadError(true);
+      setIsReady(true);
     });
     return () => { cancelled = true; };
   }, []);
@@ -220,6 +210,39 @@ export default function PokedexPage() {
     });
     return [...list].sort(sortByNum);
   }, [entries, search, selectedTypes]);
+
+  if (!isReady) {
+    return (
+      <main className="page page-with-sidebar pokedex-page">
+        <Sidebar />
+        <div className="pokedex-wrap">
+          <div className="lore-page-loading-spinner" style={{ padding: "4rem" }}>
+            <i className="fa-solid fa-spinner fa-spin" aria-hidden />
+            <span>Chargement...</span>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main className="page page-with-sidebar pokedex-page">
+        <Sidebar />
+        <div className="pokedex-wrap">
+          <div className="lore-page-unavailable">
+            <p className="lore-page-unavailable-text">
+              Le Pokédex est temporairement indisponible. Réessayez plus tard.
+            </p>
+            <button type="button" className="lore-page-unavailable-retry" onClick={() => window.location.reload()}>
+              <i className="fa-solid fa-rotate-right" aria-hidden />
+              Réessayer
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="page page-with-sidebar pokedex-page">

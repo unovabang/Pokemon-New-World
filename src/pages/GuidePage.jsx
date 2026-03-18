@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import guideDataFallback from "../config/guide.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
   : import.meta.env.DEV
     ? `${window.location.protocol}//${window.location.hostname}:3001/api`
     : `${window.location.origin}/api`;
-
-/** Priorité au JSON (guide.json) et à l’API ; pas de fallback localStorage. */
 
 /** Découpe le texte en segments (texte normal / termes à mettre en évidence) */
 function splitByHighlights(text, highlight = []) {
@@ -128,28 +125,38 @@ function StepCard({ step, onCharacterClick }) {
   );
 }
 
+const EMPTY_GUIDE = { title: "", subtitle: "", disclaimer: "", background: null, steps: [] };
+
 export default function GuidePage() {
-  const [guideData, setGuideData] = useState(guideDataFallback);
+  const [guideData, setGuideData] = useState(EMPTY_GUIDE);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    setLoadError(false);
     fetch(`${API_BASE}/guide?t=${Date.now()}`)
       .then((res) => res.json())
       .then((data) => {
         if (cancelled) return;
         if (data.success && data.guide) {
           setGuideData({
-            title: data.guide.title || guideDataFallback.title,
+            title: data.guide.title || "",
             subtitle: data.guide.subtitle || "",
             disclaimer: data.guide.disclaimer || "",
             background: data.guide.background || null,
             steps: Array.isArray(data.guide.steps) ? data.guide.steps : [],
           });
+        } else {
+          setLoadError(true);
         }
+        setIsReady(true);
       })
       .catch(() => {
         if (cancelled) return;
+        setLoadError(true);
+        setIsReady(true);
       });
     return () => { cancelled = true; };
   }, []);
@@ -157,6 +164,39 @@ export default function GuidePage() {
   const { title, subtitle, disclaimer, background, steps } = guideData;
   const stepList = Array.isArray(steps) ? steps : [];
   const hasBg = background && String(background).trim();
+
+  if (!isReady) {
+    return (
+      <main className="page page-with-sidebar guide-page">
+        <Sidebar />
+        <div className="guide-wrap">
+          <div className="lore-page-loading-spinner" style={{ padding: "4rem" }}>
+            <i className="fa-solid fa-spinner fa-spin" aria-hidden />
+            <span>Chargement...</span>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main className="page page-with-sidebar guide-page">
+        <Sidebar />
+        <div className="guide-wrap">
+          <div className="lore-page-unavailable">
+            <p className="lore-page-unavailable-text">
+              Le guide est temporairement indisponible. Réessayez plus tard.
+            </p>
+            <button type="button" className="lore-page-unavailable-retry" onClick={() => window.location.reload()}>
+              <i className="fa-solid fa-rotate-right" aria-hidden />
+              Réessayer
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className={`page page-with-sidebar guide-page${hasBg ? " guide-page--has-bg" : ""}`}>
@@ -177,7 +217,7 @@ export default function GuidePage() {
               <i className="fa-solid fa-arrow-left" /> Retour
             </Link>
             <div className="guide-title-block">
-              <h1 className="guide-title">{title}</h1>
+              <h1 className="guide-title">{title || "Guide"}</h1>
               {subtitle && <p className="guide-subtitle">{subtitle}</p>}
               {disclaimer && (
                 <div className="guide-disclaimer">
@@ -206,7 +246,6 @@ export default function GuidePage() {
           {stepList.length === 0 && (
             <p className="guide-empty">
               <i className="fa-solid fa-book-open" /> Aucune étape pour le moment.
-              Ajoutez du contenu dans <code>src/config/guide.json</code>.
             </p>
           )}
         </section>

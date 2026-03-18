@@ -1,7 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import Sidebar from "../components/Sidebar";
-import evsConfigFallback from "../config/evsLocation.js";
-import pokedexData from "../config/pokedex.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -117,37 +115,33 @@ export default function EVsLocationPage() {
   const [pokedexEntries, setPokedexEntries] = useState([]);
   const [pageBackground, setPageBackground] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [zoneFilter, setZoneFilter] = useState("");
   const [pokemonSearch, setPokemonSearch] = useState("");
 
   useEffect(() => {
     let cancelled = false;
-    const list = Array.isArray(pokedexData?.entries) ? pokedexData.entries : [];
+    setLoadError(false);
     Promise.all([
       fetch(`${API_BASE}/evs-location?t=${Date.now()}`).then((r) => r.json()),
       fetch(`${API_BASE}/pokedex`).then((r) => r.json()),
     ])
       .then(([evsData, pokedexRes]) => {
         if (cancelled) return;
-        if (evsData?.success && Array.isArray(evsData?.evs?.entries) && evsData.evs.entries.length > 0) {
+        if (evsData?.success && Array.isArray(evsData?.evs?.entries)) {
           setEvsEntries(evsData.evs.entries.map(normalizeEvEntry));
         } else {
-          setEvsEntries((Array.isArray(evsConfigFallback) ? evsConfigFallback : []).map(normalizeEvEntry));
+          setLoadError(true);
         }
         const bg = evsData?.evs?.background;
         setPageBackground(bg && String(bg).trim() ? String(bg).trim() : null);
         if (pokedexRes?.success && Array.isArray(pokedexRes?.pokedex?.entries)) {
           setPokedexEntries(pokedexRes.pokedex.entries);
-        } else {
-          setPokedexEntries(list);
         }
       })
       .catch(() => {
-        if (!cancelled) {
-          setEvsEntries((Array.isArray(evsConfigFallback) ? evsConfigFallback : []).map(normalizeEvEntry));
-          setPokedexEntries(list);
-        }
+        if (!cancelled) setLoadError(true);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -215,6 +209,16 @@ export default function EVsLocationPage() {
           <div className="evs-location-loading">
             <i className="fa-solid fa-spinner fa-spin" aria-hidden />
             <span>Chargement…</span>
+          </div>
+        ) : loadError ? (
+          <div className="lore-page-unavailable">
+            <p className="lore-page-unavailable-text">
+              Les données EVs par lieu sont temporairement indisponibles. Réessayez plus tard.
+            </p>
+            <button type="button" className="lore-page-unavailable-retry" onClick={() => window.location.reload()}>
+              <i className="fa-solid fa-rotate-right" aria-hidden />
+              Réessayer
+            </button>
           </div>
         ) : (
           <>

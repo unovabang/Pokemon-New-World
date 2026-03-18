@@ -2,8 +2,6 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { createPortal } from "react-dom";
 import Sidebar from "../components/Sidebar";
-import nerfsBuffsData from "../config/nerfs-and-buffs.json";
-import pokedexData from "../config/pokedex.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -318,24 +316,25 @@ function NerfBuffGrid({ id, title, icon, entries, pokedexList, onSelect }) {
   );
 }
 
-function getPokedexEntriesFallback() {
-  return pokedexData?.entries || [];
-}
+const EMPTY_NERFS_BUFFS = {
+  lastModified: null,
+  nerfs: [],
+  buffs: [],
+  ajustements: [],
+  background: null,
+};
 
 export default function NerfsAndBuffsPage() {
   const [selectedEntry, setSelectedEntry] = useState(null);
-  const [pokedexList, setPokedexList] = useState(() => getPokedexEntriesFallback());
+  const [pokedexList, setPokedexList] = useState([]);
   const [filter, setFilter] = useState("all");
-  const [dataSource, setDataSource] = useState(() => ({
-    lastModified: nerfsBuffsData?.lastModified ?? null,
-    nerfs: nerfsBuffsData?.nerfs ?? [],
-    buffs: nerfsBuffsData?.buffs ?? [],
-    ajustements: nerfsBuffsData?.ajustements ?? [],
-    background: nerfsBuffsData?.background ?? null,
-  }));
+  const [dataSource, setDataSource] = useState(EMPTY_NERFS_BUFFS);
+  const [isReady, setIsReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+    setLoadError(false);
     Promise.all([
       fetch(`${API_BASE}/nerfs-and-buffs?t=${Date.now()}`).then((r) => r.json()),
       fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
@@ -349,11 +348,18 @@ export default function NerfsAndBuffsPage() {
           ajustements: Array.isArray(nbRes.nerfsBuffs.ajustements) ? nbRes.nerfsBuffs.ajustements : [],
           background: nbRes.nerfsBuffs.background ?? null,
         });
+      } else {
+        setLoadError(true);
       }
       if (pokedexRes?.success && pokedexRes?.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
         setPokedexList(pokedexRes.pokedex.entries);
       }
-    }).catch(() => {});
+      setIsReady(true);
+    }).catch(() => {
+      if (cancelled) return;
+      setLoadError(true);
+      setIsReady(true);
+    });
     return () => { cancelled = true; };
   }, []);
 
@@ -367,6 +373,41 @@ export default function NerfsAndBuffsPage() {
   };
 
   const pageBackground = dataSource.background && String(dataSource.background).trim() ? dataSource.background.trim() : null;
+
+  if (!isReady) {
+    return (
+      <div className="page bst-page nerfbuff-page">
+        <Sidebar />
+        <div className="bst-bg">
+          <div className="bst-bg-grid" />
+          <div className="lore-page-loading-spinner" style={{ padding: "4rem", position: "relative", zIndex: 1 }}>
+            <i className="fa-solid fa-spinner fa-spin" aria-hidden />
+            <span>Chargement...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="page bst-page nerfbuff-page">
+        <Sidebar />
+        <div className="bst-bg">
+          <div className="bst-bg-grid" />
+          <div className="lore-page-unavailable" style={{ position: "relative", zIndex: 1 }}>
+            <p className="lore-page-unavailable-text">
+              Les données Nerfs & Buffs sont temporairement indisponibles. Réessayez plus tard.
+            </p>
+            <button type="button" className="lore-page-unavailable-retry" onClick={() => window.location.reload()}>
+              <i className="fa-solid fa-rotate-right" aria-hidden />
+              Réessayer
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`page bst-page nerfbuff-page${pageBackground ? " bst-page--has-bg" : ""}`}>

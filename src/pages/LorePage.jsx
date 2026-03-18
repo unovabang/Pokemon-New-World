@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
-import loreDataFallback from "../config/lore.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -26,22 +25,23 @@ export default function LorePage() {
   const [stories, setStories] = useState([]);
   const [pageBg, setPageBg] = useState(DEFAULT_LORE_BG);
   const [isReady, setIsReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
+    setLoadError(false);
     fetch(`${API_BASE}/lore?t=${Date.now()}`)
       .then((r) => r.json())
       .then((d) => {
-        if (d?.success) {
-          if (Array.isArray(d.lore?.stories)) setStories(d.lore.stories);
-          else setStories(loreDataFallback.stories || []);
+        if (d?.success && Array.isArray(d.lore?.stories)) {
+          setStories(d.lore.stories);
           if (d.lore?.pageBackground) setPageBg(d.lore.pageBackground);
         } else {
-          setStories(loreDataFallback.stories || []);
+          setLoadError(true);
         }
         setIsReady(true);
       })
       .catch(() => {
-        setStories(loreDataFallback.stories || []);
+        setLoadError(true);
         setIsReady(true);
       });
   }, []);
@@ -88,6 +88,17 @@ export default function LorePage() {
           </div>
         </header>
 
+        {(loadError || stories.length === 0) ? (
+          <div className="lore-page-unavailable">
+            <p className="lore-page-unavailable-text">
+              {isEn ? "The lore is temporarily unavailable. Please try again later." : "Le lore est temporairement indisponible. Réessayez plus tard."}
+            </p>
+            <button type="button" className="lore-page-unavailable-retry" onClick={() => window.location.reload()}>
+              <i className="fa-solid fa-rotate-right" aria-hidden />
+              {isEn ? "Retry" : "Réessayer"}
+            </button>
+          </div>
+        ) : (
         <section className="lore-banners">
           {stories.map((story, index) => {
             const title = isEn && story.titleEn ? story.titleEn : story.title;
@@ -133,6 +144,7 @@ export default function LorePage() {
             );
           })}
         </section>
+        )}
           </>
         )}
       </div>

@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
-import loreDataFallback from "../config/lore.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -95,7 +94,7 @@ export default function LoreStoryPage() {
   const { language } = useLanguage();
   const isEn = language === "en";
 
-  const [stories, setStories] = useState(loreDataFallback.stories || []);
+  const [stories, setStories] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {

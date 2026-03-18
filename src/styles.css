@@ -1766,6 +1766,32 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   color: var(--lore-gold);
   font-size: 1.5rem;
 }
+.lore-page-unavailable {
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+.lore-page-unavailable-text {
+  margin: 0 0 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.1rem;
+}
+.lore-page-unavailable-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--lore-gold-border);
+  border-radius: 10px;
+  color: var(--lore-gold);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.lore-page-unavailable-retry:hover {
+  background: rgba(212, 175, 55, 0.15);
+  color: #e8d48a;
+}
 .lore-hero {
   position: relative;
   text-align: center;

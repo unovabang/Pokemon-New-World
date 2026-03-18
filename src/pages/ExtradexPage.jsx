@@ -1,8 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import extradexDataFallback from "../config/extradex.json";
-import pokedexData from "../config/pokedex.json";
 import extradexBgImg from "../assets/extradex-background.jpg";
 
 const API_BASE = import.meta.env.VITE_API_URL
@@ -119,8 +117,10 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
   );
 }
 
+const EMPTY_EXTRADEX = { title: "Extradex", entries: [], customTypes: [] };
+
 export default function ExtradexPage() {
-  const [extradexData, setExtradexData] = useState(extradexDataFallback);
+  const [extradexData, setExtradexData] = useState(EMPTY_EXTRADEX);
   const [extradexBgSrc, setExtradexBgSrc] = useState(extradexBgImg);
   const [pokedexCount, setPokedexCount] = useState(null);
   const [extradexCount, setExtradexCount] = useState(null);
@@ -128,6 +128,8 @@ export default function ExtradexPage() {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const MOBILE_BREAKPOINT = 768;
   useEffect(() => {
@@ -140,6 +142,7 @@ export default function ExtradexPage() {
   }, []);
   useEffect(() => {
     let cancelled = false;
+    setLoadError(false);
     Promise.all([
       fetch(`${API_BASE}/extradex?t=${Date.now()}`).then((r) => r.json()),
       fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
@@ -156,18 +159,16 @@ export default function ExtradexPage() {
         const bg = extradexRes.extradex.background && extradexRes.extradex.background.trim();
         setExtradexBgSrc(bg ? bg.trim() : extradexBgImg);
       } else {
-        const list = Array.isArray(extradexDataFallback?.entries) ? extradexDataFallback.entries : [];
-        setExtradexCount(list.length);
+        setLoadError(true);
       }
       if (pokedexRes.success && pokedexRes.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
         setPokedexCount(pokedexRes.pokedex.entries.length);
-      } else {
-        setPokedexCount(Array.isArray(pokedexData?.entries) ? pokedexData.entries.length : 0);
       }
+      setIsReady(true);
     }).catch(() => {
       if (cancelled) return;
-      setPokedexCount(Array.isArray(pokedexData?.entries) ? pokedexData.entries.length : 0);
-      setExtradexCount(Array.isArray(extradexDataFallback?.entries) ? extradexDataFallback.entries.length : 0);
+      setLoadError(true);
+      setIsReady(true);
     });
     return () => { cancelled = true; };
   }, []);
@@ -204,6 +205,39 @@ export default function ExtradexPage() {
     });
     return [...list].sort(sortByNum);
   }, [entries, search, selectedTypes]);
+
+  if (!isReady) {
+    return (
+      <main className="page page-with-sidebar pokedex-page extradex-page">
+        <Sidebar />
+        <div className="pokedex-wrap">
+          <div className="lore-page-loading-spinner" style={{ padding: "4rem" }}>
+            <i className="fa-solid fa-spinner fa-spin" aria-hidden />
+            <span>Chargement...</span>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main className="page page-with-sidebar pokedex-page extradex-page">
+        <Sidebar />
+        <div className="pokedex-wrap">
+          <div className="lore-page-unavailable">
+            <p className="lore-page-unavailable-text">
+              L&apos;Extradex est temporairement indisponible. Réessayez plus tard.
+            </p>
+            <button type="button" className="lore-page-unavailable-retry" onClick={() => window.location.reload()}>
+              <i className="fa-solid fa-rotate-right" aria-hidden />
+              Réessayer
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="page page-with-sidebar pokedex-page extradex-page">

@@ -2,8 +2,6 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { createPortal } from "react-dom";
 import Sidebar from "../components/Sidebar";
-import bstData from "../config/bst.json";
-import pokedexData from "../config/pokedex.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -11,10 +9,7 @@ const API_BASE = import.meta.env.VITE_API_URL
     ? `${window.location.protocol}//${window.location.hostname}:3001/api`
     : `${window.location.origin}/api`;
 
-/** Données BST : API en priorité (modifs admin), puis JSON du build. */
-function getBSTDataFallback() {
-  return bstData;
-}
+const EMPTY_BST = { fakemon: [], megas: [], speciaux: [] };
 
 const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Crect fill='%23222' width='96' height='96' rx='12'/%3E%3Ctext x='48' y='56' fill='%23555' font-size='24' text-anchor='middle' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E";
 
@@ -389,19 +384,16 @@ function BSTTable({ id, title, icon, data, pokedexList = [], onSelect, viewMode 
   );
 }
 
-/** Entrées Pokédex pour les sprites BST : API en priorité, puis JSON du build. */
-function getPokedexEntriesFallback() {
-  return pokedexData?.entries || [];
-}
-
 export default function BSTPage() {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState("grid");
   const [selectedPokemon, setSelectedPokemon] = useState(null);
-  const [bstSource, setBstSource] = useState(() => getBSTDataFallback());
-  const [pokedexList, setPokedexList] = useState(() => getPokedexEntriesFallback());
+  const [bstSource, setBstSource] = useState(EMPTY_BST);
+  const [pokedexList, setPokedexList] = useState([]);
   const [pageBackground, setPageBackground] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const MOBILE_BREAKPOINT = 768;
   useEffect(() => {
@@ -414,6 +406,7 @@ export default function BSTPage() {
   }, []);
   useEffect(() => {
     let cancelled = false;
+    setLoadError(false);
     Promise.all([
       fetch(`${API_BASE}/bst?t=${Date.now()}`).then((r) => r.json()),
       fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
@@ -426,11 +419,18 @@ export default function BSTPage() {
           speciaux: Array.isArray(bstRes.bst.speciaux) ? bstRes.bst.speciaux : [],
         });
         setPageBackground(bstRes.bst.background && String(bstRes.bst.background).trim() ? bstRes.bst.background.trim() : null);
+      } else {
+        setLoadError(true);
       }
       if (pokedexRes.success && pokedexRes.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
         setPokedexList(pokedexRes.pokedex.entries);
       }
-    }).catch(() => {});
+      setIsReady(true);
+    }).catch(() => {
+      if (cancelled) return;
+      setLoadError(true);
+      setIsReady(true);
+    });
     return () => { cancelled = true; };
   }, []);
 
@@ -449,6 +449,41 @@ export default function BSTPage() {
   }, [filter, search, bstSource]);
 
   const totalCount = useMemo(() => sections.reduce((acc, s) => acc + (s.data?.length || 0), 0), [sections]);
+
+  if (!isReady) {
+    return (
+      <div className="page bst-page">
+        <Sidebar />
+        <div className="bst-bg">
+          <div className="bst-bg-grid" />
+          <div className="lore-page-loading-spinner" style={{ padding: "4rem", position: "relative", zIndex: 1 }}>
+            <i className="fa-solid fa-spinner fa-spin" aria-hidden />
+            <span>Chargement...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="page bst-page">
+        <Sidebar />
+        <div className="bst-bg">
+          <div className="bst-bg-grid" />
+          <div className="lore-page-unavailable" style={{ position: "relative", zIndex: 1 }}>
+            <p className="lore-page-unavailable-text">
+              Les données BST sont temporairement indisponibles. Réessayez plus tard.
+            </p>
+            <button type="button" className="lore-page-unavailable-retry" onClick={() => window.location.reload()}>
+              <i className="fa-solid fa-rotate-right" aria-hidden />
+              Réessayer
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`page bst-page${pageBackground ? " bst-page--has-bg" : ""}`}>
