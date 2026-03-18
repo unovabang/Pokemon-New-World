@@ -65,8 +65,18 @@ function emptyEntry() {
     typeTo: "",
     stats,
     talents: [{ from: "", to: "", desc: "", hidden: false }],
-    movepool: "",
+    movepool: [{ name: "", desc: "" }],
   };
+}
+
+/** Normalise movepool : supporte l'ancien format (string) et le nouveau format (tableau d'objets). */
+function normalizeMovepool(entry) {
+  if (Array.isArray(entry?.movepool)) {
+    return entry.movepool.map((m) => ({ name: (m.name || "").trim(), desc: (m.desc || "").trim() }));
+  }
+  const movepoolStr = (entry?.movepool || "").trim();
+  if (!movepoolStr) return [{ name: "", desc: "" }];
+  return [{ name: movepoolStr, desc: "" }];
 }
 
 function entryToForm(entry) {
@@ -78,6 +88,7 @@ function entryToForm(entry) {
   });
   let talents = Array.isArray(entry.talents) ? [...entry.talents] : [];
   if (talents.length === 0) talents.push({ from: "", to: "", desc: "", hidden: false });
+  const movepool = normalizeMovepool(entry);
   return {
     name: entry.name || "",
     imageUrl: entry.imageUrl || "",
@@ -85,7 +96,7 @@ function entryToForm(entry) {
     typeTo: entry.typeTo || "",
     stats,
     talents: talents.map((t, i) => ({ from: t.from || "", to: t.to || "", desc: t.desc ?? "", hidden: t.hidden !== undefined ? !!t.hidden : i === 2 })),
-    movepool: entry.movepool || "",
+    movepool: movepool.length > 0 ? movepool : [{ name: "", desc: "" }],
   };
 }
 
@@ -96,14 +107,15 @@ function formToEntry(form) {
     stats[k] = Array.isArray(a) ? [Number(a[0]) || 0, Number(a[1]) ?? Number(a[0]) ?? 0] : [0, 0];
   });
   const talents = (form.talents || []).filter((t) => (t.from || "").trim() || (t.to || "").trim()).map((t) => ({ from: (t.from || "").trim(), to: (t.to || "").trim(), desc: (t.desc || "").trim(), hidden: !!t.hidden }));
+  const movepool = (form.movepool || []).filter((m) => (m.name || "").trim() || (m.desc || "").trim()).map((m) => ({ name: (m.name || "").trim(), desc: (m.desc || "").trim() }));
   return {
     name: (form.name || "").trim(),
     imageUrl: (form.imageUrl || "").trim() || undefined,
     typeFrom: (form.typeFrom || "").trim(),
     typeTo: (form.typeTo || "").trim(),
     stats,
-    talents: talents.length ? talents : [{ from: "", to: "", desc: "" }],
-    movepool: (form.movepool || "").trim(),
+    talents: talents.length ? talents : undefined,
+    movepool: movepool.length ? movepool : undefined,
   };
 }
 
@@ -493,9 +505,32 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
               );
             })}
           </div>
-          <div style={{ marginTop: "1rem" }}>
-            <label className="admin-pokedex-label"><i className="fa-solid fa-book-open" aria-hidden /> Movepool (changements)</label>
-            <textarea className="admin-pokedex-textarea" value={form.movepool} onChange={(e) => setForm((f) => ({ ...f, movepool: e.target.value }))} placeholder="Ajout de Mistrâmes…" rows={2} />
+          <div className="admin-bst-movepool-block" style={{ marginTop: "1rem" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+              <span className="admin-bst-talents-title"><i className="fa-solid fa-book-open" aria-hidden /> Movepool (changements)</span>
+              <button type="button" onClick={() => setForm((f) => ({ ...f, movepool: [...(f.movepool || []), { name: "", desc: "" }] }))} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.35rem 0.75rem", fontSize: "0.8rem" }}>
+                <i className="fa-solid fa-plus" aria-hidden /> Ajouter
+              </button>
+            </div>
+            {(form.movepool || []).map((move, i) => (
+              <div key={i} className="admin-bst-movepool-slot" style={{ position: "relative", marginTop: "0.5rem", padding: "0.75rem", backgroundColor: "rgba(168,85,247,.05)", borderRadius: "8px", border: "1px solid rgba(168,85,247,.2)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                  <span style={{ fontWeight: "600", fontSize: "0.85rem", color: "#a855f7" }}>
+                    <i className="fa-solid fa-book-open" style={{ marginRight: "0.35rem" }} aria-hidden />
+                    Changement {i + 1}
+                  </span>
+                  {(form.movepool || []).length > 1 && (
+                    <button type="button" onClick={() => setForm((f) => ({ ...f, movepool: (f.movepool || []).filter((_, j) => j !== i) }))} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem", color: "#f87171" }} title="Supprimer">
+                      <i className="fa-solid fa-times" aria-hidden />
+                    </button>
+                  )}
+                </div>
+                <label className="admin-pokedex-label admin-pokedex-label--sub">Titre / Nom de l'attaque</label>
+                <input type="text" className="admin-pokedex-input" value={move.name || ""} onChange={(e) => setForm((f) => ({ ...f, movepool: (f.movepool || []).map((m, j) => j === i ? { ...m, name: e.target.value } : m) }))} placeholder="Ajout de Mistrâmes, Suppression de..." />
+                <label className="admin-pokedex-label admin-pokedex-label--sub" style={{ marginTop: "0.35rem" }}>Description (optionnel)</label>
+                <textarea className="admin-pokedex-textarea" value={move.desc || ""} onChange={(e) => setForm((f) => ({ ...f, movepool: (f.movepool || []).map((m, j) => j === i ? { ...m, desc: e.target.value } : m) }))} placeholder="Détails du changement..." rows={2} />
+              </div>
+            ))}
           </div>
         </div>
         <div className="admin-pokedex-modal-footer">

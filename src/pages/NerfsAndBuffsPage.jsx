@@ -268,12 +268,25 @@ function NerfBuffModal({ entry, pokedexList = [], onClose }) {
           );
         })()}
 
-        {entry.movepool && entry.movepool.trim() && (
-          <div className="nerfbuff-movepool-wrap">
-            <div className="bst-modal-talents-label"><i className="fa-solid fa-book-open" aria-hidden /> Movepool</div>
-            <p className="nerfbuff-movepool-text">{entry.movepool}</p>
-          </div>
-        )}
+        {entry.movepool && (() => {
+          const moves = Array.isArray(entry.movepool) 
+            ? entry.movepool.filter((m) => (m.name || "").trim() || (m.desc || "").trim())
+            : (entry.movepool.trim() ? [{ name: entry.movepool.trim(), desc: "" }] : []);
+          if (moves.length === 0) return null;
+          return (
+            <div className="nerfbuff-movepool-wrap">
+              <div className="bst-modal-talents-label" style={{ color: "#a855f7" }}><i className="fa-solid fa-book-open" aria-hidden /> Movepool</div>
+              <div className="nerfbuff-movepool-list">
+                {moves.map((move, i) => (
+                  <div key={i} className="nerfbuff-movepool-item" style={{ marginTop: i > 0 ? "0.5rem" : 0, padding: "0.5rem 0.75rem", backgroundColor: "rgba(168,85,247,.08)", borderRadius: "8px", borderLeft: "3px solid #a855f7" }}>
+                    <div className="nerfbuff-movepool-name" style={{ fontWeight: "600", color: "#c084fc" }}>{move.name}</div>
+                    {move.desc && <p className="nerfbuff-movepool-desc" style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "rgba(255,255,255,.7)", lineHeight: 1.4 }}>{move.desc}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>,
     document.body
