@@ -4237,24 +4237,27 @@ a.dex-panel--active{cursor:default}
 }
 .download-page-inner{
   position:relative; z-index:1; padding:2.5rem 2rem 4rem; max-width:1200px; margin:0 auto;
-  display:grid; grid-template-columns:1fr; gap:0;
-}
-.download-page-col-main{
-  grid-column:1; display:flex; flex-direction:column; gap:0; min-width:0; width:100%;
+  width:100%; box-sizing:border-box;
 }
 .download-page-inner--with-aside{
-  grid-template-columns:1fr 380px; gap:4rem; align-items:start;
-  max-width:1400px; padding-left:2rem; padding-right:3rem;
+  display:flex; flex-direction:row; align-items:stretch; gap:3rem;
+  max-width:1400px; padding-left:2rem; padding-right:2rem;
 }
 @media (max-width:1023px){
-  .download-page-inner--with-aside{ grid-template-columns:1fr; max-width:1200px; padding-right:2rem; }
+  .download-page-inner--with-aside{ flex-direction:column; max-width:1200px; padding-left:1.5rem; padding-right:1.5rem; gap:2rem; }
 }
-.download-page-main{ min-width:0; max-width:920px; margin-left:auto; margin-right:auto; width:100%; }
-.download-page-inner--with-aside .download-page-main{ max-width:880px; margin-left:auto; margin-right:auto; }
-.download-page .site-footer.download-page-footer{ grid-column:1 / -1; width:100%; }
-.download-page-aside{ min-width:0; width:100%; max-width:380px; justify-self:end; margin-left:2rem; margin-right:0; }
-.download-soundcloud-sticky{ position:sticky; top:2rem; margin-top:22.5rem; }
-.download-page-inner--with-aside .download-soundcloud-sticky{ margin-top:22.5rem; }
+.download-page-col-main{
+  flex:1; min-width:0; display:flex; flex-direction:column; gap:0;
+}
+.download-page-main{ min-width:0; max-width:920px; width:100%; margin:0 auto; box-sizing:border-box; }
+.download-page-inner--with-aside .download-page-main{ max-width:880px; }
+.download-page .site-footer.download-page-footer{ width:100%; margin-top:auto; }
+.download-page-aside{ flex-shrink:0; width:380px; min-width:0; }
+@media (max-width:1023px){
+  .download-page-aside{ width:100%; max-width:420px; margin:0 auto; }
+}
+.download-soundcloud-sticky{ position:sticky; top:2rem; }
+.download-page-inner--with-aside .download-soundcloud-sticky{ margin-top:0; }
 @media (max-width:1023px){
   .download-soundcloud-sticky{ margin-top:0; }
 }

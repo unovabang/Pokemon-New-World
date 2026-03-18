@@ -238,9 +238,8 @@ export default function DownloadPage() {
         )}
 
           </div>
-        </div>
 
-        <footer className="site-footer download-page-footer">
+          <footer className="site-footer download-page-footer">
           <div className="container footer-top">
             <div className="footer-grid">
               <div className="footer-col footer-col--brand">
@@ -308,6 +307,7 @@ export default function DownloadPage() {
             {footer?.version && <span>{footer.version}</span>}
           </div>
         </footer>
+        </div>
 
         {soundcloudPlaylistUrl && (
           <aside className="download-page-aside" aria-label="OST Pokemon New World">
