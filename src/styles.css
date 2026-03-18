@@ -4231,10 +4231,10 @@ a.dex-panel--active{cursor:default}
   pointer-events:none;
 }
 .download-page-bg.download-page-bg--image{
-  background:transparent !important;
-  background-size:cover !important;
-  background-position:center !important;
-  background-repeat:no-repeat !important;
+  background:none;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
 }
 .download-page-bg.download-page-bg--image::after{
   content:""; position:absolute; inset:0;
