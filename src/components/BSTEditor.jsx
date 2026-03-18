@@ -595,8 +595,8 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                 })}
               </div>
               <div>
-                <label className="admin-pokedex-label">Détails des attaques / notes</label>
-                <textarea className="admin-pokedex-textarea" value={form.attacks} onChange={(e) => setForm((f) => ({ ...f, attacks: e.target.value }))} placeholder="Attaques, couverture, etc. (optionnel)" rows={3} />
+                <label className="admin-pokedex-label">Attaque signature</label>
+                <textarea className="admin-pokedex-textarea" value={form.attacks} onChange={(e) => setForm((f) => ({ ...f, attacks: e.target.value }))} placeholder="Attaque signature (optionnel)" rows={3} />
               </div>
             </div>
             <div className="admin-pokedex-modal-footer">

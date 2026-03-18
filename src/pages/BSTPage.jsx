@@ -248,6 +248,12 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
             </div>
           );
         })()}
+        {pokemon.attacks && String(pokemon.attacks).trim() && (
+          <div className="bst-modal-talents-wrap">
+            <div className="bst-modal-talents-label"><i className="fa-solid fa-bolt" aria-hidden /> Attaque signature</div>
+            <div className="bst-modal-attacks-desc">{pokemon.attacks.trim()}</div>
+          </div>
+        )}
       </div>
     </div>,
     document.body

@@ -1,5 +1,5 @@
 :root{
-        --bg:#080e1c; --bg-elev:#0d1628;
+        --bg:#050914; --bg-elev:#0d1628;
         --primary:#2e59c6; --primary-2:#7ecdf2;
         --accent:#a78bfa; --accent-warm:#f472b6;
         --text:#eef3ff; --muted:#8da4cc;
@@ -32,9 +32,9 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   border-color:rgba(126,205,242,.22);
   box-shadow:0 16px 50px rgba(0,0,0,.5), 0 0 30px var(--glow-blue), 0 0 0 1px rgba(255,255,255,.05) inset;
 }
-.page{position:relative; padding-top:20px}
+.page{position:relative; padding-top:20px; background-color:#050914}
 .page-with-sidebar{padding-top:1rem}
-.page::before{content:""; position:fixed; inset:0; background-image:var(--page-bg); background-size:cover; background-position:center; background-repeat:no-repeat; filter:blur(var(--bg-blur,12px)) saturate(130%) brightness(.7); transform:scale(1.05); z-index:-2}
+.page::before{content:""; position:fixed; inset:0; background-image:var(--page-bg); background-color:#050914; background-size:cover; background-position:center; background-repeat:no-repeat; filter:blur(var(--bg-blur,12px)) saturate(130%) brightness(.7); transform:scale(1.05); z-index:-2}
 .page::after{content:""; position:fixed; inset:0; background:linear-gradient(170deg,rgba(5,9,20,.6) 0%,rgba(8,14,28,.7) 50%,rgba(5,9,20,.75) 100%); background-color:rgba(8,14,28,var(--bg-dim,.4)); z-index:-1}
 .pokedex-page.page::before{background-image:var(--page-bg, url(/pokedex-background.jpg))}
 /* Sur la page Pokédex on utilise un élément réel pour le fond, pas les pseudo-éléments */
@@ -1126,6 +1126,12 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   padding-left: 1.1rem;
 }
 .bst-modal-talents-list .bst-modal-talent-slot:only-of-type .bst-modal-talent-desc { padding-left: 0; }
+.bst-modal-attacks-desc {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.75);
+  line-height: 1.5;
+  margin-top: 0.35rem;
+}
 @media (max-width:520px){
   .bst-modal-stats{grid-template-columns:repeat(3, 1fr)}
   .bst-grid{grid-template-columns:repeat(auto-fill, minmax(130px, 1fr))}
@@ -4233,6 +4239,9 @@ a.dex-panel--active{cursor:default}
   position:relative; z-index:1; padding:2.5rem 2rem 4rem; max-width:1200px; margin:0 auto;
   display:grid; grid-template-columns:1fr; gap:0;
 }
+.download-page-col-main{
+  grid-column:1; display:flex; flex-direction:column; gap:0; min-width:0; width:100%;
+}
 .download-page-inner--with-aside{
   grid-template-columns:1fr 380px; gap:4rem; align-items:start;
   max-width:1400px; padding-left:2rem; padding-right:3rem;
@@ -4240,8 +4249,9 @@ a.dex-panel--active{cursor:default}
 @media (max-width:1023px){
   .download-page-inner--with-aside{ grid-template-columns:1fr; max-width:1200px; padding-right:2rem; }
 }
-.download-page-main{ min-width:0; max-width:920px; margin-left:auto; margin-right:auto; }
+.download-page-main{ min-width:0; max-width:920px; margin-left:auto; margin-right:auto; width:100%; }
 .download-page-inner--with-aside .download-page-main{ max-width:880px; margin-left:auto; margin-right:auto; }
+.download-page .site-footer.download-page-footer{ grid-column:1 / -1; width:100%; }
 .download-page-aside{ min-width:0; width:100%; max-width:380px; justify-self:end; margin-left:2rem; margin-right:0; }
 .download-soundcloud-sticky{ position:sticky; top:2rem; margin-top:22.5rem; }
 .download-page-inner--with-aside .download-soundcloud-sticky{ margin-top:22.5rem; }

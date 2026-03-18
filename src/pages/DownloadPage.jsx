@@ -26,14 +26,22 @@ export default function DownloadPage() {
   const [galleryIndex, setGalleryIndex] = useState(-1);
   const [siteConfig, setSiteConfig] = useState(null);
   const [externalConfig, setExternalConfig] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
+    setLoadError(false);
     Promise.all([
       fetch(`${API_BASE}/download-page?t=${Date.now()}`).then((r) => r.json()).catch(() => ({})),
       fetch(`${API_BASE}/downloads?t=${Date.now()}`).then((r) => r.json()).catch(() => ({}))
     ]).then(([pageRes, dlRes]) => {
       if (pageRes.success) setPageContent(pageRes);
+      else setLoadError(true);
       if (dlRes.success && dlRes.downloads) setDownloads(dlRes.downloads);
+      setIsReady(true);
+    }).catch(() => {
+      setLoadError(true);
+      setIsReady(true);
     });
   }, []);
 
@@ -65,6 +73,43 @@ export default function DownloadPage() {
   const pageBackground = pageContent?.pageBackground?.trim() || "";
   const soundcloudPlaylistUrl = pageContent?.soundcloudPlaylistUrl?.trim() || "";
 
+  if (!isReady) {
+    return (
+      <main className="page page-with-sidebar download-page">
+        <Sidebar />
+        <div className="download-page-inner">
+          <div className="download-page-main">
+            <div className="lore-page-loading-spinner" style={{ padding: "4rem" }}>
+              <i className="fa-solid fa-spinner fa-spin" aria-hidden />
+              <span>{isEn ? "Loading..." : "Chargement..."}</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <main className="page page-with-sidebar download-page">
+        <Sidebar />
+        <div className="download-page-inner">
+          <div className="download-page-main">
+            <div className="lore-page-unavailable">
+              <p className="lore-page-unavailable-text">
+                {isEn ? "The download page is temporarily unavailable. Please try again later." : "La page de téléchargement est temporairement indisponible. Réessayez plus tard."}
+              </p>
+              <button type="button" className="lore-page-unavailable-retry" onClick={() => window.location.reload()}>
+                <i className="fa-solid fa-rotate-right" aria-hidden />
+                {isEn ? "Retry" : "Réessayer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="page page-with-sidebar download-page">
       <div
@@ -74,24 +119,25 @@ export default function DownloadPage() {
       />
       <Sidebar />
       <div className={`download-page-inner${soundcloudPlaylistUrl ? " download-page-inner--with-aside" : ""}`}>
-        <div className="download-page-main">
-        <header className="download-hero">
-          <LanguageSelector className="download-lang-selector" />
-          {heroImage ? (
-            <div className="download-hero-bg" style={{ backgroundImage: `url(${heroImage})` }} aria-hidden />
-          ) : (
-            <div className="download-hero-gradient" aria-hidden />
-          )}
-          <div className="download-hero-content">
-            <h1 className="download-title">
-              <i className="fa-solid fa-cloud-arrow-down" aria-hidden />
-              <span>{title}</span>
-            </h1>
-            {subtitle && <p className="download-subtitle">{subtitle}</p>}
-            {description && <p className="download-hero-desc">{description}</p>}
-          </div>
-        </header>
+        <div className="download-page-col-main">
+          <header className="download-hero">
+            <LanguageSelector className="download-lang-selector" />
+            {heroImage ? (
+              <div className="download-hero-bg" style={{ backgroundImage: `url(${heroImage})` }} aria-hidden />
+            ) : (
+              <div className="download-hero-gradient" aria-hidden />
+            )}
+            <div className="download-hero-content">
+              <h1 className="download-title">
+                <i className="fa-solid fa-cloud-arrow-down" aria-hidden />
+                <span>{title}</span>
+              </h1>
+              {subtitle && <p className="download-subtitle">{subtitle}</p>}
+              {description && <p className="download-hero-desc">{description}</p>}
+            </div>
+          </header>
 
+          <div className="download-page-main">
         {/* 1. Téléchargements tout en haut */}
         <section id="download-section" className="download-section download-actions">
           <h2 className="download-section-title">
@@ -191,7 +237,10 @@ export default function DownloadPage() {
           </section>
         )}
 
-        <footer className="site-footer">
+          </div>
+        </div>
+
+        <footer className="site-footer download-page-footer">
           <div className="container footer-top">
             <div className="footer-grid">
               <div className="footer-col footer-col--brand">
@@ -259,7 +308,6 @@ export default function DownloadPage() {
             {footer?.version && <span>{footer.version}</span>}
           </div>
         </footer>
-        </div>
 
         {soundcloudPlaylistUrl && (
           <aside className="download-page-aside" aria-label="OST Pokemon New World">
