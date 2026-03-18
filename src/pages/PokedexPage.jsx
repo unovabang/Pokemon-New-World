@@ -4,7 +4,15 @@ import Sidebar from "../components/Sidebar";
 import content from "../config/index.js";
 import pokedexBgImg from "../assets/pokedex-background.jpg";
 
-const SECRET_CODE = "phaston+dylan=gighaston";
+const SECRET_HASH = "53f7981a8813ea030341e0e6fb3c146a2977a230cc0ef43070f5579228bf898c";
+
+async function hashString(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str.toLowerCase());
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 function GighastonEasterEgg({ onClose }) {
   const [phase, setPhase] = useState("glitch");
@@ -251,9 +259,10 @@ export default function PokedexPage() {
   const [loadError, setLoadError] = useState(false);
   const [showEasterEgg, setShowEasterEgg] = useState(false);
 
-  const handleSearchChange = useCallback((value) => {
+  const handleSearchChange = useCallback(async (value) => {
     setSearch(value);
-    if (value.toLowerCase() === SECRET_CODE) {
+    const inputHash = await hashString(value);
+    if (inputHash === SECRET_HASH) {
       setShowEasterEgg(true);
       setSearch("");
     }
