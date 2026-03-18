@@ -1131,6 +1131,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   color: rgba(255,255,255,.75);
   line-height: 1.5;
   margin-top: 0.35rem;
+  white-space: pre-line;
 }
 @media (max-width:520px){
   .bst-modal-stats{grid-template-columns:repeat(3, 1fr)}
