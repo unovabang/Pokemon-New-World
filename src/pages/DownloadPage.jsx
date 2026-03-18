@@ -118,7 +118,7 @@ export default function DownloadPage() {
         style={pageBackground ? { backgroundImage: `url(${pageBackground})` } : undefined}
       />
       <Sidebar />
-      <div className="download-page-inner">
+      <div className={`download-page-inner${soundcloudPlaylistUrl ? " download-page-inner--with-aside" : ""}`}>
         <div className="download-page-col-main">
           <header className="download-hero">
             <LanguageSelector className="download-lang-selector" />
@@ -136,28 +136,6 @@ export default function DownloadPage() {
               {description && <p className="download-hero-desc">{description}</p>}
             </div>
           </header>
-
-          {soundcloudPlaylistUrl && (
-            <section className="download-ost-section" aria-label="OST Pokemon New World">
-              <div className="download-soundcloud-sticky">
-                <h2 className="download-section-title download-soundcloud-title">
-                  <i className="fa-solid fa-music" aria-hidden />
-                  OST Pokemon New World
-                </h2>
-                <div className="download-soundcloud-wrap">
-                  <iframe
-                    title="OST Pokemon New World"
-                    width="100%"
-                    height="450"
-                    scrolling="no"
-                    frameBorder="no"
-                    allow="autoplay"
-                    src={`https://w.soundcloud.com/player/?url=${encodeURIComponent(soundcloudPlaylistUrl)}&color=%239ca8bc&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
-                  />
-                </div>
-              </div>
-            </section>
-          )}
 
           <div className="download-page-main">
         {/* 1. Téléchargements tout en haut */}
@@ -330,6 +308,28 @@ export default function DownloadPage() {
           </div>
         </footer>
         </div>
+
+        {soundcloudPlaylistUrl && (
+          <aside className="download-page-aside" aria-label="OST Pokemon New World">
+            <div className="download-soundcloud-sticky">
+              <h2 className="download-section-title download-soundcloud-title">
+                <i className="fa-solid fa-music" aria-hidden />
+                OST Pokemon New World
+              </h2>
+              <div className="download-soundcloud-wrap">
+                <iframe
+                  title="OST Pokemon New World"
+                  width="100%"
+                  height="450"
+                  scrolling="no"
+                  frameBorder="no"
+                  allow="autoplay"
+                  src={`https://w.soundcloud.com/player/?url=${encodeURIComponent(soundcloudPlaylistUrl)}&color=%239ca8bc&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
+                />
+              </div>
+            </div>
+          </aside>
+        )}
       </div>
     </main>
   );
