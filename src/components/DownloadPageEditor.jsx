@@ -220,7 +220,7 @@ export default function DownloadPageEditor({ onSave }) {
         </SectionCard>
 
         <SectionCard icon="fa-music" iconColor="#a78bfa" title="Bande son (SoundCloud)">
-          <p className="dp-editor-hint">URL de la playlist SoundCloud (ex. https://soundcloud.com/…/sets/…). La section « Quelques bande son de PNW » s'affiche avec un lecteur play/pause et volume. Laissez vide pour masquer.</p>
+          <p className="dp-editor-hint">URL de la playlist SoundCloud (ex. https://soundcloud.com/…/sets/…). La section « OST Pokemon New World » s'affiche avec un lecteur play/pause et volume. Laissez vide pour masquer.</p>
           <div className="dp-editor-fields">
             <div className="dp-editor-field">
               <label>URL playlist SoundCloud</label>

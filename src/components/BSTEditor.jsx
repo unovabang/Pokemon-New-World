@@ -558,51 +558,41 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
                 <label className="admin-pokedex-label">Total (calculé)</label>
                 <input type="text" className="admin-pokedex-input" value={form.total} readOnly style={{ opacity: 0.9 }} />
               </div>
-              <div className="admin-bst-talents-block admin-bst-talents-block--fakemon">
-                <div className="admin-bst-talents-header">
-                  <i className="fa-solid fa-star" aria-hidden />
-                  <span>Talents (jusqu’à 3)</span>
-                </div>
-                <div className="admin-bst-talents-list">
-                  {[0, 1, 2].map((i) => {
-                    const isHidden = i === 2;
-                    const talentTitle = isHidden ? <><i className="fa-solid fa-sparkles" aria-hidden /> Talent Caché</> : <>Talent {i + 1}</>;
-                    const namePlaceholder = isHidden ? "Nom du talent caché" : `Nom du talent ${i + 1}`;
-                    const descPlaceholder = isHidden ? "Description du talent caché (ex. : Les capacités de type Feu du lanceur sont converties…)" : `Description du talent ${i + 1} (ex. : Les statistiques de défense sont légèrement augmentées si le Pokémon maîtrise des capacités de type Ténèbres.)`;
-                    return (
-                      <div key={i} className="admin-bst-talent-slot admin-bst-talent-slot--fakemon">
-                        <div className="admin-bst-talent-title">{talentTitle}</div>
-                        <div className="admin-bst-talent-name-row">
-                          <i className="fa-solid fa-wand-magic-sparkles" aria-hidden />
-                          <input
-                            type="text"
-                            className="admin-bst-talent-name-input"
-                            value={form.abilities?.[i] ?? ""}
-                            onChange={(e) => setForm((f) => ({
-                              ...f,
-                              abilities: [...(f.abilities || ["", "", ""])].map((a, j) => (j === i ? e.target.value : a)),
-                            }))}
-                            placeholder={namePlaceholder}
-                            aria-label={namePlaceholder}
-                          />
-                        </div>
-                        <div className="admin-bst-talent-desc-row">
-                          <textarea
-                            className="admin-bst-talent-desc-textarea"
-                            value={form.abilityDescs?.[i] ?? ""}
-                            onChange={(e) => setForm((f) => ({
-                              ...f,
-                              abilityDescs: [...(f.abilityDescs || ["", "", ""])].map((d, j) => (j === i ? e.target.value : d)),
-                            }))}
-                            placeholder={descPlaceholder}
-                            rows={3}
-                            aria-label={descPlaceholder}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+              <div className="admin-bst-talents-block">
+                <span className="admin-bst-talents-title"><i className="fa-solid fa-star" aria-hidden /> Talents (jusqu’à 3)</span>
+                {[0, 1, 2].map((i) => {
+                  const isHidden = i === 2;
+                  const talentLabel = isHidden ? "Talent Caché" : `Talent ${i + 1}`;
+                  const descLabel = isHidden ? "Description talent caché" : `Description talent ${i + 1}`;
+                  const namePlaceholder = isHidden ? "Nom du talent caché" : `Nom du talent ${i + 1}`;
+                  const descPlaceholder = isHidden ? "Description ou variante (caché)" : `Description ou variante ${i + 1}`;
+                  return (
+                  <div key={i} className="admin-bst-talent-slot">
+                    <label className="admin-pokedex-label">{talentLabel}</label>
+                    <input
+                      type="text"
+                      className="admin-pokedex-input"
+                      value={form.abilities?.[i] ?? ""}
+                      onChange={(e) => setForm((f) => ({
+                        ...f,
+                        abilities: [...(f.abilities || ["", "", ""])].map((a, j) => (j === i ? e.target.value : a)),
+                      }))}
+                      placeholder={namePlaceholder}
+                    />
+                    <label className="admin-pokedex-label admin-pokedex-label--sub">{descLabel}</label>
+                    <textarea
+                      className="admin-pokedex-textarea"
+                      value={form.abilityDescs?.[i] ?? ""}
+                      onChange={(e) => setForm((f) => ({
+                        ...f,
+                        abilityDescs: [...(f.abilityDescs || ["", "", ""])].map((d, j) => (j === i ? e.target.value : d)),
+                      }))}
+                      placeholder={descPlaceholder}
+                      rows={2}
+                    />
+                  </div>
+                  );
+                })}
               </div>
               <div>
                 <label className="admin-pokedex-label">Détails des attaques / notes</label>

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
+import content from "../config/index.js";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -10,12 +11,21 @@ const API_BASE = import.meta.env.VITE_API_URL
     ? `${window.location.protocol}//${window.location.hostname}:3001/api`
     : `${window.location.origin}/api`;
 
+const toPublicUrl = (v) => {
+  if (!v || typeof v !== "string") return null;
+  const s = v.trim();
+  if (s.startsWith("public/")) return "/" + s.slice(7);
+  return s;
+};
+
 export default function DownloadPage() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const isEn = language === "en";
   const [pageContent, setPageContent] = useState(null);
   const [downloads, setDownloads] = useState(null);
   const [galleryIndex, setGalleryIndex] = useState(-1);
+  const [siteConfig, setSiteConfig] = useState(null);
+  const [externalConfig, setExternalConfig] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -26,6 +36,24 @@ export default function DownloadPage() {
       if (dlRes.success && dlRes.downloads) setDownloads(dlRes.downloads);
     });
   }, []);
+
+  useEffect(() => {
+    Promise.all([
+      fetch(`${API_BASE}/config/site?t=${Date.now()}`).then((r) => r.json()).catch(() => null),
+      fetch(`${API_BASE}/config/external?t=${Date.now()}`).then((r) => r.json()).catch(() => null)
+    ]).then(([siteData, externalData]) => {
+      if (siteData?.success && siteData?.config) setSiteConfig(siteData.config);
+      if (externalData?.success && externalData?.config) setExternalConfig(externalData.config);
+    });
+  }, []);
+
+  const baseContent = siteConfig ? { ...content, ...siteConfig } : content;
+  const effectiveContent = externalConfig ? { ...baseContent, ...externalConfig } : baseContent;
+  const footer = effectiveContent.footer;
+  const discord = typeof effectiveContent.discord === "string"
+    ? effectiveContent.discord
+    : (effectiveContent.discord?.invite ?? effectiveContent.discord ?? "#");
+  const logoUrl = toPublicUrl(effectiveContent.branding?.logo) || "/logo.png";
 
   const title = isEn && pageContent?.titleEn ? pageContent.titleEn : (pageContent?.title || "Télécharger");
   const subtitle = isEn && pageContent?.subtitleEn ? pageContent.subtitleEn : (pageContent?.subtitle || "");
@@ -65,7 +93,7 @@ export default function DownloadPage() {
         </header>
 
         {/* 1. Téléchargements tout en haut */}
-        <section className="download-section download-actions">
+        <section id="download-section" className="download-section download-actions">
           <h2 className="download-section-title">
             <i className="fa-solid fa-download" aria-hidden />
             {isEn ? "Downloads" : "Téléchargements"}
@@ -163,24 +191,86 @@ export default function DownloadPage() {
           </section>
         )}
 
-        <footer className="download-footer">
-          <Link to="/" className="download-footer-link">
-            <i className="fa-solid fa-arrow-left" aria-hidden />
-            {isEn ? "Back to home" : "Retour à l'accueil"}
-          </Link>
+        <footer className="site-footer">
+          <div className="container footer-top">
+            <div className="footer-grid">
+              <div className="footer-col footer-col--brand">
+                <div className="footer-brand">
+                  <img src={logoUrl} alt="Logo Pokémon New World" />
+                  <strong>Pokémon New World</strong>
+                </div>
+                <p className="footer-desc">{t("footer.description")}</p>
+                <div className="social">
+                  <a href={discord || "#"} target="_blank" rel="noreferrer" title="Discord">
+                    <i className="fa-brands fa-discord" />
+                  </a>
+                  <a href="#download-section" className="social-btn" title={t("buttons.download")}>
+                    <i className="fa-solid fa-download" />
+                  </a>
+                </div>
+              </div>
+              <div className="footer-col">
+                <h4>{t("navigation.navigation")}</h4>
+                <ul>
+                  <li><a href="/#news"><i className="fa-solid fa-newspaper" /> {t("navigation.news")}</a></li>
+                  <li>
+                    <a href="#download-section" className="footer-link-btn">
+                      <i className="fa-solid fa-cloud-arrow-down" /> {t("navigation.download")}
+                    </a>
+                  </li>
+                  <li><Link to="/lore"><i className="fa-solid fa-scroll" /> Lore</Link></li>
+                  <li><Link to="/pokedex"><i className="fa-solid fa-book" /> Pokédex</Link></li>
+                </ul>
+              </div>
+              <div className="footer-col">
+                <h4>{t("navigation.legal")}</h4>
+                <ul>
+                  <li>{t("footer.legal.disclaimer1")}</li>
+                  <li>{t("footer.legal.disclaimer2")}</li>
+                </ul>
+              </div>
+              {footer?.links && footer.links.length > 0 && (
+                <div className="footer-col">
+                  <h4>Liens</h4>
+                  <ul>
+                    {footer.links.map((link, index) => (
+                      <li key={link.id || index}>
+                        <a href={link.url} target="_blank" rel="noreferrer">
+                          {link.icon && <i className={link.icon} />} {link.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+            <div className="footer-contact-wrap">
+              <Link to="/contact" className="footer-contact-btn">
+                <i className="fa-solid fa-envelope" />
+                <span>{isEn ? "Contact the team" : "Contacter l'équipe"}</span>
+              </Link>
+            </div>
+          </div>
+          <div className="container footnote">
+            <span>{footer?.copyright ? footer.copyright.replace("{year}", new Date().getFullYear()) : `© ${new Date().getFullYear()} Pokémon New World — ${t("footer.copyright")}`}</span>
+            {footer?.developedBy && <span className="footnote-sep">·</span>}
+            {footer?.developedBy && <span>Développé par : {footer.developedBy}</span>}
+            {footer?.version && <span className="footnote-sep">·</span>}
+            {footer?.version && <span>{footer.version}</span>}
+          </div>
         </footer>
         </div>
 
         {soundcloudPlaylistUrl && (
-          <aside className="download-page-aside" aria-label={isEn ? "PNW soundtracks" : "Bande son PNW"}>
+          <aside className="download-page-aside" aria-label="OST Pokemon New World">
             <div className="download-soundcloud-sticky">
               <h2 className="download-section-title download-soundcloud-title">
                 <i className="fa-solid fa-music" aria-hidden />
-                {isEn ? "Some PNW soundtracks" : "Quelques bande son de PNW"}
+                OST Pokemon New World
               </h2>
               <div className="download-soundcloud-wrap">
                 <iframe
-                  title={isEn ? "PNW soundtracks" : "Bande son PNW"}
+                  title="OST Pokemon New World"
                   width="100%"
                   height="450"
                   scrolling="no"
