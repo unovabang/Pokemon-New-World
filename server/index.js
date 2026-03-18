@@ -1133,17 +1133,35 @@ app.post('/api/downloads', (req, res) => {
 });
 
 // === PAGE TÉLÉCHARGEMENT (contenu éditable: galerie, vidéo, description) ===
+/** Retourne un objet plat pour la page téléchargement (gère structure imbriquée { downloadPage: {...} }). */
 function getDownloadPageConfig() {
-  let data = getConfig('downloadPage');
-  if (!data || !Object.keys(data).length) {
+  let raw = getConfig('downloadPage');
+  if (!raw || !Object.keys(raw).length) {
     const seedPath = path.join(SOURCE_CONFIG_DIR, 'downloadPage.json');
     if (fs.existsSync(seedPath)) {
-      try { data = fs.readJsonSync(seedPath); } catch (_) { data = {}; }
+      try { raw = fs.readJsonSync(seedPath); } catch (_) { raw = {}; }
     } else {
-      data = {};
+      raw = {};
     }
   }
-  return data;
+  const data = raw && typeof raw.downloadPage === 'object' && raw.downloadPage !== null && !Array.isArray(raw.downloadPage)
+    ? raw.downloadPage
+    : raw;
+  return {
+    title: data.title ?? '',
+    titleEn: data.titleEn ?? '',
+    subtitle: data.subtitle ?? '',
+    subtitleEn: data.subtitleEn ?? '',
+    description: data.description ?? '',
+    descriptionEn: data.descriptionEn ?? '',
+    heroImage: (data.heroImage != null && data.heroImage !== '') ? String(data.heroImage).trim() : '',
+    pageBackground: (data.pageBackground != null && data.pageBackground !== '') ? String(data.pageBackground).trim() : '',
+    gallery: Array.isArray(data.gallery) ? data.gallery : [],
+    videoUrl: (data.videoUrl != null && data.videoUrl !== '') ? String(data.videoUrl).trim() : '',
+    videoTitle: data.videoTitle ?? '',
+    videoTitleEn: data.videoTitleEn ?? '',
+    soundcloudPlaylistUrl: (data.soundcloudPlaylistUrl != null && data.soundcloudPlaylistUrl !== '') ? String(data.soundcloudPlaylistUrl).trim() : '',
+  };
 }
 
 app.get('/api/download-page', (req, res) => {
@@ -1287,17 +1305,18 @@ app.post('/api/contact', async (req, res) => {
 // GET /api/pokedex - Lire le Pokédex (entries + background + customTypes)
 app.get('/api/pokedex', (req, res) => {
   try {
-    const pokedexData = getConfig('pokedex');
-    if (!pokedexData) {
+    let raw = getConfig('pokedex');
+    if (!raw) {
       return res.status(404).json({ success: false, error: 'Fichier Pokédex non trouvé' });
     }
+    const pokedexData = unwrapConfig(raw, 'pokedex');
     res.json({
       success: true,
       pokedex: {
         source: pokedexData.source,
         updated: pokedexData.updated,
         entries: Array.isArray(pokedexData.entries) ? pokedexData.entries : [],
-        background: pokedexData.background || null,
+        background: (pokedexData.background && String(pokedexData.background).trim()) ? String(pokedexData.background).trim() : null,
         customTypes: Array.isArray(pokedexData.customTypes) ? pokedexData.customTypes : []
       }
     });
@@ -1397,14 +1416,23 @@ app.get('/api/extradex', (req, res) => {
   }
 });
 
+// Désimbriquer une config si elle a été sauvegardée sous la forme { guide: {...} }, { pokedex: {...} }, etc.
+function unwrapConfig(raw, key) {
+  if (!raw || typeof raw !== 'object') return raw;
+  const inner = raw[key];
+  if (inner && typeof inner === 'object' && !Array.isArray(inner)) return inner;
+  return raw;
+}
+
 // === GUIDE API ===
 // GET /api/guide - Lire le guide (title, subtitle, disclaimer, steps)
 app.get('/api/guide', (req, res) => {
   try {
-    const guideData = getConfig('guide');
-    if (!guideData) {
+    let raw = getConfig('guide');
+    if (!raw) {
       return res.status(404).json({ success: false, error: 'Fichier guide non trouvé' });
     }
+    const guideData = unwrapConfig(raw, 'guide');
     res.json({
       success: true,
       guide: {
@@ -1507,19 +1535,21 @@ app.put('/api/extradex', (req, res) => {
 // GET /api/nerfs-and-buffs - Lire les données Nerfs & Buffs
 app.get('/api/nerfs-and-buffs', (req, res) => {
   try {
-    let data = getConfig('nerfs-and-buffs');
-    if (!data) {
+    let raw = getConfig('nerfs-and-buffs');
+    if (!raw) {
       const seedPath = path.join(__dirname, '../src/config/nerfs-and-buffs.json');
       if (fs.existsSync(seedPath)) {
         try {
-          data = fs.readJsonSync(seedPath);
+          raw = fs.readJsonSync(seedPath);
         } catch (e) {
-          data = { lastModified: null, nerfs: [], buffs: [], ajustements: [], background: null };
+          raw = { lastModified: null, nerfs: [], buffs: [], ajustements: [], background: null };
         }
       } else {
-        data = { lastModified: null, nerfs: [], buffs: [], ajustements: [], background: null };
+        raw = { lastModified: null, nerfs: [], buffs: [], ajustements: [], background: null };
       }
     }
+    const data = unwrapConfig(raw, 'nerfsBuffs') || raw;
+    const bg = data.background != null && String(data.background).trim() ? String(data.background).trim() : null;
     res.json({
       success: true,
       nerfsBuffs: {
@@ -1527,7 +1557,7 @@ app.get('/api/nerfs-and-buffs', (req, res) => {
         nerfs: Array.isArray(data.nerfs) ? data.nerfs : [],
         buffs: Array.isArray(data.buffs) ? data.buffs : [],
         ajustements: Array.isArray(data.ajustements) ? data.ajustements : [],
-        background: data.background ?? null,
+        background: bg,
       },
     });
   } catch (error) {
@@ -1577,17 +1607,19 @@ app.put('/api/nerfs-and-buffs', (req, res) => {
 // GET /api/bst - Lire les données BST (fakemon, megas, speciaux)
 app.get('/api/bst', (req, res) => {
   try {
-    const bstData = getConfig('bst');
-    if (!bstData) {
+    let raw = getConfig('bst');
+    if (!raw) {
       return res.status(404).json({ success: false, error: 'Fichier BST non trouvé' });
     }
+    const bstData = unwrapConfig(raw, 'bst');
+    const bg = bstData.background != null && String(bstData.background).trim() ? String(bstData.background).trim() : null;
     res.json({
       success: true,
       bst: {
         fakemon: Array.isArray(bstData.fakemon) ? bstData.fakemon : [],
         megas: Array.isArray(bstData.megas) ? bstData.megas : [],
         speciaux: Array.isArray(bstData.speciaux) ? bstData.speciaux : [],
-        background: bstData.background ?? null,
+        background: bg,
       },
     });
   } catch (error) {
@@ -1634,23 +1666,25 @@ app.put('/api/bst', (req, res) => {
 // GET /api/evs-location - Lire la table EVs (entries)
 app.get('/api/evs-location', (req, res) => {
   try {
-    let configData = getConfig('evs-location');
-    if (!configData) {
+    let raw = getConfig('evs-location');
+    if (!raw) {
       const seedPath = path.join(__dirname, '../src/config/evs-location.json');
       if (fs.existsSync(seedPath)) {
         try {
-          configData = fs.readJsonSync(seedPath);
+          raw = fs.readJsonSync(seedPath);
         } catch (e) {
-          configData = { entries: [] };
+          raw = { entries: [], background: null };
         }
       } else {
-        configData = { entries: [] };
+        raw = { entries: [], background: null };
       }
     }
+    const configData = unwrapConfig(raw, 'evs') || raw;
     const entries = Array.isArray(configData?.entries) ? configData.entries : [];
+    const bg = configData.background != null && String(configData.background).trim() ? String(configData.background).trim() : null;
     res.json({
       success: true,
-      evs: { entries, background: configData.background ?? null },
+      evs: { entries, background: bg },
     });
   } catch (error) {
     console.error('❌ Erreur API /api/evs-location:', error);

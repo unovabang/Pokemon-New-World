@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
 import content from "../config/index.js";
+import downloadPageSeed from "../config/downloadPage.json";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -36,7 +37,10 @@ export default function DownloadPage() {
       fetch(`${API_BASE}/downloads?t=${Date.now()}`).then((r) => r.json()).catch(() => ({}))
     ]).then(([pageRes, dlRes]) => {
       if (pageRes.success) setPageContent(pageRes);
-      else setLoadError(true);
+      else {
+        setLoadError(true);
+        setPageContent({ success: true, ...downloadPageSeed });
+      }
       if (dlRes.success && dlRes.downloads) setDownloads(dlRes.downloads);
       setIsReady(true);
     }).catch(() => {
