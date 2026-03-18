@@ -109,6 +109,10 @@ function GighastonEasterEgg({ onClose }) {
             style={{ width: `${((15 - countdown) / 15) * 100}%` }} 
           />
         </div>
+        <button type="button" className="gighaston-flee-btn" onClick={onClose}>
+          <i className="fa-solid fa-person-running gighaston-flee-icon" />
+          FUIR
+        </button>
       </div>
     </div>
   );
