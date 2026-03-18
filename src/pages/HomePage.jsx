@@ -52,12 +52,9 @@ const HomePage = () => {
   };
   const logoUrl = toPublicUrl(effectiveContent.branding?.logo) || "/logo.png";
 
-  // Image de fond : URL valide + fallback si l'image externe ne charge pas (CORS, 404, etc.)
+  // Image de fond : URL valide (pas de fallback logo)
   const bgHome = backgrounds?.home && String(backgrounds.home).trim();
-  const defaultBg = content.backgrounds?.home || "/logo.png";
-  const pageBgValue = bgHome
-    ? `url(${bgHome}), url(${defaultBg})`
-    : `url(${defaultBg})`;
+  const pageBgValue = bgHome ? `url(${bgHome})` : "none";
   const { t, language } = useLanguage();
   const isEn = language === "en";
   
