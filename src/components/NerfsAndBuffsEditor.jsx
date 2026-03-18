@@ -450,50 +450,57 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
           </div>
           <div className="admin-bst-talents-block" style={{ marginTop: "1rem" }}>
             <span className="admin-bst-talents-title"><i className="fa-solid fa-star" aria-hidden /> Talents (avant → après)</span>
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="admin-bst-talent-slot" style={{ marginTop: "0.75rem" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-                  <div>
-                    <label className="admin-pokedex-label admin-pokedex-label--sub">Talent {i + 1} (avant)</label>
-                    <input
-                      type="text"
-                      className="admin-pokedex-input"
-                      value={form.talents?.[i]?.from ?? ""}
-                      onChange={(e) => setForm((f) => ({
-                        ...f,
-                        talents: [...(f.talents || [{ from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }])].map((t, j) => j === i ? { ...t, from: e.target.value } : t),
-                      }))}
-                      placeholder={`Nom du talent avant`}
-                    />
+            {[0, 1, 2].map((i) => {
+              const talentLabel = i === 2 ? "Talent Caché" : `Talent ${i + 1}`;
+              return (
+                <div key={i} className="admin-bst-talent-slot" style={{ marginTop: "0.75rem", padding: "0.75rem", backgroundColor: "rgba(255,255,255,.03)", borderRadius: "8px", border: i === 2 ? "1px solid rgba(255,215,0,.2)" : "1px solid rgba(255,255,255,.06)" }}>
+                  <div style={{ marginBottom: "0.5rem", fontWeight: "600", fontSize: "0.85rem", color: i === 2 ? "#fbbf24" : "rgba(255,255,255,.8)" }}>
+                    {i === 2 && <i className="fa-solid fa-sparkles" style={{ marginRight: "0.35rem" }} aria-hidden />}
+                    {talentLabel}
                   </div>
-                  <div>
-                    <label className="admin-pokedex-label admin-pokedex-label--sub">Talent {i + 1} (après)</label>
-                    <input
-                      type="text"
-                      className="admin-pokedex-input"
-                      value={form.talents?.[i]?.to ?? ""}
-                      onChange={(e) => setForm((f) => ({
-                        ...f,
-                        talents: [...(f.talents || [{ from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }])].map((t, j) => j === i ? { ...t, to: e.target.value } : t),
-                      }))}
-                      placeholder={`Nom du nouveau talent`}
-                    />
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                    <div>
+                      <label className="admin-pokedex-label admin-pokedex-label--sub">{talentLabel} (avant)</label>
+                      <input
+                        type="text"
+                        className="admin-pokedex-input"
+                        value={form.talents?.[i]?.from ?? ""}
+                        onChange={(e) => setForm((f) => ({
+                          ...f,
+                          talents: [...(f.talents || [{ from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }])].map((t, j) => j === i ? { ...t, from: e.target.value } : t),
+                        }))}
+                        placeholder={`Nom du talent avant`}
+                      />
+                    </div>
+                    <div>
+                      <label className="admin-pokedex-label admin-pokedex-label--sub">{talentLabel} (après)</label>
+                      <input
+                        type="text"
+                        className="admin-pokedex-input"
+                        value={form.talents?.[i]?.to ?? ""}
+                        onChange={(e) => setForm((f) => ({
+                          ...f,
+                          talents: [...(f.talents || [{ from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }])].map((t, j) => j === i ? { ...t, to: e.target.value } : t),
+                        }))}
+                        placeholder={`Nom du nouveau talent`}
+                      />
+                    </div>
                   </div>
+                  <label className="admin-pokedex-label admin-pokedex-label--sub" style={{ marginTop: "0.35rem", display: "block" }}>Description du talent (après)</label>
+                  <textarea
+                    className="admin-pokedex-textarea"
+                    value={form.talents?.[i]?.desc ?? ""}
+                    onChange={(e) => setForm((f) => ({
+                      ...f,
+                      talents: [...(f.talents || [{ from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }])].map((t, j) => j === i ? { ...t, desc: e.target.value } : t),
+                    }))}
+                    placeholder="Description du nouveau talent (optionnel)"
+                    rows={2}
+                    style={{ marginTop: "0.25rem" }}
+                  />
                 </div>
-                <label className="admin-pokedex-label admin-pokedex-label--sub" style={{ marginTop: "0.35rem", display: "block" }}>Description du talent (après)</label>
-                <textarea
-                  className="admin-pokedex-textarea"
-                  value={form.talents?.[i]?.desc ?? ""}
-                  onChange={(e) => setForm((f) => ({
-                    ...f,
-                    talents: [...(f.talents || [{ from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }, { from: "", to: "", desc: "" }])].map((t, j) => j === i ? { ...t, desc: e.target.value } : t),
-                  }))}
-                  placeholder="Description du nouveau talent (optionnel)"
-                  rows={2}
-                  style={{ marginTop: "0.25rem" }}
-                />
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div style={{ marginTop: "1rem" }}>
             <label className="admin-pokedex-label"><i className="fa-solid fa-book-open" aria-hidden /> Movepool (changements)</label>

@@ -228,16 +228,16 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
         </div>
         {(() => {
           const { abilities, abilityDescs } = normalizeAbilities(pokemon);
-          const slots = abilities.map((name, i) => ({ name, desc: abilityDescs[i] || "" })).filter((s) => s.name.trim() || s.desc.trim());
+          const slots = abilities.map((name, i) => ({ name, desc: abilityDescs[i] || "", originalIndex: i })).filter((s) => s.name.trim() || s.desc.trim());
           if (slots.length === 0) return null;
           return (
             <div className="bst-modal-talents-wrap">
               <div className="bst-modal-talents-label"><i className="fa-solid fa-star" aria-hidden /> Talents</div>
               <div className="bst-modal-talents-list">
-                {slots.map((slot, i) => {
-                  const talentTitle = i === 2 ? <><i className="fa-solid fa-sparkles" aria-hidden /> Talent Caché</> : <>Talent {i + 1}</>;
+                {slots.map((slot) => {
+                  const talentTitle = slot.originalIndex === 2 ? <><i className="fa-solid fa-sparkles" aria-hidden /> Talent Caché</> : <>Talent {slot.originalIndex + 1}</>;
                   return (
-                    <div key={i} className="bst-modal-talent-slot">
+                    <div key={slot.originalIndex} className="bst-modal-talent-slot">
                       <div className="bst-modal-talent-title">{talentTitle}</div>
                       {slot.name && <div className="bst-modal-talent-name"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> {slot.name}</div>}
                       {slot.desc && <div className="bst-modal-talent-desc">{slot.desc}</div>}
