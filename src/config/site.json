@@ -15,7 +15,7 @@
     "favicon": "public/logo.png"
   },
   "backgrounds": {
-    "home": "https://i.postimg.cc/L5ZTnW66/image-2025-09-05-021846399.png",
+    "home": "",
     "pokedex": "/pokedex-background.jpg",
     "blur": 0.5,
     "dim": 0.01

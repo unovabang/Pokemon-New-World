@@ -32,7 +32,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   border-color:rgba(126,205,242,.22);
   box-shadow:0 16px 50px rgba(0,0,0,.5), 0 0 30px var(--glow-blue), 0 0 0 1px rgba(255,255,255,.05) inset;
 }
-.page{position:relative; padding-top:20px; background-color:#050914}
+.page{position:relative; padding-top:20px; background-color:transparent}
 .page-with-sidebar{padding-top:1rem}
 .page::before{content:""; position:fixed; inset:0; background-image:var(--page-bg); background-color:#050914; background-size:cover; background-position:center; background-repeat:no-repeat; filter:blur(var(--bg-blur,12px)) saturate(130%) brightness(.7); transform:scale(1.05); z-index:-2}
 .page::after{content:""; position:fixed; inset:0; background:linear-gradient(170deg,rgba(5,9,20,.6) 0%,rgba(8,14,28,.7) 50%,rgba(5,9,20,.75) 100%); background-color:rgba(8,14,28,var(--bg-dim,.4)); z-index:-1}
