@@ -245,75 +245,6 @@ export default function DownloadPage() {
         )}
 
           </div>
-
-          <footer className="site-footer download-page-footer">
-          <div className="container footer-top">
-            <div className="footer-grid">
-              <div className="footer-col footer-col--brand">
-                <div className="footer-brand">
-                  <img src={logoUrl} alt="Logo Pokémon New World" />
-                  <strong>Pokémon New World</strong>
-                </div>
-                <p className="footer-desc">{t("footer.description")}</p>
-                <div className="social">
-                  <a href={discord || "#"} target="_blank" rel="noreferrer" title="Discord">
-                    <i className="fa-brands fa-discord" />
-                  </a>
-                  <a href="#download-section" className="social-btn" title={t("buttons.download")}>
-                    <i className="fa-solid fa-download" />
-                  </a>
-                </div>
-              </div>
-              <div className="footer-col">
-                <h4>{t("navigation.navigation")}</h4>
-                <ul>
-                  <li><a href="/#news"><i className="fa-solid fa-newspaper" /> {t("navigation.news")}</a></li>
-                  <li>
-                    <a href="#download-section" className="footer-link-btn">
-                      <i className="fa-solid fa-cloud-arrow-down" /> {t("navigation.download")}
-                    </a>
-                  </li>
-                  <li><Link to="/lore"><i className="fa-solid fa-scroll" /> Lore</Link></li>
-                  <li><Link to="/pokedex"><i className="fa-solid fa-book" /> Pokédex</Link></li>
-                </ul>
-              </div>
-              <div className="footer-col">
-                <h4>{t("navigation.legal")}</h4>
-                <ul>
-                  <li>{t("footer.legal.disclaimer1")}</li>
-                  <li>{t("footer.legal.disclaimer2")}</li>
-                </ul>
-              </div>
-              {footer?.links && footer.links.length > 0 && (
-                <div className="footer-col">
-                  <h4>Liens</h4>
-                  <ul>
-                    {footer.links.map((link, index) => (
-                      <li key={link.id || index}>
-                        <a href={link.url} target="_blank" rel="noreferrer">
-                          {link.icon && <i className={link.icon} />} {link.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-            <div className="footer-contact-wrap">
-              <Link to="/contact" className="footer-contact-btn">
-                <i className="fa-solid fa-envelope" />
-                <span>{isEn ? "Contact the team" : "Contacter l'équipe"}</span>
-              </Link>
-            </div>
-          </div>
-          <div className="container footnote">
-            <span>{footer?.copyright ? footer.copyright.replace("{year}", new Date().getFullYear()) : `© ${new Date().getFullYear()} Pokémon New World — ${t("footer.copyright")}`}</span>
-            {footer?.developedBy && <span className="footnote-sep">·</span>}
-            {footer?.developedBy && <span>Développé par : {footer.developedBy}</span>}
-            {footer?.version && <span className="footnote-sep">·</span>}
-            {footer?.version && <span>{footer.version}</span>}
-          </div>
-        </footer>
         </div>
 
         {soundcloudPlaylistUrl && (
@@ -338,6 +269,75 @@ export default function DownloadPage() {
           </aside>
         )}
       </div>
+
+      <footer className="site-footer download-page-footer">
+        <div className="container footer-top">
+          <div className="footer-grid">
+            <div className="footer-col footer-col--brand">
+              <div className="footer-brand">
+                <img src={logoUrl} alt="Logo Pokémon New World" />
+                <strong>Pokémon New World</strong>
+              </div>
+              <p className="footer-desc">{t("footer.description")}</p>
+              <div className="social">
+                <a href={discord || "#"} target="_blank" rel="noreferrer" title="Discord">
+                  <i className="fa-brands fa-discord" />
+                </a>
+                <a href="#download-section" className="social-btn" title={t("buttons.download")}>
+                  <i className="fa-solid fa-download" />
+                </a>
+              </div>
+            </div>
+            <div className="footer-col">
+              <h4>{t("navigation.navigation")}</h4>
+              <ul>
+                <li><a href="/#news"><i className="fa-solid fa-newspaper" /> {t("navigation.news")}</a></li>
+                <li>
+                  <a href="#download-section" className="footer-link-btn">
+                    <i className="fa-solid fa-cloud-arrow-down" /> {t("navigation.download")}
+                  </a>
+                </li>
+                <li><Link to="/lore"><i className="fa-solid fa-scroll" /> Lore</Link></li>
+                <li><Link to="/pokedex"><i className="fa-solid fa-book" /> Pokédex</Link></li>
+              </ul>
+            </div>
+            <div className="footer-col">
+              <h4>{t("navigation.legal")}</h4>
+              <ul>
+                <li>{t("footer.legal.disclaimer1")}</li>
+                <li>{t("footer.legal.disclaimer2")}</li>
+              </ul>
+            </div>
+            {footer?.links && footer.links.length > 0 && (
+              <div className="footer-col">
+                <h4>Liens</h4>
+                <ul>
+                  {footer.links.map((link, index) => (
+                    <li key={link.id || index}>
+                      <a href={link.url} target="_blank" rel="noreferrer">
+                        {link.icon && <i className={link.icon} />} {link.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+          <div className="footer-contact-wrap">
+            <Link to="/contact" className="footer-contact-btn">
+              <i className="fa-solid fa-envelope" />
+              <span>{isEn ? "Contact the team" : "Contacter l'équipe"}</span>
+            </Link>
+          </div>
+        </div>
+        <div className="container footnote">
+          <span>{footer?.copyright ? footer.copyright.replace("{year}", new Date().getFullYear()) : `© ${new Date().getFullYear()} Pokémon New World — ${t("footer.copyright")}`}</span>
+          {footer?.developedBy && <span className="footnote-sep">·</span>}
+          {footer?.developedBy && <span>Développé par : {footer.developedBy}</span>}
+          {footer?.version && <span className="footnote-sep">·</span>}
+          {footer?.version && <span>{footer.version}</span>}
+        </div>
+      </footer>
     </main>
   );
 }
