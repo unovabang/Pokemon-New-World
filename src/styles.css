@@ -4230,6 +4230,10 @@ a.dex-panel--active{cursor:default}
   background-size:cover; background-position:center; background-repeat:no-repeat;
   pointer-events:none;
 }
+.download-page-bg.download-page-bg--image{
+  background:none;
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+}
 .download-page-bg.download-page-bg--image::after{
   content:""; position:absolute; inset:0;
   background:linear-gradient(165deg, rgba(8,14,28,.88) 0%, rgba(12,22,48,.82) 50%, rgba(6,12,28,.9) 100%);

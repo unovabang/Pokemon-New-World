@@ -1147,6 +1147,18 @@ function getDownloadPageConfig() {
   const data = raw && typeof raw.downloadPage === 'object' && raw.downloadPage !== null && !Array.isArray(raw.downloadPage)
     ? raw.downloadPage
     : raw;
+  let pageBackground = (data.pageBackground != null && data.pageBackground !== '') ? String(data.pageBackground).trim() : '';
+  if (!pageBackground) {
+    const seedPath = path.join(SOURCE_CONFIG_DIR, 'downloadPage.json');
+    if (fs.existsSync(seedPath)) {
+      try {
+        const seed = fs.readJsonSync(seedPath);
+        const seedData = seed && seed.downloadPage ? seed.downloadPage : seed;
+        const bg = seedData?.pageBackground;
+        if (bg != null && String(bg).trim() !== '') pageBackground = String(bg).trim();
+      } catch (_) {}
+    }
+  }
   return {
     title: data.title ?? '',
     titleEn: data.titleEn ?? '',
@@ -1155,7 +1167,7 @@ function getDownloadPageConfig() {
     description: data.description ?? '',
     descriptionEn: data.descriptionEn ?? '',
     heroImage: (data.heroImage != null && data.heroImage !== '') ? String(data.heroImage).trim() : '',
-    pageBackground: (data.pageBackground != null && data.pageBackground !== '') ? String(data.pageBackground).trim() : '',
+    pageBackground,
     gallery: Array.isArray(data.gallery) ? data.gallery : [],
     videoUrl: (data.videoUrl != null && data.videoUrl !== '') ? String(data.videoUrl).trim() : '',
     videoTitle: data.videoTitle ?? '',
@@ -1166,6 +1178,7 @@ function getDownloadPageConfig() {
 
 app.get('/api/download-page', (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
     const data = getDownloadPageConfig();
     res.json({ success: true, ...data });
   } catch (error) {

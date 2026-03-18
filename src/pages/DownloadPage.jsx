@@ -36,15 +36,18 @@ export default function DownloadPage() {
       fetch(`${API_BASE}/download-page?t=${Date.now()}`).then((r) => r.json()).catch(() => ({})),
       fetch(`${API_BASE}/downloads?t=${Date.now()}`).then((r) => r.json()).catch(() => ({}))
     ]).then(([pageRes, dlRes]) => {
-      if (pageRes.success) setPageContent(pageRes);
-      else {
-        setLoadError(true);
+      if (pageRes && pageRes.success) {
+        setPageContent(pageRes);
+        setLoadError(false);
+      } else {
         setPageContent({ success: true, ...downloadPageSeed });
+        setLoadError(false);
       }
       if (dlRes.success && dlRes.downloads) setDownloads(dlRes.downloads);
       setIsReady(true);
     }).catch(() => {
-      setLoadError(true);
+      setPageContent({ success: true, ...downloadPageSeed });
+      setLoadError(false);
       setIsReady(true);
     });
   }, []);
@@ -74,7 +77,7 @@ export default function DownloadPage() {
   const gallery = pageContent?.gallery || [];
   const heroImage = pageContent?.heroImage?.trim() || "";
   const videoUrl = pageContent?.videoUrl?.trim() || "";
-  const pageBackground = pageContent?.pageBackground?.trim() || "";
+  const pageBackground = (pageContent?.pageBackground?.trim() || downloadPageSeed?.pageBackground?.trim() || "").trim();
   const soundcloudPlaylistUrl = pageContent?.soundcloudPlaylistUrl?.trim() || "";
 
   if (!isReady) {
