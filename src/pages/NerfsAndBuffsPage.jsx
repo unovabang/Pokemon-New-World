@@ -231,36 +231,42 @@ function NerfBuffModal({ entry, pokedexList = [], onClose }) {
           </div>
         </div>
 
-        {entry.talents && entry.talents.length > 0 && (
-          <div className="bst-modal-talents-wrap">
-            <div className="bst-modal-talents-label"><i className="fa-solid fa-star" aria-hidden /> Talents</div>
-            <div className="bst-modal-talents-list">
-              {entry.talents.map((t, i) => {
-                if (!t.from?.trim() && !t.to?.trim()) return null;
-                const talentLabel = i === 2 ? "Talent Caché" : `Talent ${i + 1}`;
-                return (
-                  <div key={i} className="bst-modal-talent-slot nerfbuff-talent-slot">
-                    <div className="bst-modal-talent-title" style={i === 2 ? { color: "#fbbf24" } : undefined}>
-                      {i === 2 && <i className="fa-solid fa-sparkles" aria-hidden style={{ marginRight: "0.35rem" }} />}
-                      {talentLabel}
-                    </div>
-                    {t.from !== t.to ? (
-                      <div className="bst-modal-talent-name">
-                        <i className="fa-solid fa-wand-magic-sparkles" aria-hidden />
-                        <span className="nerfbuff-talent-from">{t.from}</span>
-                        <span className="nerfbuff-arrow-inline"><i className="fa-solid fa-arrow-right" /></span>
-                        <span className="nerfbuff-talent-to">{t.to}</span>
+        {entry.talents && entry.talents.length > 0 && (() => {
+          const filledTalents = entry.talents.filter((t) => t.from?.trim() || t.to?.trim());
+          if (filledTalents.length === 0) return null;
+          let normalCount = 0;
+          return (
+            <div className="bst-modal-talents-wrap">
+              <div className="bst-modal-talents-label"><i className="fa-solid fa-star" aria-hidden /> Talents</div>
+              <div className="bst-modal-talents-list">
+                {filledTalents.map((t, i) => {
+                  const isHidden = t.hidden !== undefined ? !!t.hidden : i === 2;
+                  if (!isHidden) normalCount++;
+                  const talentLabel = isHidden ? "Talent Caché" : `Talent ${normalCount}`;
+                  return (
+                    <div key={i} className="bst-modal-talent-slot nerfbuff-talent-slot">
+                      <div className="bst-modal-talent-title" style={isHidden ? { color: "#fbbf24" } : undefined}>
+                        {isHidden && <i className="fa-solid fa-sparkles" aria-hidden style={{ marginRight: "0.35rem" }} />}
+                        {talentLabel}
                       </div>
-                    ) : (
-                      <div className="bst-modal-talent-name"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> {t.to}</div>
-                    )}
-                    {t.desc && t.desc.trim() && <div className="bst-modal-talent-desc">{t.desc}</div>}
-                  </div>
-                );
-              })}
+                      {t.from !== t.to ? (
+                        <div className="bst-modal-talent-name">
+                          <i className="fa-solid fa-wand-magic-sparkles" aria-hidden />
+                          <span className="nerfbuff-talent-from">{t.from}</span>
+                          <span className="nerfbuff-arrow-inline"><i className="fa-solid fa-arrow-right" /></span>
+                          <span className="nerfbuff-talent-to">{t.to}</span>
+                        </div>
+                      ) : (
+                        <div className="bst-modal-talent-name"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> {t.to}</div>
+                      )}
+                      {t.desc && t.desc.trim() && <div className="bst-modal-talent-desc">{t.desc}</div>}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {entry.movepool && entry.movepool.trim() && (
           <div className="nerfbuff-movepool-wrap">

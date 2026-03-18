@@ -32,8 +32,15 @@ function normalizeName(str) {
     .trim();
 }
 
-/** Normalise les talents (legacy ability/abilityDesc ou arrays). Retourne toujours 3 slots (peuvent être vides). */
+/** Normalise les talents : supporte l'ancien format (arrays) et le nouveau format (tableau d'objets). */
 function normalizeAbilities(row) {
+  if (Array.isArray(row?.talents)) {
+    return {
+      talents: row.talents.map((t) => ({ name: (t.name || "").trim(), desc: (t.desc || "").trim(), hidden: !!t.hidden })),
+      abilities: row.talents.map((t) => (t.name || "").trim()),
+      abilityDescs: row.talents.map((t) => (t.desc || "").trim()),
+    };
+  }
   const abilities = Array.isArray(row?.abilities) ? [...row.abilities] : [];
   const abilityDescs = Array.isArray(row?.abilityDescs) ? [...row.abilityDescs] : [];
   if (abilities.length < 3 && row?.ability != null && String(row.ability).trim() !== "") {
@@ -42,10 +49,32 @@ function normalizeAbilities(row) {
   }
   while (abilities.length < 3) abilities.push("");
   while (abilityDescs.length < 3) abilityDescs.push("");
+  const talents = abilities.map((name, i) => ({ name: (name || "").trim(), desc: (abilityDescs[i] || "").trim(), hidden: i === 2 }));
   return {
+    talents,
     abilities: abilities.slice(0, 3).map((a) => (a || "").trim()),
     abilityDescs: abilityDescs.slice(0, 3).map((d) => (d || "").trim()),
   };
+}
+
+/** Normalise les attaques : supporte l'ancien format (string) et le nouveau format (tableau d'objets). */
+function normalizeAttacks(row) {
+  if (Array.isArray(row?.attacks)) {
+    return row.attacks.map((a) => ({ name: (a.name || "").trim(), desc: (a.desc || "").trim() }));
+  }
+  const attacksStr = (row?.attacks || "").trim();
+  if (!attacksStr) return [];
+  const lines = attacksStr.split(/\n/).filter((l) => l.trim());
+  const attacks = [];
+  for (const line of lines) {
+    const match = line.match(/^(?:\d+\))\s*([^:]+)(?:\s*:\s*(.*))?$/);
+    if (match) {
+      attacks.push({ name: match[1].trim(), desc: (match[2] || "").trim() });
+    } else {
+      attacks.push({ name: line.trim(), desc: "" });
+    }
+  }
+  return attacks;
 }
 
 /** Retourne la liste des talents remplis (pour affichage compact). */
@@ -227,17 +256,19 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
           <div className="bst-modal-stat bst-modal-stat-total"><span className="bst-modal-stat-label"><i className="fa-solid fa-calculator" aria-hidden /> Total</span><span>{pokemon.total}</span></div>
         </div>
         {(() => {
-          const { abilities, abilityDescs } = normalizeAbilities(pokemon);
-          const slots = abilities.map((name, i) => ({ name, desc: abilityDescs[i] || "", originalIndex: i })).filter((s) => s.name.trim() || s.desc.trim());
+          const { talents } = normalizeAbilities(pokemon);
+          const slots = talents.filter((t) => (t.name || "").trim() || (t.desc || "").trim());
           if (slots.length === 0) return null;
+          let normalCount = 0;
           return (
             <div className="bst-modal-talents-wrap">
               <div className="bst-modal-talents-label"><i className="fa-solid fa-star" aria-hidden /> Talents</div>
               <div className="bst-modal-talents-list">
-                {slots.map((slot) => {
-                  const talentTitle = slot.originalIndex === 2 ? <><i className="fa-solid fa-sparkles" aria-hidden /> Talent Caché</> : <>Talent {slot.originalIndex + 1}</>;
+                {slots.map((slot, i) => {
+                  if (!slot.hidden) normalCount++;
+                  const talentTitle = slot.hidden ? <><i className="fa-solid fa-sparkles" aria-hidden /> Talent Caché</> : <>Talent {normalCount}</>;
                   return (
-                    <div key={slot.originalIndex} className="bst-modal-talent-slot">
+                    <div key={i} className="bst-modal-talent-slot">
                       <div className="bst-modal-talent-title">{talentTitle}</div>
                       {slot.name && <div className="bst-modal-talent-name"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> {slot.name}</div>}
                       {slot.desc && <div className="bst-modal-talent-desc">{slot.desc}</div>}
@@ -248,39 +279,23 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
             </div>
           );
         })()}
-        {pokemon.attacks && String(pokemon.attacks).trim() && (() => {
-          const attacksText = pokemon.attacks.trim();
-          const attackLines = attacksText.split(/\n/).filter(line => line.trim());
-          const parsedAttacks = attackLines.map(line => {
-            const match = line.match(/^(\d+\))\s*([^:]+)(?:\s*:\s*(.*))?$/);
-            if (match) {
-              return { num: match[1], name: match[2].trim(), desc: match[3]?.trim() || "" };
-            }
-            return { raw: line.trim() };
-          });
-          const hasStructured = parsedAttacks.some(a => a.name);
+        {(() => {
+          const attacks = normalizeAttacks(pokemon);
+          if (attacks.length === 0) return null;
           return (
             <div className="bst-modal-attacks-wrap">
-              <div className="bst-modal-talents-label"><i className="fa-solid fa-bolt" aria-hidden /> Attaque signature</div>
-              {hasStructured ? (
-                <div className="bst-modal-attacks-list">
-                  {parsedAttacks.map((attack, i) => (
-                    attack.name ? (
-                      <div key={i} className="bst-modal-attack-item">
-                        <div className="bst-modal-attack-header">
-                          <span className="bst-modal-attack-num">{attack.num}</span>
-                          <span className="bst-modal-attack-name">{attack.name}</span>
-                        </div>
-                        {attack.desc && <p className="bst-modal-attack-desc">{attack.desc}</p>}
-                      </div>
-                    ) : (
-                      <p key={i} className="bst-modal-attack-raw">{attack.raw}</p>
-                    )
-                  ))}
-                </div>
-              ) : (
-                <div className="bst-modal-attacks-text">{attacksText}</div>
-              )}
+              <div className="bst-modal-talents-label"><i className="fa-solid fa-bolt" aria-hidden /> Attaque{attacks.length > 1 ? "s" : ""} signature</div>
+              <div className="bst-modal-attacks-list">
+                {attacks.map((attack, i) => (
+                  <div key={i} className="bst-modal-attack-item">
+                    <div className="bst-modal-attack-header">
+                      <span className="bst-modal-attack-num">{i + 1})</span>
+                      <span className="bst-modal-attack-name">{attack.name}</span>
+                    </div>
+                    {attack.desc && <p className="bst-modal-attack-desc">{attack.desc}</p>}
+                  </div>
+                ))}
+              </div>
             </div>
           );
         })()}
