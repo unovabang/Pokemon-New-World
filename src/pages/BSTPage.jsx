@@ -248,12 +248,42 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
             </div>
           );
         })()}
-        {pokemon.attacks && String(pokemon.attacks).trim() && (
-          <div className="bst-modal-talents-wrap">
-            <div className="bst-modal-talents-label"><i className="fa-solid fa-bolt" aria-hidden /> Attaque signature</div>
-            <div className="bst-modal-attacks-desc">{pokemon.attacks.trim()}</div>
-          </div>
-        )}
+        {pokemon.attacks && String(pokemon.attacks).trim() && (() => {
+          const attacksText = pokemon.attacks.trim();
+          const attackLines = attacksText.split(/\n/).filter(line => line.trim());
+          const parsedAttacks = attackLines.map(line => {
+            const match = line.match(/^(\d+\))\s*([^:]+)(?:\s*:\s*(.*))?$/);
+            if (match) {
+              return { num: match[1], name: match[2].trim(), desc: match[3]?.trim() || "" };
+            }
+            return { raw: line.trim() };
+          });
+          const hasStructured = parsedAttacks.some(a => a.name);
+          return (
+            <div className="bst-modal-attacks-wrap">
+              <div className="bst-modal-talents-label"><i className="fa-solid fa-bolt" aria-hidden /> Attaque signature</div>
+              {hasStructured ? (
+                <div className="bst-modal-attacks-list">
+                  {parsedAttacks.map((attack, i) => (
+                    attack.name ? (
+                      <div key={i} className="bst-modal-attack-item">
+                        <div className="bst-modal-attack-header">
+                          <span className="bst-modal-attack-num">{attack.num}</span>
+                          <span className="bst-modal-attack-name">{attack.name}</span>
+                        </div>
+                        {attack.desc && <p className="bst-modal-attack-desc">{attack.desc}</p>}
+                      </div>
+                    ) : (
+                      <p key={i} className="bst-modal-attack-raw">{attack.raw}</p>
+                    )
+                  ))}
+                </div>
+              ) : (
+                <div className="bst-modal-attacks-text">{attacksText}</div>
+              )}
+            </div>
+          );
+        })()}
       </div>
     </div>,
     document.body

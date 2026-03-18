@@ -1126,11 +1126,70 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   padding-left: 1.1rem;
 }
 .bst-modal-talents-list .bst-modal-talent-slot:only-of-type .bst-modal-talent-desc { padding-left: 0; }
-.bst-modal-attacks-desc {
+/* Attaque signature - section wrap */
+.bst-modal-attacks-wrap {
+  margin-top: 1rem;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, rgba(251,191,36,.08) 0%, rgba(245,158,11,.04) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(251,191,36,.2);
+}
+.bst-modal-attacks-wrap .bst-modal-talents-label {
+  color: #fbbf24;
+  margin-bottom: 0.6rem;
+}
+.bst-modal-attacks-wrap .bst-modal-talents-label i {
+  color: #fbbf24;
+}
+/* Liste des attaques structurées */
+.bst-modal-attacks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.bst-modal-attack-item {
+  padding: 0.6rem 0.75rem;
+  background: rgba(0,0,0,.25);
+  border-radius: 8px;
+  border-left: 3px solid #fbbf24;
+}
+.bst-modal-attack-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+.bst-modal-attack-num {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fbbf24;
+  background: rgba(251,191,36,.15);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+.bst-modal-attack-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.95);
+}
+.bst-modal-attack-desc {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.7);
+  line-height: 1.5;
+  margin: 0;
+  padding-left: 0.25rem;
+}
+.bst-modal-attack-raw {
   font-size: 0.8rem;
   color: rgba(255,255,255,.75);
   line-height: 1.5;
-  margin-top: 0.35rem;
+  margin: 0.25rem 0;
+}
+/* Texte simple (fallback) */
+.bst-modal-attacks-text {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.75);
+  line-height: 1.6;
   white-space: pre-line;
 }
 @media (max-width:520px){
