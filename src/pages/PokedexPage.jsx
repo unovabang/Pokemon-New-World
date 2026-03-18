@@ -19,15 +19,9 @@ function GighastonEasterEgg({ onClose }) {
     }, 50);
     const timeout = setTimeout(() => {
       clearInterval(interval);
-      setPhase("video");
+      setPhase("card");
     }, 2000);
     return () => { clearInterval(interval); clearTimeout(timeout); };
-  }, [phase]);
-
-  useEffect(() => {
-    if (phase !== "video") return;
-    const timeout = setTimeout(() => setPhase("card"), 2000);
-    return () => clearTimeout(timeout);
   }, [phase]);
 
   useEffect(() => {
@@ -47,21 +41,6 @@ function GighastonEasterEgg({ onClose }) {
           <div className="gighaston-hex">{glitchNumbers}</div>
           <div className="gighaston-scanlines" />
         </div>
-      </div>
-    );
-  }
-
-  if (phase === "video") {
-    return (
-      <div className="gighaston-overlay gighaston-video-phase">
-        <iframe
-          src="https://www.youtube.com/embed/sKTRwgS0Dvk?autoplay=1&mute=1&start=31&end=33&controls=0&showinfo=0&rel=0&modestbranding=1&loop=0"
-          allow="autoplay; encrypted-media"
-          allowFullScreen
-          className="gighaston-video-iframe"
-          title="???"
-        />
-        <div className="gighaston-video-overlay" />
       </div>
     );
   }
