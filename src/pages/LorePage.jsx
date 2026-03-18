@@ -23,8 +23,9 @@ const CHAPTER_BANNER_IMAGES = [
 export default function LorePage() {
   const { t, language } = useLanguage();
   const isEn = language === "en";
-  const [stories, setStories] = useState(loreDataFallback.stories || []);
+  const [stories, setStories] = useState([]);
   const [pageBg, setPageBg] = useState(DEFAULT_LORE_BG);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     fetch(`${API_BASE}/lore?t=${Date.now()}`)
@@ -32,10 +33,17 @@ export default function LorePage() {
       .then((d) => {
         if (d?.success) {
           if (Array.isArray(d.lore?.stories)) setStories(d.lore.stories);
+          else setStories(loreDataFallback.stories || []);
           if (d.lore?.pageBackground) setPageBg(d.lore.pageBackground);
+        } else {
+          setStories(loreDataFallback.stories || []);
         }
+        setIsReady(true);
       })
-      .catch(() => {});
+      .catch(() => {
+        setStories(loreDataFallback.stories || []);
+        setIsReady(true);
+      });
   }, []);
 
   return (
@@ -46,6 +54,27 @@ export default function LorePage() {
       <div className="lore-page-bg-overlay" aria-hidden />
       <Sidebar />
       <div className="lore-page-inner">
+        {!isReady ? (
+          <div className="lore-page-loading" aria-live="polite">
+            <header className="lore-hero">
+              <LanguageSelector className="lore-lang-selector" />
+              <div className="lore-hero-card">
+                <h1 className="lore-title">
+                  <i className="fa-solid fa-scroll" aria-hidden />
+                  <span>Le Lore</span>
+                </h1>
+                <p className="lore-subtitle">
+                  {t("lorePage.subtitle") || "L'histoire et l'univers de Pokémon New World."}
+                </p>
+              </div>
+            </header>
+            <div className="lore-page-loading-spinner">
+              <i className="fa-solid fa-spinner fa-spin" aria-hidden />
+              <span>{isEn ? "Loading..." : "Chargement..."}</span>
+            </div>
+          </div>
+        ) : (
+          <>
         <header className="lore-hero">
           <LanguageSelector className="lore-lang-selector" />
           <div className="lore-hero-card">
@@ -104,6 +133,8 @@ export default function LorePage() {
             );
           })}
         </section>
+          </>
+        )}
       </div>
     </main>
   );
