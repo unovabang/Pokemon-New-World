@@ -85,19 +85,12 @@ export default function SecretPage() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const source = ctx.createMediaElementSource(audio);
-    const gainNode = ctx.createGain();
-    gainNode.gain.value = 2;
-    source.connect(gainNode);
-    gainNode.connect(ctx.destination);
+    audio.volume = 0.5;
     const p = audio.play().catch(() => {});
-    if (p && typeof p.then === "function") p.then(() => ctx.resume?.()).catch(() => {});
+    if (p && typeof p.then === "function") p.then(() => {}).catch(() => {});
     return () => {
       audio.pause();
       audio.currentTime = 0;
-      gainNode.disconnect();
-      source.disconnect();
     };
   }, []);
 
@@ -137,32 +130,32 @@ export default function SecretPage() {
         <div className="secret-hero-glow" aria-hidden="true" />
         <div className="secret-hero-inner">
           <img src="https://i.imgur.com/9bVZ1FP.png" alt="" className="secret-hero-logo" />
-          <span className="secret-hero-badge">[ ACCÈS RESTREINT ]</span>
+          <span className="secret-hero-badge"><i className="fa-solid fa-lock" aria-hidden /> [ ACCÈS RESTREINT ]</span>
           <h1 className="secret-hero-title">
             <i className="fa-solid fa-moon" aria-hidden /> LA LUNE BRILLE CE SOIR
           </h1>
           <p className="secret-hero-description">
-            Là où l'esprit perd son bord — une présence veille dans l'oubli.
+            <i className="fa-solid fa-quote-left" aria-hidden /> Là où l'esprit perd son bord — une présence veille dans l'oubli.
           </p>
+          <div className="secret-hero-toolbar">
+            <button type="button" className="secret-back" onClick={handleFuir}>
+              <i className="fa-solid fa-door-open" aria-hidden /> Quitter
+            </button>
+            <button
+              type="button"
+              className="secret-listen-btn"
+              onClick={handleEcouteMoi}
+              aria-pressed={isPlaying}
+            >
+              <i className={isPlaying ? "fa-solid fa-pause" : "fa-solid fa-volume-high"} aria-hidden />
+              {isPlaying ? " Pause" : " Ecoute-moi"}
+            </button>
+          </div>
+          <p className="secret-hero-warning"><i className="fa-solid fa-triangle-exclamation" aria-hidden /> Tu ne devrais pas être ici.</p>
         </div>
       </header>
 
       <div className="secret-content-wrap">
-        <div className="secret-toolbar">
-          <button type="button" className="secret-back" onClick={handleFuir}>
-            <i className="fa-solid fa-door-open" aria-hidden /> Quitter
-          </button>
-          <button
-            type="button"
-            className="secret-listen-btn"
-            onClick={handleEcouteMoi}
-            aria-pressed={isPlaying}
-          >
-            <i className={isPlaying ? "fa-solid fa-pause" : "fa-solid fa-volume-high"} aria-hidden />
-            {isPlaying ? " Pause" : " Ecoute-moi"}
-          </button>
-        </div>
-        <p className="secret-hero-warning">Tu ne devrais pas être ici.</p>
         <div className="secret-main">
           <aside className="secret-transcript-panel" aria-label="Retranscription">
             <div className="secret-transcript-box" aria-live="polite">
