@@ -85,11 +85,19 @@ export default function SecretPage() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = ctx.createMediaElementSource(audio);
+    const gainNode = ctx.createGain();
+    gainNode.gain.value = 2;
+    source.connect(gainNode);
+    gainNode.connect(ctx.destination);
     const p = audio.play().catch(() => {});
-    if (p && typeof p.then === "function") p.then(() => {}).catch(() => {});
+    if (p && typeof p.then === "function") p.then(() => ctx.resume?.()).catch(() => {});
     return () => {
       audio.pause();
       audio.currentTime = 0;
+      gainNode.disconnect();
+      source.disconnect();
     };
   }, []);
 
