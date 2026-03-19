@@ -34,6 +34,17 @@
   opacity:1;
   text-shadow:0 0 12px rgba(167,139,250,.25);
 }
+/* Zone invisible : 3 clics pour révéler le bouton runique */
+.btn-secret-zone{
+  min-width:140px;
+  min-height:48px;
+  padding:.85rem 1.75rem;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  border-radius:12px;
+}
+.btn-secret-zone:focus{ outline:none; }
 .hero-video .cta .btn-runic{ min-width:140px; }
 /* Bouton runes ᚦᚨᚱᚲᚱᚨᛁ : esthétique mystérieuse, police runique */
 .btn-runic{

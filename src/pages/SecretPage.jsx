@@ -85,7 +85,7 @@ export default function SecretPage() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.volume = 0.01;
+    audio.volume = 0.02;
     const p = audio.play().catch(() => {});
     if (p && typeof p.then === "function") p.then(() => {}).catch(() => {});
     return () => {

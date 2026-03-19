@@ -90,6 +90,8 @@ const HomePage = () => {
   const [secretTransitioning, setSecretTransitioning] = useState(false);
   const [openEnigmaModal, setOpenEnigmaModal] = useState(false);
   const [enigmaAnswer, setEnigmaAnswer] = useState("");
+  const [showSecretButton, setShowSecretButton] = useState(false);
+  const [secretZoneClicks, setSecretZoneClicks] = useState(0);
   const enigmaAudioRef = useRef(null);
   const navigate = useNavigate();
 
@@ -113,7 +115,7 @@ const HomePage = () => {
   const playEnigmaAudio = () => {
     const el = enigmaAudioRef.current;
     if (!el) return;
-    el.volume = 0.01;
+    el.volume = 0.02;
     el.currentTime = 0;
     el.play().catch(() => {});
   };
@@ -153,6 +155,13 @@ const HomePage = () => {
   const handleSecretClick = () => {
     setOpenEnigmaModal(true);
     setEnigmaAnswer("");
+  };
+
+  const handleSecretZoneClick = () => {
+    if (showSecretButton) return;
+    const next = secretZoneClicks + 1;
+    setSecretZoneClicks(next);
+    if (next >= 3) setShowSecretButton(true);
   };
 
   useEffect(() => {
@@ -246,14 +255,23 @@ const HomePage = () => {
                     </a>
                   </div>
                   <div className="cta-row cta-row--runic">
-                    <button
-                      type="button"
-                      className="btn btn-secret btn-runic"
-                      onClick={handleSecretClick}
-                      aria-label="Entrée secrète"
-                    >
-                      <span className="btn-runic-text">ᚦᚨᚱᚲᚱᚨᛁ</span>
-                    </button>
+                    {showSecretButton ? (
+                      <button
+                        type="button"
+                        className="btn btn-secret btn-runic"
+                        onClick={handleSecretClick}
+                        aria-label="Entrée secrète"
+                      >
+                        <span className="btn-runic-text">ᚦᚨᚱᚲᚱᚨᛁ</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn-secret-zone"
+                        onClick={handleSecretZoneClick}
+                        aria-label=""
+                      />
+                    )}
                   </div>
                 </div>
 
@@ -304,15 +322,7 @@ const HomePage = () => {
                           type="text"
                           className="enigma-modal-input"
                           value={enigmaAnswer}
-                          onChange={(e) => {
-                            setEnigmaAnswer(e.target.value);
-                            if (e.target.value.trim().toLowerCase() === ENIGMA_ANSWER) {
-                              setOpenEnigmaModal(false);
-                              setEnigmaAnswer("");
-                              setSecretTransitioning(true);
-                              setTimeout(() => navigate("/la-lune-brillera-ce-soir", { replace: true }), 1200);
-                            }
-                          }}
+                          onChange={(e) => setEnigmaAnswer(e.target.value)}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") checkEnigmaAndGo();
                           }}
