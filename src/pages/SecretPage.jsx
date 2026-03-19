@@ -27,7 +27,11 @@ export default function SecretPage() {
 
   useEffect(() => {
     document.body.classList.add("secret-page-active");
-    return () => document.body.classList.remove("secret-page-active");
+    document.documentElement.classList.add("secret-page-active");
+    return () => {
+      document.body.classList.remove("secret-page-active");
+      document.documentElement.classList.remove("secret-page-active");
+    };
   }, []);
 
   useEffect(() => {
