@@ -11,17 +11,17 @@ const MEGA_DARKRAI_IMAGE = "https://static.wikia.nocookie.net/pokemon-new-world-
 
 /** Segments avec timestamps (secondes) — ajuster pour coller à la voix. */
 const SECRET_TRANSCRIPT_SEGMENTS = [
-  { text: "Félicitations", at: 0 },
-  { text: "Tu es arrivé jusqu'ici", at: 2.5 },
-  { text: "Il ne te reste qu'une seule étape avant d'obtenir ce que tu cherches", at: 6 },
-  { text: "Chemin des Larmes", at: 11 },
-  { text: "Vieux Manoir", at: 14 },
-  { text: "Six y", at: 17 },
-  { text: "Quatre x", at: 19 },
-  { text: "Moins un x", at: 21 },
-  { text: "Trois y", at: 23 },
-  { text: "AA", at: 25 },
-  { text: "Ne te trompe pas", at: 27 },
+  { text: "Félicitations", at: 1 },
+  { text: "Tu es arrivé jusqu'ici", at: 2 },
+  { text: "Il ne te reste qu'une seule étape avant d'obtenir ce que tu cherches", at: 3 },
+  { text: "Chemin des Larmes", at: 10 },
+  { text: "Vieux Manoir", at: 12 },
+  { text: "Six y", at: 13 },
+  { text: "Quatre x", at: 14 },
+  { text: "Moins un x", at: 15 },
+  { text: "Trois y", at: 17 },
+  { text: "AA", at: 18 },
+  { text: "Ne te trompe pas", at: 20 },
 ];
 
 const CRYPT = {
