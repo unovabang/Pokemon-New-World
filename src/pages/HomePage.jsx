@@ -94,13 +94,13 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   const ENIGMA_ANSWER = "darkrai";
-  const ENIGMA_AUDIO_SRC = "https://audio.jukehost.co.uk/L4y1De7ALwhHFwTlpXi1xppnpALq3Ph5.mp3";
+  const ENIGMA_AUDIO_SRC = "https://audio.jukehost.co.uk/DGAfKjoSST6lFylKTtpRd0ybZeBlpmRG.mp3";
   const checkEnigmaAndGo = () => {
     if (enigmaAnswer.trim().toLowerCase() !== ENIGMA_ANSWER) return;
     setOpenEnigmaModal(false);
     setEnigmaAnswer("");
     setSecretTransitioning(true);
-    setTimeout(() => navigate("/la-lune-brille-ce-soir", { replace: true }), 1200);
+    setTimeout(() => navigate("/la-lune-brillera-ce-soir", { replace: true }), 1200);
   };
 
   const playEnigmaAudio = () => {
@@ -303,7 +303,7 @@ const HomePage = () => {
                               setOpenEnigmaModal(false);
                               setEnigmaAnswer("");
                               setSecretTransitioning(true);
-                              setTimeout(() => navigate("/la-lune-brille-ce-soir", { replace: true }), 1200);
+                              setTimeout(() => navigate("/la-lune-brillera-ce-soir", { replace: true }), 1200);
                             }
                           }}
                           onKeyDown={(e) => {

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
  * Page Chemin des Larmes — Easter egg Darkrai.
  * Ambiance mystérieuse, sombre, carte Pokémon type archive corrompue.
  */
-const SECRET_AUDIO_SRC = "https://audio.jukehost.co.uk/Icyu4x7mU7ApHJ0lx9R6R6WwMX2pP9Si.mp3";
+const SECRET_AUDIO_SRC = "https://audio.jukehost.co.uk/eKKRtuK9gYWurjocfyfXIu9oGuOLJXQr.mp3";
 const SECRET_HERO_BG = "https://images3.alphacoders.com/107/1073997.jpg";
 const MEGA_DARKRAI_IMAGE = "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/f7/Darkrai2.gif/revision/latest?cb=20260130212808&path-prefix=fr";
 
@@ -132,7 +132,7 @@ export default function SecretPage() {
           <img src="https://i.imgur.com/9bVZ1FP.png" alt="" className="secret-hero-logo" />
           <span className="secret-hero-badge"><i className="fa-solid fa-lock" aria-hidden /> [ ACCÈS RESTREINT ]</span>
           <h1 className="secret-hero-title">
-            <i className="fa-solid fa-moon" aria-hidden /> LA LUNE BRILLE CE SOIR
+            <i className="fa-solid fa-moon" aria-hidden /> LA LUNE BRILLERA CE SOIR
           </h1>
           <p className="secret-hero-description">
             <i className="fa-solid fa-quote-left" aria-hidden /> Là où l'esprit perd son bord — une présence veille dans l'oubli.

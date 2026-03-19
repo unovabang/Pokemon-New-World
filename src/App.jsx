@@ -48,8 +48,8 @@ export default function App() {
         <Route path="/nerfs-and-buffs" element={<NerfsAndBuffsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/telechargement" element={<DownloadPage />} />
-        <Route path="/la-lune-brille-ce-soir" element={<SecretPage />} />
-        <Route path="/chemin-des-larmes" element={<Navigate to="/la-lune-brille-ce-soir" replace />} />
+        <Route path="/la-lune-brillera-ce-soir" element={<SecretPage />} />
+        <Route path="/chemin-des-larmes" element={<Navigate to="/la-lune-brillera-ce-soir" replace />} />
         <Route path="/admin-login" element={<LoginAdmin />} />
         <Route path="/admin" element={
           <ProtectedRoute>
