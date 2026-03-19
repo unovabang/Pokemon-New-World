@@ -9,9 +9,28 @@ const SECRET_AUDIO_SRC = "https://audio.jukehost.co.uk/Icyu4x7mU7ApHJ0lx9R6R6WwM
 const SECRET_HERO_BG = "https://images3.alphacoders.com/107/1073997.jpg";
 const MEGA_DARKRAI_IMAGE = "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/f7/Darkrai2.gif/revision/latest?cb=20260130212808&path-prefix=fr";
 
-/** Texte complet de la retranscription — apparaît au fur et à mesure de l'audio. Remplacer par votre texte si besoin. */
-const SECRET_TRANSCRIPT =
-  "Retranscription du message. Remplacez cette constante SECRET_TRANSCRIPT dans SecretPage.jsx par votre texte complet pour qu'il s'affiche progressivement pendant l'écoute.";
+/** Texte de la retranscription — apparaît ligne par ligne au rythme de l'audio. */
+const SECRET_TRANSCRIPT = `Félicitations
+
+Tu es arrivé jusqu'ici
+
+Il ne te reste qu'une seule étape avant d'obtenir ce que tu cherches
+
+Chemin des Larmes
+
+Vieux Manoir
+
+Six y
+
+Quatre x
+
+Moins un x
+
+Trois y
+
+AA
+
+Ne te trompe pas`;
 
 const CRYPT = {
   name: "▯ ▯ ▯ ▯ ▯ ▯",
@@ -25,11 +44,11 @@ const CRYPT = {
   attackDesc: "▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯",
 };
 
-/** Découpe le texte en segments (phrases) pour révélation progressive. */
+/** Découpe le texte en segments (lignes) pour révélation au rythme de la voix. */
 function segmentTranscript(text) {
   if (!text || !text.trim()) return [""];
-  const parts = text.trim().split(/(?<=[.!?])\s+/);
-  return parts.length > 0 ? parts : [text];
+  const parts = text.trim().split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  return parts.length > 0 ? parts : [text.trim()];
 }
 
 export default function SecretPage() {
@@ -41,11 +60,10 @@ export default function SecretPage() {
   const segments = useMemo(() => segmentTranscript(SECRET_TRANSCRIPT), []);
   const visibleText = useMemo(() => {
     if (segments.length === 0) return "";
-    const n = Math.min(
-      Math.floor(transcriptProgress * segments.length),
-      segments.length
-    );
-    return segments.slice(0, n).join(" ").trim();
+    const count = transcriptProgress > 0
+      ? Math.min(segments.length, Math.ceil(transcriptProgress * segments.length))
+      : 0;
+    return segments.slice(0, count).join("\n").trim();
   }, [segments, transcriptProgress]);
 
   useEffect(() => {
@@ -81,6 +99,17 @@ export default function SecretPage() {
       audio.removeEventListener("play", onPlay);
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("ended", onEnded);
+    };
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const p = audio.play().catch(() => {});
+    if (p && typeof p.then === "function") p.then(() => {}).catch(() => {});
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
     };
   }, []);
 

@@ -9639,19 +9639,19 @@ body.secret-page-active{
   padding:0.65rem 1.4rem;
   font-size:1rem;
   font-weight:600;
-  color:rgba(255,220,120,.95);
-  background:linear-gradient(180deg, rgba(180,120,40,.35) 0%, rgba(140,80,20,.4) 100%);
-  border:1px solid rgba(255,200,80,.5);
+  color:rgba(255,200,200,.95);
+  background:linear-gradient(180deg, rgba(180,50,50,.4) 0%, rgba(140,30,30,.5) 100%);
+  border:1px solid rgba(255,100,100,.55);
   border-radius:12px;
   cursor:pointer;
   transition:all .3s ease;
-  box-shadow:0 2px 12px rgba(0,0,0,.3), 0 0 20px rgba(200,150,50,.15), inset 0 1px 0 rgba(255,255,255,.08);
+  box-shadow:0 2px 12px rgba(0,0,0,.3), 0 0 20px rgba(180,50,50,.2), inset 0 1px 0 rgba(255,255,255,.08);
 }
 .secret-listen-btn:hover{
-  color:rgba(255,235,180,1);
-  background:linear-gradient(180deg, rgba(200,140,50,.45) 0%, rgba(160,100,30,.5) 100%);
-  border-color:rgba(255,210,100,.65);
-  box-shadow:0 4px 24px rgba(0,0,0,.4), 0 0 30px rgba(220,170,80,.25), inset 0 1px 0 rgba(255,255,255,.1);
+  color:rgba(255,220,220,1);
+  background:linear-gradient(180deg, rgba(200,60,60,.5) 0%, rgba(160,40,40,.55) 100%);
+  border-color:rgba(255,120,120,.7);
+  box-shadow:0 4px 24px rgba(0,0,0,.4), 0 0 30px rgba(200,60,60,.3), inset 0 1px 0 rgba(255,255,255,.1);
   transform:translateY(-1px);
 }
 .secret-listen-btn:active,
@@ -9659,9 +9659,9 @@ body.secret-page-active{
   transform:translateY(0);
 }
 .secret-listen-btn[aria-pressed="true"]{
-  color:rgba(255,240,200,1);
-  border-color:rgba(255,220,120,.6);
-  box-shadow:0 0 24px rgba(255,200,80,.2), inset 0 0 20px rgba(255,200,80,.08);
+  color:rgba(255,230,230,1);
+  border-color:rgba(255,140,140,.65);
+  box-shadow:0 0 24px rgba(255,80,80,.25), inset 0 0 20px rgba(255,100,100,.1);
 }
 .secret-back{
   display:inline-flex;
@@ -9670,19 +9670,19 @@ body.secret-page-active{
   padding:0.65rem 1.4rem;
   font-size:1rem;
   font-weight:600;
-  color:rgba(220,225,240,.95);
-  background:linear-gradient(180deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,.06) 100%);
-  border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,200,200,.95);
+  background:linear-gradient(180deg, rgba(180,50,50,.4) 0%, rgba(140,30,30,.5) 100%);
+  border:1px solid rgba(255,100,100,.55);
   border-radius:12px;
   cursor:pointer;
   transition:all .3s ease;
-  box-shadow:0 2px 12px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05);
+  box-shadow:0 2px 12px rgba(0,0,0,.3), 0 0 20px rgba(180,50,50,.2), inset 0 1px 0 rgba(255,255,255,.05);
 }
 .secret-back:hover{
-  color:#fff;
-  background:linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.1) 100%);
-  border-color:rgba(255,255,255,.35);
-  box-shadow:0 4px 24px rgba(0,0,0,.4), 0 0 30px rgba(80,50,120,.1), inset 0 1px 0 rgba(255,255,255,.08);
+  color:rgba(255,220,220,1);
+  background:linear-gradient(180deg, rgba(200,60,60,.5) 0%, rgba(160,40,40,.55) 100%);
+  border-color:rgba(255,120,120,.7);
+  box-shadow:0 4px 24px rgba(0,0,0,.4), 0 0 30px rgba(200,60,60,.25), inset 0 1px 0 rgba(255,255,255,.08);
   transform:translateY(-1px);
 }
 .secret-back:active{
@@ -9947,9 +9947,10 @@ body.secret-page-active{
 .secret-transcript-text{
   margin:0;
   font-size:.9rem;
-  line-height:1.55;
+  line-height:1.6;
   color:rgba(200,190,210,.95);
   text-shadow:0 1px 2px rgba(0,0,0,.4);
+  white-space:pre-line;
 }
 .secret-transcript-placeholder{
   margin:0;
