@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import content from "./config/index.js";
 import HeroVideo from "./components/HeroVideo";
 import Carousel from "./components/Carousel";
@@ -48,7 +48,8 @@ export default function App() {
         <Route path="/nerfs-and-buffs" element={<NerfsAndBuffsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/telechargement" element={<DownloadPage />} />
-        <Route path="/chemin-des-larmes" element={<SecretPage />} />
+        <Route path="/la-lune-brille-ce-soir" element={<SecretPage />} />
+        <Route path="/chemin-des-larmes" element={<Navigate to="/la-lune-brille-ce-soir" replace />} />
         <Route path="/admin-login" element={<LoginAdmin />} />
         <Route path="/admin" element={
           <ProtectedRoute>

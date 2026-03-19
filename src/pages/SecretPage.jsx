@@ -130,7 +130,9 @@ export default function SecretPage() {
         <div className="secret-hero-inner">
           <img src="https://i.imgur.com/9bVZ1FP.png" alt="" className="secret-hero-logo" />
           <span className="secret-hero-badge">[ ACCÈS RESTREINT ]</span>
-          <h1 className="secret-hero-title">CHEMIN DES LARMES</h1>
+          <h1 className="secret-hero-title">
+            <i className="fa-solid fa-moon" aria-hidden /> LA LUNE BRILLE CE SOIR
+          </h1>
           <p className="secret-hero-description">
             Là où l'esprit perd son bord — une présence veille dans l'oubli.
           </p>

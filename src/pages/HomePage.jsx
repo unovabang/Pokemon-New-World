@@ -100,7 +100,7 @@ const HomePage = () => {
     setOpenEnigmaModal(false);
     setEnigmaAnswer("");
     setSecretTransitioning(true);
-    setTimeout(() => navigate("/chemin-des-larmes", { replace: true }), 1200);
+    setTimeout(() => navigate("/la-lune-brille-ce-soir", { replace: true }), 1200);
   };
 
   const playEnigmaAudio = () => {
@@ -303,7 +303,7 @@ const HomePage = () => {
                               setOpenEnigmaModal(false);
                               setEnigmaAnswer("");
                               setSecretTransitioning(true);
-                              setTimeout(() => navigate("/chemin-des-larmes", { replace: true }), 1200);
+                              setTimeout(() => navigate("/la-lune-brille-ce-soir", { replace: true }), 1200);
                             }
                           }}
                           onKeyDown={(e) => {
