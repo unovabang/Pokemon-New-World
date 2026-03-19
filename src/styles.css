@@ -9354,6 +9354,7 @@ body.secret-page-active{
 }
 .secret-page-enter .secret-hero-inner{ animation:secret-hero-enter .8s ease-out forwards; }
 .secret-page-enter .secret-content-wrap{ animation:secret-content-enter 1s ease-out .3s both; }
+.secret-page-enter .secret-transcript-panel{ animation:secret-content-enter 1s ease-out .35s both; }
 .secret-page-enter .secret-card{ animation:secret-card-enter .9s ease-out .5s both; }
 @keyframes secret-hero-enter{
   0%{ opacity:0; transform:translateY(20px); filter:blur(4px); }
@@ -9611,26 +9612,46 @@ body.secret-page-active{
   margin-top:-80px;
   padding:2.5rem 1.5rem 4rem;
   display:flex;
-  justify-content:center;
+  flex-direction:column;
+  align-items:center;
   box-sizing:border-box;
   overflow-x:hidden;
-}
-.secret-content{
-  max-width:520px;
-  width:100%;
-  min-width:0;
-  margin:0 auto;
-  padding:0 1.5rem;
-  padding-top:1rem;
-  box-sizing:border-box;
 }
 .secret-toolbar{
   margin-bottom:1.75rem;
   padding:1rem 0;
   display:flex;
   align-items:center;
+  justify-content:center;
   gap:1rem;
   flex-wrap:wrap;
+  width:100%;
+  max-width:900px;
+}
+.secret-main{
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  gap:1.5rem;
+  width:100%;
+  max-width:900px;
+  min-width:0;
+}
+.secret-transcript-panel{
+  flex-shrink:0;
+  width:280px;
+  min-width:240px;
+}
+@media (max-width: 768px){
+  .secret-main{ flex-direction:column; align-items:stretch; }
+  .secret-transcript-panel{ width:100%; min-width:0; }
+}
+.secret-content{
+  flex:1;
+  min-width:0;
+  max-width:520px;
+  padding:0;
+  box-sizing:border-box;
 }
 .secret-listen-btn{
   display:inline-flex;
@@ -9933,13 +9954,17 @@ body.secret-page-active{
   border-left:2px solid rgba(50,50,60,.5);
 }
 .secret-transcript-box{
-  margin:0 1.25rem 0;
-  padding:1rem 1.25rem;
-  min-height:4.5rem;
-  background:rgba(0,0,0,.45);
-  border:1px solid rgba(180,60,60,.4);
-  border-radius:12px;
-  box-shadow:0 0 20px rgba(120,40,40,.15), inset 0 1px 0 rgba(255,255,255,.03);
+  padding:1.25rem 1.25rem;
+  min-height:5rem;
+  background:linear-gradient(165deg, rgba(18,16,26,.97) 0%, rgba(12,10,20,.98) 100%);
+  border:1px solid rgba(180,60,60,.45);
+  border-radius:16px;
+  box-shadow:
+    0 0 24px rgba(120,40,40,.2),
+    0 4px 20px rgba(0,0,0,.4),
+    inset 0 1px 0 rgba(255,255,255,.04);
+  position:sticky;
+  top:1rem;
 }
 .secret-transcript-inner{
   min-height:2.5rem;

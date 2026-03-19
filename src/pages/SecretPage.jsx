@@ -82,7 +82,7 @@ export default function SecretPage() {
       const d = audio.duration;
       if (!d || !isFinite(d)) return;
       const p = Math.min(audio.currentTime / d, 1);
-      setTranscriptProgress(p);
+      setTranscriptProgress(Math.pow(p, 2));
     };
     const onPlay = () => setIsPlaying(true);
     const onPause = () => setIsPlaying(false);
@@ -159,76 +159,22 @@ export default function SecretPage() {
       </header>
 
       <div className="secret-content-wrap">
-        <div className="secret-content">
-          <div className="secret-toolbar">
-            <button type="button" className="secret-back" onClick={handleFuir}>
-              <i className="fa-solid fa-door-open" aria-hidden /> Quitter
-            </button>
-            <button
-              type="button"
-              className="secret-listen-btn"
-              onClick={handleEcouteMoi}
-              aria-pressed={isPlaying}
-            >
-              <i className={isPlaying ? "fa-solid fa-pause" : "fa-solid fa-volume-high"} aria-hidden />
-              {isPlaying ? " Pause" : " Ecoute-moi"}
-            </button>
-          </div>
-
-          <article className="secret-card">
-            <div className="secret-card-frame" aria-hidden="true" />
-            <div className="secret-card-glitch" aria-hidden="true" />
-            <div className="secret-card-header">
-              <span className="secret-card-classified">CLASSIFIÉ</span>
-              <span className="secret-card-id">ID: ???</span>
-            </div>
-            <div className="secret-card-sprite-wrap">
-              <div className="secret-card-sprite-frame">
-                <div className="secret-card-sprite-inner">
-                  <img
-                    src={MEGA_DARKRAI_IMAGE}
-                    alt=""
-                    className="secret-card-sprite-img"
-                    onError={(e) => {
-                      e.target.style.display = "none";
-                      e.target.nextElementSibling?.classList.add("secret-card-unknown-visible");
-                    }}
-                  />
-                  <span className="secret-card-unknown" aria-hidden>?</span>
-                </div>
-                <div className="secret-card-sprite-static" aria-hidden="true" />
-              </div>
-            </div>
-            <div className="secret-card-body">
-              <p className="secret-card-subtitle">Archive corrompue // niveau d'accès : néant</p>
-              <h2 className="secret-card-name">{CRYPT.name}</h2>
-              <div className="secret-card-types">
-                <span className="secret-card-type-pill">{CRYPT.type}</span>
-                <span className="secret-card-type-pill">{CRYPT.type}</span>
-              </div>
-              <div className="secret-card-divider" />
-              <div className="secret-card-stats">
-                <div className="secret-card-stat"><span className="secret-card-stat-label">PV</span><span>{CRYPT.stat}</span></div>
-                <div className="secret-card-stat"><span className="secret-card-stat-label">ATK</span><span>{CRYPT.stat}</span></div>
-                <div className="secret-card-stat"><span className="secret-card-stat-label">DEF</span><span>{CRYPT.stat}</span></div>
-                <div className="secret-card-stat"><span className="secret-card-stat-label">ATK SPE</span><span>{CRYPT.stat}</span></div>
-                <div className="secret-card-stat"><span className="secret-card-stat-label">DEF SPE</span><span>{CRYPT.stat}</span></div>
-                <div className="secret-card-stat"><span className="secret-card-stat-label">SPE</span><span>{CRYPT.stat}</span></div>
-                <div className="secret-card-stat secret-card-stat-total"><span className="secret-card-stat-label">TOTAL</span><span>{CRYPT.total}</span></div>
-              </div>
-              <div className="secret-card-divider" />
-              <div className="secret-card-talents">
-                <div className="secret-card-section-label">{CRYPT.talentLabel}</div>
-                <div className="secret-card-talent-slot">
-                  <div className="secret-card-talent-name">{CRYPT.talentName}</div>
-                  <p className="secret-card-talent-desc">{CRYPT.talentDesc}</p>
-                </div>
-              </div>
-              <div className="secret-card-attacks">
-                <div className="secret-card-section-label">{CRYPT.attackName}</div>
-                <p className="secret-card-attack-desc">{CRYPT.attackDesc}</p>
-              </div>
-            </div>
+        <div className="secret-toolbar">
+          <button type="button" className="secret-back" onClick={handleFuir}>
+            <i className="fa-solid fa-door-open" aria-hidden /> Quitter
+          </button>
+          <button
+            type="button"
+            className="secret-listen-btn"
+            onClick={handleEcouteMoi}
+            aria-pressed={isPlaying}
+          >
+            <i className={isPlaying ? "fa-solid fa-pause" : "fa-solid fa-volume-high"} aria-hidden />
+            {isPlaying ? " Pause" : " Ecoute-moi"}
+          </button>
+        </div>
+        <div className="secret-main">
+          <aside className="secret-transcript-panel" aria-label="Retranscription">
             <div className="secret-transcript-box" aria-live="polite">
               <div className="secret-transcript-inner">
                 {visibleText ? (
@@ -238,10 +184,67 @@ export default function SecretPage() {
                 )}
               </div>
             </div>
-            <div className="secret-card-footer">
-              <span>Données inaccessibles</span>
-            </div>
-          </article>
+          </aside>
+          <div className="secret-content">
+            <article className="secret-card">
+              <div className="secret-card-frame" aria-hidden="true" />
+              <div className="secret-card-glitch" aria-hidden="true" />
+              <div className="secret-card-header">
+                <span className="secret-card-classified">CLASSIFIÉ</span>
+                <span className="secret-card-id">ID: ???</span>
+              </div>
+              <div className="secret-card-sprite-wrap">
+                <div className="secret-card-sprite-frame">
+                  <div className="secret-card-sprite-inner">
+                    <img
+                      src={MEGA_DARKRAI_IMAGE}
+                      alt=""
+                      className="secret-card-sprite-img"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextElementSibling?.classList.add("secret-card-unknown-visible");
+                      }}
+                    />
+                    <span className="secret-card-unknown" aria-hidden>?</span>
+                  </div>
+                  <div className="secret-card-sprite-static" aria-hidden="true" />
+                </div>
+              </div>
+              <div className="secret-card-body">
+                <p className="secret-card-subtitle">Archive corrompue // niveau d'accès : néant</p>
+                <h2 className="secret-card-name">{CRYPT.name}</h2>
+                <div className="secret-card-types">
+                  <span className="secret-card-type-pill">{CRYPT.type}</span>
+                  <span className="secret-card-type-pill">{CRYPT.type}</span>
+                </div>
+                <div className="secret-card-divider" />
+                <div className="secret-card-stats">
+                  <div className="secret-card-stat"><span className="secret-card-stat-label">PV</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label">ATK</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label">DEF</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label">ATK SPE</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label">DEF SPE</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label">SPE</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat secret-card-stat-total"><span className="secret-card-stat-label">TOTAL</span><span>{CRYPT.total}</span></div>
+                </div>
+                <div className="secret-card-divider" />
+                <div className="secret-card-talents">
+                  <div className="secret-card-section-label">{CRYPT.talentLabel}</div>
+                  <div className="secret-card-talent-slot">
+                    <div className="secret-card-talent-name">{CRYPT.talentName}</div>
+                    <p className="secret-card-talent-desc">{CRYPT.talentDesc}</p>
+                  </div>
+                </div>
+                <div className="secret-card-attacks">
+                  <div className="secret-card-section-label">{CRYPT.attackName}</div>
+                  <p className="secret-card-attack-desc">{CRYPT.attackDesc}</p>
+                </div>
+              </div>
+              <div className="secret-card-footer">
+                <span>Données inaccessibles</span>
+              </div>
+            </article>
+          </div>
         </div>
       </div>
 
