@@ -94,8 +94,7 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   const ENIGMA_ANSWER = "darkrai";
-  /** Remplacer par l’URL complète de l’audio (ex. https://audio.jukehost.co.uk/xxxxx.mp3) */
-  const ENIGMA_AUDIO_SRC = "https://audio.jukehost.co.uk/placeholder";
+  const ENIGMA_AUDIO_SRC = "https://audio.jukehost.co.uk/L4y1De7ALwhHFwTlpXi1xppnpALq3Ph5.mp3";
   const checkEnigmaAndGo = () => {
     if (enigmaAnswer.trim().toLowerCase() !== ENIGMA_ANSWER) return;
     setOpenEnigmaModal(false);

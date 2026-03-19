@@ -53,6 +53,7 @@ export default function SecretPage() {
   return (
     <div className="secret-page">
       <div className="secret-page-bg" aria-hidden="true" />
+      <div className="secret-page-fog" aria-hidden="true" />
       <div className="secret-page-noise" aria-hidden="true" />
       <div className="secret-page-vignette" aria-hidden="true" />
 
@@ -90,6 +91,7 @@ export default function SecretPage() {
                 <span className="secret-card-unknown" aria-hidden>◊</span>
               </div>
             </div>
+            <p className="secret-card-subtitle">Archive interdite // niveau d'acces : neant</p>
             <h2 className="secret-card-name secret-card-name--crypt">{CRYPT.name}</h2>
             <div className="secret-card-types">
               <span className="secret-card-type-pill">{CRYPT.type}</span>
