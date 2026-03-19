@@ -9153,6 +9153,122 @@ a.dex-panel--active{cursor:default}
 }
 .hero-video .cta .btn-runic{ min-width:120px; }
 
+/* ===== Modal énigme Darkrai (sombre, police thématique, glitch) ===== */
+.enigma-modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  background:rgba(0,0,0,.92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1.5rem;
+  box-sizing:border-box;
+}
+.enigma-modal{
+  position:relative;
+  width:100%;
+  max-width:420px;
+  padding:2rem 1.75rem;
+  background:linear-gradient(165deg, rgba(15,5,15,.98) 0%, rgba(8,2,12,.99) 100%);
+  border:1px solid rgba(139,0,0,.4);
+  border-radius:16px;
+  box-shadow:0 0 48px rgba(139,0,0,.2), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.enigma-modal-close{
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;
+  color:rgba(255,255,255,.7);
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.enigma-modal-close:hover{
+  color:#fff;
+  border-color:rgba(139,0,0,.5);
+  box-shadow:0 0 12px rgba(139,0,0,.25);
+}
+.enigma-modal-title{
+  margin:0 0 1.25rem;
+  font-family:"Cinzel",serif;
+  font-size:1.25rem;
+  font-weight:600;
+  color:rgba(255,255,255,.95);
+  text-align:center;
+  letter-spacing:.06em;
+}
+.enigma-modal-riddle{
+  font-family:"Cinzel",serif;
+  font-size:clamp(0.9rem, 2vw, 1rem);
+  line-height:1.7;
+  color:rgba(255,255,255,.85);
+  margin-bottom:1.5rem;
+  text-align:center;
+}
+.enigma-modal-riddle p{ margin:0.25rem 0; }
+.enigma-riddle-spacer{ height:.5rem; margin:0 !important; }
+.enigma-modal-riddle em{ color:rgba(200,180,220,.9); font-style:italic; }
+/* Glitch léger sur le texte de l'énigme */
+.enigma-glitch{
+  animation:enigma-glitch 4s ease-in-out infinite;
+}
+@keyframes enigma-glitch{
+  0%, 90%, 100%{ opacity:1; text-shadow:0 0 0 transparent; transform:translate(0,0); }
+  92%{ opacity:.95; text-shadow:-1px 0 rgba(139,0,0,.3), 1px 0 rgba(80,20,120,.2); transform:translate(-1px,0); }
+  94%{ opacity:1; text-shadow:1px 0 rgba(139,0,0,.25), -1px 0 rgba(80,20,120,.15); transform:translate(1px,0); }
+  96%{ opacity:.97; text-shadow:0 0 8px rgba(139,0,0,.2); transform:translate(0,0); }
+  98%{ opacity:1; text-shadow:none; transform:translate(0,0); }
+}
+.enigma-modal-actions{
+  display:flex;
+  flex-direction:column;
+  gap:.75rem;
+}
+.enigma-modal-input{
+  width:100%;
+  padding:.75rem 1rem;
+  font-family:"Cinzel",serif;
+  font-size:1rem;
+  color:#fff;
+  background:rgba(0,0,0,.5);
+  border:1px solid rgba(139,0,0,.4);
+  border-radius:10px;
+  box-sizing:border-box;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+.enigma-modal-input::placeholder{ color:rgba(255,255,255,.4); }
+.enigma-modal-input:focus{
+  outline:none;
+  border-color:rgba(139,0,0,.7);
+  box-shadow:0 0 0 2px rgba(139,0,0,.25);
+}
+.enigma-modal-submit{
+  padding:.7rem 1.25rem;
+  font-family:"Cinzel",serif;
+  font-size:.95rem;
+  font-weight:600;
+  letter-spacing:.08em;
+  color:rgba(255,255,255,.9);
+  background:transparent;
+  border:1px solid rgba(139,0,0,.5);
+  border-radius:10px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.enigma-modal-submit:hover{
+  background:rgba(139,0,0,.2);
+  border-color:rgba(139,0,0,.7);
+  box-shadow:0 0 16px rgba(139,0,0,.3);
+}
+
 /* ===== Transition vers page secrète (freeze + flicker + sombre) ===== */
 .secret-transition-overlay{
   position:fixed;
@@ -9197,186 +9313,257 @@ a.dex-panel--active{cursor:default}
   100%{ opacity:1; }
 }
 
-/* ===== Page secrète (ambiance Darkrai — couleurs logo rouge/noir) ===== */
-body.secret-page-active{ overflow:hidden; background:#000; }
+/* ===== Page secrète (ambiance Darkrai — hero type lore + carte style fakemon) ===== */
+body.secret-page-active{ background:#000; }
 .secret-page{
-  position:fixed;
-  inset:0;
+  position:relative;
   z-index:10000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   min-height:100vh;
   background:#000;
   color:rgba(238,243,255,.85);
   font-family:"Outfit",system-ui,sans-serif;
 }
-.secret-page-bg{
-  position:absolute;
-  inset:0;
-  background:#000 url(https://images3.alphacoders.com/107/1073997.jpg) center/cover no-repeat;
-  animation:secret-page-bg-pulse 8s ease-in-out infinite;
-}
-.secret-page-overlay{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(180deg, rgba(0,0,0,.6) 0%, rgba(74,0,0,.15) 40%, rgba(0,0,0,.5) 70%, rgba(0,0,0,.85) 100%);
-  pointer-events:none;
-}
-.secret-page-glow{
-  position:absolute;
-  inset:0;
-  background:radial-gradient(ellipse 70% 50% at 50% 20%, rgba(139,0,0,.08) 0%, transparent 55%);
-  pointer-events:none;
-  animation:secret-page-glow-pulse 6s ease-in-out infinite;
-}
-@keyframes secret-page-bg-pulse{
-  0%, 100%{ opacity:1; }
-  50%{ opacity:.97; }
-}
-@keyframes secret-page-glow-pulse{
-  0%, 100%{ opacity:1; }
-  50%{ opacity:.7; }
-}
-.secret-page-content{
+.secret-page-bg{ display:none; }
+/* Hero type chapitre lore : pleine largeur, fond image, overlay, titre + sous-titre */
+.secret-hero.lore-style{
   position:relative;
-  z-index:2;
+  min-height:70vh;
   display:flex;
-  flex-direction:column;
   align-items:center;
-  justify-content:flex-start;
-  gap:2rem;
-  padding:2rem;
-  max-width:520px;
-  width:100%;
-  animation:secret-page-in .6s ease-out forwards;
-  overflow-y:auto;
-  max-height:100vh;
+  justify-content:center;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-color:rgba(5,2,8,.95);
 }
-@keyframes secret-page-in{
-  0%{ opacity:0; transform:scale(0.98); }
-  100%{ opacity:1; transform:scale(1); }
+.secret-hero-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(30,5,15,.7) 50%, rgba(0,0,0,.85) 100%);
+  pointer-events:none;
 }
-/* Hero Darkrai : logo centré */
-.secret-hero{
-  width:100%;
+.secret-hero-inner{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  padding:0 1.5rem;
+  max-width:720px;
+}
+.secret-hero-title{
+  margin:0 0 0.75rem;
+  font-size:clamp(1.75rem, 5vw, 3rem);
+  font-weight:800;
+  color:#fff;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  font-family:"Outfit",system-ui,sans-serif;
+  text-shadow:0 2px 24px rgba(0,0,0,.6), 0 0 40px rgba(139,0,0,.15);
+}
+.secret-hero-description{
+  margin:0;
+  font-size:clamp(0.95rem, 2vw, 1.1rem);
+  line-height:1.6;
+  color:rgba(255,255,255,.9);
+  font-style:italic;
+  text-shadow:0 1px 12px rgba(0,0,0,.5);
+}
+/* Contenu : cadre arrondi comme lore-story-content */
+.secret-content-wrap{
+  max-width:100%;
+  margin:0 auto;
+  padding:3rem 1.5rem 4rem;
   display:flex;
   justify-content:center;
+  box-sizing:border-box;
+}
+.secret-content{
+  max-width:560px;
+  width:100%;
+  margin:0 auto;
+  padding:2rem 1.5rem 3rem;
+  background:rgba(12,6,14,.85);
+  border-radius:20px;
+  border:1px solid rgba(139,0,0,.2);
+  box-shadow:0 12px 48px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04);
+  box-sizing:border-box;
+}
+.secret-toolbar{
+  margin-bottom:1.5rem;
+  padding-bottom:1rem;
+  border-bottom:1px solid rgba(139,0,0,.2);
+}
+.secret-back{
+  display:inline-flex;
   align-items:center;
-  padding:1rem 0;
+  gap:0.5rem;
+  padding:0.5rem 0;
+  font-size:.9rem;
+  font-weight:600;
+  color:rgba(212,175,55,.95);
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  transition:color .2s ease;
 }
-.secret-hero-logo{
-  max-width:min(320px, 85vw);
-  height:auto;
-  filter:drop-shadow(0 0 20px rgba(139,0,0,.4)) drop-shadow(0 4px 24px rgba(0,0,0,.6));
-}
-/* Carte Pokémon Mega Darkrai — style inconnu/sombre */
-.secret-card{
+.secret-back:hover{ color:rgba(255,220,100,.95); }
+/* Carte Mega Darkrai style fakemon / BST : sprite, nom, types, stats, talents, attaque signature */
+.secret-card--fakemon{
   width:100%;
   border-radius:16px;
   overflow:hidden;
-  border:1px solid rgba(139,0,0,.35);
-  box-shadow:0 0 32px rgba(139,0,0,.2), inset 0 1px 0 rgba(255,255,255,.06);
-  background:linear-gradient(165deg, rgba(20,5,5,.95) 0%, rgba(10,2,2,.98) 100%);
+  border:1px solid rgba(139,0,0,.3);
+  background:linear-gradient(165deg, rgba(18,8,18,.95) 0%, rgba(10,4,12,.98) 100%);
+  box-shadow:0 0 32px rgba(139,0,0,.15), inset 0 1px 0 rgba(255,255,255,.04);
 }
-.secret-card-inner{
-  padding:1.25rem 1.5rem;
-}
-.secret-card-header{
+.secret-card-sprite-wrap{
+  width:100%;
+  padding:1rem;
   display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:12px;
+  justify-content:center;
+  background:rgba(0,0,0,.3);
+  border-bottom:1px solid rgba(139,0,0,.2);
 }
-.secret-card-name,
-.secret-card-hp{
-  font-weight:700;
-  font-size:1.1rem;
-  color:rgba(255,255,255,.5);
-  letter-spacing:.1em;
-}
-.secret-card-image-wrap{
-  margin:0 0 12px;
-  border-radius:12px;
-  overflow:hidden;
+.secret-card-sprite-placeholder{
+  width:160px;
+  height:160px;
+  border-radius:14px;
   background:rgba(0,0,0,.5);
-  border:1px solid rgba(139,0,0,.2);
-}
-.secret-card-image-placeholder{
-  aspect-ratio:1;
+  border:1px solid rgba(139,0,0,.25);
   display:flex;
   align-items:center;
   justify-content:center;
-  min-height:180px;
 }
 .secret-card-unknown{
   font-size:4rem;
   font-weight:800;
   color:rgba(139,0,0,.4);
-  text-shadow:0 0 20px rgba(139,0,0,.3);
+  text-shadow:0 0 20px rgba(139,0,0,.25);
 }
-.secret-card-type{
-  margin-bottom:12px;
+.secret-card--fakemon .secret-card-name{
+  margin:0 0 0.5rem;
+  padding:0 1rem;
+  font-size:1.5rem;
+  font-weight:700;
+  color:rgba(255,255,255,.6);
+  letter-spacing:.03em;
 }
-.secret-card-type-badge{
+.secret-card-types{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.5rem;
+  padding:0 1rem 1rem;
+}
+.secret-card-type-pill{
   display:inline-block;
-  padding:.25rem .6rem;
+  padding:0.25rem 0.65rem;
   border-radius:8px;
-  font-size:.85rem;
+  font-size:.8rem;
   font-weight:600;
+  text-transform:uppercase;
   background:rgba(139,0,0,.25);
   color:rgba(255,255,255,.5);
   border:1px solid rgba(139,0,0,.4);
 }
 .secret-card-stats{
-  display:flex;
-  gap:1rem;
-  margin-bottom:12px;
-  flex-wrap:wrap;
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:0.5rem;
+  padding:1rem;
+  margin-bottom:0;
 }
 .secret-card-stat{
-  font-size:.9rem;
-  color:rgba(255,255,255,.45);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.2rem;
+  padding:0.5rem 0.35rem;
+  background:rgba(0,0,0,.35);
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.06);
 }
 .secret-card-stat-label{
-  color:rgba(255,255,255,.3);
-  margin-right:.35rem;
-}
-.secret-card-desc{
-  font-size:.85rem;
-  line-height:1.5;
-  color:rgba(255,255,255,.35);
-  margin:0 0 12px;
-}
-.secret-card-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:.8rem;
-  color:rgba(255,255,255,.3);
-}
-.secret-page-btn-fuir{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:.9rem 2.25rem;
-  font-size:.95rem;
-  font-weight:700;
-  letter-spacing:.2em;
+  font-size:0.65rem;
+  font-weight:600;
   text-transform:uppercase;
-  color:rgba(238,243,255,.9);
-  background:transparent;
-  border:1px solid rgba(139,0,0,.5);
-  border-radius:12px;
-  cursor:pointer;
-  transition:all .25s ease;
-  box-shadow:0 0 24px rgba(139,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06);
+  color:rgba(255,255,255,.4);
+  display:flex;
+  align-items:center;
+  gap:0.25rem;
 }
-.secret-page-btn-fuir:hover{
-  color:#fff;
-  border-color:rgba(180,0,0,.7);
-  box-shadow:0 0 32px rgba(139,0,0,.4), 0 0 0 1px rgba(139,0,0,.3);
-  transform:translateY(-1px);
+.secret-card-stat span:last-child{
+  font-size:1rem;
+  font-weight:700;
+  color:rgba(255,255,255,.5);
 }
-.secret-page-btn-fuir:active{ transform:translateY(0); }
+.secret-card-stat-total{
+  grid-column:1 / -1;
+  flex-direction:row;
+  justify-content:center;
+  background:rgba(139,0,0,.12);
+  border-color:rgba(139,0,0,.3);
+}
+.secret-card-stat-total .secret-card-stat-label{ color:rgba(180,80,80,.9); }
+.secret-card-stat-total span:last-child{ color:rgba(255,255,255,.6); }
+.secret-card-talents,
+.secret-card-attacks{
+  padding:1rem;
+  padding-top:0.75rem;
+  border-top:1px solid rgba(139,0,0,.2);
+}
+.secret-card-section-label{
+  font-size:0.75rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  color:rgba(212,175,55,.9);
+  margin-bottom:0.5rem;
+  display:flex;
+  align-items:center;
+  gap:0.4rem;
+}
+.secret-card-section-label i{ opacity:.9; }
+.secret-card-talent-slot{
+  padding:0.6rem 0.75rem;
+  background:rgba(0,0,0,.25);
+  border-radius:10px;
+  margin-top:0.35rem;
+}
+.secret-card-talent-title{
+  font-size:0.7rem;
+  font-weight:600;
+  color:rgba(139,0,0,.7);
+  text-transform:uppercase;
+  margin-bottom:0.25rem;
+}
+.secret-card-talent-name{
+  font-size:0.9rem;
+  font-weight:600;
+  color:rgba(255,255,255,.7);
+  margin-bottom:0.2rem;
+}
+.secret-card-talent-desc{
+  font-size:0.8rem;
+  color:rgba(255,255,255,.5);
+  line-height:1.45;
+  margin:0;
+}
+.secret-card-attack-item{
+  padding:0.6rem 0.75rem;
+  background:rgba(0,0,0,.25);
+  border-radius:10px;
+  border-left:3px solid rgba(212,175,55,.6);
+  margin-top:0.35rem;
+}
+.secret-card-attack-name{
+  font-size:0.95rem;
+  font-weight:600;
+  color:rgba(255,255,255,.8);
+  margin-bottom:0.25rem;
+}
+.secret-card-attack-desc{
+  font-size:0.8rem;
+  color:rgba(255,255,255,.5);
+  line-height:1.5;
+  margin:0;
+}
 .secret-page-audio{ position:absolute; width:0; height:0; opacity:0; pointer-events:none; }

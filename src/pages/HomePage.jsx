@@ -88,7 +88,18 @@ const HomePage = () => {
   const [openPatchNotes, setOpenPatchNotes] = useState(false);
   const [patchNotesFromApi, setPatchNotesFromApi] = useState(null);
   const [secretTransitioning, setSecretTransitioning] = useState(false);
+  const [openEnigmaModal, setOpenEnigmaModal] = useState(false);
+  const [enigmaAnswer, setEnigmaAnswer] = useState("");
   const navigate = useNavigate();
+
+  const ENIGMA_ANSWER = "darkrai";
+  const checkEnigmaAndGo = () => {
+    if (enigmaAnswer.trim().toLowerCase() !== ENIGMA_ANSWER) return;
+    setOpenEnigmaModal(false);
+    setEnigmaAnswer("");
+    setSecretTransitioning(true);
+    setTimeout(() => navigate("/chemin-des-larmes", { replace: true }), 1200);
+  };
 
   // Charger les configs site, external, news, downloads et patchnotes depuis l'API
   // Chaque fetch est indépendant : un échec n'empêche pas les autres de charger
@@ -123,8 +134,8 @@ const HomePage = () => {
   }, [openPatchNotes, language]);
 
   const handleSecretClick = () => {
-    setSecretTransitioning(true);
-    setTimeout(() => navigate("/chemin-des-larmes", { replace: true }), 1200);
+    setOpenEnigmaModal(true);
+    setEnigmaAnswer("");
   };
 
   // Mise à jour des métadonnées SEO
@@ -221,6 +232,75 @@ const HomePage = () => {
                     </button>
                   </div>
                 </div>
+
+                {/* Modal énigme Darkrai : riddle + champ réponse, redirection si "Darkrai" */}
+                {openEnigmaModal && (
+                  <div
+                    className="enigma-modal-overlay"
+                    onClick={() => setOpenEnigmaModal(false)}
+                    onKeyDown={(e) => e.key === "Escape" && setOpenEnigmaModal(false)}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="enigma-modal-title"
+                  >
+                    <div
+                      className="enigma-modal"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        type="button"
+                        className="enigma-modal-close"
+                        onClick={() => setOpenEnigmaModal(false)}
+                        aria-label="Fermer"
+                      >
+                        <i className="fa-solid fa-xmark" />
+                      </button>
+                      <h2 id="enigma-modal-title" className="enigma-modal-title">Qui suis-je ?</h2>
+                      <div className="enigma-modal-riddle enigma-glitch">
+                        <p>Je ne suis pas l'ombre,</p>
+                        <p>mais ce qui la fait dérailler.</p>
+                        <p className="enigma-riddle-spacer" />
+                        <p>On ne me rejoint pas,</p>
+                        <p>on glisse jusqu'à moi.</p>
+                        <p className="enigma-riddle-spacer" />
+                        <p>Je n'existe que là</p>
+                        <p>où l'esprit perd son bord.</p>
+                        <p className="enigma-riddle-spacer" />
+                        <p><em>Qui suis-je ?</em></p>
+                      </div>
+                      <div className="enigma-modal-actions">
+                        <input
+                          type="text"
+                          className="enigma-modal-input"
+                          value={enigmaAnswer}
+                          onChange={(e) => {
+                            setEnigmaAnswer(e.target.value);
+                            if (e.target.value.trim().toLowerCase() === ENIGMA_ANSWER) {
+                              setOpenEnigmaModal(false);
+                              setEnigmaAnswer("");
+                              setSecretTransitioning(true);
+                              setTimeout(() => navigate("/chemin-des-larmes", { replace: true }), 1200);
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") checkEnigmaAndGo();
+                          }}
+                          placeholder="Ta réponse..."
+                          autoFocus
+                          autoComplete="off"
+                          aria-label="Réponse à l'énigme"
+                        />
+                        <button
+                          type="button"
+                          className="enigma-modal-submit"
+                          onClick={checkEnigmaAndGo}
+                        >
+                          Valider
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </HeroVideo>
           </section>

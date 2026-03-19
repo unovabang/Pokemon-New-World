@@ -3,11 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 /**
  * Page dédiée Easter egg — ambiance Darkrai.
- * Hero avec fond Darkrai, logo New World sombre, carte Mega Darkrai (infos inconnues).
+ * Hero type chapitre lore (titre + sous-titre sur fond Darkrai), puis carte Mega Darkrai style fakemon (infos ???).
  */
 const SECRET_AUDIO_SRC = "/audio/secret-voice.mp3";
 const SECRET_HERO_BG = "https://images3.alphacoders.com/107/1073997.jpg";
-const SECRET_LOGO_URL = "https://i.imgur.com/i6ihLu2.png";
 
 export default function SecretPage() {
   const navigate = useNavigate();
@@ -39,56 +38,65 @@ export default function SecretPage() {
   return (
     <div className="secret-page">
       <div className="secret-page-bg" aria-hidden="true" />
-      <div className="secret-page-overlay" aria-hidden="true" />
-      <div className="secret-page-glow" aria-hidden="true" />
 
-      <div className="secret-page-content">
-        {/* Hero avec fond Darkrai + logo */}
-        <header className="secret-hero">
-          <img
-            className="secret-hero-logo"
-            src={SECRET_LOGO_URL}
-            alt="Pokémon New World"
-          />
-        </header>
+      {/* Hero type lore : pleine largeur, fond Darkrai, titre + sous-titre */}
+      <header className="secret-hero lore-style" style={{ backgroundImage: `url(${SECRET_HERO_BG})` }}>
+        <div className="secret-hero-overlay" aria-hidden="true" />
+        <div className="secret-hero-inner">
+          <h1 className="secret-hero-title">CHEMIN DES LARMES</h1>
+          <p className="secret-hero-description">
+            Là où l'esprit perd son bord — une présence veille dans l'oubli.
+          </p>
+        </div>
+      </header>
 
-        {/* Carte Pokémon Mega Darkrai — infos inconnues */}
-        <article className="secret-card">
-          <div className="secret-card-inner">
-            <div className="secret-card-header">
-              <span className="secret-card-name">???</span>
-              <span className="secret-card-hp">??? HP</span>
-            </div>
-            <div className="secret-card-image-wrap">
-              <div className="secret-card-image-placeholder">
+      {/* Contenu : cadre arrondi comme lore, carte Mega Darkrai style fakemon */}
+      <div className="secret-content-wrap">
+        <div className="secret-content">
+          <div className="secret-toolbar">
+            <button type="button" className="secret-back" onClick={handleFuir}>
+              <i className="fa-solid fa-arrow-left" aria-hidden /> Fuir
+            </button>
+          </div>
+
+          {/* Carte Pokémon style fakemon / BST : sprite, nom, types, stats, talents, attaque signature — tout en ??? */}
+          <article className="secret-card secret-card--fakemon">
+            <div className="secret-card-sprite-wrap">
+              <div className="secret-card-sprite-placeholder">
                 <span className="secret-card-unknown">?</span>
               </div>
             </div>
-            <div className="secret-card-type">
-              <span className="secret-card-type-badge">???</span>
+            <h2 className="secret-card-name">???</h2>
+            <div className="secret-card-types">
+              <span className="secret-card-type-pill">???</span>
+              <span className="secret-card-type-pill">???</span>
             </div>
             <div className="secret-card-stats">
-              <div className="secret-card-stat"><span className="secret-card-stat-label">???</span> ???</div>
-              <div className="secret-card-stat"><span className="secret-card-stat-label">???</span> ???</div>
-              <div className="secret-card-stat"><span className="secret-card-stat-label">???</span> ???</div>
+              <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-heart-pulse" aria-hidden /> PV</span><span>???</span></div>
+              <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-hand-fist" aria-hidden /> ATK</span><span>???</span></div>
+              <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-shield" aria-hidden /> DEF</span><span>???</span></div>
+              <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> ATK SPE</span><span>???</span></div>
+              <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-gem" aria-hidden /> DEF SPE</span><span>???</span></div>
+              <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-gauge-high" aria-hidden /> SPE</span><span>???</span></div>
+              <div className="secret-card-stat secret-card-stat-total"><span className="secret-card-stat-label"><i className="fa-solid fa-calculator" aria-hidden /> TOTAL</span><span>???</span></div>
             </div>
-            <p className="secret-card-desc">
-              ??? ??? ??? ??? ??? ??? ??? ??? ??? ???
-            </p>
-            <div className="secret-card-footer">
-              <span className="secret-card-id">???</span>
-              <span className="secret-card-subtitle">Méga ??? · ???</span>
+            <div className="secret-card-talents">
+              <div className="secret-card-section-label"><i className="fa-solid fa-star" aria-hidden /> Talents</div>
+              <div className="secret-card-talent-slot">
+                <div className="secret-card-talent-title">???</div>
+                <div className="secret-card-talent-name">???</div>
+                <p className="secret-card-talent-desc">??? ??? ??? ??? ??? ??? ??? ???</p>
+              </div>
             </div>
-          </div>
-        </article>
-
-        <button
-          type="button"
-          className="secret-page-btn-fuir"
-          onClick={handleFuir}
-        >
-          FUIR
-        </button>
+            <div className="secret-card-attacks">
+              <div className="secret-card-section-label"><i className="fa-solid fa-bolt" aria-hidden /> Attaque signature</div>
+              <div className="secret-card-attack-item">
+                <div className="secret-card-attack-name">???</div>
+                <p className="secret-card-attack-desc">??? ??? ??? ??? ??? ??? ??? ??? ??? ??? ???</p>
+              </div>
+            </div>
+          </article>
+        </div>
       </div>
 
       <audio
