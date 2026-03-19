@@ -10001,8 +10001,12 @@ body.secret-page-active{
   line-height:1.7;
   color:rgba(220,210,230,.95);
   text-shadow:0 1px 3px rgba(0,0,0,.5), 0 0 20px rgba(140,100,160,.15);
-  white-space:pre-line;
   font-weight:500;
+}
+.secret-transcript-bold{
+  font-weight:700;
+  color:rgba(240,230,255,.98);
+  text-shadow:0 0 16px rgba(180,140,220,.3);
 }
 .secret-transcript-placeholder{
   margin:0;

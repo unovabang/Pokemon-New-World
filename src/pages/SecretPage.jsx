@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 
 /**
@@ -16,10 +16,10 @@ const SECRET_TRANSCRIPT_SEGMENTS = [
   { text: "Il ne te reste qu'une seule étape avant d'obtenir ce que tu cherches", at: 3 },
   { text: "Chemin des Larmes", at: 10 },
   { text: "Vieux Manoir", at: 12 },
-  { text: "Six y", at: 13 },
-  { text: "Quatre x", at: 14 },
-  { text: "Moins un x", at: 15 },
-  { text: "Trois y", at: 17 },
+  { text: "6 Y", at: 13 },
+  { text: "4 X", at: 14 },
+  { text: "- 1 X", at: 15 },
+  { text: "3 Y", at: 17 },
   { text: "AA", at: 18 },
   { text: "Ne te trompe pas", at: 20 },
 ];
@@ -42,13 +42,13 @@ export default function SecretPage() {
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const visibleText = useMemo(() => {
+  const visibleSegments = useMemo(() => {
     const segments = SECRET_TRANSCRIPT_SEGMENTS;
     let count = 0;
     for (let i = 0; i < segments.length; i++) {
       if (currentTime >= segments[i].at) count = i + 1;
     }
-    return segments.slice(0, count).map((s) => s.text).join("\n").trim();
+    return segments.slice(0, count).map((s, i) => ({ text: s.text, index: i }));
   }, [currentTime]);
 
   useEffect(() => {
@@ -158,8 +158,19 @@ export default function SecretPage() {
             <div className="secret-transcript-box" aria-live="polite">
               <div className="secret-transcript-header">RETRANSCRIPTION</div>
               <div className="secret-transcript-inner">
-                {visibleText ? (
-                  <p className="secret-transcript-text">{visibleText}</p>
+                {visibleSegments.length > 0 ? (
+                  <div className="secret-transcript-text">
+                    {visibleSegments.map(({ text, index }) => (
+                      <Fragment key={index}>
+                        {index === 3 && <br />}
+                        <span className={index >= 3 && index <= 9 ? "secret-transcript-bold" : ""}>
+                          {text}
+                        </span>
+                        {index < visibleSegments.length - 1 && <br />}
+                        {index === 9 && <br />}
+                      </Fragment>
+                    ))}
+                  </div>
                 ) : (
                   <p className="secret-transcript-placeholder">La retranscription apparaîtra ici au fur et à mesure de l&apos;écoute.</p>
                 )}
