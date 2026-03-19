@@ -444,7 +444,7 @@ function resolvePatchImageUrl(patchImage, baseUrl) {
 
 // URLs fixes pour l’embed Discord (logo du site + avatar auteur)
 const SITE_BASE = (process.env.SITE_PUBLIC_URL || 'https://www.pokemonnewworld.fr').replace(/\/$/, '');
-const DISCORD_LOGO_URL = `${SITE_BASE}/logo.png`;
+const DISCORD_LOGO_URL = 'https://i.imgur.com/dnom6sx.png';
 const DISCORD_AUTHOR_AVATAR_URL = 'https://media.discordapp.net/attachments/1412015491026784327/1480268790829678815/pp3.png?ex=69af0f3d&is=69adbdbd&hm=93ece592e96c036bc109f295eea70b9f9ab94f12bd0f9a457efc587dc51cf947&=&format=webp&quality=lossless';
 const DISCORD_PATCHNOTES_URL = `${SITE_BASE}/patchnotes`;
 const DISCORD_DOWNLOAD_URL = `${SITE_BASE}/#`;
@@ -489,7 +489,7 @@ async function sendPatchnoteToDiscord(patch) {
     embed.thumbnail = { url: imageUrl };
   }
   if (!embed.thumbnail && logoUrl) {
-    embed.thumbnail = { url: `${logoUrl}?v=1` };
+    embed.thumbnail = { url: logoUrl };
   }
 
   const payload = { embeds: [embed] };
@@ -529,7 +529,7 @@ async function sendLauncherUpdateToDiscord(newLauncherUrl) {
     url: DISCORD_TELECHARGEMENT_URL,
     timestamp: new Date().toISOString(),
     footer: { text: 'Launcher' },
-    thumbnail: { url: `${DISCORD_LOGO_URL}?v=1` }
+    thumbnail: { url: DISCORD_LOGO_URL }
   };
   const payload = {
     embeds: [embed],
