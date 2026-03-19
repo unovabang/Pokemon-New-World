@@ -9411,6 +9411,10 @@ body.secret-page-active{ background:#000; }
   background-position:center;
   background-repeat:no-repeat;
   background-color:#000;
+  -webkit-mask-image:linear-gradient(180deg, #fff 0%, #fff 70%, rgba(255,255,255,.9) 82%, rgba(255,255,255,.5) 90%, transparent 100%);
+  mask-image:linear-gradient(180deg, #fff 0%, #fff 70%, rgba(255,255,255,.9) 82%, rgba(255,255,255,.5) 90%, transparent 100%);
+  mask-size:100% 100%;
+  mask-position:bottom;
 }
 .secret-hero::after{
   content:"";
@@ -9418,15 +9422,15 @@ body.secret-page-active{ background:#000; }
   left:0;
   right:0;
   bottom:0;
-  height:120px;
-  background:linear-gradient(180deg, transparent 0%, rgba(5,3,12,.4) 60%, rgba(5,3,12,.9) 100%);
+  height:180px;
+  background:linear-gradient(180deg, transparent 0%, rgba(5,3,12,.2) 40%, rgba(5,3,12,.6) 75%, rgba(5,3,12,.95) 100%);
   pointer-events:none;
   z-index:0;
 }
 .secret-hero-overlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(5,0,15,.5) 35%, rgba(0,0,0,.5) 70%, transparent 100%);
+  background:linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(5,0,15,.45) 40%, rgba(0,0,0,.35) 65%, transparent 100%);
   pointer-events:none;
 }
 .secret-hero-inner{
@@ -9501,8 +9505,8 @@ body.secret-page-active{ background:#000; }
   z-index:2;
   max-width:100%;
   margin:0 auto;
-  margin-top:-60px;
-  padding:2rem 1.5rem 4rem;
+  margin-top:-80px;
+  padding:2.5rem 1.5rem 4rem;
   display:flex;
   justify-content:center;
   box-sizing:border-box;
@@ -9511,29 +9515,37 @@ body.secret-page-active{ background:#000; }
   max-width:520px;
   width:100%;
   margin:0 auto;
-  padding:1.5rem;
+  padding:0 1.5rem;
+  padding-top:1rem;
   box-sizing:border-box;
 }
 .secret-toolbar{
-  margin-bottom:1.5rem;
-  padding-bottom:1rem;
-  border-bottom:1px solid transparent;
-  background:linear-gradient(90deg, transparent, rgba(100,100,120,.15) 20%, rgba(100,100,120,.15) 80%, transparent) bottom/100% 1px no-repeat;
+  margin-bottom:1.75rem;
+  padding:1rem 0;
+  display:flex;
+  align-items:center;
 }
 .secret-back{
   display:inline-flex;
   align-items:center;
-  gap:0.5rem;
-  padding:0.5rem 0;
-  font-size:.85rem;
+  gap:0.6rem;
+  padding:0.6rem 1.25rem;
+  font-size:1rem;
   font-weight:600;
-  color:rgba(180,185,200,.95);
-  background:transparent;
-  border:none;
+  color:rgba(220,225,240,.95);
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:12px;
   cursor:pointer;
-  transition:color .2s ease;
+  transition:all .25s ease;
+  box-shadow:0 2px 12px rgba(0,0,0,.3);
 }
-.secret-back:hover{ color:rgba(220,225,240,1); }
+.secret-back:hover{
+  color:#fff;
+  background:rgba(255,255,255,.14);
+  border-color:rgba(255,255,255,.25);
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+}
 /* Carte Pokémon — archive corrompue, mystérieuse, dark */
 .secret-card{
   position:relative;
