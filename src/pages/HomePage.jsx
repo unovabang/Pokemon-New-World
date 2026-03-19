@@ -91,8 +91,11 @@ const HomePage = () => {
   const [openEnigmaModal, setOpenEnigmaModal] = useState(false);
   const [enigmaAnswer, setEnigmaAnswer] = useState("");
   const [showSecretButton, setShowSecretButton] = useState(false);
+  const [runicButtonReady, setRunicButtonReady] = useState(false);
   const [secretZoneClicks, setSecretZoneClicks] = useState(0);
   const enigmaAudioRef = useRef(null);
+
+  const RUNIC_REVEAL_DURATION_MS = 700;
   const navigate = useNavigate();
 
   const ENIGMA_AUDIO_SRC = "https://audio.jukehost.co.uk/DGAfKjoSST6lFylKTtpRd0ybZeBlpmRG.mp3";
@@ -163,6 +166,15 @@ const HomePage = () => {
     setSecretZoneClicks(next);
     if (next >= 3) setShowSecretButton(true);
   };
+
+  useEffect(() => {
+    if (!showSecretButton) {
+      setRunicButtonReady(false);
+      return;
+    }
+    const t = setTimeout(() => setRunicButtonReady(true), RUNIC_REVEAL_DURATION_MS);
+    return () => clearTimeout(t);
+  }, [showSecretButton]);
 
   useEffect(() => {
     if (openEnigmaModal) {
@@ -260,6 +272,7 @@ const HomePage = () => {
                         type="button"
                         className="btn btn-secret btn-runic btn-runic--reveal"
                         onClick={handleSecretClick}
+                        disabled={!runicButtonReady}
                         aria-label="Entrée secrète"
                       >
                         <span className="btn-runic-shards" aria-hidden />
