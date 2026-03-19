@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import content from "../config/index.js";
 import patreonData from "../config/patreon.json";
 import HeroVideo from "../components/HeroVideo";
@@ -90,15 +90,26 @@ const HomePage = () => {
   const [secretTransitioning, setSecretTransitioning] = useState(false);
   const [openEnigmaModal, setOpenEnigmaModal] = useState(false);
   const [enigmaAnswer, setEnigmaAnswer] = useState("");
+  const enigmaAudioRef = useRef(null);
   const navigate = useNavigate();
 
   const ENIGMA_ANSWER = "darkrai";
+  /** Remplacer par l’URL complète de l’audio (ex. https://audio.jukehost.co.uk/xxxxx.mp3) */
+  const ENIGMA_AUDIO_SRC = "https://audio.jukehost.co.uk/placeholder";
   const checkEnigmaAndGo = () => {
     if (enigmaAnswer.trim().toLowerCase() !== ENIGMA_ANSWER) return;
     setOpenEnigmaModal(false);
     setEnigmaAnswer("");
     setSecretTransitioning(true);
     setTimeout(() => navigate("/chemin-des-larmes", { replace: true }), 1200);
+  };
+
+  const playEnigmaAudio = () => {
+    const el = enigmaAudioRef.current;
+    if (!el) return;
+    el.volume = 0.02;
+    el.currentTime = 0;
+    el.play().catch(() => {});
   };
 
   // Charger les configs site, external, news, downloads et patchnotes depuis l'API
@@ -137,6 +148,13 @@ const HomePage = () => {
     setOpenEnigmaModal(true);
     setEnigmaAnswer("");
   };
+
+  useEffect(() => {
+    if (openEnigmaModal) {
+      const t = setTimeout(playEnigmaAudio, 300);
+      return () => clearTimeout(t);
+    }
+  }, [openEnigmaModal]);
 
   // Mise à jour des métadonnées SEO
   useEffect(() => {
@@ -247,6 +265,13 @@ const HomePage = () => {
                       className="enigma-modal"
                       onClick={(e) => e.stopPropagation()}
                     >
+                      <audio
+                        ref={enigmaAudioRef}
+                        src={ENIGMA_AUDIO_SRC}
+                        preload="auto"
+                        className="enigma-audio-hidden"
+                        aria-hidden
+                      />
                       <button
                         type="button"
                         className="enigma-modal-close"
@@ -290,13 +315,16 @@ const HomePage = () => {
                           autoComplete="off"
                           aria-label="Réponse à l'énigme"
                         />
-                        <button
-                          type="button"
-                          className="enigma-modal-submit"
-                          onClick={checkEnigmaAndGo}
-                        >
-                          Valider
-                        </button>
+                        <div className="enigma-modal-footer">
+                          <button
+                            type="button"
+                            className="enigma-modal-replay"
+                            onClick={(e) => { e.stopPropagation(); playEnigmaAudio(); }}
+                            aria-label="Réécouter"
+                          >
+                            <i className="fa-solid fa-rotate-right" aria-hidden /> Réécouter
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

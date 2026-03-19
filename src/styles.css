@@ -9152,6 +9152,23 @@ a.dex-panel--active{cursor:default}
   text-shadow:0 0 12px rgba(167,139,250,.25);
 }
 .hero-video .cta .btn-runic{ min-width:120px; }
+/* Bouton runes : plus inquiétant (pulsation, ombre rouge) */
+.btn-runic{
+  position:relative;
+  animation:btn-runic-pulse 3s ease-in-out infinite;
+}
+@keyframes btn-runic-pulse{
+  0%, 100%{ box-shadow:0 0 12px rgba(139,0,0,.2); opacity:.95; }
+  50%{ box-shadow:0 0 24px rgba(139,0,0,.35), 0 0 40px rgba(80,0,0,.15); opacity:1; }
+}
+.btn-runic:hover{ animation:none; box-shadow:0 0 28px rgba(139,0,0,.5), 0 0 0 1px rgba(139,0,0,.3); }
+.btn-runic .btn-runic-text{
+  text-shadow:0 0 10px rgba(139,0,0,.5), 0 0 20px rgba(139,0,0,.25);
+  letter-spacing:.2em;
+}
+.btn-runic:hover .btn-runic-text{
+  text-shadow:0 0 16px rgba(180,0,0,.7), 0 0 32px rgba(139,0,0,.4);
+}
 
 /* ===== Modal énigme Darkrai (sombre, police thématique, glitch) ===== */
 .enigma-modal-overlay{
@@ -9250,24 +9267,27 @@ a.dex-panel--active{cursor:default}
   border-color:rgba(139,0,0,.7);
   box-shadow:0 0 0 2px rgba(139,0,0,.25);
 }
-.enigma-modal-submit{
-  padding:.7rem 1.25rem;
+.enigma-modal-footer{ margin-top:.75rem; display:flex; justify-content:center; }
+.enigma-modal-replay{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.5rem 1rem;
   font-family:"Cinzel",serif;
-  font-size:.95rem;
-  font-weight:600;
-  letter-spacing:.08em;
-  color:rgba(255,255,255,.9);
+  font-size:.85rem;
+  color:rgba(255,255,255,.7);
   background:transparent;
-  border:1px solid rgba(139,0,0,.5);
-  border-radius:10px;
+  border:1px solid rgba(139,0,0,.35);
+  border-radius:8px;
   cursor:pointer;
   transition:all .2s ease;
 }
-.enigma-modal-submit:hover{
-  background:rgba(139,0,0,.2);
-  border-color:rgba(139,0,0,.7);
-  box-shadow:0 0 16px rgba(139,0,0,.3);
+.enigma-modal-replay:hover{
+  color:rgba(255,255,255,.95);
+  border-color:rgba(139,0,0,.6);
+  box-shadow:0 0 12px rgba(139,0,0,.2);
 }
+.enigma-audio-hidden{ position:absolute; width:0; height:0; opacity:0; pointer-events:none; }
 
 /* ===== Transition vers page secrète (freeze + flicker + sombre) ===== */
 .secret-transition-overlay{
@@ -9313,7 +9333,7 @@ a.dex-panel--active{cursor:default}
   100%{ opacity:1; }
 }
 
-/* ===== Page secrète (ambiance Darkrai — hero type lore + carte style fakemon) ===== */
+/* ===== Page secrète (ambiance Darkrai — plus creepy, fond angoissant) ===== */
 body.secret-page-active{ background:#000; }
 .secret-page{
   position:relative;
@@ -9323,10 +9343,36 @@ body.secret-page-active{ background:#000; }
   color:rgba(238,243,255,.85);
   font-family:"Outfit",system-ui,sans-serif;
 }
-.secret-page-bg{ display:none; }
-/* Hero type chapitre lore : pleine largeur, fond image, overlay, titre + sous-titre */
+.secret-page-bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background:#000 url(https://images3.alphacoders.com/107/1073997.jpg) center/cover no-repeat;
+  animation:secret-bg-creep 12s ease-in-out infinite;
+}
+.secret-page-noise{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  opacity:.12;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.secret-page-vignette{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  box-shadow:inset 0 0 25vh 12vmin rgba(0,0,0,.85), inset 0 0 15vh 8vmin rgba(60,0,20,.4);
+}
+@keyframes secret-bg-creep{
+  0%, 100%{ filter:brightness(.5) contrast(1.05); }
+  50%{ filter:brightness(.45) contrast(1.08); }
+}
+/* Hero type lore : titre avec léger glitch creepy */
 .secret-hero.lore-style{
   position:relative;
+  z-index:2;
   min-height:70vh;
   display:flex;
   align-items:center;
@@ -9339,7 +9385,7 @@ body.secret-page-active{ background:#000; }
 .secret-hero-overlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(30,5,15,.7) 50%, rgba(0,0,0,.85) 100%);
+  background:linear-gradient(180deg, rgba(0,0,0,.65) 0%, rgba(40,5,15,.75) 40%, rgba(0,0,0,.9) 100%);
   pointer-events:none;
 }
 .secret-hero-inner{
@@ -9359,16 +9405,28 @@ body.secret-page-active{ background:#000; }
   font-family:"Outfit",system-ui,sans-serif;
   text-shadow:0 2px 24px rgba(0,0,0,.6), 0 0 40px rgba(139,0,0,.15);
 }
+.secret-hero-title--creepy{
+  animation:secret-title-flicker 6s ease-in-out infinite;
+  text-shadow:0 2px 24px rgba(0,0,0,.8), 0 0 30px rgba(139,0,0,.2), 0 0 60px rgba(80,0,20,.15);
+}
+@keyframes secret-title-flicker{
+  0%, 92%, 100%{ opacity:1; filter:brightness(1); }
+  94%{ opacity:.9; filter:brightness(.85); }
+  96%{ opacity:1; filter:brightness(1.05); }
+  98%{ opacity:.95; filter:brightness(.9); }
+}
 .secret-hero-description{
   margin:0;
   font-size:clamp(0.95rem, 2vw, 1.1rem);
   line-height:1.6;
-  color:rgba(255,255,255,.9);
+  color:rgba(255,255,255,.85);
   font-style:italic;
-  text-shadow:0 1px 12px rgba(0,0,0,.5);
+  text-shadow:0 1px 12px rgba(0,0,0,.6), 0 0 20px rgba(0,0,0,.3);
 }
 /* Contenu : cadre arrondi comme lore-story-content */
 .secret-content-wrap{
+  position:relative;
+  z-index:2;
   max-width:100%;
   margin:0 auto;
   padding:3rem 1.5rem 4rem;
@@ -9432,12 +9490,29 @@ body.secret-page-active{ background:#000; }
   display:flex;
   align-items:center;
   justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+.secret-card-sprite-img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  image-rendering:pixelated;
+  image-rendering:auto;
 }
 .secret-card-unknown{
-  font-size:4rem;
+  display:none;
+  position:absolute;
+  font-size:3rem;
   font-weight:800;
-  color:rgba(139,0,0,.4);
-  text-shadow:0 0 20px rgba(139,0,0,.25);
+  color:rgba(139,0,0,.5);
+  text-shadow:0 0 20px rgba(139,0,0,.3);
+}
+.secret-card-unknown-visible{ display:flex !important; }
+.secret-card-name--crypt{
+  letter-spacing:.15em;
+  font-weight:700;
+  color:rgba(255,255,255,.55);
 }
 .secret-card--fakemon .secret-card-name{
   margin:0 0 0.5rem;
