@@ -1,4 +1,4 @@
-/* ===== Styles Darkrai — Easter egg, modal énigme, page secrète ===== */
+/* ===== Styles énigme — Easter egg, modal, page secrète ===== */
 
 /* Hero : rangée du bouton runique */
 .hero-video .cta-row--runic{
@@ -72,7 +72,7 @@
 }
 .btn-runic:focus-visible{ outline:none; box-shadow:0 0 0 2px rgba(167,139,250,.5); }
 
-/* ===== Modal énigme Darkrai (sombre, police thématique, glitch) ===== */
+/* ===== Modal énigme (sombre, police thématique, glitch) ===== */
 .enigma-modal-overlay{
   position:fixed;
   inset:0;

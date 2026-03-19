@@ -93,10 +93,17 @@ const HomePage = () => {
   const enigmaAudioRef = useRef(null);
   const navigate = useNavigate();
 
-  const ENIGMA_ANSWER = "darkrai";
   const ENIGMA_AUDIO_SRC = "https://audio.jukehost.co.uk/DGAfKjoSST6lFylKTtpRd0ybZeBlpmRG.mp3";
-  const checkEnigmaAndGo = () => {
-    if (enigmaAnswer.trim().toLowerCase() !== ENIGMA_ANSWER) return;
+  const ENIGMA_HASH = "f8adeef9021e0cbdd3871d6c50af2ff5920ffeb07db4020caf4488c5863b59fd";
+  const checkEnigmaAndGo = async () => {
+    const input = enigmaAnswer.trim().toLowerCase();
+    if (!input) return;
+    const buf = new TextEncoder().encode(input);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", buf);
+    const hashHex = Array.from(new Uint8Array(hashBuffer))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    if (hashHex !== ENIGMA_HASH) return;
     setOpenEnigmaModal(false);
     setEnigmaAnswer("");
     setSecretTransitioning(true);
