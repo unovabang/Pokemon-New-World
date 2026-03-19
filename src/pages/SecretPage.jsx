@@ -1,13 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 /**
  * Page Chemin des Larmes — Easter egg Darkrai.
  * Ambiance mystérieuse, sombre, carte Pokémon type archive corrompue.
  */
-const SECRET_AUDIO_SRC = "/audio/secret-voice.mp3";
+const SECRET_AUDIO_SRC = "https://audio.jukehost.co.uk/Icyu4x7mU7ApHJ0lx9R6R6WwMX2pP9Si.mp3";
 const SECRET_HERO_BG = "https://images3.alphacoders.com/107/1073997.jpg";
 const MEGA_DARKRAI_IMAGE = "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/f7/Darkrai2.gif/revision/latest?cb=20260130212808&path-prefix=fr";
+
+/** Texte complet de la retranscription — apparaît au fur et à mesure de l'audio. Remplacer par votre texte si besoin. */
+const SECRET_TRANSCRIPT =
+  "Retranscription du message. Remplacez cette constante SECRET_TRANSCRIPT dans SecretPage.jsx par votre texte complet pour qu'il s'affiche progressivement pendant l'écoute.";
 
 const CRYPT = {
   name: "▯ ▯ ▯ ▯ ▯ ▯",
@@ -21,9 +25,28 @@ const CRYPT = {
   attackDesc: "▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯",
 };
 
+/** Découpe le texte en segments (phrases) pour révélation progressive. */
+function segmentTranscript(text) {
+  if (!text || !text.trim()) return [""];
+  const parts = text.trim().split(/(?<=[.!?])\s+/);
+  return parts.length > 0 ? parts : [text];
+}
+
 export default function SecretPage() {
   const navigate = useNavigate();
   const audioRef = useRef(null);
+  const [transcriptProgress, setTranscriptProgress] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const segments = useMemo(() => segmentTranscript(SECRET_TRANSCRIPT), []);
+  const visibleText = useMemo(() => {
+    if (segments.length === 0) return "";
+    const n = Math.min(
+      Math.floor(transcriptProgress * segments.length),
+      segments.length
+    );
+    return segments.slice(0, n).join(" ").trim();
+  }, [segments, transcriptProgress]);
 
   useEffect(() => {
     document.body.classList.add("secret-page-active");
@@ -37,19 +60,46 @@ export default function SecretPage() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const play = () => {
-      const p = audio.play().catch(() => {});
-      if (p && typeof p.then === "function") p.then(() => {}).catch(() => {});
+    const onTimeUpdate = () => {
+      const d = audio.duration;
+      if (!d || !isFinite(d)) return;
+      const p = Math.min(audio.currentTime / d, 1);
+      setTranscriptProgress(p);
     };
-    play();
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
+    const onEnded = () => {
+      setIsPlaying(false);
+      setTranscriptProgress(1);
+    };
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("play", onPlay);
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("ended", onEnded);
     return () => {
-      audio.pause();
-      audio.currentTime = 0;
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("ended", onEnded);
     };
   }, []);
 
   const handleFuir = () => {
     navigate("/", { replace: true });
+  };
+
+  const handleEcouteMoi = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+      return;
+    }
+    if (audio.ended || audio.currentTime > 0) {
+      audio.currentTime = 0;
+      setTranscriptProgress(0);
+    }
+    audio.play().catch(() => {});
   };
 
   return (
@@ -84,6 +134,15 @@ export default function SecretPage() {
           <div className="secret-toolbar">
             <button type="button" className="secret-back" onClick={handleFuir}>
               <i className="fa-solid fa-door-open" aria-hidden /> Quitter
+            </button>
+            <button
+              type="button"
+              className="secret-listen-btn"
+              onClick={handleEcouteMoi}
+              aria-pressed={isPlaying}
+            >
+              <i className={isPlaying ? "fa-solid fa-pause" : "fa-solid fa-volume-high"} aria-hidden />
+              {isPlaying ? " Pause" : " Ecoute-moi"}
             </button>
           </div>
 
@@ -139,6 +198,15 @@ export default function SecretPage() {
               <div className="secret-card-attacks">
                 <div className="secret-card-section-label">{CRYPT.attackName}</div>
                 <p className="secret-card-attack-desc">{CRYPT.attackDesc}</p>
+              </div>
+            </div>
+            <div className="secret-transcript-box" aria-live="polite">
+              <div className="secret-transcript-inner">
+                {visibleText ? (
+                  <p className="secret-transcript-text">{visibleText}</p>
+                ) : (
+                  <p className="secret-transcript-placeholder">La retranscription apparaîtra ici au fur et à mesure de l&apos;écoute.</p>
+                )}
               </div>
             </div>
             <div className="secret-card-footer">

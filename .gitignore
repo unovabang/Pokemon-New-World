@@ -129,6 +129,9 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Claude Code / Anthropic
+.claude/
+
 # Dossier config locale (dev) — en prod on utilise DATA_DIR / volume
 /data/
 

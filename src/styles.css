@@ -9583,16 +9583,16 @@ body.secret-page-active{
   margin:1.75rem 0 0;
   font-size:1.05rem;
   font-weight:700;
-  color:rgba(255,200,120,.98);
+  color:rgba(255,100,100,.98);
   letter-spacing:.15em;
   text-transform:uppercase;
   text-shadow:
-    0 0 20px rgba(255,180,80,.8),
-    0 0 40px rgba(255,140,60,.5),
+    0 0 20px rgba(255,80,80,.8),
+    0 0 40px rgba(255,60,60,.5),
     0 2px 8px rgba(0,0,0,.8);
   padding:.5rem 1.25rem;
   background:rgba(0,0,0,.4);
-  border:1px solid rgba(255,180,80,.4);
+  border:1px solid rgba(255,100,100,.5);
   border-radius:8px;
   display:inline-block;
   animation:secret-warning-blink 3s ease-in-out infinite;
@@ -9629,6 +9629,39 @@ body.secret-page-active{
   padding:1rem 0;
   display:flex;
   align-items:center;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+.secret-listen-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:0.6rem;
+  padding:0.65rem 1.4rem;
+  font-size:1rem;
+  font-weight:600;
+  color:rgba(255,220,120,.95);
+  background:linear-gradient(180deg, rgba(180,120,40,.35) 0%, rgba(140,80,20,.4) 100%);
+  border:1px solid rgba(255,200,80,.5);
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .3s ease;
+  box-shadow:0 2px 12px rgba(0,0,0,.3), 0 0 20px rgba(200,150,50,.15), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.secret-listen-btn:hover{
+  color:rgba(255,235,180,1);
+  background:linear-gradient(180deg, rgba(200,140,50,.45) 0%, rgba(160,100,30,.5) 100%);
+  border-color:rgba(255,210,100,.65);
+  box-shadow:0 4px 24px rgba(0,0,0,.4), 0 0 30px rgba(220,170,80,.25), inset 0 1px 0 rgba(255,255,255,.1);
+  transform:translateY(-1px);
+}
+.secret-listen-btn:active,
+.secret-listen-btn[aria-pressed="true"]{
+  transform:translateY(0);
+}
+.secret-listen-btn[aria-pressed="true"]{
+  color:rgba(255,240,200,1);
+  border-color:rgba(255,220,120,.6);
+  box-shadow:0 0 24px rgba(255,200,80,.2), inset 0 0 20px rgba(255,200,80,.08);
 }
 .secret-back{
   display:inline-flex;
@@ -9898,6 +9931,31 @@ body.secret-page-active{
   padding:0.5rem 0.6rem;
   background:rgba(0,0,0,.3);
   border-left:2px solid rgba(50,50,60,.5);
+}
+.secret-transcript-box{
+  margin:0 1.25rem 0;
+  padding:1rem 1.25rem;
+  min-height:4.5rem;
+  background:rgba(0,0,0,.45);
+  border:1px solid rgba(180,60,60,.4);
+  border-radius:12px;
+  box-shadow:0 0 20px rgba(120,40,40,.15), inset 0 1px 0 rgba(255,255,255,.03);
+}
+.secret-transcript-inner{
+  min-height:2.5rem;
+}
+.secret-transcript-text{
+  margin:0;
+  font-size:.9rem;
+  line-height:1.55;
+  color:rgba(200,190,210,.95);
+  text-shadow:0 1px 2px rgba(0,0,0,.4);
+}
+.secret-transcript-placeholder{
+  margin:0;
+  font-size:.85rem;
+  color:rgba(120,115,130,.7);
+  font-style:italic;
 }
 .secret-card-footer{
   padding:0.75rem 1.25rem;
