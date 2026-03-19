@@ -194,28 +194,32 @@ const HomePage = () => {
                 />
                 {/* Titre texte retiré */}
                 <div className="cta">
-                  <button 
-                    className="btn btn-primary" 
-                    onClick={() => setOpenDownload(true)}
-                  >
-                    <i className="fa-solid fa-cloud-arrow-down"></i> {t('buttons.download')}
-                  </button>
-                  <a
-                    className="btn btn-ghost"
-                    href={discord || "#"}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <i className="fa-brands fa-discord"></i> {t('buttons.discord')}
-                  </a>
-                  <button
-                    type="button"
-                    className="btn btn-secret"
-                    onClick={handleSecretClick}
-                    aria-label="Entrée secrète"
-                  >
-                    <span className="btn-secret-text">⋯ l&#8239;ombre &#8239;⋯</span>
-                  </button>
+                  <div className="cta-row">
+                    <button 
+                      className="btn btn-primary" 
+                      onClick={() => setOpenDownload(true)}
+                    >
+                      <i className="fa-solid fa-cloud-arrow-down"></i> {t('buttons.download')}
+                    </button>
+                    <a
+                      className="btn btn-ghost"
+                      href={discord || "#"}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <i className="fa-brands fa-discord"></i> {t('buttons.discord')}
+                    </a>
+                  </div>
+                  <div className="cta-row cta-row--runic">
+                    <button
+                      type="button"
+                      className="btn btn-secret btn-runic"
+                      onClick={handleSecretClick}
+                      aria-label="Entrée secrète"
+                    >
+                      <span className="btn-runic-text">ᚦᚨᚱᚲᚱᚨᛁ</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </HeroVideo>
