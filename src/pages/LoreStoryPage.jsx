@@ -71,7 +71,24 @@ function renderMarkdown(text) {
     return out;
   }
 
-  const parts = parseBold(text);
+  function parseTitle(str) {
+    const out = [];
+    let rest = str;
+    const openTag = "[TITLE]";
+    const closeTag = "[/TITLE]";
+    while (rest) {
+      const a = rest.indexOf(openTag);
+      if (a === -1) { out.push(...parseBold(rest)); break; }
+      const b = rest.indexOf(closeTag, a + openTag.length);
+      if (b === -1) { out.push(...parseBold(rest)); break; }
+      if (a > 0) out.push(...parseBold(rest.slice(0, a)));
+      out.push(<span key={`t${k++}`} className="lore-story-section-title">{parseBold(rest.slice(a + openTag.length, b))}</span>);
+      rest = rest.slice(b + closeTag.length);
+    }
+    return out;
+  }
+
+  const parts = parseTitle(text);
   return parts.length ? parts : text;
 }
 
@@ -84,7 +101,12 @@ function RenderContent({ paragraphs }) {
       if (src) return <img key={i} src={src} alt="" className="lore-story-image" />;
       return null;
     }
-    return <p key={i} className="lore-story-p">{renderMarkdown(p)}</p>;
+    const isTitleOnly = typeof p === "string" && /^\s*\[TITLE\].*\[\/TITLE\]\s*$/.test(p);
+    return (
+      <p key={i} className={`lore-story-p${isTitleOnly ? " lore-story-p--title" : ""}`}>
+        {renderMarkdown(p)}
+      </p>
+    );
   });
 }
 

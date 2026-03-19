@@ -2479,6 +2479,23 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   margin-right: auto;
   max-width: 60ch;
 }
+.lore-story-content .lore-story-p--title {
+  text-align: center;
+}
+.lore-story-content .lore-story-section-title {
+  display: block;
+  font-size: clamp(1.35rem, 3.5vw, 1.85rem);
+  font-family: "Outfit", system-ui, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--lore-gold);
+  line-height: 1.35;
+  margin: 0.5rem 0;
+}
+.lore-story-content .lore-story-p--title .lore-story-section-title {
+  margin: 0;
+}
 .lore-story-image {
   display: block;
   max-width: 100%;

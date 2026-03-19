@@ -65,6 +65,7 @@ function MarkdownToolbar({ textareaRef, onUpdate }) {
     <div style={toolbarStyle}>
       <button type="button" onClick={() => wrap("**", "**")} style={tbBtnStyle} title="Gras"><i className="fa-solid fa-bold" /></button>
       <button type="button" onClick={() => wrap("*", "*")} style={tbBtnStyle} title="Italique"><i className="fa-solid fa-italic" /></button>
+      <button type="button" onClick={() => wrap("[TITLE]", "[/TITLE]")} style={tbBtnStyle} title="Titre (centré, majuscules, police différente)"><i className="fa-solid fa-heading" /></button>
     </div>
   );
 }
