@@ -26,6 +26,7 @@ import LoginAdmin from "./pages/LoginAdmin";
 import ContactPage from "./pages/ContactPage";
 import DownloadPage from "./pages/DownloadPage";
 import Page404 from "./pages/Page404";
+import SecretPage from "./pages/SecretPage";
 import { useLanguage } from "./contexts/LanguageContext";
 
 
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/nerfs-and-buffs" element={<NerfsAndBuffsPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/telechargement" element={<DownloadPage />} />
+        <Route path="/chemin-des-larmes" element={<SecretPage />} />
         <Route path="/admin-login" element={<LoginAdmin />} />
         <Route path="/admin" element={
           <ProtectedRoute>

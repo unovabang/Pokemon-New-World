@@ -9,7 +9,7 @@ import NewsBanner from "../components/NewsBanner";
 import LanguageSelector from "../components/LanguageSelector";
 import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -87,6 +87,8 @@ const HomePage = () => {
   const [openDownload, setOpenDownload] = useState(false);
   const [openPatchNotes, setOpenPatchNotes] = useState(false);
   const [patchNotesFromApi, setPatchNotesFromApi] = useState(null);
+  const [secretTransitioning, setSecretTransitioning] = useState(false);
+  const navigate = useNavigate();
 
   // Charger les configs site, external, news, downloads et patchnotes depuis l'API
   // Chaque fetch est indépendant : un échec n'empêche pas les autres de charger
@@ -120,6 +122,11 @@ const HomePage = () => {
       .catch(() => {});
   }, [openPatchNotes, language]);
 
+  const handleSecretClick = () => {
+    setSecretTransitioning(true);
+    setTimeout(() => navigate("/chemin-des-larmes", { replace: true }), 1200);
+  };
+
   // Mise à jour des métadonnées SEO
   useEffect(() => {
     document.title = t('seo.title');
@@ -145,6 +152,12 @@ const HomePage = () => {
 
   return (
     <>
+      {secretTransitioning && (
+        <div className="secret-transition-overlay" aria-hidden="true">
+          <div className="secret-transition-flicker" />
+          <div className="secret-transition-vignette" />
+        </div>
+      )}
       <main
         id="top"
         className="page page-with-nav"
@@ -195,6 +208,14 @@ const HomePage = () => {
                   >
                     <i className="fa-brands fa-discord"></i> {t('buttons.discord')}
                   </a>
+                  <button
+                    type="button"
+                    className="btn btn-secret"
+                    onClick={handleSecretClick}
+                    aria-label="Entrée secrète"
+                  >
+                    <span className="btn-secret-text">⋯ l&#8239;ombre &#8239;⋯</span>
+                  </button>
                 </div>
               </div>
             </HeroVideo>
