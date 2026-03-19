@@ -448,6 +448,7 @@ const DISCORD_LOGO_URL = `${SITE_BASE}/logo.png`;
 const DISCORD_AUTHOR_AVATAR_URL = 'https://media.discordapp.net/attachments/1412015491026784327/1480268790829678815/pp3.png?ex=69af0f3d&is=69adbdbd&hm=93ece592e96c036bc109f295eea70b9f9ab94f12bd0f9a457efc587dc51cf947&=&format=webp&quality=lossless';
 const DISCORD_PATCHNOTES_URL = `${SITE_BASE}/patchnotes`;
 const DISCORD_DOWNLOAD_URL = `${SITE_BASE}/#`;
+const DISCORD_TELECHARGEMENT_URL = `${SITE_BASE}/telechargement`;
 
 /** Envoie un embed Discord pour un nouveau patchnote (appelé après POST version) */
 async function sendPatchnoteToDiscord(patch) {
@@ -488,15 +489,14 @@ async function sendPatchnoteToDiscord(patch) {
     embed.thumbnail = { url: imageUrl };
   }
   if (!embed.thumbnail && logoUrl) {
-    embed.thumbnail = { url: logoUrl };
+    embed.thumbnail = { url: `${logoUrl}?v=1` };
   }
 
   const payload = { embeds: [embed] };
   payload.components = [{
     type: 1,
     components: [
-      { type: 2, style: 5, label: 'PatchNotes', url: DISCORD_PATCHNOTES_URL },
-      { type: 2, style: 5, label: 'Télécharger', url: DISCORD_DOWNLOAD_URL }
+      { type: 2, style: 5, label: 'Patchnote', url: DISCORD_PATCHNOTES_URL }
     ]
   }];
 
@@ -526,14 +526,14 @@ async function sendLauncherUpdateToDiscord(newLauncherUrl) {
     title: '🚀 Nouvelle version du Launcher disponible',
     description: 'Une mise à jour du launcher est sortie.\n\nLa mise à jour est disponible automatiquement sur le launcher PNW.',
     color: 0x9B59B6,
-    url: DISCORD_PATCHNOTES_URL,
+    url: DISCORD_TELECHARGEMENT_URL,
     timestamp: new Date().toISOString(),
     footer: { text: 'Launcher' },
-    thumbnail: { url: 'https://www.pokemonnewworld.fr/logo.png' }
+    thumbnail: { url: `${DISCORD_LOGO_URL}?v=1` }
   };
   const payload = {
     embeds: [embed],
-    components: [{ type: 1, components: [{ type: 2, style: 5, label: 'Patchnote', url: 'https://www.pokemonnewworld.fr/patchnotes' }] }]
+    components: [{ type: 1, components: [{ type: 2, style: 5, label: 'Télécharger', url: DISCORD_TELECHARGEMENT_URL }] }]
   };
   const url = webhookUrl + (webhookUrl.includes('?') ? '&' : '?') + 'with_components=true';
   try {
