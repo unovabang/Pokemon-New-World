@@ -258,10 +258,11 @@ const HomePage = () => {
                     {showSecretButton ? (
                       <button
                         type="button"
-                        className="btn btn-secret btn-runic"
+                        className="btn btn-secret btn-runic btn-runic--reveal"
                         onClick={handleSecretClick}
                         aria-label="Entrée secrète"
                       >
+                        <span className="btn-runic-shards" aria-hidden />
                         <span className="btn-runic-text">ᚦᚨᚱᚲᚱᚨᛁ</span>
                       </button>
                     ) : (
