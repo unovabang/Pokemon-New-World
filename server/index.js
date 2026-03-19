@@ -517,6 +517,60 @@ async function sendPatchnoteToDiscord(patch) {
   }
 }
 
+/** Envoie un embed Discord pour une mise à jour du launcher (appelé après POST downloads si launcher URL change) */
+async function sendLauncherUpdateToDiscord(newLauncherUrl) {
+  const { webhookUrl } = getDiscordWebhookConfig();
+  if (!webhookUrl) return;
+  const embed = {
+    author: { name: 'Pokémon New World', icon_url: DISCORD_AUTHOR_AVATAR_URL },
+    title: '🚀 Nouvelle version du Launcher disponible',
+    description: 'Une mise à jour du launcher est sortie. Téléchargez-la pour profiter des dernières améliorations.',
+    color: 0x9B59B6,
+    url: DISCORD_DOWNLOAD_URL,
+    timestamp: new Date().toISOString(),
+    footer: { text: 'Launcher' },
+    thumbnail: { url: DISCORD_LOGO_URL }
+  };
+  const payload = {
+    embeds: [embed],
+    components: [{ type: 1, components: [{ type: 2, style: 5, label: 'Télécharger', url: newLauncherUrl || DISCORD_DOWNLOAD_URL }] }]
+  };
+  const url = webhookUrl + (webhookUrl.includes('?') ? '&' : '?') + 'with_components=true';
+  try {
+    const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!resp.ok) console.warn('Discord webhook launcher error:', resp.status, await resp.text());
+  } catch (e) {
+    console.warn('Discord webhook launcher send error:', e.message);
+  }
+}
+
+/** Envoie un embed Discord pour une mise à jour du jeu (appelé après POST downloads si gameVersion change) */
+async function sendGameUpdateToDiscord(version) {
+  const { webhookUrl } = getDiscordWebhookConfig();
+  if (!webhookUrl) return;
+  const embed = {
+    author: { name: 'Pokémon New World', icon_url: DISCORD_AUTHOR_AVATAR_URL },
+    title: `🎮 Nouvelle version du jeu disponible — v${version}`,
+    description: `La version ${version} de Pokémon New World est disponible. Consultez les PatchNotes pour les détails.`,
+    color: 0x5865F2,
+    url: DISCORD_PATCHNOTES_URL,
+    timestamp: new Date().toISOString(),
+    footer: { text: 'Mise à jour jeu' },
+    thumbnail: { url: DISCORD_LOGO_URL }
+  };
+  const payload = {
+    embeds: [embed],
+    components: [{ type: 1, components: [{ type: 2, style: 5, label: 'PatchNotes', url: DISCORD_PATCHNOTES_URL }, { type: 2, style: 5, label: 'Télécharger', url: DISCORD_DOWNLOAD_URL }] }]
+  };
+  const url = webhookUrl + (webhookUrl.includes('?') ? '&' : '?') + 'with_components=true';
+  try {
+    const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!resp.ok) console.warn('Discord webhook game update error:', resp.status, await resp.text());
+  } catch (e) {
+    console.warn('Discord webhook game update send error:', e.message);
+  }
+}
+
 // GET /api/config/discord-webhook - Lire l’URL du webhook (masquée partiellement)
 app.get('/api/config/discord-webhook', (req, res) => {
   try {
@@ -1115,10 +1169,23 @@ app.get('/api/downloads', (req, res) => {
 app.post('/api/downloads', (req, res) => {
   try {
     const { downloads } = req.body;
+    const prevDownloads = getConfig('downloads') || {};
     const success = saveConfig('downloads', downloads);
     
     if (!success) {
       return res.status(500).json({ success: false, error: 'Erreur lors de la sauvegarde' });
+    }
+    
+    // Notifications Discord : launcher si URL change, jeu si gameVersion change
+    const prevLauncher = (prevDownloads.launcher || '').trim();
+    const newLauncher = (downloads?.launcher || '').trim();
+    const prevGameVersion = (prevDownloads.gameVersion || '').trim();
+    const newGameVersion = (downloads?.gameVersion || '').trim();
+    if (newLauncher && prevLauncher !== newLauncher) {
+      sendLauncherUpdateToDiscord(newLauncher).catch(() => {});
+    }
+    if (newGameVersion && prevGameVersion !== newGameVersion) {
+      sendGameUpdateToDiscord(newGameVersion).catch(() => {});
     }
     
     res.json({ 
