@@ -137,25 +137,25 @@ export default function SecretPage() {
           <p className="secret-hero-description">
             <i className="fa-solid fa-quote-left" aria-hidden /> Là où l'esprit perd son bord — une présence veille dans l'oubli.
           </p>
-          <div className="secret-hero-toolbar">
-            <button type="button" className="secret-back" onClick={handleFuir}>
-              <i className="fa-solid fa-door-open" aria-hidden /> Quitter
-            </button>
-            <button
-              type="button"
-              className="secret-listen-btn"
-              onClick={handleEcouteMoi}
-              aria-pressed={isPlaying}
-            >
-              <i className={isPlaying ? "fa-solid fa-pause" : "fa-solid fa-volume-high"} aria-hidden />
-              {isPlaying ? " Pause" : " Ecoute-moi"}
-            </button>
-          </div>
           <p className="secret-hero-warning"><i className="fa-solid fa-triangle-exclamation" aria-hidden /> Tu ne devrais pas être ici.</p>
         </div>
       </header>
 
       <div className="secret-content-wrap">
+        <div className="secret-toolbar">
+          <button type="button" className="secret-back" onClick={handleFuir}>
+            <i className="fa-solid fa-door-open" aria-hidden /> Quitter
+          </button>
+          <button
+            type="button"
+            className="secret-listen-btn"
+            onClick={handleEcouteMoi}
+            aria-pressed={isPlaying}
+          >
+            <i className={isPlaying ? "fa-solid fa-pause" : "fa-solid fa-volume-high"} aria-hidden />
+            {isPlaying ? " Pause" : " Ecoute-moi"}
+          </button>
+        </div>
         <div className="secret-main">
           <aside className="secret-transcript-panel" aria-label="Retranscription">
             <div className="secret-transcript-box" aria-live="polite">

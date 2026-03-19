@@ -9595,19 +9595,11 @@ body.secret-page-active{
   max-width:520px;
 }
 .secret-hero-description .fa-quote-left{ opacity:.5; margin-top:.3em; flex-shrink:0; color:rgba(140,145,160,.7); }
-.secret-hero-toolbar{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:1rem;
-  flex-wrap:wrap;
-  margin:1.25rem 0 0;
-}
 .secret-hero-warning{
   display:inline-flex;
   align-items:center;
   gap:.5rem;
-  margin:1.25rem 0 0;
+  margin:1.5rem 0 0;
   font-size:1.15rem;
   font-weight:800;
   color:#fff;
@@ -9637,8 +9629,8 @@ body.secret-page-active{
   max-width:100%;
   width:100%;
   margin:0 auto;
-  margin-top:-80px;
-  padding:2.5rem 1.5rem 4rem;
+  margin-top:0;
+  padding:2rem 1.5rem 4rem;
   display:flex;
   flex-direction:column;
   align-items:center;
