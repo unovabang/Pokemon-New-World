@@ -136,7 +136,6 @@ export default function SecretPage() {
           <p className="secret-hero-description">
             Là où l'esprit perd son bord — une présence veille dans l'oubli.
           </p>
-          <p className="secret-hero-warning">Tu ne devrais pas être ici.</p>
         </div>
       </header>
 
@@ -155,6 +154,7 @@ export default function SecretPage() {
             {isPlaying ? " Pause" : " Ecoute-moi"}
           </button>
         </div>
+        <p className="secret-hero-warning">Tu ne devrais pas être ici.</p>
         <div className="secret-main">
           <aside className="secret-transcript-panel" aria-label="Retranscription">
             <div className="secret-transcript-box" aria-live="polite">
