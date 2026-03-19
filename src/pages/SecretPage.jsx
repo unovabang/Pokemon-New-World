@@ -10,15 +10,15 @@ const SECRET_HERO_BG = "https://images3.alphacoders.com/107/1073997.jpg";
 const MEGA_DARKRAI_IMAGE = "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/f7/Darkrai2.gif/revision/latest?cb=20260130212808&path-prefix=fr";
 
 const CRYPT = {
-  name: "◊ ⁂ ▯ ᛭ ⁂ ◊",
-  type: "⌇",
+  name: "▯ ▯ ▯ ▯ ▯ ▯",
+  type: "▯",
   stat: "▯",
   total: "▯▯▯",
-  talentLabel: "† † †",
-  talentName: "◊ ⁂ ◊",
-  talentDesc: "··· † ··· † ··· † ··· † ···",
-  attackName: "⁂ ⌇ ⁂",
-  attackDesc: "† ··· † ··· † ··· † ··· † ··· † ···",
+  talentLabel: "▯ ▯ ▯",
+  talentName: "▯ ▯ ▯",
+  talentDesc: "▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯",
+  attackName: "▯ ▯ ▯",
+  attackDesc: "▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯",
 };
 
 export default function SecretPage() {
@@ -59,6 +59,7 @@ export default function SecretPage() {
       <header className="secret-hero" style={{ backgroundImage: `url(${SECRET_HERO_BG})` }}>
         <div className="secret-hero-overlay" aria-hidden="true" />
         <div className="secret-hero-inner">
+          <img src="https://i.imgur.com/9bVZ1FP.png" alt="" className="secret-hero-logo" />
           <span className="secret-hero-badge">[ ACCÈS RESTREINT ]</span>
           <h1 className="secret-hero-title">CHEMIN DES LARMES</h1>
           <p className="secret-hero-description">
