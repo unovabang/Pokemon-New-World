@@ -3900,25 +3900,7 @@ a.dex-panel--active{cursor:default}
   justify-content:center;
   margin-top:4px;
 }
-.btn-runic{
-  font-family:inherit;
-  font-size:1.1rem;
-  letter-spacing:.15em;
-}
-.btn-runic-text{
-  text-shadow:0 0 10px rgba(108,92,231,.45), 0 0 20px rgba(56,189,248,.2);
-  color:rgba(255,255,255,.9);
-  transition:text-shadow .25s ease, color .25s ease;
-}
-.btn-runic:hover .btn-runic-text{
-  text-shadow:0 0 14px rgba(124,58,237,.65), 0 0 28px rgba(56,189,248,.3);
-  color:#fff;
-}
-.btn-runic:hover{
-  border-color:rgba(124,58,237,.45);
-  box-shadow:0 0 20px rgba(56,189,248,.2);
-}
-.btn-runic:focus-visible .btn-runic-text{ text-shadow:0 0 14px rgba(124,58,237,.7); }
+.btn-runic:focus-visible .btn-runic-text{ text-shadow:0 0 16px rgba(124,58,237,.8); }
 @media (max-width:640px){
   .hero-video .copy{padding:16px}
   .hero-logo{height:clamp(80px, 18vw, 140px)}
@@ -9151,24 +9133,43 @@ a.dex-panel--active{cursor:default}
   opacity:1;
   text-shadow:0 0 12px rgba(167,139,250,.25);
 }
-.hero-video .cta .btn-runic{ min-width:120px; }
-/* Bouton runes : pulsation froide, sans halo rouge */
+.hero-video .cta .btn-runic{ min-width:140px; }
+/* Bouton runes ᚦᚨᚱᚲᚱᚨᛁ : esthétique mystérieuse, police runique */
 .btn-runic{
   position:relative;
+  padding:.85rem 1.75rem;
+  background:linear-gradient(180deg, rgba(40,15,60,.5) 0%, rgba(20,5,35,.65) 100%);
+  border:1px solid rgba(139,92,246,.45);
+  border-radius:12px;
+  min-height:48px;
   animation:btn-runic-pulse 3s ease-in-out infinite;
+  transition:background .3s ease, border-color .3s ease, transform .2s ease;
+}
+.btn-runic:hover{
+  animation:none;
+  background:linear-gradient(180deg, rgba(55,25,85,.6) 0%, rgba(30,10,50,.75) 100%);
+  border-color:rgba(167,139,250,.6);
+  box-shadow:0 0 28px rgba(124,58,237,.4), 0 0 0 1px rgba(139,92,246,.35);
+  transform:translateY(-1px);
 }
 @keyframes btn-runic-pulse{
-  0%, 100%{ box-shadow:0 0 10px rgba(124,58,237,.2); opacity:.95; }
-  50%{ box-shadow:0 0 22px rgba(124,58,237,.3), 0 0 36px rgba(56,189,248,.14); opacity:1; }
+  0%, 100%{ box-shadow:0 0 12px rgba(124,58,237,.25); }
+  50%{ box-shadow:0 0 24px rgba(124,58,237,.4), 0 0 40px rgba(56,189,248,.12); }
 }
-.btn-runic:hover{ animation:none; box-shadow:0 0 26px rgba(124,58,237,.35), 0 0 0 1px rgba(124,58,237,.28); }
 .btn-runic .btn-runic-text{
-  text-shadow:0 0 10px rgba(124,58,237,.5), 0 0 22px rgba(56,189,248,.22);
-  letter-spacing:.2em;
+  font-family:"Noto Sans Runic", "Cinzel", serif;
+  font-size:1.25rem;
+  font-weight:600;
+  letter-spacing:.25em;
+  text-shadow:0 0 12px rgba(124,58,237,.6), 0 0 24px rgba(56,189,248,.25);
+  color:rgba(255,255,255,.95);
+  transition:text-shadow .25s ease, color .25s ease;
 }
 .btn-runic:hover .btn-runic-text{
-  text-shadow:0 0 14px rgba(147,51,234,.75), 0 0 30px rgba(56,189,248,.3);
+  text-shadow:0 0 16px rgba(147,51,234,.8), 0 0 32px rgba(56,189,248,.35);
+  color:#fff;
 }
+.btn-runic:focus-visible{ outline:none; box-shadow:0 0 0 2px rgba(167,139,250,.5); }
 
 /* ===== Modal énigme Darkrai (sombre, police thématique, glitch) ===== */
 .enigma-modal-overlay{
