@@ -1,0 +1,991 @@
+/* ===== Styles Darkrai — Easter egg, modal énigme, page secrète ===== */
+
+/* Hero : rangée du bouton runique */
+.hero-video .cta-row--runic{
+  width:100%;
+  justify-content:center;
+  margin-top:4px;
+}
+.btn-runic:focus-visible .btn-runic-text{ text-shadow:0 0 16px rgba(124,58,237,.8); }
+
+/* ===== Easter egg : bouton secret hero ===== */
+.btn-secret{
+  color:rgba(255,255,255,.35);
+  background:transparent;
+  border:1px solid rgba(255,255,255,.12);
+  font-size:.85rem;
+  font-weight:500;
+  letter-spacing:.25em;
+  padding:.6rem 1rem;
+  min-width:0;
+}
+.btn-secret:hover{
+  color:rgba(255,255,255,.55);
+  border-color:rgba(167,139,250,.25);
+  box-shadow:0 0 20px rgba(88,28,135,.15);
+}
+.btn-secret:focus-visible{ outline:none; box-shadow:0 0 0 2px rgba(167,139,250,.3); }
+.btn-secret-text{
+  display:inline-block;
+  opacity:.9;
+  transition:opacity .2s ease, text-shadow .2s ease;
+}
+.btn-secret:hover .btn-secret-text{
+  opacity:1;
+  text-shadow:0 0 12px rgba(167,139,250,.25);
+}
+.hero-video .cta .btn-runic{ min-width:140px; }
+/* Bouton runes ᚦᚨᚱᚲᚱᚨᛁ : esthétique mystérieuse, police runique */
+.btn-runic{
+  position:relative;
+  padding:.85rem 1.75rem;
+  background:linear-gradient(180deg, rgba(40,15,60,.5) 0%, rgba(20,5,35,.65) 100%);
+  border:1px solid rgba(139,92,246,.45);
+  border-radius:12px;
+  min-height:48px;
+  animation:btn-runic-pulse 3s ease-in-out infinite;
+  transition:background .3s ease, border-color .3s ease, transform .2s ease;
+}
+.btn-runic:hover{
+  animation:none;
+  background:linear-gradient(180deg, rgba(55,25,85,.6) 0%, rgba(30,10,50,.75) 100%);
+  border-color:rgba(167,139,250,.6);
+  box-shadow:0 0 28px rgba(124,58,237,.4), 0 0 0 1px rgba(139,92,246,.35);
+  transform:translateY(-1px);
+}
+@keyframes btn-runic-pulse{
+  0%, 100%{ box-shadow:0 0 12px rgba(124,58,237,.25); }
+  50%{ box-shadow:0 0 24px rgba(124,58,237,.4), 0 0 40px rgba(56,189,248,.12); }
+}
+.btn-runic .btn-runic-text{
+  font-family:"Noto Sans Runic", "Cinzel", serif;
+  font-size:1.25rem;
+  font-weight:600;
+  letter-spacing:.25em;
+  text-shadow:0 0 12px rgba(124,58,237,.6), 0 0 24px rgba(56,189,248,.25);
+  color:rgba(255,255,255,.95);
+  transition:text-shadow .25s ease, color .25s ease;
+}
+.btn-runic:hover .btn-runic-text{
+  text-shadow:0 0 16px rgba(147,51,234,.8), 0 0 32px rgba(56,189,248,.35);
+  color:#fff;
+}
+.btn-runic:focus-visible{ outline:none; box-shadow:0 0 0 2px rgba(167,139,250,.5); }
+
+/* ===== Modal énigme Darkrai (sombre, police thématique, glitch) ===== */
+.enigma-modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  background:rgba(0,0,0,.92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1.5rem;
+  box-sizing:border-box;
+}
+.enigma-modal{
+  position:relative;
+  width:100%;
+  max-width:420px;
+  padding:2rem 1.75rem;
+  background:linear-gradient(165deg, rgba(15,5,15,.98) 0%, rgba(8,2,12,.99) 100%);
+  border:1px solid rgba(139,0,0,.4);
+  border-radius:16px;
+  box-shadow:0 0 48px rgba(139,0,0,.2), inset 0 1px 0 rgba(255,255,255,.04);
+}
+.enigma-modal-close{
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;
+  color:rgba(255,255,255,.7);
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.enigma-modal-close:hover{
+  color:#fff;
+  border-color:rgba(139,0,0,.5);
+  box-shadow:0 0 12px rgba(139,0,0,.25);
+}
+.enigma-modal-title{
+  margin:0 0 1.25rem;
+  font-family:"Cinzel",serif;
+  font-size:1.25rem;
+  font-weight:600;
+  color:rgba(255,255,255,.95);
+  text-align:center;
+  letter-spacing:.06em;
+}
+.enigma-modal-riddle{
+  font-family:"Cinzel",serif;
+  font-size:clamp(0.9rem, 2vw, 1rem);
+  line-height:1.7;
+  color:rgba(255,255,255,.85);
+  margin-bottom:1.5rem;
+  text-align:center;
+}
+.enigma-modal-riddle p{ margin:0.25rem 0; }
+.enigma-riddle-spacer{ height:.5rem; margin:0 !important; }
+.enigma-modal-riddle em{ color:rgba(200,180,220,.9); font-style:italic; }
+/* Glitch léger sur le texte de l'énigme */
+.enigma-glitch{
+  animation:enigma-glitch 4s ease-in-out infinite;
+}
+@keyframes enigma-glitch{
+  0%, 90%, 100%{ opacity:1; text-shadow:0 0 0 transparent; transform:translate(0,0); }
+  92%{ opacity:.95; text-shadow:-1px 0 rgba(139,0,0,.3), 1px 0 rgba(80,20,120,.2); transform:translate(-1px,0); }
+  94%{ opacity:1; text-shadow:1px 0 rgba(139,0,0,.25), -1px 0 rgba(80,20,120,.15); transform:translate(1px,0); }
+  96%{ opacity:.97; text-shadow:0 0 8px rgba(139,0,0,.2); transform:translate(0,0); }
+  98%{ opacity:1; text-shadow:none; transform:translate(0,0); }
+}
+.enigma-modal-actions{
+  display:flex;
+  flex-direction:column;
+  gap:.75rem;
+}
+.enigma-modal-input{
+  width:100%;
+  padding:.75rem 1rem;
+  font-family:"Cinzel",serif;
+  font-size:1rem;
+  color:#fff;
+  background:rgba(0,0,0,.5);
+  border:1px solid rgba(139,0,0,.4);
+  border-radius:10px;
+  box-sizing:border-box;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+.enigma-modal-input::placeholder{ color:rgba(255,255,255,.4); }
+.enigma-modal-input:focus{
+  outline:none;
+  border-color:rgba(139,0,0,.7);
+  box-shadow:0 0 0 2px rgba(139,0,0,.25);
+}
+.enigma-modal-footer{ margin-top:.75rem; display:flex; justify-content:center; }
+.enigma-modal-replay{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:.5rem 1rem;
+  font-family:"Cinzel",serif;
+  font-size:.85rem;
+  color:rgba(255,255,255,.7);
+  background:transparent;
+  border:1px solid rgba(139,0,0,.35);
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.enigma-modal-replay:hover{
+  color:rgba(255,255,255,.95);
+  border-color:rgba(139,0,0,.6);
+  box-shadow:0 0 12px rgba(139,0,0,.2);
+}
+.enigma-audio-hidden{ position:absolute; width:0; height:0; opacity:0; pointer-events:none; }
+
+/* ===== Transition vers page secrète (freeze + flicker + sombre) ===== */
+.secret-transition-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  pointer-events:auto;
+  background:#030208;
+  animation:secret-transition-bg .4s ease-out forwards;
+  transform-origin:center center;
+}
+.secret-transition-flicker{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, transparent 0%, rgba(88,28,135,.08) 50%, transparent 100%);
+  animation:secret-transition-flicker 1.2s ease-in-out forwards;
+  pointer-events:none;
+}
+.secret-transition-vignette{
+  position:absolute;
+  inset:0;
+  box-shadow:inset 0 0 120px rgba(0,0,0,.9), inset 0 0 60px rgba(60,20,80,.2);
+  animation:secret-transition-vignette .8s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes secret-transition-bg{
+  0%{ opacity:0; transform:scale(1); filter:blur(0); }
+  20%{ opacity:0.5; transform:scale(1.002); filter:blur(0.5px); }
+  100%{ opacity:1; transform:scale(1); filter:blur(0); }
+}
+@keyframes secret-transition-flicker{
+  0%, 100%{ opacity:0; filter:contrast(1); }
+  15%{ opacity:1; filter:contrast(1.15); }
+  25%{ opacity:0.3; filter:contrast(1); }
+  40%{ opacity:1; filter:contrast(1.08); }
+  55%{ opacity:0.2; filter:contrast(1); }
+  70%{ opacity:0.8; filter:contrast(1.12); }
+  85%{ opacity:0.1; }
+  100%{ opacity:0; filter:contrast(1); }
+}
+@keyframes secret-transition-vignette{
+  0%{ opacity:0; }
+  100%{ opacity:1; }
+}
+
+/* ===== Page Chemin des Larmes — mystérieuse, dark, archive corrompue ===== */
+html.secret-page-active, body.secret-page-active{
+  overflow-x:hidden;
+  max-width:100vw;
+}
+body.secret-page-active{
+  background:#000;
+}
+.secret-page{
+  position:relative;
+  z-index:10000;
+  min-height:100vh;
+  width:100%;
+  max-width:100vw;
+  overflow-x:hidden;
+  background:transparent;
+  color:rgba(220,225,240,.9);
+  font-family:"Outfit",system-ui,sans-serif;
+}
+.secret-page-enter .secret-hero-inner{ animation:secret-hero-enter .8s ease-out forwards; }
+.secret-page-enter .secret-content-wrap{ animation:secret-content-enter 1s ease-out .3s both; }
+.secret-page-enter .secret-transcript-panel{ animation:secret-content-enter 1s ease-out .35s both; }
+.secret-page-enter .secret-card{ animation:secret-card-enter .9s ease-out .5s both; }
+@keyframes secret-hero-enter{
+  0%{ opacity:0; transform:translateY(20px); filter:blur(4px); }
+  100%{ opacity:1; transform:translateY(0); filter:blur(0); }
+}
+@keyframes secret-content-enter{
+  0%{ opacity:0; transform:translateY(30px); }
+  100%{ opacity:1; transform:translateY(0); }
+}
+@keyframes secret-card-enter{
+  0%{ opacity:0; transform:translateY(40px) scale(0.96); }
+  100%{ opacity:1; transform:translateY(0) scale(1); }
+}
+.secret-page-bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background:#000 url(https://wallpapercave.com/wp/jXJL8vB.jpg) center/cover no-repeat;
+  transform:scale(1.15);
+  filter:blur(14px) brightness(.9) contrast(1.05) saturate(.9);
+  animation:secret-bg-creep 20s ease-in-out infinite;
+}
+.secret-page-fog{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    radial-gradient(150% 100% at 50% 0%, rgba(0,0,0,.25) 0%, rgba(0,0,0,0) 45%),
+    radial-gradient(120% 90% at 90% 90%, rgba(15,5,25,.15) 0%, rgba(0,0,0,0) 50%),
+    radial-gradient(100% 80% at 10% 80%, rgba(5,5,25,.12) 0%, rgba(0,0,0,0) 55%);
+  animation:secret-fog-drift 25s ease-in-out infinite alternate;
+}
+.secret-page-noise{
+  position:fixed;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  opacity:.06;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.secret-page-vignette{
+  position:fixed;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  box-shadow:
+    inset 0 0 40vh 18vmin rgba(0,0,0,.3),
+    inset 0 0 30vh 12vmin rgba(5,0,15,.2),
+    inset 0 0 60vh 25vmin rgba(0,0,0,.15);
+}
+.secret-page-scan{
+  position:fixed;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  background:linear-gradient(180deg, transparent 0%, transparent 45%, rgba(0,0,0,.03) 50%, transparent 55%, transparent 100%);
+  animation:secret-scan 8s linear infinite;
+}
+.secret-page-ambient{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  overflow:hidden;
+}
+.secret-orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(50px);
+  opacity:.45;
+  animation:secret-orb-float 18s ease-in-out infinite;
+}
+.secret-orb-1{
+  width:400px;
+  height:400px;
+  background:radial-gradient(circle, rgba(140,80,200,.9) 0%, rgba(100,50,160,.5) 40%, transparent 70%);
+  top:10%;
+  left:15%;
+  animation-delay:0s;
+}
+.secret-orb-2{
+  width:350px;
+  height:350px;
+  background:radial-gradient(circle, rgba(120,60,180,.85) 0%, rgba(80,40,140,.6) 40%, transparent 70%);
+  top:55%;
+  right:15%;
+  animation-delay:-6s;
+}
+.secret-orb-3{
+  width:300px;
+  height:300px;
+  background:radial-gradient(circle, rgba(100,50,160,.8) 0%, rgba(70,35,120,.5) 40%, transparent 70%);
+  bottom:15%;
+  left:25%;
+  animation-delay:-12s;
+}
+@keyframes secret-orb-float{
+  0%, 100%{ transform:translate(0, 0) scale(1); opacity:.45; }
+  33%{ transform:translate(30px, -20px) scale(1.08); opacity:.35; }
+  66%{ transform:translate(-20px, 15px) scale(0.95); opacity:.5; }
+}
+@keyframes secret-bg-creep{
+  0%, 100%{ filter:blur(14px) brightness(.9) contrast(1.05) saturate(.9); transform:scale(1.15); }
+  50%{ filter:blur(14px) brightness(.85) contrast(1.08) saturate(.85); transform:scale(1.18); }
+}
+@keyframes secret-fog-drift{
+  0%{ opacity:.9; transform:translate3d(-2%, -1%, 0); }
+  100%{ opacity:1; transform:translate3d(2%, 1%, 0); }
+}
+@keyframes secret-scan{
+  0%{ transform:translateY(-100%); }
+  100%{ transform:translateY(100vh); }
+}
+/* Hero sombre */
+.secret-hero{
+  position:relative;
+  z-index:2;
+  min-height:65vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-color:#000;
+  -webkit-mask-image:linear-gradient(180deg, #fff 0%, #fff 70%, rgba(255,255,255,.9) 82%, rgba(255,255,255,.5) 90%, transparent 100%);
+  mask-image:linear-gradient(180deg, #fff 0%, #fff 70%, rgba(255,255,255,.9) 82%, rgba(255,255,255,.5) 90%, transparent 100%);
+  mask-size:100% 100%;
+  mask-position:bottom;
+}
+.secret-hero::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:180px;
+  background:linear-gradient(180deg, transparent 0%, rgba(5,3,12,.2) 40%, rgba(5,3,12,.6) 75%, rgba(5,3,12,.95) 100%);
+  pointer-events:none;
+  z-index:0;
+}
+.secret-hero-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(5,0,15,.45) 40%, rgba(0,0,0,.35) 65%, transparent 100%);
+  pointer-events:none;
+}
+.secret-hero-glow{
+  position:absolute;
+  inset:-20%;
+  pointer-events:none;
+  background:radial-gradient(ellipse 80% 50% at 50% 50%, rgba(60,30,100,.15) 0%, transparent 60%);
+  animation:secret-hero-glow-pulse 6s ease-in-out infinite;
+}
+@keyframes secret-hero-glow-pulse{
+  0%, 100%{ opacity:.8; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.05); }
+}
+.secret-hero-inner{
+  position:relative;
+  z-index:1;
+  text-align:center;
+  padding:0 1.5rem 2.5rem;
+  max-width:720px;
+}
+.secret-hero-logo{
+  display:block;
+  margin:0 auto 1.25rem;
+  height:clamp(160px, 32vw, 280px);
+  width:auto;
+  max-width:min(90vw, 420px);
+  object-fit:contain;
+  filter:drop-shadow(0 4px 24px rgba(0,0,0,.6));
+}
+.secret-hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  font-size:.65rem;
+  font-weight:700;
+  letter-spacing:.25em;
+  color:rgba(180,80,80,.95);
+  margin-bottom:1rem;
+  padding:.35rem .9rem;
+  border:1px solid rgba(139,0,0,.4);
+  border-radius:4px;
+  background:rgba(0,0,0,.3);
+  text-shadow:0 0 12px rgba(139,0,0,.5), 0 0 24px rgba(139,0,0,.2);
+  box-shadow:0 0 20px rgba(139,0,0,.15), inset 0 0 20px rgba(0,0,0,.2);
+  animation:secret-badge-pulse 4s ease-in-out infinite;
+}
+.secret-hero-badge .fa-lock{ opacity:.9; }
+@keyframes secret-badge-pulse{
+  0%, 100%{ opacity:.95; box-shadow:0 0 20px rgba(139,0,0,.15), inset 0 0 20px rgba(0,0,0,.2); }
+  50%{ opacity:.7; box-shadow:0 0 30px rgba(139,0,0,.25), inset 0 0 20px rgba(0,0,0,.2); }
+}
+.secret-hero-title{
+  margin:0 0 0.75rem;
+  font-size:clamp(1.6rem, 4.5vw, 2.8rem);
+  font-weight:800;
+  color:rgba(255,255,255,.95);
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  text-shadow:
+    0 2px 30px rgba(0,0,0,.9),
+    0 0 40px rgba(0,0,0,.5),
+    0 0 60px rgba(80,50,120,.15);
+  animation:secret-title-flicker 8s ease-in-out infinite;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  flex-wrap:wrap;
+}
+.secret-hero-title .fa-moon{
+  opacity:.95;
+  filter:drop-shadow(0 0 12px rgba(255,220,180,.4));
+}
+@keyframes secret-title-flicker{
+  0%, 92%, 100%{ opacity:1; filter:brightness(1); }
+  94%{ opacity:.85; filter:brightness(.8); }
+  96%{ opacity:1; filter:brightness(1.02); }
+  98%{ opacity:.9; filter:brightness(.85); }
+}
+.secret-hero-description{
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:.5rem;
+  margin:0 auto;
+  font-size:clamp(0.9rem, 1.8vw, 1.05rem);
+  line-height:1.8;
+  color:rgba(210,215,230,.92);
+  font-style:italic;
+  text-shadow:0 1px 16px rgba(0,0,0,.6), 0 0 30px rgba(0,0,0,.3);
+  max-width:520px;
+}
+.secret-hero-description .fa-quote-left{ opacity:.5; margin-top:.3em; flex-shrink:0; color:rgba(140,145,160,.7); }
+.secret-hero-warning{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  margin:1.5rem 0 0;
+  font-size:1.15rem;
+  font-weight:800;
+  color:#fff;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  text-shadow:
+    0 0 24px rgba(255,80,80,1),
+    0 0 48px rgba(255,60,60,.9),
+    0 2px 4px rgba(0,0,0,1),
+    0 0 0 2px rgba(255,100,100,.6);
+  padding:.6rem 1.5rem;
+  background:rgba(180,40,40,.85);
+  border:2px solid rgba(255,150,150,.9);
+  border-radius:8px;
+  display:inline-block;
+  animation:secret-warning-blink 3s ease-in-out infinite;
+  box-shadow:0 0 30px rgba(200,50,50,.5);
+}
+@keyframes secret-warning-blink{
+  0%, 95%, 100%{ opacity:1; filter:brightness(1); }
+  97%{ opacity:.9; filter:brightness(1.05); }
+}
+/* Contenu */
+.secret-content-wrap{
+  position:relative;
+  z-index:2;
+  max-width:100%;
+  width:100%;
+  margin:0 auto;
+  margin-top:0;
+  padding:2rem 1.5rem 4rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  box-sizing:border-box;
+  overflow-x:hidden;
+}
+.secret-toolbar{
+  margin-bottom:1.75rem;
+  padding:1rem 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:1rem;
+  flex-wrap:wrap;
+  width:100%;
+  max-width:900px;
+}
+.secret-main{
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  gap:1.5rem;
+  width:100%;
+  max-width:900px;
+  min-width:0;
+}
+.secret-transcript-panel{
+  flex-shrink:0;
+  width:280px;
+  min-width:240px;
+}
+@media (max-width: 768px){
+  .secret-main{ flex-direction:column; align-items:stretch; }
+  .secret-transcript-panel{ width:100%; min-width:0; }
+}
+.secret-content{
+  flex:1;
+  min-width:0;
+  max-width:520px;
+  padding:0;
+  box-sizing:border-box;
+}
+.secret-listen-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:0.6rem;
+  padding:0.65rem 1.4rem;
+  font-size:1rem;
+  font-weight:600;
+  color:rgba(255,200,200,.95);
+  background:linear-gradient(180deg, rgba(180,50,50,.4) 0%, rgba(140,30,30,.5) 100%);
+  border:1px solid rgba(255,100,100,.55);
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .3s ease;
+  box-shadow:0 2px 12px rgba(0,0,0,.3), 0 0 20px rgba(180,50,50,.2), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.secret-listen-btn:hover{
+  color:rgba(255,220,220,1);
+  background:linear-gradient(180deg, rgba(200,60,60,.5) 0%, rgba(160,40,40,.55) 100%);
+  border-color:rgba(255,120,120,.7);
+  box-shadow:0 4px 24px rgba(0,0,0,.4), 0 0 30px rgba(200,60,60,.3), inset 0 1px 0 rgba(255,255,255,.1);
+  transform:translateY(-1px);
+}
+.secret-listen-btn:active,
+.secret-listen-btn[aria-pressed="true"]{
+  transform:translateY(0);
+}
+.secret-listen-btn[aria-pressed="true"]{
+  color:rgba(255,230,230,1);
+  border-color:rgba(255,140,140,.65);
+  box-shadow:0 0 24px rgba(255,80,80,.25), inset 0 0 20px rgba(255,100,100,.1);
+}
+.secret-back{
+  display:inline-flex;
+  align-items:center;
+  gap:0.6rem;
+  padding:0.65rem 1.4rem;
+  font-size:1rem;
+  font-weight:600;
+  color:rgba(255,200,200,.95);
+  background:linear-gradient(180deg, rgba(180,50,50,.4) 0%, rgba(140,30,30,.5) 100%);
+  border:1px solid rgba(255,100,100,.55);
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .3s ease;
+  box-shadow:0 2px 12px rgba(0,0,0,.3), 0 0 20px rgba(180,50,50,.2), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.secret-back:hover{
+  color:rgba(255,220,220,1);
+  background:linear-gradient(180deg, rgba(200,60,60,.5) 0%, rgba(160,40,40,.55) 100%);
+  border-color:rgba(255,120,120,.7);
+  box-shadow:0 4px 24px rgba(0,0,0,.4), 0 0 30px rgba(200,60,60,.25), inset 0 1px 0 rgba(255,255,255,.08);
+  transform:translateY(-1px);
+}
+.secret-back:active{
+  transform:translateY(0);
+}
+/* Carte Pokémon — archive corrompue, mystérieuse, dark */
+.secret-card{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+  border-radius:20px;
+  background:linear-gradient(165deg, rgba(22,20,30,.96) 0%, rgba(14,12,22,.97) 50%, rgba(10,8,18,.98) 100%);
+  border:1px solid rgba(100,100,115,.3);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.04) inset,
+    0 4px 24px rgba(0,0,0,.45),
+    0 24px 64px rgba(0,0,0,.5),
+    0 0 80px rgba(60,40,100,.1);
+  backdrop-filter:blur(14px);
+  transition:box-shadow .4s ease, transform .4s ease;
+}
+.secret-card:hover{
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05) inset,
+    0 8px 32px rgba(0,0,0,.5),
+    0 32px 80px rgba(0,0,0,.55),
+    0 0 100px rgba(80,50,120,.12);
+}
+.secret-card-frame{
+  position:absolute;
+  inset:-2px;
+  pointer-events:none;
+  border-radius:22px;
+  border:1px solid rgba(80,60,120,.25);
+  box-shadow:
+    0 0 30px rgba(80,50,120,.12),
+    0 0 60px rgba(60,40,100,.06),
+    inset 0 0 30px rgba(0,0,0,.15);
+}
+.secret-card-glitch{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.03) 2px,
+    rgba(0,0,0,.03) 4px
+  );
+  animation:secret-card-glitch 12s linear infinite;
+  opacity:.5;
+}
+@keyframes secret-card-glitch{
+  0%, 100%{ opacity:.3; }
+  50%{ opacity:.6; }
+}
+.secret-card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0.75rem 1.25rem;
+  background:linear-gradient(180deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.4) 100%);
+  border-bottom:1px solid rgba(80,60,120,.25);
+  border-radius:20px 20px 0 0;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+}
+.secret-card-classified{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  font-size:.65rem;
+  font-weight:800;
+  letter-spacing:.25em;
+  color:rgba(180,80,80,.95);
+  text-shadow:0 0 12px rgba(139,0,0,.4), 0 0 24px rgba(139,0,0,.2);
+}
+.secret-card-classified .fa-lock{ color:rgba(90,95,110,.75); opacity:.9; }
+.secret-card-id{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  font-size:.65rem;
+  color:rgba(120,120,130,.6);
+  font-family:monospace;
+}
+.secret-card-id .fa-fingerprint{ color:rgba(90,95,110,.75); opacity:.8; font-size:.55rem; }
+.secret-card-sprite-wrap{
+  width:100%;
+  padding:1.75rem;
+  display:flex;
+  justify-content:center;
+  background:linear-gradient(180deg, rgba(15,10,25,.9) 0%, rgba(8,5,18,.95) 100%);
+  border-bottom:1px solid rgba(70,60,100,.3);
+  box-shadow:inset 0 0 60px rgba(0,0,0,.3);
+}
+.secret-card-sprite-frame{
+  position:relative;
+  width:180px;
+  height:180px;
+  border-radius:12px;
+  border:1px solid rgba(80,80,95,.5);
+  box-shadow:
+    inset 0 0 40px rgba(0,0,0,.6),
+    inset 0 0 20px rgba(60,40,100,.08),
+    0 0 24px rgba(0,0,0,.4),
+    0 0 40px rgba(60,40,100,.06),
+    0 0 0 1px rgba(255,255,255,.03) inset;
+}
+.secret-card-sprite-inner{
+  position:absolute;
+  inset:4px;
+  background:radial-gradient(circle at 50% 40%, rgba(20,10,40,.4), rgba(0,0,0,.95));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.secret-card-sprite-img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  filter:brightness(.85) contrast(1.1) blur(4px);
+}
+.secret-card-unknown{
+  display:none;
+  position:absolute;
+  inset:0;
+  align-items:center;
+  justify-content:center;
+  font-size:4rem;
+  font-weight:800;
+  color:rgba(80,80,90,.5);
+}
+.secret-card-unknown .fa-circle-question{ font-size:inherit; }
+.secret-card-unknown-visible{ display:flex !important; }
+.secret-card-sprite-static{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 1px,
+    rgba(0,0,0,.15) 1px,
+    rgba(0,0,0,.15) 2px
+  );
+  opacity:.4;
+}
+.secret-card-body{
+  padding:1rem 1.25rem;
+}
+.secret-card-subtitle{
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  margin:0 0 0.5rem;
+  font-size:.65rem;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:rgba(90,90,100,.8);
+}
+.secret-card-subtitle .fa-database{ color:rgba(90,95,110,.75); opacity:.75; font-size:.6rem; }
+.secret-card-name{
+  margin:0 0 0.75rem;
+  font-size:1.5rem;
+  font-weight:700;
+  letter-spacing:.2em;
+  color:rgba(180,185,200,.75);
+}
+.secret-card-types{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.5rem;
+  margin-bottom:1rem;
+}
+.secret-card-type-pill{
+  display:inline-block;
+  padding:0.2rem 0.6rem;
+  font-size:.7rem;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  background:rgba(30,30,40,.9);
+  color:rgba(120,125,140,.7);
+  border:1px solid rgba(60,60,70,.6);
+}
+.secret-card-divider{
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(60,60,70,.6), transparent);
+  margin:0.75rem 0;
+}
+.secret-card-stats{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:0.4rem;
+  margin-bottom:0;
+}
+.secret-card-stat{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.15rem;
+  padding:0.45rem 0.3rem;
+  background:rgba(0,0,0,.5);
+  border:1px solid rgba(40,40,50,.6);
+}
+.secret-card-stat-label{
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  font-size:.6rem;
+  font-weight:600;
+  text-transform:uppercase;
+  color:rgba(100,105,120,.7);
+}
+.secret-card-stat-label .fa-heart,
+.secret-card-stat-label .fa-bolt,
+.secret-card-stat-label .fa-shield,
+.secret-card-stat-label .fa-shield-halved,
+.secret-card-stat-label .fa-wand-magic-sparkles,
+.secret-card-stat-label .fa-gauge-high,
+.secret-card-stat-label .fa-calculator{ color:rgba(90,95,110,.75); }
+.secret-card-stat span:last-child{
+  font-size:.9rem;
+  font-weight:700;
+  color:rgba(140,145,160,.6);
+}
+.secret-card-stat-total{
+  grid-column:1 / -1;
+  flex-direction:row;
+  justify-content:center;
+  background:rgba(20,20,30,.8);
+  border-color:rgba(50,50,60,.7);
+}
+.secret-card-stat-total .secret-card-stat-label{ color:rgba(130,135,150,.8); }
+.secret-card-stat-total span:last-child{ color:rgba(150,155,170,.7); }
+.secret-card-talents,
+.secret-card-attacks{
+  padding:0.75rem 0 0;
+}
+.secret-card-section-label{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  font-size:.7rem;
+  font-weight:700;
+  letter-spacing:.15em;
+  color:rgba(120,125,140,.7);
+  margin-bottom:0.4rem;
+}
+.secret-card-section-label .fa-star,
+.secret-card-section-label .fa-burst{ color:rgba(90,95,110,.75); }
+.secret-card-talent-slot{
+  padding:0.5rem 0.6rem;
+  background:rgba(0,0,0,.4);
+  border-left:2px solid rgba(60,60,70,.5);
+  margin-top:0.25rem;
+}
+.secret-card-talent-name{
+  font-size:.85rem;
+  font-weight:600;
+  color:rgba(150,155,170,.7);
+  margin-bottom:0.2rem;
+}
+.secret-card-talent-desc{
+  font-size:.75rem;
+  color:rgba(110,115,130,.6);
+  line-height:1.6;
+  margin:0;
+}
+.secret-card-attack-desc{
+  font-size:.75rem;
+  color:rgba(110,115,130,.6);
+  line-height:1.6;
+  margin:0.25rem 0 0;
+  padding:0.5rem 0.6rem;
+  background:rgba(0,0,0,.3);
+  border-left:2px solid rgba(50,50,60,.5);
+}
+.secret-transcript-box{
+  position:sticky;
+  top:1rem;
+  overflow:hidden;
+  min-height:6rem;
+  background:linear-gradient(165deg, rgba(16,14,24,.98) 0%, rgba(10,8,18,.99) 50%, rgba(8,6,16,.99) 100%);
+  border:1px solid rgba(140,80,100,.5);
+  border-radius:18px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.03) inset,
+    0 0 40px rgba(100,40,80,.25),
+    0 0 80px rgba(80,30,60,.12),
+    0 8px 32px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
+.secret-transcript-box::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:18px;
+  padding:1px;
+  background:linear-gradient(135deg, rgba(180,100,140,.3) 0%, transparent 50%, rgba(100,60,120,.2) 100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  pointer-events:none;
+}
+.secret-transcript-header{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.6rem 1.25rem;
+  background:linear-gradient(180deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.3) 100%);
+  border-bottom:1px solid rgba(120,60,90,.4);
+  font-size:.65rem;
+  font-weight:800;
+  letter-spacing:.2em;
+  color:rgba(200,140,160,.9);
+  text-shadow:0 0 12px rgba(180,80,120,.4);
+}
+.secret-transcript-header .fa-file-lines{ opacity:.9; }
+.secret-transcript-inner{
+  padding:1.25rem 1.35rem;
+  min-height:4rem;
+}
+.secret-transcript-text{
+  margin:0;
+  font-size:.95rem;
+  line-height:1.7;
+  color:rgba(220,210,230,.95);
+  text-shadow:0 1px 3px rgba(0,0,0,.5), 0 0 20px rgba(140,100,160,.15);
+  font-weight:500;
+}
+.secret-transcript-bold{
+  font-weight:700;
+  color:rgba(240,230,255,.98);
+  text-shadow:0 0 16px rgba(180,140,220,.3);
+}
+.secret-transcript-placeholder{
+  margin:0;
+  font-size:.88rem;
+  color:rgba(130,120,145,.75);
+  font-style:italic;
+}
+.secret-card-footer{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  padding:0.75rem 1.25rem;
+  background:linear-gradient(180deg, rgba(0,0,0,.4) 0%, rgba(0,0,0,.6) 100%);
+  border-top:1px solid rgba(70,70,85,.4);
+  font-size:.7rem;
+  font-weight:600;
+  color:rgba(140,145,160,.85);
+  letter-spacing:.12em;
+  border-radius:0 0 20px 20px;
+  text-transform:uppercase;
+  text-shadow:0 1px 4px rgba(0,0,0,.5);
+}
+.secret-card-footer .fa-ban{ color:rgba(90,95,110,.75); opacity:.85; }
+.secret-page-audio{ position:absolute; width:0; height:0; opacity:0; pointer-events:none; }

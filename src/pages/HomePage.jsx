@@ -106,7 +106,7 @@ const HomePage = () => {
   const playEnigmaAudio = () => {
     const el = enigmaAudioRef.current;
     if (!el) return;
-    el.volume = 0.02;
+    el.volume = 0.01;
     el.currentTime = 0;
     el.play().catch(() => {});
   };
