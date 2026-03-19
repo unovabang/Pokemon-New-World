@@ -10033,6 +10033,9 @@ body.secret-page-active{
   pointer-events:none;
 }
 .secret-transcript-header{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
   padding:.6rem 1.25rem;
   background:linear-gradient(180deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.3) 100%);
   border-bottom:1px solid rgba(120,60,90,.4);
@@ -10042,6 +10045,7 @@ body.secret-page-active{
   color:rgba(200,140,160,.9);
   text-shadow:0 0 12px rgba(180,80,120,.4);
 }
+.secret-transcript-header .fa-file-lines{ opacity:.9; }
 .secret-transcript-inner{
   padding:1.25rem 1.35rem;
   min-height:4rem;
