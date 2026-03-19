@@ -9591,25 +9591,27 @@ body.secret-page-active{
 }
 .secret-hero-warning{
   margin:1.75rem 0 0;
-  font-size:1.05rem;
-  font-weight:700;
-  color:rgba(255,100,100,.98);
+  font-size:1.15rem;
+  font-weight:800;
+  color:#fff;
   letter-spacing:.15em;
   text-transform:uppercase;
   text-shadow:
-    0 0 20px rgba(255,80,80,.8),
-    0 0 40px rgba(255,60,60,.5),
-    0 2px 8px rgba(0,0,0,.8);
-  padding:.5rem 1.25rem;
-  background:rgba(0,0,0,.4);
-  border:1px solid rgba(255,100,100,.5);
+    0 0 24px rgba(255,80,80,1),
+    0 0 48px rgba(255,60,60,.9),
+    0 2px 4px rgba(0,0,0,1),
+    0 0 0 2px rgba(255,100,100,.6);
+  padding:.6rem 1.5rem;
+  background:rgba(180,40,40,.85);
+  border:2px solid rgba(255,150,150,.9);
   border-radius:8px;
   display:inline-block;
   animation:secret-warning-blink 3s ease-in-out infinite;
+  box-shadow:0 0 30px rgba(200,50,50,.5);
 }
 @keyframes secret-warning-blink{
   0%, 95%, 100%{ opacity:1; filter:brightness(1); }
-  97%{ opacity:.85; filter:brightness(.9); }
+  97%{ opacity:.9; filter:brightness(1.05); }
 }
 /* Contenu */
 .secret-content-wrap{
