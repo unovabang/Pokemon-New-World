@@ -9343,6 +9343,21 @@ body.secret-page-active{ background:#000; }
   color:rgba(220,225,240,.9);
   font-family:"Outfit",system-ui,sans-serif;
 }
+.secret-page-enter .secret-hero-inner{ animation:secret-hero-enter .8s ease-out forwards; }
+.secret-page-enter .secret-content-wrap{ animation:secret-content-enter 1s ease-out .3s both; }
+.secret-page-enter .secret-card{ animation:secret-card-enter .9s ease-out .5s both; }
+@keyframes secret-hero-enter{
+  0%{ opacity:0; transform:translateY(20px); filter:blur(4px); }
+  100%{ opacity:1; transform:translateY(0); filter:blur(0); }
+}
+@keyframes secret-content-enter{
+  0%{ opacity:0; transform:translateY(30px); }
+  100%{ opacity:1; transform:translateY(0); }
+}
+@keyframes secret-card-enter{
+  0%{ opacity:0; transform:translateY(40px) scale(0.96); }
+  100%{ opacity:1; transform:translateY(0) scale(1); }
+}
 .secret-page-bg{
   position:fixed;
   inset:0;
@@ -9377,7 +9392,10 @@ body.secret-page-active{ background:#000; }
   inset:0;
   z-index:2;
   pointer-events:none;
-  box-shadow:inset 0 0 35vh 15vmin rgba(0,0,0,.25), inset 0 0 25vh 10vmin rgba(5,0,15,.15);
+  box-shadow:
+    inset 0 0 40vh 18vmin rgba(0,0,0,.3),
+    inset 0 0 30vh 12vmin rgba(5,0,15,.2),
+    inset 0 0 60vh 25vmin rgba(0,0,0,.15);
 }
 .secret-page-scan{
   position:fixed;
@@ -9386,6 +9404,49 @@ body.secret-page-active{ background:#000; }
   pointer-events:none;
   background:linear-gradient(180deg, transparent 0%, transparent 45%, rgba(0,0,0,.03) 50%, transparent 55%, transparent 100%);
   animation:secret-scan 8s linear infinite;
+}
+.secret-page-ambient{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  overflow:hidden;
+}
+.secret-orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(80px);
+  opacity:.12;
+  animation:secret-orb-float 18s ease-in-out infinite;
+}
+.secret-orb-1{
+  width:400px;
+  height:400px;
+  background:radial-gradient(circle, rgba(80,40,120,.6) 0%, transparent 70%);
+  top:10%;
+  left:15%;
+  animation-delay:0s;
+}
+.secret-orb-2{
+  width:300px;
+  height:300px;
+  background:radial-gradient(circle, rgba(40,20,80,.5) 0%, transparent 70%);
+  top:60%;
+  right:20%;
+  animation-delay:-6s;
+}
+.secret-orb-3{
+  width:250px;
+  height:250px;
+  background:radial-gradient(circle, rgba(60,30,100,.4) 0%, transparent 70%);
+  bottom:20%;
+  left:30%;
+  animation-delay:-12s;
+}
+@keyframes secret-orb-float{
+  0%, 100%{ transform:translate(0, 0) scale(1); opacity:.12; }
+  33%{ transform:translate(30px, -20px) scale(1.05); opacity:.08; }
+  66%{ transform:translate(-20px, 15px) scale(0.95); opacity:.15; }
 }
 @keyframes secret-bg-creep{
   0%, 100%{ filter:blur(14px) brightness(.9) contrast(1.05) saturate(.9); transform:scale(1.15); }
@@ -9433,6 +9494,17 @@ body.secret-page-active{ background:#000; }
   background:linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(5,0,15,.45) 40%, rgba(0,0,0,.35) 65%, transparent 100%);
   pointer-events:none;
 }
+.secret-hero-glow{
+  position:absolute;
+  inset:-20%;
+  pointer-events:none;
+  background:radial-gradient(ellipse 80% 50% at 50% 50%, rgba(60,30,100,.15) 0%, transparent 60%);
+  animation:secret-hero-glow-pulse 6s ease-in-out infinite;
+}
+@keyframes secret-hero-glow-pulse{
+  0%, 100%{ opacity:.8; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.05); }
+}
 .secret-hero-inner{
   position:relative;
   z-index:1;
@@ -9454,23 +9526,31 @@ body.secret-page-active{ background:#000; }
   font-size:.65rem;
   font-weight:700;
   letter-spacing:.25em;
-  color:rgba(120,0,0,.9);
+  color:rgba(180,80,80,.95);
   margin-bottom:1rem;
-  text-shadow:0 0 12px rgba(139,0,0,.4);
+  padding:.35rem .9rem;
+  border:1px solid rgba(139,0,0,.4);
+  border-radius:4px;
+  background:rgba(0,0,0,.3);
+  text-shadow:0 0 12px rgba(139,0,0,.5), 0 0 24px rgba(139,0,0,.2);
+  box-shadow:0 0 20px rgba(139,0,0,.15), inset 0 0 20px rgba(0,0,0,.2);
   animation:secret-badge-pulse 4s ease-in-out infinite;
 }
 @keyframes secret-badge-pulse{
-  0%, 100%{ opacity:.9; }
-  50%{ opacity:.6; }
+  0%, 100%{ opacity:.95; box-shadow:0 0 20px rgba(139,0,0,.15), inset 0 0 20px rgba(0,0,0,.2); }
+  50%{ opacity:.7; box-shadow:0 0 30px rgba(139,0,0,.25), inset 0 0 20px rgba(0,0,0,.2); }
 }
 .secret-hero-title{
   margin:0 0 0.75rem;
   font-size:clamp(1.6rem, 4.5vw, 2.8rem);
   font-weight:800;
-  color:rgba(255,255,255,.92);
+  color:rgba(255,255,255,.95);
   text-transform:uppercase;
-  letter-spacing:.12em;
-  text-shadow:0 2px 30px rgba(0,0,0,.9), 0 0 40px rgba(0,0,0,.5);
+  letter-spacing:.15em;
+  text-shadow:
+    0 2px 30px rgba(0,0,0,.9),
+    0 0 40px rgba(0,0,0,.5),
+    0 0 60px rgba(80,50,120,.15);
   animation:secret-title-flicker 8s ease-in-out infinite;
 }
 @keyframes secret-title-flicker{
@@ -9482,10 +9562,13 @@ body.secret-page-active{ background:#000; }
 .secret-hero-description{
   margin:0;
   font-size:clamp(0.9rem, 1.8vw, 1.05rem);
-  line-height:1.7;
-  color:rgba(200,205,220,.9);
+  line-height:1.8;
+  color:rgba(210,215,230,.92);
   font-style:italic;
-  text-shadow:0 1px 12px rgba(0,0,0,.5);
+  text-shadow:0 1px 16px rgba(0,0,0,.6), 0 0 30px rgba(0,0,0,.3);
+  max-width:480px;
+  margin-left:auto;
+  margin-right:auto;
 }
 .secret-hero-warning{
   margin:1.5rem 0 0;
@@ -9529,22 +9612,26 @@ body.secret-page-active{ background:#000; }
   display:inline-flex;
   align-items:center;
   gap:0.6rem;
-  padding:0.6rem 1.25rem;
+  padding:0.65rem 1.4rem;
   font-size:1rem;
   font-weight:600;
   color:rgba(220,225,240,.95);
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.15);
+  background:linear-gradient(180deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,.06) 100%);
+  border:1px solid rgba(255,255,255,.2);
   border-radius:12px;
   cursor:pointer;
-  transition:all .25s ease;
-  box-shadow:0 2px 12px rgba(0,0,0,.3);
+  transition:all .3s ease;
+  box-shadow:0 2px 12px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05);
 }
 .secret-back:hover{
   color:#fff;
-  background:rgba(255,255,255,.14);
-  border-color:rgba(255,255,255,.25);
-  box-shadow:0 4px 20px rgba(0,0,0,.4);
+  background:linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.1) 100%);
+  border-color:rgba(255,255,255,.35);
+  box-shadow:0 4px 24px rgba(0,0,0,.4), 0 0 30px rgba(80,50,120,.1), inset 0 1px 0 rgba(255,255,255,.08);
+  transform:translateY(-1px);
+}
+.secret-back:active{
+  transform:translateY(0);
 }
 /* Carte Pokémon — archive corrompue, mystérieuse, dark */
 .secret-card{
@@ -9552,14 +9639,33 @@ body.secret-page-active{ background:#000; }
   width:100%;
   overflow:hidden;
   border-radius:20px;
-  background:linear-gradient(165deg, rgba(22,20,30,.94) 0%, rgba(12,10,18,.96) 50%, rgba(8,6,14,.98) 100%);
-  border:1px solid rgba(100,100,115,.25);
+  background:linear-gradient(165deg, rgba(22,20,30,.96) 0%, rgba(14,12,22,.97) 50%, rgba(10,8,18,.98) 100%);
+  border:1px solid rgba(100,100,115,.3);
   box-shadow:
-    0 0 0 1px rgba(255,255,255,.03) inset,
-    0 4px 24px rgba(0,0,0,.4),
-    0 24px 64px rgba(0,0,0,.45),
-    0 0 120px rgba(60,40,100,.08);
-  backdrop-filter:blur(12px);
+    0 0 0 1px rgba(255,255,255,.04) inset,
+    0 4px 24px rgba(0,0,0,.45),
+    0 24px 64px rgba(0,0,0,.5),
+    0 0 80px rgba(60,40,100,.1);
+  backdrop-filter:blur(14px);
+  transition:box-shadow .4s ease, transform .4s ease;
+}
+.secret-card:hover{
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.05) inset,
+    0 8px 32px rgba(0,0,0,.5),
+    0 32px 80px rgba(0,0,0,.55),
+    0 0 100px rgba(80,50,120,.12);
+}
+.secret-card-frame{
+  position:absolute;
+  inset:-2px;
+  pointer-events:none;
+  border-radius:22px;
+  border:1px solid rgba(80,60,120,.25);
+  box-shadow:
+    0 0 30px rgba(80,50,120,.12),
+    0 0 60px rgba(60,40,100,.06),
+    inset 0 0 30px rgba(0,0,0,.15);
 }
 .secret-card-glitch{
   position:absolute;
@@ -9613,11 +9719,13 @@ body.secret-page-active{ background:#000; }
   width:180px;
   height:180px;
   border-radius:12px;
-  border:1px solid rgba(80,80,95,.4);
+  border:1px solid rgba(80,80,95,.5);
   box-shadow:
-    inset 0 0 30px rgba(0,0,0,.5),
-    0 0 24px rgba(0,0,0,.35),
-    0 0 0 1px rgba(255,255,255,.02) inset;
+    inset 0 0 40px rgba(0,0,0,.6),
+    inset 0 0 20px rgba(60,40,100,.08),
+    0 0 24px rgba(0,0,0,.4),
+    0 0 40px rgba(60,40,100,.06),
+    0 0 0 1px rgba(255,255,255,.03) inset;
 }
 .secret-card-sprite-inner{
   position:absolute;

@@ -49,15 +49,21 @@ export default function SecretPage() {
   };
 
   return (
-    <div className="secret-page">
+    <div className="secret-page secret-page-enter">
       <div className="secret-page-bg" aria-hidden="true" />
       <div className="secret-page-fog" aria-hidden="true" />
+      <div className="secret-page-ambient">
+        <span className="secret-orb secret-orb-1" aria-hidden="true" />
+        <span className="secret-orb secret-orb-2" aria-hidden="true" />
+        <span className="secret-orb secret-orb-3" aria-hidden="true" />
+      </div>
       <div className="secret-page-noise" aria-hidden="true" />
       <div className="secret-page-vignette" aria-hidden="true" />
       <div className="secret-page-scan" aria-hidden="true" />
 
       <header className="secret-hero" style={{ backgroundImage: `url(${SECRET_HERO_BG})` }}>
         <div className="secret-hero-overlay" aria-hidden="true" />
+        <div className="secret-hero-glow" aria-hidden="true" />
         <div className="secret-hero-inner">
           <img src="https://i.imgur.com/9bVZ1FP.png" alt="" className="secret-hero-logo" />
           <span className="secret-hero-badge">[ ACCÈS RESTREINT ]</span>
@@ -78,6 +84,7 @@ export default function SecretPage() {
           </div>
 
           <article className="secret-card">
+            <div className="secret-card-frame" aria-hidden="true" />
             <div className="secret-card-glitch" aria-hidden="true" />
             <div className="secret-card-header">
               <span className="secret-card-classified">CLASSIFIÉ</span>
