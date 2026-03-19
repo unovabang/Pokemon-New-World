@@ -9,28 +9,20 @@ const SECRET_AUDIO_SRC = "https://audio.jukehost.co.uk/Icyu4x7mU7ApHJ0lx9R6R6WwM
 const SECRET_HERO_BG = "https://images3.alphacoders.com/107/1073997.jpg";
 const MEGA_DARKRAI_IMAGE = "https://static.wikia.nocookie.net/pokemon-new-world-fr/images/f/f7/Darkrai2.gif/revision/latest?cb=20260130212808&path-prefix=fr";
 
-/** Texte de la retranscription — apparaît ligne par ligne au rythme de l'audio. */
-const SECRET_TRANSCRIPT = `Félicitations
-
-Tu es arrivé jusqu'ici
-
-Il ne te reste qu'une seule étape avant d'obtenir ce que tu cherches
-
-Chemin des Larmes
-
-Vieux Manoir
-
-Six y
-
-Quatre x
-
-Moins un x
-
-Trois y
-
-AA
-
-Ne te trompe pas`;
+/** Segments avec timestamps (secondes) — ajuster pour coller à la voix. */
+const SECRET_TRANSCRIPT_SEGMENTS = [
+  { text: "Félicitations", at: 0 },
+  { text: "Tu es arrivé jusqu'ici", at: 2.5 },
+  { text: "Il ne te reste qu'une seule étape avant d'obtenir ce que tu cherches", at: 6 },
+  { text: "Chemin des Larmes", at: 11 },
+  { text: "Vieux Manoir", at: 14 },
+  { text: "Six y", at: 17 },
+  { text: "Quatre x", at: 19 },
+  { text: "Moins un x", at: 21 },
+  { text: "Trois y", at: 23 },
+  { text: "AA", at: 25 },
+  { text: "Ne te trompe pas", at: 27 },
+];
 
 const CRYPT = {
   name: "▯ ▯ ▯ ▯ ▯ ▯",
@@ -44,27 +36,20 @@ const CRYPT = {
   attackDesc: "▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯ ▯",
 };
 
-/** Découpe le texte en segments (lignes) pour révélation au rythme de la voix. */
-function segmentTranscript(text) {
-  if (!text || !text.trim()) return [""];
-  const parts = text.trim().split(/\n+/).map((s) => s.trim()).filter(Boolean);
-  return parts.length > 0 ? parts : [text.trim()];
-}
-
 export default function SecretPage() {
   const navigate = useNavigate();
   const audioRef = useRef(null);
-  const [transcriptProgress, setTranscriptProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const segments = useMemo(() => segmentTranscript(SECRET_TRANSCRIPT), []);
   const visibleText = useMemo(() => {
-    if (segments.length === 0) return "";
-    const count = transcriptProgress > 0
-      ? Math.min(segments.length, Math.ceil(transcriptProgress * segments.length))
-      : 0;
-    return segments.slice(0, count).join("\n").trim();
-  }, [segments, transcriptProgress]);
+    const segments = SECRET_TRANSCRIPT_SEGMENTS;
+    let count = 0;
+    for (let i = 0; i < segments.length; i++) {
+      if (currentTime >= segments[i].at) count = i + 1;
+    }
+    return segments.slice(0, count).map((s) => s.text).join("\n").trim();
+  }, [currentTime]);
 
   useEffect(() => {
     document.body.classList.add("secret-page-active");
@@ -78,17 +63,12 @@ export default function SecretPage() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const onTimeUpdate = () => {
-      const d = audio.duration;
-      if (!d || !isFinite(d)) return;
-      const p = Math.min(audio.currentTime / d, 1);
-      setTranscriptProgress(Math.pow(p, 2));
-    };
+    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
     const onPlay = () => setIsPlaying(true);
     const onPause = () => setIsPlaying(false);
     const onEnded = () => {
       setIsPlaying(false);
-      setTranscriptProgress(1);
+      setCurrentTime(audio.duration && isFinite(audio.duration) ? audio.duration : 999);
     };
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("play", onPlay);
@@ -126,7 +106,7 @@ export default function SecretPage() {
     }
     if (audio.ended || audio.currentTime > 0) {
       audio.currentTime = 0;
-      setTranscriptProgress(0);
+      setCurrentTime(0);
     }
     audio.play().catch(() => {});
   };
@@ -176,6 +156,7 @@ export default function SecretPage() {
         <div className="secret-main">
           <aside className="secret-transcript-panel" aria-label="Retranscription">
             <div className="secret-transcript-box" aria-live="polite">
+              <div className="secret-transcript-header">RETRANSCRIPTION</div>
               <div className="secret-transcript-inner">
                 {visibleText ? (
                   <p className="secret-transcript-text">{visibleText}</p>
