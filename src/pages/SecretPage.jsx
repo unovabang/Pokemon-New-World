@@ -184,8 +184,8 @@ export default function SecretPage() {
               <div className="secret-card-frame" aria-hidden="true" />
               <div className="secret-card-glitch" aria-hidden="true" />
               <div className="secret-card-header">
-                <span className="secret-card-classified">CLASSIFIÉ</span>
-                <span className="secret-card-id">ID: ???</span>
+                <span className="secret-card-classified"><i className="fa-solid fa-lock" aria-hidden /> CLASSIFIÉ</span>
+                <span className="secret-card-id"><i className="fa-solid fa-fingerprint" aria-hidden /> ID: ???</span>
               </div>
               <div className="secret-card-sprite-wrap">
                 <div className="secret-card-sprite-frame">
@@ -199,13 +199,13 @@ export default function SecretPage() {
                         e.target.nextElementSibling?.classList.add("secret-card-unknown-visible");
                       }}
                     />
-                    <span className="secret-card-unknown" aria-hidden>?</span>
+                    <span className="secret-card-unknown" aria-hidden><i className="fa-solid fa-circle-question" /></span>
                   </div>
                   <div className="secret-card-sprite-static" aria-hidden="true" />
                 </div>
               </div>
               <div className="secret-card-body">
-                <p className="secret-card-subtitle">Archive corrompue // niveau d'accès : néant</p>
+                <p className="secret-card-subtitle"><i className="fa-solid fa-database" aria-hidden /> Archive corrompue // niveau d'accès : néant</p>
                 <h2 className="secret-card-name">{CRYPT.name}</h2>
                 <div className="secret-card-types">
                   <span className="secret-card-type-pill">{CRYPT.type}</span>
@@ -213,29 +213,29 @@ export default function SecretPage() {
                 </div>
                 <div className="secret-card-divider" />
                 <div className="secret-card-stats">
-                  <div className="secret-card-stat"><span className="secret-card-stat-label">PV</span><span>{CRYPT.stat}</span></div>
-                  <div className="secret-card-stat"><span className="secret-card-stat-label">ATK</span><span>{CRYPT.stat}</span></div>
-                  <div className="secret-card-stat"><span className="secret-card-stat-label">DEF</span><span>{CRYPT.stat}</span></div>
-                  <div className="secret-card-stat"><span className="secret-card-stat-label">ATK SPE</span><span>{CRYPT.stat}</span></div>
-                  <div className="secret-card-stat"><span className="secret-card-stat-label">DEF SPE</span><span>{CRYPT.stat}</span></div>
-                  <div className="secret-card-stat"><span className="secret-card-stat-label">SPE</span><span>{CRYPT.stat}</span></div>
-                  <div className="secret-card-stat secret-card-stat-total"><span className="secret-card-stat-label">TOTAL</span><span>{CRYPT.total}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-heart" aria-hidden /> PV</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-bolt" aria-hidden /> ATK</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-shield" aria-hidden /> DEF</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-wand-magic-sparkles" aria-hidden /> ATK SPE</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-shield-halved" aria-hidden /> DEF SPE</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat"><span className="secret-card-stat-label"><i className="fa-solid fa-gauge-high" aria-hidden /> SPE</span><span>{CRYPT.stat}</span></div>
+                  <div className="secret-card-stat secret-card-stat-total"><span className="secret-card-stat-label"><i className="fa-solid fa-calculator" aria-hidden /> TOTAL</span><span>{CRYPT.total}</span></div>
                 </div>
                 <div className="secret-card-divider" />
                 <div className="secret-card-talents">
-                  <div className="secret-card-section-label">{CRYPT.talentLabel}</div>
+                  <div className="secret-card-section-label"><i className="fa-solid fa-star" aria-hidden /> {CRYPT.talentLabel}</div>
                   <div className="secret-card-talent-slot">
                     <div className="secret-card-talent-name">{CRYPT.talentName}</div>
                     <p className="secret-card-talent-desc">{CRYPT.talentDesc}</p>
                   </div>
                 </div>
                 <div className="secret-card-attacks">
-                  <div className="secret-card-section-label">{CRYPT.attackName}</div>
+                  <div className="secret-card-section-label"><i className="fa-solid fa-burst" aria-hidden /> {CRYPT.attackName}</div>
                   <p className="secret-card-attack-desc">{CRYPT.attackDesc}</p>
                 </div>
               </div>
               <div className="secret-card-footer">
-                <span>Données inaccessibles</span>
+                <span><i className="fa-solid fa-ban" aria-hidden /> Données inaccessibles</span>
               </div>
             </article>
           </div>
