@@ -1699,6 +1699,15 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   position:relative;
 }
 .sidebar-logo{height:72px; width:auto; object-fit:contain; filter:drop-shadow(0 0 14px rgba(126,205,242,.25))}
+.sidebar-brand-text{
+  font-weight:800;
+  font-size:0.95rem;
+  line-height:1.25;
+  text-align:center;
+  color:var(--text);
+  padding:0 2rem;
+  max-width:100%;
+}
 .sidebar-close{
   position:absolute;
   top:1rem; right:1rem;
@@ -3916,6 +3925,18 @@ a.dex-panel--active{cursor:default}
   .hero-video .copy{padding:16px}
   .hero-logo{height:clamp(80px, 18vw, 140px)}
 }
+.hero-logo--text{
+  height:auto;
+  margin:0;
+  font-size:clamp(1.35rem, 5vw, 2.25rem);
+  font-weight:800;
+  letter-spacing:-0.02em;
+  color:#fff;
+  text-shadow:0 4px 28px rgba(0,0,0,.55);
+  filter:none;
+  max-width:min(92vw, 28rem);
+  line-height:1.15;
+}
 
 /* ===== News Banner ===== */
 .news-banner-container{margin-top:16px}
@@ -4908,6 +4929,20 @@ a.dex-panel--active{cursor:default}
   display:block;
   transition:transform .5s ease;
 }
+.patreon-image--placeholder{
+  width:100%;
+  aspect-ratio:16/10;
+  min-height:200px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(145deg, rgba(255,66,77,.12), rgba(8,14,28,.55));
+}
+.patreon-image--placeholder .fa-brands{
+  font-size:clamp(3rem, 10vw, 4.5rem);
+  opacity:.55;
+  color:rgba(255,255,255,.9);
+}
 .patreon-image-container:hover .patreon-image{
   transform:scale(1.04);
 }
@@ -5046,6 +5081,25 @@ a.dex-panel--active{cursor:default}
   object-fit:cover; 
   display:block;
   transition:transform .5s ease;
+}
+.dual-image--pending{
+  background:linear-gradient(135deg, rgba(126,205,242,.12) 0%, rgba(8,14,28,.5) 50%, rgba(126,205,242,.08) 100%);
+  animation:dual-image-pulse 1.2s ease-in-out infinite;
+}
+@keyframes dual-image-pulse{
+  0%, 100%{ opacity:.75; }
+  50%{ opacity:1; }
+}
+.dual-image--tiktok{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  object-fit:initial;
+}
+.dual-image-tiktok-icon{
+  font-size:clamp(3rem, 14vw, 5.5rem);
+  color:rgba(255,255,255,.88);
+  filter:drop-shadow(0 8px 24px rgba(0,0,0,.45));
 }
 .dual-image-container:hover .dual-image{
   transform:scale(1.06);

@@ -3,7 +3,61 @@
     "seo": {
       "title": "Pokémon New World • Site officiel",
       "description": "Site officiel du fangame Pokémon New World : explorez Bélamie, découvrez les nouveaux types Aspic & Malice, et téléchargez le jeu gratuitement.",
-      "keywords": ["pokemon", "fangame", "new world", "belamie", "aspic", "malice", "rpg", "jeu gratuit"]
+      "keywords": ["pokemon", "fangame", "new world", "belamie", "aspic", "malice", "rpg", "jeu gratuit"],
+      "pages": {
+        "patchnotes": {
+          "title": "Notes de patch • Pokémon New World",
+          "description": "Historique des mises à jour, équilibrages, corrections et nouveautés du fangame Pokémon New World."
+        },
+        "pokedex": {
+          "title": "Pokédex • Pokémon New World",
+          "description": "Liste des Pokémon et créatures du jeu : types Aspic & Malice, formes, stats et encyclopédie interactive."
+        },
+        "extradex": {
+          "title": "Extradex • Pokémon New World",
+          "description": "Entrées spéciales, ultra-chimères et contenu étendu autour du bestiaire de Pokémon New World."
+        },
+        "guide": {
+          "title": "Guide • Pokémon New World",
+          "description": "Progression, cartes, étapes et personnages pour avancer dans l’aventure Pokémon New World."
+        },
+        "lore": {
+          "title": "Lore • Pokémon New World",
+          "description": "Histoires, chapitres et univers narrative de Pokémon New World."
+        },
+        "bst": {
+          "title": "BST & talents • Pokémon New World",
+          "description": "Base stats, talents et formes (Fakemon, Mégas, spéciaux) du fangame."
+        },
+        "itemLocation": {
+          "title": "Objets • Pokémon New World",
+          "description": "Localisation des objets clés et ressources utiles dans Pokémon New World."
+        },
+        "team": {
+          "title": "L’équipe • Pokémon New World",
+          "description": "Membres du projet, contributeurs et remerciements pour Pokémon New World."
+        },
+        "evsLocation": {
+          "title": "EVs • Pokémon New World",
+          "description": "Zones d’entraînement et emplacements pour farmer les EV dans Pokémon New World."
+        },
+        "nerfsAndBuffs": {
+          "title": "Équilibrages • Pokémon New World",
+          "description": "Nerfs, buffs et ajustements récents régulièrement mis à jour."
+        },
+        "contact": {
+          "title": "Contact • Pokémon New World",
+          "description": "Contacter l’équipe du fangame : questions, retours et support."
+        },
+        "download": {
+          "title": "Téléchargement • Pokémon New World",
+          "description": "Télécharger le jeu, les patchs et accéder aux ressources d’installation."
+        },
+        "notFound": {
+          "title": "Page introuvable • Pokémon New World",
+          "description": "La page demandée n’existe pas ou a été déplacée."
+        }
+      }
     },
     "navigation": {
       "navigation": "Navigation",
@@ -105,7 +159,61 @@
     "seo": {
       "title": "Pokémon New World • Official Website",
       "description": "Official website of the Pokémon New World fangame: explore Bélamie, discover the new Aspic & Malice types, and download the game for free.",
-      "keywords": ["pokemon", "fangame", "new world", "belamie", "aspic", "malice", "rpg", "free game"]
+      "keywords": ["pokemon", "fangame", "new world", "belamie", "aspic", "malice", "rpg", "free game"],
+      "pages": {
+        "patchnotes": {
+          "title": "Patch notes • Pokémon New World",
+          "description": "Update history, balance changes, fixes and new features for the Pokémon New World fangame."
+        },
+        "pokedex": {
+          "title": "Pokédex • Pokémon New World",
+          "description": "Pokémon and creatures from the game: Aspic & Malice types, forms, stats and interactive encyclopedia."
+        },
+        "extradex": {
+          "title": "Extradex • Pokémon New World",
+          "description": "Special entries, Ultra Beasts and extended bestiary content for Pokémon New World."
+        },
+        "guide": {
+          "title": "Guide • Pokémon New World",
+          "description": "Walkthrough, maps, steps and characters to progress in Pokémon New World."
+        },
+        "lore": {
+          "title": "Lore • Pokémon New World",
+          "description": "Stories, chapters and narrative universe of Pokémon New World."
+        },
+        "bst": {
+          "title": "BST & abilities • Pokémon New World",
+          "description": "Base stats, abilities and forms (Fakemon, Megas, specials) for the fangame."
+        },
+        "itemLocation": {
+          "title": "Items • Pokémon New World",
+          "description": "Where to find key items and useful resources in Pokémon New World."
+        },
+        "team": {
+          "title": "The team • Pokémon New World",
+          "description": "Project members, contributors and acknowledgements for Pokémon New World."
+        },
+        "evsLocation": {
+          "title": "EVs • Pokémon New World",
+          "description": "Training spots and locations to farm EVs in Pokémon New World."
+        },
+        "nerfsAndBuffs": {
+          "title": "Balance changes • Pokémon New World",
+          "description": "Recent nerfs, buffs and tuning updates."
+        },
+        "contact": {
+          "title": "Contact • Pokémon New World",
+          "description": "Reach the fangame team: questions, feedback and support."
+        },
+        "download": {
+          "title": "Download • Pokémon New World",
+          "description": "Download the game, patches and installation resources."
+        },
+        "notFound": {
+          "title": "Page not found • Pokémon New World",
+          "description": "The page you requested does not exist or has been moved."
+        }
+      }
     },
     "navigation": {
       "navigation": "Navigation",

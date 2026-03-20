@@ -1,8 +1,10 @@
 import { useParams, Link, useLocation } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
+import { usePageSeo } from "../hooks/usePageSeo";
+import { plainTextFromMarkdown } from "../utils/pageSeo";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -132,6 +134,43 @@ export default function LoreStoryPage() {
   const story = stories.find((s) => s.slug === slug);
   const storyIndex = stories.findIndex((s) => s.slug === slug);
   const bannerImage = locationState?.bannerImage || getBanner(story, storyIndex);
+
+  const loreSeo = useMemo(() => {
+    const path = `/lore/${slug}`;
+    if (!story) {
+      if (!loaded) {
+        return {
+          title: isEn ? "Lore • Pokémon New World" : "Lore • Pokémon New World",
+          description: isEn ? "Loading…" : "Chargement…",
+          path,
+          lang: language,
+        };
+      }
+      return {
+        title: isEn ? "Story not found • Pokémon New World" : "Histoire introuvable • Pokémon New World",
+        description: isEn
+          ? "This lore chapter does not exist."
+          : "Ce chapitre du lore n’existe pas ou a été retiré.",
+        path,
+        lang: language,
+        robots: "noindex,follow",
+      };
+    }
+    const pageTitle = isEn && story.titleEn ? story.titleEn : story.title;
+    const rawDesc = isEn && story.descriptionEn ? story.descriptionEn : story.description;
+    const desc =
+      plainTextFromMarkdown(rawDesc) ||
+      (isEn ? "Lore chapter — Pokémon New World." : "Chapitre du lore — Pokémon New World.");
+    return {
+      title: `${pageTitle} • Pokémon New World`,
+      description: desc,
+      path,
+      imagePath: bannerImage,
+      lang: language,
+    };
+  }, [slug, story, loaded, isEn, bannerImage, language]);
+
+  usePageSeo(loreSeo);
 
   const playerRef = useRef(null);
   const containerRef = useRef(null);

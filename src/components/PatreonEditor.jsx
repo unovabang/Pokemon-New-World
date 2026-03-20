@@ -302,7 +302,7 @@ const PatreonEditor = ({ onSave }) => {
                   type="url"
                   value={icon}
                   onChange={(e) => setIcon(e.target.value)}
-                  placeholder="/patreonlogo.png"
+                  placeholder="https://…"
                   style={{
                     width: '100%',
                     padding: '1rem',
@@ -342,7 +342,7 @@ const PatreonEditor = ({ onSave }) => {
                   type="url"
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
-                  placeholder="/patreon.png"
+                  placeholder="https://…"
                   style={{
                     width: '100%',
                     padding: '1rem',

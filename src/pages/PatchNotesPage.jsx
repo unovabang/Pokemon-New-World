@@ -41,7 +41,7 @@ export default function PatchNotesPage() {
       {pageBackground && (
         <>
           <div className="page-bg-layer" aria-hidden>
-            <img src={pageBackground} alt="" />
+            <img key={pageBackground} src={pageBackground} alt="" decoding="async" />
           </div>
           <div className="page-overlay-layer" aria-hidden />
         </>
@@ -96,7 +96,13 @@ export default function PatchNotesPage() {
               </div>
               {selectedVersion.image && (
                 <div className="patchnotes-version-image-wrap">
-                  <img src={selectedVersion.image} alt={`Patch ${selectedVersion.version}`} className="patchnotes-version-image" />
+                  <img
+                    key={selectedVersion.image}
+                    src={selectedVersion.image}
+                    alt={`Patch ${selectedVersion.version}`}
+                    className="patchnotes-version-image"
+                    decoding="async"
+                  />
                 </div>
               )}
               <div className="patchnotes-version-sections">
@@ -105,7 +111,13 @@ export default function PatchNotesPage() {
                     <h3>{section.title}</h3>
                     {section.image && (
                       <div className="patchnotes-section-image-wrap">
-                        <img src={section.image} alt="" className="patchnotes-section-image" />
+                        <img
+                          key={section.image}
+                          src={section.image}
+                          alt=""
+                          className="patchnotes-section-image"
+                          decoding="async"
+                        />
                       </div>
                     )}
                     <ul>

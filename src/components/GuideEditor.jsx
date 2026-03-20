@@ -570,12 +570,7 @@ export default function GuideEditor({ initialData = null, onSave }) {
                   </div>
                   <div className="admin-guide-field">
                     <label>URL de l'image</label>
-                    <div className="admin-guide-field-with-preset">
-                      <input type="url" value={form.imageUrl} onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))} placeholder="https://exemple.com/image.png" />
-                      <button type="button" onClick={() => setForm((f) => ({ ...f, imageUrl: "/guide-map.png" }))} className="admin-guide-btn admin-guide-btn-ghost" title="Utiliser la carte par défaut">
-                        Carte
-                      </button>
-                    </div>
+                    <input type="url" value={form.imageUrl} onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))} placeholder="https://exemple.com/image.png" />
                     {form.imageUrl.trim() && (
                       <div className="admin-guide-img-preview">
                         <img src={form.imageUrl.trim()} alt="Aperçu" onError={(e) => (e.target.style.display = "none")} onLoad={(e) => (e.target.style.display = "block")} />

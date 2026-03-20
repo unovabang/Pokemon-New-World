@@ -134,7 +134,7 @@ const SiteEditor = ({ onSave }) => {
               description: "Explorez la région de Bélamie"
             },
             carousel: {
-              images: ["/screenshot1.png", "/screenshot2.png", "/screenshot3.png"]
+              images: []
             },
             discord: {
               invite: "#"
@@ -207,6 +207,72 @@ const SiteEditor = ({ onSave }) => {
       </div>
 
       <div className="site-editor-grid" style={{ display: 'grid', gap: '2rem' }}>
+        {/* Logo global : une seule URL pour tout le site public qui affiche le logo */}
+        <div
+          className="site-editor-section"
+          style={{
+            background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(255,255,255,0.06) 100%)',
+            borderRadius: '10px',
+            padding: '2rem',
+            border: '1px solid rgba(245, 158, 11, 0.35)',
+          }}
+        >
+          <h3
+            style={{
+              marginBottom: '0.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: '#fbbf24',
+            }}
+          >
+            <i className="fa-solid fa-image"></i> Logo du site (URL globale)
+          </h3>
+          <p style={{ margin: '0 0 1.25rem', color: 'rgba(255,255,255,0.82)', fontSize: '0.95rem', lineHeight: 1.55 }}>
+            Collez ici le <strong>lien direct vers votre image</strong> (PNG, WebP ou SVG recommandés), hébergée où vous voulez (CDN, Imgur, votre domaine…).
+            Ce logo est utilisé <strong>partout où le site en a besoin</strong> : accueil (hero), pied de page, page téléchargement, menu latéral.
+            Vous pouvez aussi utiliser un fichier du site au format <code style={{ background: 'rgba(0,0,0,0.25)', padding: '0.15rem 0.4rem', borderRadius: '4px' }}>public/mon-logo.png</code> → enregistré comme chemin commençant par <code style={{ background: 'rgba(0,0,0,0.25)', padding: '0.15rem 0.4rem', borderRadius: '4px' }}>public/</code>.
+          </p>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+            <i className="fa-solid fa-link"></i> URL du logo
+          </label>
+          <input
+            type="text"
+            inputMode="url"
+            value={logoUrl}
+            onChange={(e) => setLogoUrl(e.target.value)}
+            placeholder="https://exemple.com/chemin/vers/logo.png ou public/logo.png"
+            style={{
+              width: '100%',
+              padding: '1rem',
+              borderRadius: '8px',
+              border: '1px solid rgba(255,255,255,0.3)',
+              background: 'rgba(255,255,255,0.1)',
+              color: 'white',
+              fontSize: '1rem',
+            }}
+          />
+          {logoUrl?.trim() ? (
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <span style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.65)' }}>Aperçu</span>
+              <img
+                src={logoUrl.trim().startsWith('public/') ? `/${logoUrl.trim().slice(7)}` : logoUrl.trim()}
+                alt=""
+                style={{
+                  maxWidth: '220px',
+                  maxHeight: '110px',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  borderRadius: '8px',
+                  objectFit: 'contain',
+                }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+            </div>
+          ) : null}
+        </div>
+
         {/* SEO et Métadonnées */}
         <div className="site-editor-section" style={{ 
           background: 'rgba(255,255,255,0.05)', 
@@ -468,50 +534,10 @@ const SiteEditor = ({ onSave }) => {
             gap: '0.5rem',
             color: '#f59e0b'
           }}>
-            <i className="fa-solid fa-image"></i> Images et Branding
+            <i className="fa-solid fa-image"></i> Favicon & fond d’accueil
           </h3>
           
           <div style={{ display: 'grid', gap: '1rem' }}>
-            <div>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: '0.5rem', 
-                fontWeight: 'bold' 
-              }}>
-                <i className="fa-solid fa-star"></i> Logo du site :
-              </label>
-              <input
-                type="url"
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="/logo.png ou https://exemple.com/logo.png"
-                style={{
-                  width: '100%',
-                  padding: '1rem',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  background: 'rgba(255,255,255,0.1)',
-                  color: 'white',
-                  fontSize: '1rem'
-                }}
-              />
-              {logoUrl && (
-                <div style={{ marginTop: '0.5rem', textAlign: 'center' }}>
-                  <img 
-                    src={logoUrl} 
-                    alt="Aperçu logo" 
-                    style={{ 
-                      maxWidth: '200px', 
-                      maxHeight: '100px', 
-                      border: '1px solid rgba(255,255,255,0.3)',
-                      borderRadius: '5px'
-                    }}
-                    onError={(e) => e.target.style.display = 'none'}
-                  />
-                </div>
-              )}
-            </div>
-
             <div>
               <label style={{ 
                 display: 'block', 

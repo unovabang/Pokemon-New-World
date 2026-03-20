@@ -1,8 +1,25 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useLanguage } from "../contexts/LanguageContext";
+import { usePageSeo } from "../hooks/usePageSeo";
 
 const Page404 = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { language, t } = useLanguage();
+
+  const notFoundSeo = useMemo(
+    () => ({
+      title: t("seo.pages.notFound.title"),
+      description: t("seo.pages.notFound.description"),
+      path: pathname,
+      lang: language,
+      robots: "noindex,follow",
+    }),
+    [pathname, language, t]
+  );
+  usePageSeo(notFoundSeo);
+
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth <= 768);
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 768);

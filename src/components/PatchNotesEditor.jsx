@@ -42,7 +42,7 @@ const PatchNotesEditor = ({ onSave }) => {
   const normalizePatch = (v) => ({
     version: v?.version || '',
     date: v?.date || '',
-    image: v?.image || (v?.version ? `/PATCHNOTE${String(v.version).replace('.', '')}.png` : ''),
+    image: typeof v?.image === 'string' ? v.image : '',
     sections: (v?.sections || []).map(normalizeSection)
   });
 
@@ -486,13 +486,13 @@ const PatchNotesEditor = ({ onSave }) => {
                 </label>
                 <label className="patchnotes-editor-field">
                   <span>URL image</span>
-                  <input type="text" value={currentPatch.image} onChange={(e) => updatePatchProperty('image', e.target.value)} placeholder="/PATCHNOTE06.png ou https://…" disabled={!isEditing} className="patchnotes-editor-input" />
+                  <input type="text" value={currentPatch.image} onChange={(e) => updatePatchProperty('image', e.target.value)} placeholder="https://… (URL de l’image du patch)" disabled={!isEditing} className="patchnotes-editor-input" />
                 </label>
               </div>
-              {currentPatch.image && (
+              {typeof currentPatch.image === "string" && currentPatch.image.trim() && (
                 <div className="patchnotes-editor-preview">
                   <span>Aperçu</span>
-                  <img src={currentPatch.image} alt="Aperçu patch" className="patchnotes-editor-preview-img" onError={(e) => { e.target.style.display = 'none'; }} />
+                  <img src={currentPatch.image.trim()} alt="Aperçu patch" className="patchnotes-editor-preview-img" onError={(e) => { e.target.style.display = 'none'; }} />
                 </div>
               )}
             </div>

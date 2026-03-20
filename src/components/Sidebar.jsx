@@ -21,11 +21,36 @@ const DEFAULT_ITEMS = [
 ];
 
 let cachedConfig = null;
+/** `undefined` = pas encore chargé ; `null` = pas de logo configuré */
+let cachedSiteLogo;
 
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState(cachedConfig?.items || DEFAULT_ITEMS);
   const [bgUrl, setBgUrl] = useState(cachedConfig?.backgroundImage || "");
+  const [logoUrl, setLogoUrl] = useState(() => (cachedSiteLogo !== undefined ? cachedSiteLogo : null));
+
+  useEffect(() => {
+    if (cachedSiteLogo !== undefined) {
+      setLogoUrl(cachedSiteLogo);
+      return;
+    }
+    fetch(`${API_BASE}/config/site?t=${Date.now()}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.success && d?.config?.branding?.logo) {
+          const v = String(d.config.branding.logo).trim();
+          cachedSiteLogo = v.startsWith("public/") ? "/" + v.slice(7) : v;
+        } else {
+          cachedSiteLogo = null;
+        }
+        setLogoUrl(cachedSiteLogo);
+      })
+      .catch(() => {
+        cachedSiteLogo = null;
+        setLogoUrl(null);
+      });
+  }, []);
 
   useEffect(() => {
     if (cachedConfig) return;
@@ -81,7 +106,11 @@ const Sidebar = () => {
       >
         <div className="sidebar-inner" style={innerStyle}>
           <div className="sidebar-header">
-            <img src="/logo.png" alt="Pokémon New World" className="sidebar-logo" />
+            {logoUrl ? (
+              <img src={logoUrl} alt="" className="sidebar-logo" />
+            ) : (
+              <span className="sidebar-brand-text">Pokémon New World</span>
+            )}
             <button
               type="button"
               className="sidebar-close"

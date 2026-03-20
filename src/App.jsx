@@ -1,12 +1,5 @@
-import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import content from "./config/index.js";
-import HeroVideo from "./components/HeroVideo";
-import Carousel from "./components/Carousel";
-import Modal from "./components/Modal";
-import YouTubeAudio from "./components/YouTubeAudio";
-import NewsBanner from "./components/NewsBanner";
-import LanguageSelector from "./components/LanguageSelector";
+import RouteSeo from "./components/RouteSeo";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPanel from "./pages/AdminPanel";
 import HomePage from "./pages/HomePage";
@@ -21,18 +14,16 @@ import NerfsAndBuffsPage from "./pages/NerfsAndBuffsPage";
 import ItemLocationPage from "./pages/ItemLocationPage";
 import EVsLocationPage from "./pages/EVsLocationPage";
 import TeamPage from "./pages/TeamPage";
-import UnderConstructionPage from "./pages/UnderConstructionPage";
 import LoginAdmin from "./pages/LoginAdmin";
 import ContactPage from "./pages/ContactPage";
 import DownloadPage from "./pages/DownloadPage";
 import Page404 from "./pages/Page404";
 import SecretPage from "./pages/SecretPage";
-import { useLanguage } from "./contexts/LanguageContext";
-
 
 export default function App() {
   return (
     <Router>
+      <RouteSeo />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/patchnotes" element={<PatchNotesPage />} />

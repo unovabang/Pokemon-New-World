@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import translations from '../config/translations.json';
 import patchNotesData from '../config/patchnotes.json';
 import patchNotesDataEN from '../config/patchnotes-en.json';
@@ -26,7 +26,7 @@ export const LanguageProvider = ({ children }) => {
     localStorage.setItem('pokemon-new-world-language', language);
   }, [language]);
 
-  const t = (key, fallback = key) => {
+  const t = useCallback((key, fallback = key) => {
     // Gestion spéciale pour les patch notes - selon la langue
     if (key.startsWith('patchNotes.')) {
       const patchKey = key.replace('patchNotes.', '');
@@ -80,7 +80,7 @@ export const LanguageProvider = ({ children }) => {
     }
     
     return value || fallback;
-  };
+  }, [language]);
 
   const changeLanguage = (newLanguage) => {
     if (translations[newLanguage]) {

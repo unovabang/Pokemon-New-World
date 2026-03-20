@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import content from "../config/index.js";
 import patreonData from "../config/patreon.json";
 import HeroVideo from "../components/HeroVideo";
@@ -50,7 +50,7 @@ const HomePage = () => {
     if (s.startsWith("public/")) return "/" + s.slice(7);
     return s;
   };
-  const logoUrl = toPublicUrl(effectiveContent.branding?.logo) || "/logo.png";
+  const logoUrl = toPublicUrl(effectiveContent.branding?.logo);
 
   // Image de fond : URL valide (pas de fallback logo)
   const bgHome = backgrounds?.home && String(backgrounds.home).trim();
@@ -155,6 +155,18 @@ const HomePage = () => {
       .catch(() => {});
   }, [openPatchNotes, language]);
 
+  /** Image patch accueil : uniquement si une URL est renseignée côté API (pas de PNG local implicite). */
+  const patchNotesSectionImageSrc = useMemo(() => {
+    if (patchNotesFromApi == null) return null;
+    const latest = patchNotesFromApi?.versions?.[0];
+    if (!latest) return null;
+    if (typeof latest.image === "string" && latest.image.trim()) return latest.image.trim();
+    return null;
+  }, [patchNotesFromApi]);
+
+  const patreonIconUrl = typeof patreonContent?.icon === "string" && patreonContent.icon.trim() ? patreonContent.icon.trim() : null;
+  const patreonHeroImageUrl = typeof patreonContent?.image === "string" && patreonContent.image.trim() ? patreonContent.image.trim() : null;
+
   const handleSecretClick = () => {
     setOpenEnigmaModal(true);
     setEnigmaAnswer("");
@@ -183,20 +195,7 @@ const HomePage = () => {
     }
   }, [openEnigmaModal]);
 
-  // Mise à jour des métadonnées SEO
   useEffect(() => {
-    document.title = t('seo.title');
-    
-    const titleEl = document.getElementById('page-title');
-    if (titleEl) titleEl.textContent = t('seo.title');
-
-    const descEl = document.getElementById('page-description');
-    if (descEl) descEl.setAttribute('content', t('seo.description'));
-
-    const keywordsEl = document.getElementById('page-keywords');
-    if (keywordsEl) keywordsEl.setAttribute('content', t('seo.keywords').join(','));
-
-    // Vérifier s'il faut rediriger vers admin-login après logout
     const shouldRedirectToAdmin = localStorage.getItem('redirectToAdminLogin');
     if (shouldRedirectToAdmin === 'true') {
       localStorage.removeItem('redirectToAdminLogin');
@@ -204,7 +203,7 @@ const HomePage = () => {
         window.location.href = '/admin-login';
       }, 1000);
     }
-  }, [language, t]);
+  }, []);
 
   return (
     <>
@@ -243,11 +242,11 @@ const HomePage = () => {
           <section className="section" style={{ padding: 0 }}>
             <HeroVideo videoId={heroVideo.youtubeId}>
               <div>
-                <img
-                  className="hero-logo"
-                  src={logoUrl}
-                  alt="Logo Pokémon New World"
-                />
+                {logoUrl ? (
+                  <img className="hero-logo" src={logoUrl} alt="" />
+                ) : (
+                  <p className="hero-logo hero-logo--text">{game?.title || "Pokémon New World"}</p>
+                )}
                 {/* Titre texte retiré */}
                 <div className="cta">
                   <div className="cta-row">
@@ -366,7 +365,8 @@ const HomePage = () => {
           {/* DERNIÈRES NOUVEAUTÉS */}
           <section id="news" className="section card">
             <h2>
-              <img src="/newsCLEAN3.png" alt="Icône nouveautés" className="section-icon" />{" "}
+              <i className="fa-solid fa-newspaper section-icon" aria-hidden />
+              {" "}
               {t('sections.news.title')}
             </h2>
             <NewsBanner 
@@ -386,11 +386,9 @@ const HomePage = () => {
               </h2>
               <div className="dual-content">
                 <div className="dual-image-container">
-                  <img 
-                    src="/TIKTOK.png" 
-                    alt="TikTok" 
-                    className="dual-image"
-                  />
+                  <div className="dual-image dual-image--pending dual-image--tiktok" aria-hidden>
+                    <i className="fa-brands fa-tiktok dual-image-tiktok-icon" />
+                  </div>
                   <div className="dual-overlay">
                     <div className="dual-cta">
                       <h3>{t('sections.tiktok.heading')}</h3>
@@ -416,11 +414,17 @@ const HomePage = () => {
               </h2>
               <div className="dual-content">
                 <div className="dual-image-container">
-                  <img 
-                    src={(patchNotesFromApi?.versions?.[0]?.image) || (patchNotesFromApi?.versions?.[0]?.version ? `/PATCHNOTE${String(patchNotesFromApi.versions[0].version).replace('.', '')}.png` : '/PATCHNOTE06.png')}
-                    alt="Notes de patch" 
-                    className="dual-image"
-                  />
+                  {patchNotesSectionImageSrc ? (
+                    <img
+                      key={patchNotesSectionImageSrc}
+                      src={patchNotesSectionImageSrc}
+                      alt=""
+                      className="dual-image"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div className="dual-image dual-image--pending" aria-hidden />
+                  )}
                   <div className="dual-overlay">
                     <div className="dual-cta">
                       <h3>{t('sections.patchNotes.heading')}</h3>
@@ -441,7 +445,11 @@ const HomePage = () => {
           {/* SECTION PATREON */}
           <section id="patreon" className="section card">
             <h2>
-              <img src={patreonContent?.icon || "/patreonlogo.png"} alt="Logo Patreon" className="section-icon" />{" "}
+              {patreonIconUrl ? (
+                <img src={patreonIconUrl} alt="" className="section-icon" />
+              ) : (
+                <i className="fa-brands fa-patreon section-icon" aria-hidden />
+              )}{" "}
               {patreonContent?.title || t('sections.patreon.title')}
             </h2>
             <div className="patreon-content">
@@ -454,11 +462,13 @@ const HomePage = () => {
                 aria-expanded={patreonOverlayOpen}
                 aria-label={patreonOverlayOpen ? (t("sections.patreon.close") || "Fermer") : (t("sections.patreon.open") || "Voir le contenu Patreon")}
               >
-                <img 
-                  src={patreonContent?.image || "/patreon.png"} 
-                  alt="Soutenez-nous sur Patreon" 
-                  className="patreon-image"
-                />
+                {patreonHeroImageUrl ? (
+                  <img src={patreonHeroImageUrl} alt="" className="patreon-image" />
+                ) : (
+                  <div className="patreon-image patreon-image--placeholder" aria-hidden>
+                    <i className="fa-brands fa-patreon" />
+                  </div>
+                )}
                 <div className="patreon-overlay">
                   <div className="patreon-cta" onClick={(e) => e.stopPropagation()}>
                     <h3>{patreonContent?.content?.heading || t('sections.patreon.heading')}</h3>
@@ -485,8 +495,8 @@ const HomePage = () => {
             <div className="footer-grid">
               <div className="footer-col footer-col--brand">
                 <div className="footer-brand">
-                  <img src={logoUrl} alt="Logo Pokémon New World" />
-                  <strong>Pokémon New World</strong>
+                  {logoUrl ? <img src={logoUrl} alt="" /> : null}
+                  <strong>{game?.title || "Pokémon New World"}</strong>
                 </div>
                 <p className="footer-desc">{t('footer.description')}</p>
                 <div className="social">
@@ -677,7 +687,13 @@ const HomePage = () => {
                 </div>
                 {patchNotesFromApi.versions[0].image && (
                   <div className="patch-image-wrap">
-                    <img src={patchNotesFromApi.versions[0].image} alt="" className="patch-image" />
+                    <img
+                      key={patchNotesFromApi.versions[0].image}
+                      src={patchNotesFromApi.versions[0].image}
+                      alt=""
+                      className="patch-image"
+                      decoding="async"
+                    />
                   </div>
                 )}
                 {(patchNotesFromApi.versions[0].sections || []).map((section, index) => (
@@ -685,7 +701,13 @@ const HomePage = () => {
                     <h4>{section.title}</h4>
                     {section.image && (
                       <div className="patch-section-image-wrap">
-                        <img src={section.image} alt="" className="patch-section-image" />
+                        <img
+                          key={section.image}
+                          src={section.image}
+                          alt=""
+                          className="patch-section-image"
+                          decoding="async"
+                        />
                       </div>
                     )}
                     <ul>

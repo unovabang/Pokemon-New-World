@@ -375,6 +375,24 @@ const DownloadsEditor = ({ onSave }) => {
   };
 
   const handleSave = async () => {
+    const wEn = (windowsEnLink || '').trim();
+    const vEn = (gameVersionEn || '').trim();
+    if (wEn && !vEn) {
+      showMessage(
+        'Version anglaise requise',
+        'Vous avez un lien ou fichier pour le jeu anglais : renseignez aussi « Version anglaise (semver) » dans le bloc jaune en haut. Sinon le manifest ?lang=en renverra une erreur côté launcher.',
+        'error',
+      );
+      return;
+    }
+    if (vEn && !wEn) {
+      showMessage(
+        'Lien anglais manquant',
+        'Une version anglaise est indiquée mais il n’y a pas d’URL / fichier EN. Ajoutez l’upload R2 ou effacez la version anglaise.',
+        'error',
+      );
+      return;
+    }
     showConfirm(
       'Confirmer la sauvegarde',
       'Êtes-vous sûr de vouloir sauvegarder les modifications des téléchargements ?',
@@ -770,7 +788,7 @@ const DownloadsEditor = ({ onSave }) => {
           currentLink={windowsEnLink}
           onLinkChange={setWindowsEnLink}
           onUploadComplete={(url) => { setWindowsEnLink(url); loadR2Objects(); }}
-          infoText="Build anglais : utilisé lorsque le joueur choisit Anglais dans le Launcher (?lang=en). Les deux champs version + URL sont requis pour publier l’anglais."
+          infoText="Build anglais : utilisé avec ?lang=en. Obligatoire ensemble : lien + « Version anglaise » ci-dessus. Le launcher extrait des archives ZIP (comme le FR) : évitez .rar/.7z tant que l’outil d’extraction ne les gère pas."
         />
 
         {/* Patch */}

@@ -68,7 +68,7 @@ export default function DownloadPage() {
   const discord = typeof effectiveContent.discord === "string"
     ? effectiveContent.discord
     : (effectiveContent.discord?.invite ?? effectiveContent.discord ?? "#");
-  const logoUrl = toPublicUrl(effectiveContent.branding?.logo) || "/logo.png";
+  const logoUrl = toPublicUrl(effectiveContent.branding?.logo);
 
   const title = isEn && pageContent?.titleEn ? pageContent.titleEn : (pageContent?.title || "Télécharger");
   const subtitle = isEn && pageContent?.subtitleEn ? pageContent.subtitleEn : (pageContent?.subtitle || "");
@@ -275,8 +275,8 @@ export default function DownloadPage() {
           <div className="footer-grid">
             <div className="footer-col footer-col--brand">
               <div className="footer-brand">
-                <img src={logoUrl} alt="Logo Pokémon New World" />
-                <strong>Pokémon New World</strong>
+                {logoUrl ? <img src={logoUrl} alt="" /> : null}
+                <strong>{effectiveContent.game?.title || "Pokémon New World"}</strong>
               </div>
               <p className="footer-desc">{t("footer.description")}</p>
               <div className="social">
