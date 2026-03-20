@@ -265,10 +265,12 @@ const UploadZone = ({ label, icon, iconColor, currentLink, onLinkChange, onUploa
 
 const DownloadsEditor = ({ onSave }) => {
   const [windowsLink, setWindowsLink] = useState('');
+  const [windowsEnLink, setWindowsEnLink] = useState('');
   const [patchLink, setPatchLink] = useState('');
   const [launcherLink, setLauncherLink] = useState('');
   const [patchVideo, setPatchVideo] = useState('');
   const [gameVersion, setGameVersion] = useState('');
+  const [gameVersionEn, setGameVersionEn] = useState('');
   const [launcherBackgroundUrl, setLauncherBackgroundUrl] = useState('');
   const [launcherSidebarImageUrl, setLauncherSidebarImageUrl] = useState('');
   const [launcherDownloadEnabled, setLauncherDownloadEnabled] = useState(true);
@@ -298,10 +300,12 @@ const DownloadsEditor = ({ onSave }) => {
       
       if (data.success && data.downloads) {
         setWindowsLink(data.downloads.windows || '');
+        setWindowsEnLink(data.downloads.windowsEn || '');
         setPatchLink(data.downloads.patch || '');
         setLauncherLink(data.downloads.launcher || '');
         setPatchVideo(data.downloads.patchVideo || '');
         setGameVersion(data.downloads.gameVersion || '');
+        setGameVersionEn(data.downloads.gameVersionEn || '');
         setLauncherBackgroundUrl(data.downloads.launcherBackgroundUrl || '');
         setLauncherSidebarImageUrl(data.downloads.launcherSidebarImageUrl || '');
         setLauncherDownloadEnabled(data.downloads.launcherDownloadEnabled !== false);
@@ -379,10 +383,12 @@ const DownloadsEditor = ({ onSave }) => {
           setSaving(true);
           const downloadsConfig = {
             windows: windowsLink,
+            windowsEn: windowsEnLink,
             patch: patchLink,
             launcher: launcherLink,
             patchVideo: patchVideo,
             gameVersion: gameVersion,
+            gameVersionEn: gameVersionEn,
             launcherBackgroundUrl: launcherBackgroundUrl.trim() || undefined,
             launcherSidebarImageUrl: launcherSidebarImageUrl.trim() || undefined,
             launcherDownloadEnabled: launcherDownloadEnabled
@@ -483,12 +489,15 @@ const DownloadsEditor = ({ onSave }) => {
             color: '#ffc107',
           }}>
             <i className="fa-solid fa-code-branch"></i>
-            Version du jeu
+            Versions du jeu (Launcher)
           </h3>
+          <p style={{ fontSize: '0.9rem', opacity: 0.85, marginBottom: '1rem' }}>
+            <strong>Français</strong> et <strong>Anglais</strong> peuvent avoir des numéros de version différents. Chaque piste a son propre fichier .zip sur R2.
+          </p>
 
           <div style={{ marginBottom: '1rem' }}>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-              <i className="fa-solid fa-tag"></i> Version actuelle (semver) :
+              <i className="fa-solid fa-tag"></i> Version française (semver) :
             </label>
             <input
               type="text"
@@ -519,8 +528,43 @@ const DownloadsEditor = ({ onSave }) => {
             opacity: 0.9,
           }}>
             <i className="fa-solid fa-triangle-exclamation" style={{ color: '#ffc107' }}></i>{' '}
-            <strong>Important :</strong> Incrémentez ce numéro à chaque nouvelle mise à jour du jeu.
-            Le Launcher compare cette version avec celle installée localement pour déclencher les mises à jour automatiques.
+            <strong>Important :</strong> Incrémentez le numéro FR à chaque mise à jour du build français.
+            Le Launcher (langue FR) compare cette version avec celle installée localement.
+          </div>
+
+          <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255, 193, 7, 0.25)' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              <i className="fa-solid fa-tag"></i> Version anglaise (semver) :
+            </label>
+            <input
+              type="text"
+              value={gameVersionEn}
+              onChange={(e) => setGameVersionEn(e.target.value)}
+              placeholder="0.52"
+              style={{
+                width: '100%',
+                padding: '1rem',
+                borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                background: 'rgba(255,255,255,0.1)',
+                color: 'white',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                fontFamily: 'monospace',
+                boxSizing: 'border-box',
+                letterSpacing: '0.05em',
+              }}
+            />
+            <div style={{
+              background: 'rgba(255, 193, 7, 0.1)',
+              padding: '0.75rem',
+              borderRadius: '5px',
+              fontSize: '0.85rem',
+              opacity: 0.9,
+              marginTop: '0.75rem',
+            }}>
+              Utilisée pour le manifest <code style={{ opacity: 0.9 }}>?lang=en</code>. Peut différer de la version FR.
+            </div>
           </div>
         </div>
 
@@ -707,15 +751,26 @@ const DownloadsEditor = ({ onSave }) => {
           }
         />
 
-        {/* Jeu Principal — téléchargé automatiquement par le Launcher */}
+        {/* Jeu Principal FR — téléchargé automatiquement par le Launcher */}
         <UploadZone
-          label="Jeu Principal (fichier .zip)"
+          label="Jeu Principal — français (.zip)"
           icon="fa-brands fa-windows"
           iconColor="#0078d4"
           currentLink={windowsLink}
           onLinkChange={setWindowsLink}
           onUploadComplete={(url) => { setWindowsLink(url); loadR2Objects(); }}
-          infoText="Ce fichier sera téléchargé automatiquement par le Launcher quand un joueur l'installe."
+          infoText="Build français : manifest Launcher par défaut (?lang=fr ou sans paramètre)."
+        />
+
+        {/* Jeu Principal EN */}
+        <UploadZone
+          label="Jeu Principal — anglais (.zip)"
+          icon="fa-solid fa-language"
+          iconColor="#17a2b8"
+          currentLink={windowsEnLink}
+          onLinkChange={setWindowsEnLink}
+          onUploadComplete={(url) => { setWindowsEnLink(url); loadR2Objects(); }}
+          infoText="Build anglais : utilisé lorsque le joueur choisit Anglais dans le Launcher (?lang=en). Les deux champs version + URL sont requis pour publier l’anglais."
         />
 
         {/* Patch */}
@@ -869,13 +924,25 @@ const DownloadsEditor = ({ onSave }) => {
 
             <div style={{ textAlign: 'center' }}>
               <button className="btn btn-primary" style={{ marginBottom: '0.5rem', background: '#0078d4' }}>
-                <i className="fa-brands fa-windows"></i> Jeu Principal (.zip)
+                <i className="fa-brands fa-windows"></i> Jeu FR (.zip)
               </button>
               <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>
                 {windowsLink ? '✅ Fichier configuré' : '❌ Fichier manquant'}
               </p>
               <p style={{ fontSize: '0.7rem', opacity: 0.5, margin: '0.2rem 0 0' }}>
-                (téléchargé par le Launcher)
+                (Launcher FR)
+              </p>
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <button className="btn btn-primary" style={{ marginBottom: '0.5rem', background: '#17a2b8' }}>
+                <i className="fa-solid fa-language"></i> Jeu EN (.zip)
+              </button>
+              <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>
+                {windowsEnLink && gameVersionEn ? '✅ Config EN' : '— Optionnel'}
+              </p>
+              <p style={{ fontSize: '0.7rem', opacity: 0.5, margin: '0.2rem 0 0' }}>
+                (Launcher EN)
               </p>
             </div>
             
@@ -890,13 +957,28 @@ const DownloadsEditor = ({ onSave }) => {
                 fontWeight: 'bold',
                 fontSize: '1rem',
               }}>
-                v{gameVersion || '???'}
+                FR v{gameVersion || '???'}
               </div>
               <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>
-                {gameVersion ? '✅ Version définie' : '❌ Version manquante'}
+                {gameVersion ? '✅ Version FR' : '❌ Version FR manquante'}
               </p>
-              <p style={{ fontSize: '0.7rem', opacity: 0.5, margin: '0.2rem 0 0' }}>
-                (manifest du Launcher)
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                marginBottom: '0.5rem',
+                padding: '0.5rem 1rem',
+                background: 'rgba(23, 162, 184, 0.15)',
+                borderRadius: '8px',
+                border: '1px solid rgba(23, 162, 184, 0.35)',
+                fontFamily: 'monospace',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+              }}>
+                EN v{gameVersionEn || '—'}
+              </div>
+              <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>
+                {gameVersionEn ? '✅ Version EN' : '—'}
               </p>
             </div>
 

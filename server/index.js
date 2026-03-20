@@ -1097,25 +1097,64 @@ app.get('/api/r2/list', async (req, res) => {
   }
 });
 
+/** Corps manifest launcher (FR ou EN selon la piste). */
+function buildLauncherManifestBody(dl, version, downloadUrl) {
+  return {
+    name: 'Pokemon New World',
+    version,
+    releaseDate: dl.gameReleaseDate || new Date().toISOString(),
+    minimumLauncherVersion: '1.0.0',
+    changelog: { fr: dl.gameChangelog || '', en: dl.gameChangelogEn || '' },
+    downloadUrl,
+    downloadSize: 0,
+    files: [],
+    requirements: { minimumRAM: 2048, diskSpace: 500000000 },
+    integrity: { archiveHash: 'sha256:pending', archiveSize: 0 },
+    ...(dl.launcherBackgroundUrl && { launcherBackgroundUrl: dl.launcherBackgroundUrl }),
+    ...(dl.launcherSidebarImageUrl && { launcherSidebarImageUrl: dl.launcherSidebarImageUrl }),
+  };
+}
+
+// GET /api/downloads/version-hints — Versions distantes FR/EN pour migration launcher (sans URLs lourdes)
+app.get('/api/downloads/version-hints', (req, res) => {
+  try {
+    const dl = getConfig('downloads') || {};
+    const frVer = String(dl.gameVersion || '0.52').trim();
+    const enVer = String(dl.gameVersionEn || '').trim();
+    const enUrl = String(dl.windowsEn || '').trim();
+    const enAvailable = !!(enVer && enUrl);
+    res.json({
+      fr: { version: frVer },
+      en: enAvailable ? { version: enVer } : null,
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/downloads/version-hints:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET /api/downloads/manifest — Manifest JSON pour le launcher (format compatible)
+// ?lang=fr (défaut) | en — piste FR = windows + gameVersion ; piste EN = windowsEn + gameVersionEn
 app.get('/api/downloads/manifest', (req, res) => {
   try {
     const dl = getConfig('downloads') || {};
-    const manifest = {
-      name: 'Pokemon New World',
-      version: dl.gameVersion || '0.52',
-      releaseDate: dl.gameReleaseDate || new Date().toISOString(),
-      minimumLauncherVersion: '1.0.0',
-      changelog: { fr: dl.gameChangelog || '', en: dl.gameChangelogEn || '' },
-      downloadUrl: dl.windows || '',
-      downloadSize: 0,
-      files: [],
-      requirements: { minimumRAM: 2048, diskSpace: 500000000 },
-      integrity: { archiveHash: 'sha256:pending', archiveSize: 0 },
-      ...(dl.launcherBackgroundUrl && { launcherBackgroundUrl: dl.launcherBackgroundUrl }),
-      ...(dl.launcherSidebarImageUrl && { launcherSidebarImageUrl: dl.launcherSidebarImageUrl }),
-    };
-    res.json(manifest);
+    const rawLang = (req.query.lang || 'fr').toString().toLowerCase();
+    const lang = rawLang === 'en' ? 'en' : 'fr';
+
+    if (lang === 'en') {
+      const downloadUrl = String(dl.windowsEn || '').trim();
+      const version = String(dl.gameVersionEn || '').trim();
+      if (!downloadUrl || !version) {
+        return res.status(400).json({
+          error: 'Build anglais non configuré (windowsEn et gameVersionEn requis dans les téléchargements).',
+        });
+      }
+      return res.json(buildLauncherManifestBody(dl, version, downloadUrl));
+    }
+
+    const version = String(dl.gameVersion || '0.52').trim();
+    const downloadUrl = String(dl.windows || '').trim();
+    return res.json(buildLauncherManifestBody(dl, version, downloadUrl));
   } catch (error) {
     console.error('❌ Erreur API /api/downloads/manifest:', error);
     res.status(500).json({ error: error.message });
