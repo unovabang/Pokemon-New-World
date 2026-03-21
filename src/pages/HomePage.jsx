@@ -633,15 +633,20 @@ const HomePage = () => {
         <Modal
           open={openPatchNotes}
           onClose={() => setOpenPatchNotes(false)}
+          dialogClassName="modal-dialog--patchnotes"
           title={patchNotesFromApi?.versions?.[0] ? `${t('modals.patchNotes.version')} ${patchNotesFromApi.versions[0].version}` : t('modals.patchNotes.version')}
         >
           <div className="patch-notes-content">
             {patchNotesFromApi?.versions?.[0] ? (
               <>
-                <div className="patch-header">
-                  <h3>{t('modals.patchNotes.version')} {patchNotesFromApi.versions[0].version}</h3>
-                  <p className="patch-date">{patchNotesFromApi.versions[0].date}</p>
-                </div>
+                {patchNotesFromApi.versions[0].date ? (
+                  <div className="patch-header">
+                    <span className="patch-date-badge">
+                      <i className="fa-regular fa-calendar" aria-hidden />
+                      {patchNotesFromApi.versions[0].date}
+                    </span>
+                  </div>
+                ) : null}
                 {patchNotesFromApi.versions[0].image && (
                   <div className="patch-image-wrap">
                     <img
@@ -655,7 +660,7 @@ const HomePage = () => {
                 )}
                 {(patchNotesFromApi.versions[0].sections || []).map((section, index) => (
                   <div key={index} className="patch-section">
-                    <h4>{section.title}</h4>
+                    <h4 className="patch-section-title">{section.title}</h4>
                     {section.image && (
                       <div className="patch-section-image-wrap">
                         <img
@@ -677,10 +682,10 @@ const HomePage = () => {
                 <div className="patch-modal-footer">
                   <a
                     href="/patchnotes"
-                    className="btn btn-primary"
+                    className="btn btn-primary patch-modal-footer-btn"
                     onClick={() => setOpenPatchNotes(false)}
                   >
-                    <i className="fa-solid fa-clock-rotate-left" /> {t('buttons.olderPatches')}
+                    <i className="fa-solid fa-clock-rotate-left" aria-hidden /> {t('buttons.olderPatches')}
                   </a>
                 </div>
               </>

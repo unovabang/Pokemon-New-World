@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export default function Modal({ open, onClose, title, children }) {
+export default function Modal({ open, onClose, title, children, dialogClassName }) {
 	useEffect(() => {
 		if (!open) return;
 		const onKey = (e) => e.key === "Escape" && onClose?.();
@@ -18,7 +18,7 @@ export default function Modal({ open, onClose, title, children }) {
 			aria-label={title}
 		>
 			<div className="backdrop" onClick={onClose} />
-			<div className="dialog card">
+			<div className={["dialog", "card", dialogClassName].filter(Boolean).join(" ")}>
 				<header>
 					<h3>{title}</h3>
 					<button className="close" onClick={onClose} aria-label="Fermer">
