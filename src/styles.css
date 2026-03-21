@@ -5278,9 +5278,13 @@ a.dex-panel--active{cursor:default}
 }
 .dual-btn--tiktok{
   background:linear-gradient(135deg,#2becf0,#ff2e6d);
-  color:#0a1628;
-  border:1px solid rgba(255,255,255,.28);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.35);
   box-shadow:0 8px 28px rgba(0,242,234,.28),0 8px 24px rgba(255,46,109,.2);
+  text-shadow:0 1px 2px rgba(0,0,0,.35);
+}
+.dual-btn--tiktok i{
+  color:inherit;
 }
 .dual-btn--tiktok:hover{
   transform:translateY(-2px);
@@ -5289,9 +5293,13 @@ a.dex-panel--active{cursor:default}
 }
 .dual-btn--patch{
   background:linear-gradient(135deg,var(--primary),var(--primary-2));
-  color:#001228;
-  border:1px solid rgba(126,205,242,.45);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.35);
   box-shadow:0 8px 26px rgba(126,205,242,.35);
+  text-shadow:0 1px 2px rgba(0,0,0,.35);
+}
+.dual-btn--patch i{
+  color:inherit;
 }
 .dual-btn--patch:hover{
   transform:translateY(-2px);
