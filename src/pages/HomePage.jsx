@@ -82,8 +82,6 @@ const HomePage = () => {
   
   const patreonContent = getPatreonContent();
   const [patreonOverlayOpen, setPatreonOverlayOpen] = useState(false);
-  const [openVideo, setOpenVideo] = useState(false);
-  const [openExplanations, setOpenExplanations] = useState(false);
   const [openDownload, setOpenDownload] = useState(false);
   const [openPatchNotes, setOpenPatchNotes] = useState(false);
   const [patchNotesFromApi, setPatchNotesFromApi] = useState(null);
@@ -365,7 +363,7 @@ const HomePage = () => {
           {/* DERNIÈRES NOUVEAUTÉS */}
           <section id="news" className="section card">
             <h2>
-              <i className="fa-solid fa-newspaper section-icon" aria-hidden />
+              <img src="/newsCLEAN3.png" alt="" className="section-icon" />
               {" "}
               {t('sections.news.title')}
             </h2>
@@ -381,14 +379,18 @@ const HomePage = () => {
           <div className="dual-sections">
             <section className="section card dual-section">
               <h2>
-                <i className="fa-brands fa-tiktok"></i>
+                <img src="/TIKTOK.png" alt="" className="section-icon" />
+                {" "}
                 {t('sections.tiktok.title')}
               </h2>
               <div className="dual-content">
                 <div className="dual-image-container">
-                  <div className="dual-image dual-image--pending dual-image--tiktok" aria-hidden>
-                    <i className="fa-brands fa-tiktok dual-image-tiktok-icon" />
-                  </div>
+                  <img
+                    src="/TIKTOK.png"
+                    alt=""
+                    className="dual-image"
+                    decoding="async"
+                  />
                   <div className="dual-overlay">
                     <div className="dual-cta">
                       <h3>{t('sections.tiktok.heading')}</h3>
@@ -564,39 +566,7 @@ const HomePage = () => {
           </div>
         </footer>
 
-        {/* Modal explications patch */}
-        <Modal
-          open={openExplanations}
-          onClose={() => setOpenExplanations(false)}
-          title={t('modals.patchExplanations.title')}
-        >
-          <div className="explanations-content">
-            <div className="explanations-video">
-              <iframe
-                width="100%"
-                height="315"
-                src="https://www.youtube.com/embed/043CVnIdeZ0"
-                title="Tutoriel installation patch"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-            <div className="explanations-text">
-              <h3>{t('modals.patchExplanations.heading')}</h3>
-              <p>
-                {t('modals.patchExplanations.description')}
-              </p>
-              <ol>
-                {t('modals.patchExplanations.steps').map((step, index) => (
-                  <li key={index}>{step}</li>
-                ))}
-              </ol>
-            </div>
-          </div>
-        </Modal>
-
-        {/* Modal de téléchargement — données depuis l'API (launcher + patch si configuré) */}
+        {/* Modal de téléchargement — données depuis l'API (launcher) */}
         <Modal
           open={openDownload}
           onClose={() => setOpenDownload(false)}
@@ -626,35 +596,6 @@ const HomePage = () => {
                   </span>
                 </div>
               )}
-              {(downloads?.patch?.trim() && downloads.patch !== '#') && (
-                <a
-                  className="dl-modal-card dl-modal-card--patch"
-                  href={downloads.patch.trim()}
-                  onClick={() => setOpenDownload(false)}
-                >
-                  <span className="dl-modal-card-icon"><i className="fa-solid fa-file-zipper" /></span>
-                  <span className="dl-modal-card-body">
-                    <span className="dl-modal-card-title">{t('buttons.downloadPatch')}</span>
-                    <span className="dl-modal-card-sub">{isEn ? "Latest update" : "Dernière mise à jour"}</span>
-                  </span>
-                  <span className="dl-modal-card-arrow"><i className="fa-solid fa-arrow-down" /></span>
-                </a>
-              )}
-            </div>
-            <div className="dl-modal-info">
-              <div className="dl-modal-info-icon"><i className="fa-solid fa-circle-info" /></div>
-              <div className="dl-modal-info-body">
-                <h4>{t('modals.download.patchInstructions.title')}</h4>
-                <p>{t('modals.download.patchInstructions.description')}</p>
-                <p className="dl-modal-info-note">{t('modals.download.patchInstructions.videoNote')}</p>
-                <button
-                  type="button"
-                  className="dl-modal-video-btn"
-                  onClick={() => { setOpenExplanations(true); setOpenDownload(false); }}
-                >
-                  <i className="fa-solid fa-play" /> {t('buttons.watchVideo')}
-                </button>
-              </div>
             </div>
 
             <Link
@@ -733,21 +674,6 @@ const HomePage = () => {
           </div>
         </Modal>
 
-        {/* (optionnel) modal vidéo patch si utilisé */}
-        {downloads.patchVideo && (
-          <Modal
-            open={openVideo}
-            onClose={() => setOpenVideo(false)}
-            title="Installer un patch — Vidéo tutoriel"
-          >
-            <iframe
-              src={downloads.patchVideo}
-              title="Tutoriel Patch"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-          </Modal>
-        )}
       </main>
     </>
   );

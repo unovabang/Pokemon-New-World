@@ -170,23 +170,7 @@ export default function DownloadPage() {
                 </span>
               </div>
             )}
-            {(downloads?.patch?.trim() && downloads.patch !== "#") && (
-              <a className="download-card-btn download-card-btn--patch" href={downloads.patch.trim()}>
-                <span className="download-card-btn-icon"><i className="fa-solid fa-file-zipper" /></span>
-                <span className="download-card-btn-body">
-                  <span className="download-card-btn-title">{isEn ? "Download the patch" : "Télécharger le patch"}</span>
-                  <span className="download-card-btn-sub">{isEn ? "Latest update" : "Dernière mise à jour"}</span>
-                </span>
-                <span className="download-card-btn-arrow"><i className="fa-solid fa-arrow-down" /></span>
-              </a>
-            )}
           </div>
-          {(downloads?.patch?.trim() && downloads.patch !== "#") && (
-            <p className="download-actions-note">
-              <i className="fa-solid fa-circle-info" aria-hidden />
-              {isEn ? "Extract the patch to your game root folder. See the video below for details." : "Extrayez le patch à la racine du jeu. Voir la vidéo ci-dessous pour plus de détails."}
-            </p>
-          )}
         </section>
 
         {videoUrl && (

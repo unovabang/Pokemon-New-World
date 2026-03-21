@@ -266,9 +266,7 @@ const UploadZone = ({ label, icon, iconColor, currentLink, onLinkChange, onUploa
 const DownloadsEditor = ({ onSave }) => {
   const [windowsLink, setWindowsLink] = useState('');
   const [windowsEnLink, setWindowsEnLink] = useState('');
-  const [patchLink, setPatchLink] = useState('');
   const [launcherLink, setLauncherLink] = useState('');
-  const [patchVideo, setPatchVideo] = useState('');
   const [gameVersion, setGameVersion] = useState('');
   const [gameVersionEn, setGameVersionEn] = useState('');
   const [launcherBackgroundUrl, setLauncherBackgroundUrl] = useState('');
@@ -301,9 +299,7 @@ const DownloadsEditor = ({ onSave }) => {
       if (data.success && data.downloads) {
         setWindowsLink(data.downloads.windows || '');
         setWindowsEnLink(data.downloads.windowsEn || '');
-        setPatchLink(data.downloads.patch || '');
         setLauncherLink(data.downloads.launcher || '');
-        setPatchVideo(data.downloads.patchVideo || '');
         setGameVersion(data.downloads.gameVersion || '');
         setGameVersionEn(data.downloads.gameVersionEn || '');
         setLauncherBackgroundUrl(data.downloads.launcherBackgroundUrl || '');
@@ -402,9 +398,9 @@ const DownloadsEditor = ({ onSave }) => {
           const downloadsConfig = {
             windows: windowsLink,
             windowsEn: windowsEnLink,
-            patch: patchLink,
+            patch: '',
             launcher: launcherLink,
-            patchVideo: patchVideo,
+            patchVideo: '',
             gameVersion: gameVersion,
             gameVersionEn: gameVersionEn,
             launcherBackgroundUrl: launcherBackgroundUrl.trim() || undefined,
@@ -791,69 +787,6 @@ const DownloadsEditor = ({ onSave }) => {
           infoText="Build anglais : utilisé avec ?lang=en. Obligatoire ensemble : lien + « Version anglaise » ci-dessus. Le launcher extrait des archives ZIP (comme le FR) : évitez .rar/.7z tant que l’outil d’extraction ne les gère pas."
         />
 
-        {/* Patch */}
-        <UploadZone
-          label="Patch / Mise à jour"
-          icon="fa-solid fa-file-arrow-up"
-          iconColor="#28a745"
-          currentLink={patchLink}
-          onLinkChange={setPatchLink}
-          onUploadComplete={(url) => { setPatchLink(url); loadR2Objects(); }}
-          infoText='Ce lien sera utilisé pour le bouton "Télécharger le patch" sur votre site.'
-        />
-
-        {/* Vidéo tutoriel */}
-        <div style={{ 
-          background: 'rgba(255,255,255,0.05)', 
-          borderRadius: '10px', 
-          padding: '2rem',
-          border: '1px solid rgba(255,255,255,0.1)'
-        }}>
-          <h3 style={{ 
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}>
-            <i className="fa-solid fa-play-circle" style={{ color: '#dc3545' }}></i>
-            Vidéo Tutoriel (Optionnel)
-          </h3>
-          
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-              <i className="fa-solid fa-video"></i> Lien YouTube (embed):
-            </label>
-            <input
-              type="url"
-              value={patchVideo}
-              onChange={(e) => setPatchVideo(e.target.value)}
-              placeholder="https://www.youtube.com/embed/VIDEO_ID"
-              style={{
-                width: '100%',
-                padding: '1rem',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.3)',
-                background: 'rgba(255,255,255,0.1)',
-                color: 'white',
-                fontSize: '1rem',
-                boxSizing: 'border-box',
-              }}
-            />
-          </div>
-
-          <div style={{ 
-            background: 'rgba(255,255,255,0.1)',
-            padding: '1rem',
-            borderRadius: '5px',
-            fontSize: '0.9rem',
-            opacity: 0.8
-          }}>
-            <i className="fa-solid fa-info-circle"></i>{' '}
-            Lien YouTube pour le tutoriel d'installation. Utilisez le format "embed" : 
-            https://www.youtube.com/embed/ID_VIDEO
-          </div>
-        </div>
-
         {/* Uploads incomplets (multipart non finalisés) */}
         {r2IncompleteUploads.length > 0 && (
           <div style={{
@@ -932,15 +865,6 @@ const DownloadsEditor = ({ onSave }) => {
             </div>
 
             <div style={{ textAlign: 'center' }}>
-              <button className="btn btn-primary" style={{ marginBottom: '0.5rem' }}>
-                <i className="fa-solid fa-file-arrow-up"></i> Télécharger le patch
-              </button>
-              <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>
-                {patchLink ? '✅ Lien configuré' : '❌ Lien manquant'}
-              </p>
-            </div>
-
-            <div style={{ textAlign: 'center' }}>
               <button className="btn btn-primary" style={{ marginBottom: '0.5rem', background: '#0078d4' }}>
                 <i className="fa-brands fa-windows"></i> Jeu FR (.zip)
               </button>
@@ -1015,17 +939,6 @@ const DownloadsEditor = ({ onSave }) => {
                 {launcherBackgroundUrl ? '✅ Image configurée' : '— Optionnel'}
               </p>
             </div>
-
-            {patchVideo && (
-              <div style={{ textAlign: 'center' }}>
-                <button className="btn btn-ghost" style={{ marginBottom: '0.5rem' }}>
-                  <i className="fa-solid fa-play"></i> Voir le tutoriel
-                </button>
-                <p style={{ fontSize: '0.8rem', opacity: 0.7, margin: 0 }}>
-                  ✅ Vidéo configurée
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </div>
