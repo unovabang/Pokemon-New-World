@@ -12,7 +12,7 @@ const tbBtnStyle = {
 };
 
 /**
- * Barre Gras / Italique / Titre (même logique que l’éditeur Lore).
+ * Barre Gras / Italique / Titre / Puces (même logique que l’éditeur Lore + patch notes).
  */
 export default function MarkdownToolbar({ textareaRef, onUpdate }) {
   const wrap = useCallback(
@@ -35,6 +35,36 @@ export default function MarkdownToolbar({ textareaRef, onUpdate }) {
     [textareaRef, onUpdate]
   );
 
+  /** Préfixe chaque ligne du bloc sélectionné par « - » (lignes déjà en liste inchangées). */
+  const prefixBulletLines = useCallback(() => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    const val = ta.value;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const lineStart = val.lastIndexOf("\n", Math.max(0, start - 1)) + 1;
+    let lineEnd = val.indexOf("\n", end);
+    if (lineEnd === -1) lineEnd = val.length;
+    const block = val.slice(lineStart, lineEnd);
+    const lines = block.split("\n");
+    const newLines = lines.map((line) => {
+      if (line.trim() === "") return line;
+      if (/^\s*[-*]\s+/.test(line)) return line;
+      return `- ${line}`;
+    });
+    const newBlock = newLines.join("\n");
+    const newVal = val.slice(0, lineStart) + newBlock + val.slice(lineEnd);
+    const delta = newBlock.length - block.length;
+    onUpdate(newVal);
+    requestAnimationFrame(() => {
+      ta.focus();
+      const ns = lineStart;
+      const ne = Math.max(ns, end + delta);
+      ta.selectionStart = ns;
+      ta.selectionEnd = ne;
+    });
+  }, [textareaRef, onUpdate]);
+
   return (
     <div style={toolbarStyle}>
       <button type="button" onClick={() => wrap("**", "**")} style={tbBtnStyle} title="Gras">
@@ -45,6 +75,9 @@ export default function MarkdownToolbar({ textareaRef, onUpdate }) {
       </button>
       <button type="button" onClick={() => wrap("[TITLE]", "[/TITLE]")} style={tbBtnStyle} title="Titre (style Lore)">
         <i className="fa-solid fa-heading" />
+      </button>
+      <button type="button" onClick={prefixBulletLines} style={tbBtnStyle} title="Puces (- ) sur chaque ligne">
+        <i className="fa-solid fa-list-ul" />
       </button>
     </div>
   );

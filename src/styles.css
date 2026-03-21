@@ -5501,6 +5501,23 @@ a.dex-panel--active{cursor:default}
   margin:0.35rem 0 0.2rem;
   line-height:1.35;
 }
+.patch-md-root{display:block;}
+.patch-section li .patch-md-root .patch-md-ul,
+.patchnotes-section li .patch-md-root .patch-md-ul{
+  margin:0.35rem 0 0.2rem;
+  padding-left:1.35rem;
+  list-style-type:disc;
+  color:rgba(255,255,255,.9);
+}
+.patch-md-ul .patch-md-ul{
+  list-style-type:circle;
+  margin:0.25rem 0 0.15rem;
+}
+.patch-md-li{
+  margin:0.2rem 0;
+  line-height:1.5;
+}
+.patch-md-li-content{display:inline;}
 .patch-section-image-wrap{margin:0 0 1rem; text-align:center}
 .patch-section-image{
   max-width:100%;

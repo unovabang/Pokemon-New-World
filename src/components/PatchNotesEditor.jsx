@@ -580,9 +580,10 @@ const PatchNotesEditor = ({ onSave }) => {
                         <button type="button" onClick={() => addItem(sectionIndex)} className="btn btn-ghost"><i className="fa-solid fa-plus" /> Ajouter</button>
                       </div>
                       <p className="patchnotes-editor-md-hint">
-                        Markdown (comme le Lore) : retours ligne, <code className="patchnotes-editor-md-code">**gras**</code>,{' '}
+                        Markdown : retours ligne, <code className="patchnotes-editor-md-code">**gras**</code>,{' '}
                         <code className="patchnotes-editor-md-code">*italique*</code>,{' '}
-                        <code className="patchnotes-editor-md-code">[TITLE]…[/TITLE]</code> — ou les boutons ci‑dessous.
+                        <code className="patchnotes-editor-md-code">[TITLE]…[/TITLE]</code>, listes <code className="patchnotes-editor-md-code">- </code> ou{' '}
+                        <code className="patchnotes-editor-md-code">  - </code> (2 espaces pour sous-niveau) — ou les boutons ci‑dessous.
                       </p>
                       {(section.items || []).map((item, itemIndex) => {
                         const taRef = getItemTextareaRef(sectionIndex, itemIndex);
