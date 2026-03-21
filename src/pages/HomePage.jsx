@@ -379,15 +379,18 @@ const HomePage = () => {
           <div className="dual-sections">
             <section className="section card dual-section">
               <h2>
-                <i className="fa-brands fa-tiktok section-icon" aria-hidden />
+                <img src="https://i.imgur.com/Pw770I9.png" alt="" className="section-icon" />
                 {" "}
                 {t('sections.tiktok.title')}
               </h2>
               <div className="dual-content">
                 <div className="dual-image-container">
-                  <div className="dual-image dual-image--pending dual-image--tiktok" aria-hidden>
-                    <i className="fa-brands fa-tiktok dual-image-tiktok-icon" />
-                  </div>
+                  <img
+                    src="https://i.imgur.com/Pw770I9.png"
+                    alt=""
+                    className="dual-image"
+                    decoding="async"
+                  />
                   <div className="dual-overlay">
                     <div className="dual-cta">
                       <h3>{t('sections.tiktok.heading')}</h3>
@@ -408,7 +411,8 @@ const HomePage = () => {
 
             <section className="section card dual-section">
               <h2>
-                <i className="fa-solid fa-file-text"></i>
+                <img src="https://i.imgur.com/XB2K6SU.png" alt="" className="section-icon" />
+                {" "}
                 {t('sections.patchNotes.title')}
               </h2>
               <div className="dual-content">
