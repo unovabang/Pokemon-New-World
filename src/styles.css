@@ -5045,68 +5045,162 @@ a.dex-panel--active{cursor:default}
   padding:12px 20px;
   font-size:15px;
   position:relative;
+  overflow:hidden;
 }
 
 /* ===== Dual Sections (TikTok & Patch) ===== */
 .dual-sections{
-  display:grid; 
-  /* minmax(0,1fr) : colonnes strictement égales (évite min-content > 1fr sur le contenu) */
-  grid-template-columns:repeat(2, minmax(0, 1fr)); 
-  gap:20px; 
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:24px;
   margin-top:32px;
   align-items:stretch;
 }
 @media (max-width:900px){
   .dual-sections{
     grid-template-columns:minmax(0, 1fr);
-    gap:16px;
-  }
-  .dual-image{
-    aspect-ratio:1.2;
+    gap:20px;
   }
 }
 .dual-section{
   margin-top:0;
   min-width:0;
+  display:flex;
+  flex-direction:column;
+  transition:transform .25s ease, box-shadow .25s ease;
 }
-/* Même hauteur de ligne de titre pour aligner les deux visuels (TikTok vs titre plus long) */
+.dual-section:hover{
+  transform:translateY(-3px);
+}
 .dual-section.card{
   display:flex;
   flex-direction:column;
   height:100%;
   min-height:0;
 }
-.dual-section.card h2{
+.dual-section.card h2.dual-section-heading{
+  margin:0 0 18px;
+  padding-bottom:14px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  font-family:"Rajdhani","Outfit",system-ui,sans-serif;
+  font-size:clamp(1.35rem,2.2vw,1.85rem);
+  font-weight:700;
+  letter-spacing:.02em;
+  color:var(--text);
   min-height:clamp(3.25rem, 5.5vw, 5.75rem);
 }
-.dual-section .dual-content{
-  margin-top:16px;
+.dual-section.card h2.dual-section-heading::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-1px;
+  width:100%;
+  height:2px;
+  border-radius:2px;
+  background:linear-gradient(90deg,var(--primary-2) 0%,rgba(126,205,242,.45) 42%,transparent 100%);
+  pointer-events:none;
+}
+.dual-section-heading-start{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+.dual-section-heading-icon{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.15rem;
+  flex-shrink:0;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 4px 16px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.dual-section-heading-icon--tiktok{
+  background:linear-gradient(145deg,rgba(0,242,234,.35),rgba(255,0,80,.28));
+  color:#fff;
+}
+.dual-section-heading-icon--patch{
+  background:linear-gradient(145deg,rgba(251,191,36,.22),rgba(245,158,11,.12));
+  color:#fde68a;
+}
+.dual-section-version-pill{
+  font-size:.72rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:7px 12px;
+  border-radius:999px;
+  background:linear-gradient(135deg,rgba(251,191,36,.2),rgba(245,158,11,.1));
+  border:1px solid rgba(251,191,36,.4);
+  color:#fde68a;
+  box-shadow:0 0 20px -6px rgba(251,191,36,.45);
+}
+.dual-body{
+  margin-top:0;
   flex:1 1 auto;
   display:flex;
   flex-direction:column;
-  justify-content:flex-end;
+  border-radius:18px;
+  overflow:hidden;
   min-height:0;
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:
+    0 0 0 1px rgba(126,205,242,.12) inset,
+    0 12px 40px rgba(0,0,0,.32);
+  transition:box-shadow .3s ease, border-color .3s ease;
 }
-.dual-image-container{
-  position:relative; 
+.dual-section--tiktok .dual-body{
+  border-color:rgba(0,242,234,.22);
+  box-shadow:
+    0 0 0 1px rgba(255,0,80,.12) inset,
+    0 14px 44px rgba(0,0,0,.35);
+}
+.dual-section--patch .dual-body{
+  border-color:rgba(251,191,36,.2);
+  box-shadow:
+    0 0 0 1px rgba(251,191,36,.1) inset,
+    0 14px 44px rgba(0,0,0,.35);
+}
+.dual-section:hover .dual-body{
+  box-shadow:
+    0 0 0 1px rgba(126,205,242,.22) inset,
+    0 18px 52px rgba(0,0,0,.4);
+}
+.dual-section--tiktok:hover .dual-body{
+  border-color:rgba(0,242,234,.35);
+}
+.dual-section--patch:hover .dual-body{
+  border-color:rgba(251,191,36,.32);
+}
+.dual-media{
+  position:relative;
+  overflow:hidden;
+  aspect-ratio:16/10;
+  min-height:168px;
+  background:rgba(0,0,0,.35);
+}
+@media (max-width:900px){
+  .dual-media{ aspect-ratio:4/3; min-height:200px; }
+}
+.dual-media .dual-image{
   width:100%;
-  border-radius:20px; 
-  overflow:hidden; 
-  border:1px solid rgba(126,205,242,.15); 
-  box-shadow:0 16px 40px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.03) inset;
-  transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
-}
-.dual-image-container:hover{
-  transform:translateY(-4px);
-  border-color:rgba(126,205,242,.3);
-  box-shadow:0 24px 56px rgba(0,0,0,.55), 0 0 40px var(--glow-blue);
-}
-.dual-image{
-  width:100%; 
-  aspect-ratio:1; 
-  object-fit:cover; 
+  height:100%;
+  object-fit:cover;
+  object-position:center;
   display:block;
-  transition:transform .5s ease;
+  transition:transform .5s cubic-bezier(.25,.46,.45,.94);
+}
+.dual-body:hover .dual-media .dual-image{
+  transform:scale(1.05);
 }
 .dual-image--pending{
   background:linear-gradient(135deg, rgba(126,205,242,.12) 0%, rgba(8,14,28,.5) 50%, rgba(126,205,242,.08) 100%);
@@ -5116,79 +5210,84 @@ a.dex-panel--active{cursor:default}
   0%, 100%{ opacity:.75; }
   50%{ opacity:1; }
 }
-.dual-image--tiktok{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  object-fit:initial;
+.dual-panel{
+  position:relative;
+  flex:1;
+  background:linear-gradient(180deg,rgba(14,20,36,.72) 0%,rgba(8,12,24,.92) 100%);
+  backdrop-filter:saturate(140%) blur(14px);
+  -webkit-backdrop-filter:saturate(140%) blur(14px);
+  border-top:1px solid rgba(255,255,255,.12);
 }
-.dual-image-tiktok-icon{
-  font-size:clamp(3rem, 14vw, 5.5rem);
-  color:rgba(255,255,255,.88);
-  filter:drop-shadow(0 8px 24px rgba(0,0,0,.45));
+.dual-panel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(120% 80% at 50% 0%,rgba(126,205,242,.08),transparent 55%);
+  pointer-events:none;
 }
-.dual-image-container:hover .dual-image{
-  transform:scale(1.06);
+.dual-section--tiktok .dual-panel::before{
+  background:radial-gradient(120% 80% at 50% 0%,rgba(0,242,234,.1),transparent 55%);
 }
-.dual-overlay{
-  position:absolute; 
-  inset:0; 
-  background:linear-gradient(
-    to top,
-    rgba(5,9,20,.92) 0%,
-    rgba(5,9,20,.6) 50%,
-    rgba(5,9,20,.15) 100%
-  );
-  display:flex; 
-  align-items:flex-end;
-  justify-content:center;
-  padding:24px;
-  opacity:0;
-  transition:opacity .35s ease;
+.dual-section--patch .dual-panel::before{
+  background:radial-gradient(120% 80% at 50% 0%,rgba(251,191,36,.09),transparent 55%);
 }
-.dual-image-container:hover .dual-overlay{
-  opacity:1;
+.dual-panel-inner{
+  position:relative;
+  z-index:1;
+  padding:22px 22px 24px;
+  text-align:left;
 }
-.dual-cta{
-  text-align:center; 
-  width:100%;
-  color:var(--text);
+.dual-panel-inner h3{
+  margin:0 0 10px;
+  font-family:"Rajdhani","Outfit",system-ui,sans-serif;
+  font-size:clamp(1.05rem,1.8vw,1.3rem);
+  font-weight:700;
+  line-height:1.2;
+  background:linear-gradient(135deg,#fff,rgba(191,232,255,.92));
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
-.dual-cta h3{
-  margin:0 0 8px; 
-  font-size:clamp(15px,2vw,19px); 
-  font-weight:800;
-  color:#fff;
-  text-shadow:0 2px 12px rgba(0,0,0,.6);
-}
-.dual-cta p{
-  margin:0 0 14px; 
-  color:rgba(255,255,255,.75); 
-  font-size:13px; 
-  line-height:1.4;
-  text-shadow:0 1px 6px rgba(0,0,0,.5);
+.dual-panel-inner p{
+  margin:0 0 20px;
+  color:rgba(255,255,255,.78);
+  font-size:14px;
+  line-height:1.55;
+  max-width:36em;
 }
 .dual-btn{
-  background:linear-gradient(180deg, color-mix(in srgb, var(--primary) 92%, white), var(--primary));
-  border:1px solid rgba(255,255,255,.2);
-  box-shadow:0 2px 12px -4px rgba(46,89,198,.3);
-  color:#fff;
-  font-weight:600;
-  padding:10px 16px;
+  font-weight:700;
+  padding:11px 20px;
   font-size:14px;
   border-radius:10px;
   text-decoration:none;
   display:inline-flex;
   align-items:center;
-  gap:8px;
-  transition:all .2s ease;
+  gap:9px;
+  transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+  border:none;
+  cursor:pointer;
 }
-.dual-btn:hover{
-  box-shadow:0 4px 16px -4px rgba(46,89,198,.35);
+.dual-btn--tiktok{
+  background:linear-gradient(135deg,#2becf0,#ff2e6d);
+  color:#0a1628;
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:0 8px 28px rgba(0,242,234,.28),0 8px 24px rgba(255,46,109,.2);
 }
-.patreon-btn{
-  position:relative;
-  overflow:hidden;
+.dual-btn--tiktok:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.06);
+  box-shadow:0 12px 36px rgba(0,242,234,.38),0 10px 28px rgba(255,46,109,.28);
+}
+.dual-btn--patch{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  color:#001228;
+  border:1px solid rgba(126,205,242,.45);
+  box-shadow:0 8px 26px rgba(126,205,242,.35);
+}
+.dual-btn--patch:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 34px rgba(126,205,242,.5);
 }
 .patreon-btn::before{
   content:""; 

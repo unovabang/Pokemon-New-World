@@ -162,6 +162,11 @@ const HomePage = () => {
     return null;
   }, [patchNotesFromApi]);
 
+  const latestPatchVersion = useMemo(() => {
+    const v = patchNotesFromApi?.versions?.[0]?.version;
+    return v != null && String(v).trim() ? String(v).trim() : null;
+  }, [patchNotesFromApi]);
+
   const patreonIconUrl = typeof patreonContent?.icon === "string" && patreonContent.icon.trim() ? patreonContent.icon.trim() : null;
   const patreonHeroImageUrl = typeof patreonContent?.image === "string" && patreonContent.image.trim() ? patreonContent.image.trim() : null;
 
@@ -377,46 +382,55 @@ const HomePage = () => {
 
           {/* SECTIONS TIKTOK & PATCH */}
           <div className="dual-sections">
-            <section className="section card dual-section">
-              <h2>
-                <img src="https://i.imgur.com/v9porTU.png" alt="" className="section-icon" />
-                {" "}
-                {t('sections.tiktok.title')}
+            <section className="section card dual-section dual-section--tiktok">
+              <h2 className="dual-section-heading">
+                <span className="dual-section-heading-start">
+                  <span className="dual-section-heading-icon dual-section-heading-icon--tiktok" aria-hidden>
+                    <i className="fa-brands fa-tiktok" />
+                  </span>
+                  {t("sections.tiktok.title")}
+                </span>
               </h2>
-              <div className="dual-content">
-                <div className="dual-image-container">
+              <div className="dual-body">
+                <div className="dual-media">
                   <img
                     src="/TIKTOK.png"
                     alt=""
                     className="dual-image"
                     decoding="async"
                   />
-                  <div className="dual-overlay">
-                    <div className="dual-cta">
-                      <h3>{t('sections.tiktok.heading')}</h3>
-                      <p>{t('sections.tiktok.description')}</p>
-                      <a 
-                        href={tiktok || "https://www.tiktok.com"} 
-                        target="_blank" 
-                        rel="noreferrer"
-                        className="btn btn-primary dual-btn"
-                      >
-                        <i className="fa-brands fa-tiktok"></i> {t('buttons.viewOnTikTok')}
-                      </a>
-                    </div>
+                </div>
+                <div className="dual-panel">
+                  <div className="dual-panel-inner">
+                    <h3>{t("sections.tiktok.heading")}</h3>
+                    <p>{t("sections.tiktok.description")}</p>
+                    <a
+                      href={tiktok || "https://www.tiktok.com"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn dual-btn dual-btn--tiktok"
+                    >
+                      <i className="fa-brands fa-tiktok" aria-hidden /> {t("buttons.viewOnTikTok")}
+                    </a>
                   </div>
                 </div>
               </div>
             </section>
 
-            <section className="section card dual-section">
-              <h2>
-                <img src="https://i.imgur.com/c3Naj4W.png" alt="" className="section-icon" />
-                {" "}
-                {t('sections.patchNotes.title')}
+            <section className="section card dual-section dual-section--patch">
+              <h2 className="dual-section-heading">
+                <span className="dual-section-heading-start">
+                  <span className="dual-section-heading-icon dual-section-heading-icon--patch" aria-hidden>
+                    <i className="fa-solid fa-file-lines" />
+                  </span>
+                  {t("sections.patchNotes.title")}
+                </span>
+                {latestPatchVersion ? (
+                  <span className="dual-section-version-pill">v{latestPatchVersion}</span>
+                ) : null}
               </h2>
-              <div className="dual-content">
-                <div className="dual-image-container">
+              <div className="dual-body">
+                <div className="dual-media">
                   {patchNotesSectionImageSrc ? (
                     <img
                       key={patchNotesSectionImageSrc}
@@ -428,17 +442,18 @@ const HomePage = () => {
                   ) : (
                     <div className="dual-image dual-image--pending" aria-hidden />
                   )}
-                  <div className="dual-overlay">
-                    <div className="dual-cta">
-                      <h3>{t('sections.patchNotes.heading')}</h3>
-                      <p>{t('sections.patchNotes.description')}</p>
-                      <button 
-                        className="btn btn-primary dual-btn"
-                        onClick={() => setOpenPatchNotes(true)}
-                      >
-                        <i className="fa-solid fa-eye"></i> {t('buttons.viewNotes')}
-                      </button>
-                    </div>
+                </div>
+                <div className="dual-panel">
+                  <div className="dual-panel-inner">
+                    <h3>{t("sections.patchNotes.heading")}</h3>
+                    <p>{t("sections.patchNotes.description")}</p>
+                    <button
+                      type="button"
+                      className="btn dual-btn dual-btn--patch"
+                      onClick={() => setOpenPatchNotes(true)}
+                    >
+                      <i className="fa-solid fa-eye" aria-hidden /> {t("buttons.viewNotes")}
+                    </button>
                   </div>
                 </div>
               </div>
