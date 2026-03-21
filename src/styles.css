@@ -5500,50 +5500,289 @@ a.dex-panel--active{cursor:default}
 .modal-dialog--patchnotes .patch-modal-footer .patch-modal-footer-btn i{color:inherit}
 .patch-loading{margin:0; color:var(--muted); text-align:center; padding:2rem; font-size:0.95rem}
 
-/* Page dédiée Notes de patch */
-.patchnotes-page { min-height: 100vh; padding-bottom: 4rem; }
-.patchnotes-container { max-width: 800px; margin: 0 auto; padding-top: 1.5rem; }
-.patchnotes-header { margin-bottom: 2rem; text-align: center; }
-.patchnotes-title { margin: 0 0 .5rem; font-size: 1.6rem; font-weight: 700; color: var(--text); display: flex; align-items: center; justify-content: center; gap: .5rem; }
-.patchnotes-title i { color: var(--primary-2); opacity: .95; }
-.patchnotes-desc { margin: 0; font-size: 1rem; color: var(--muted); }
-.patchnotes-loading { text-align: center; padding: 3rem; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: .75rem; }
-.patchnotes-empty { text-align: center; padding: 3rem; color: var(--muted); }
-.patchnotes-empty i { font-size: 2rem; display: block; margin-bottom: 1rem; opacity: .6; }
-.patchnotes-list { display: flex; flex-direction: column; gap: 1.5rem; }
-.patchnotes-version { padding: 1.75rem 2rem; }
-.patchnotes-version-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; padding-bottom: .75rem; border-bottom: 1px solid rgba(255,255,255,.12); }
-.patchnotes-version-header h2 { margin: 0; font-size: 1.25rem; color: var(--text); }
-.patchnotes-version-date { color: var(--muted); font-size: .95rem; }
-.patchnotes-version-image-wrap { margin-bottom: 1.25rem; text-align: center; }
-.patchnotes-version-image { max-width: 100%; max-height: 320px; border-radius: 12px; border: 1px solid rgba(255,255,255,.1); }
-.patchnotes-version-sections { display: flex; flex-direction: column; gap: 1.25rem; }
-.patchnotes-section h3 { margin: 0 0 .75rem; font-size: 1rem; color: var(--primary-2); padding: .5rem .75rem; background: rgba(126,205,242,.1); border-radius: 8px; border-left: 3px solid var(--primary-2); }
-.patchnotes-section ul { margin: 0; padding-left: 1.25rem; list-style: none; }
-.patchnotes-section li { margin-bottom: .4rem; color: var(--text); line-height: 1.5; position: relative; padding-left: .5rem; }
-.patchnotes-section li::before { content: "•"; color: var(--primary-2); font-weight: bold; position: absolute; left: 0; }
-.patchnotes-section-image-wrap { margin: .75rem 0 1rem; text-align: center; }
-.patchnotes-section-image { max-width: 100%; max-height: 280px; border-radius: 10px; border: 1px solid rgba(255,255,255,.1); }
-
-/* Page Notes de patch avec sidebar (liste des versions) */
-.patchnotes-container--with-sidebar { max-width: none; display: grid; grid-template-columns: 220px 1fr; gap: 2rem; padding-left: 1rem; padding-right: 1rem; }
-@media (max-width: 700px) { .patchnotes-container--with-sidebar { grid-template-columns: 1fr; padding-left: .75rem; padding-right: .75rem; } }
-@media (max-width: 480px) {
-  .patchnotes-container--with-sidebar { padding-left: .5rem; padding-right: .5rem; }
-  .patchnotes-version { padding: 1.25rem 1rem; }
-  .patchnotes-version-header { flex-direction: column; align-items: flex-start; }
+/* Page dédiée /patchnotes (alignée sur le modal patch) */
+.patchnotes-page{
+  min-height:100vh;
+  padding-bottom:4rem;
+  position:relative;
 }
-.patchnotes-sidebar { position: sticky; top: 2rem; height: fit-content; }
-.patchnotes-sidebar-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1rem; }
-.patchnotes-sidebar-title { margin: 0; font-size: 1rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-.patchnotes-lang-selector { flex-shrink: 0; }
-.patchnotes-sidebar-nav { display: flex; flex-direction: column; gap: .35rem; }
-.patchnotes-sidebar-item { display: flex; flex-direction: column; align-items: flex-start; gap: .15rem; width: 100%; padding: .75rem 1rem; border: none; border-radius: 10px; background: rgba(255,255,255,.05); color: var(--text); font-size: .9rem; text-align: left; cursor: pointer; transition: background .2s, border-color .2s; border: 1px solid transparent; }
-.patchnotes-sidebar-item:hover { background: rgba(255,255,255,.1); }
-.patchnotes-sidebar-item--selected { background: rgba(126,205,242,.15); border-color: var(--primary-2); color: var(--text); }
-.patchnotes-sidebar-item-version { font-weight: 600; }
-.patchnotes-sidebar-item-date { font-size: .8rem; color: var(--muted); }
-.patchnotes-main { min-width: 0; }
+.patchnotes-container{
+  max-width:800px;
+  margin:0 auto;
+  padding-top:1.5rem;
+}
+.patchnotes-header{
+  margin-bottom:1.75rem;
+  padding:1.35rem 1.5rem 1.5rem;
+  text-align:center;
+  border-radius:18px;
+  background:linear-gradient(165deg, rgba(12,28,58,.45) 0%, rgba(8,14,28,.35) 100%);
+  border:1px solid rgba(126,205,242,.16);
+  box-shadow:0 12px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.patchnotes-title{
+  margin:0 0 .6rem;
+  font-size:clamp(1.45rem, 3vw, 1.85rem);
+  font-weight:700;
+  letter-spacing:.02em;
+  color:#f0f6ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:.65rem;
+  text-shadow:0 1px 8px rgba(0,0,0,.45);
+}
+.patchnotes-title-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+.patchnotes-title-icon i{
+  font-size:1.35em;
+  color:var(--primary-2);
+  filter:drop-shadow(0 0 10px rgba(126,205,242,.45));
+}
+.patchnotes-title-text{
+  background:linear-gradient(135deg,#fff 0%, rgba(191,232,255,.92) 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.patchnotes-desc{
+  margin:0;
+  font-size:0.98rem;
+  line-height:1.55;
+  color:rgba(255,255,255,.62);
+  max-width:36rem;
+  margin-left:auto;
+  margin-right:auto;
+}
+.patchnotes-loading{
+  text-align:center;
+  padding:3rem 1rem;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.75rem;
+  font-size:0.95rem;
+}
+.patchnotes-loading i{color:var(--primary-2)}
+.patchnotes-empty{
+  text-align:center;
+  padding:3rem 1.5rem;
+  color:var(--muted);
+  border-radius:18px;
+  border:1px dashed rgba(126,205,242,.22);
+  background:rgba(255,255,255,.03);
+}
+.patchnotes-empty i{
+  font-size:2.25rem;
+  display:block;
+  margin-bottom:1rem;
+  color:var(--primary-2);
+  opacity:.75;
+  filter:drop-shadow(0 0 12px rgba(126,205,242,.3));
+}
+.patchnotes-list{display:flex; flex-direction:column; gap:1.5rem}
+.patchnotes-version{
+  padding:1.6rem 1.65rem 1.75rem;
+  border-radius:18px;
+  border:1px solid rgba(126,205,242,.18);
+  background:linear-gradient(165deg, rgba(255,255,255,.06) 0%, rgba(8,14,28,.55) 100%);
+  box-shadow:0 16px 48px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.patchnotes-version-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:.75rem;
+  margin-bottom:1.2rem;
+  padding-bottom:1rem;
+  border-bottom:1px solid rgba(126,205,242,.2);
+}
+.patchnotes-version-heading{
+  margin:0;
+  font-size:1.2rem;
+  font-weight:700;
+  color:#fff;
+  letter-spacing:.02em;
+}
+.patchnotes-version-date-badge{
+  display:inline-flex;
+  align-items:center;
+  padding:0.35rem 0.85rem;
+  border-radius:999px;
+  font-size:0.82rem;
+  font-weight:500;
+  color:rgba(255,255,255,.78);
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(126,205,242,.22);
+  box-shadow:0 2px 10px rgba(0,0,0,.2);
+}
+.patchnotes-version-image-wrap{
+  margin-bottom:1.35rem;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 12px 36px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.patchnotes-version-image{
+  width:100%;
+  max-height:min(340px, 45vh);
+  object-fit:cover;
+  display:block;
+  vertical-align:top;
+}
+.patchnotes-version-sections{
+  display:flex;
+  flex-direction:column;
+  gap:1.15rem;
+}
+.patchnotes-section{
+  padding:1.2rem 1.15rem 1.3rem;
+  border-radius:14px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.patchnotes-section-title{
+  margin:0 0 1rem;
+  padding:0 0 0.65rem;
+  border-bottom:1px solid rgba(126,205,242,.2);
+  font-size:1.05rem;
+  font-weight:700;
+  letter-spacing:.02em;
+  line-height:1.35;
+  color:#fff;
+}
+.patchnotes-section ul{
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+.patchnotes-section li{
+  margin-bottom:0.6rem;
+  padding:0.5rem 0.65rem 0.5rem 1.3rem;
+  position:relative;
+  color:rgba(255,255,255,.88);
+  line-height:1.55;
+  font-size:0.95rem;
+  background:rgba(0,0,0,.2);
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.06);
+}
+.patchnotes-section li:last-child{margin-bottom:0}
+.patchnotes-section li::before{
+  content:"";
+  position:absolute;
+  left:0.6rem;
+  top:50%;
+  transform:translateY(-50%);
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--primary-2),#bfe8ff);
+  box-shadow:0 0 10px rgba(126,205,242,.45);
+}
+.patchnotes-section-image-wrap{margin:0 0 1rem; text-align:center}
+.patchnotes-section-image{
+  max-width:100%;
+  max-height:min(260px, 32vh);
+  width:auto;
+  height:auto;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 8px 28px rgba(0,0,0,.38);
+}
+
+/* Sidebar + grille */
+.patchnotes-container--with-sidebar{
+  max-width:none;
+  display:grid;
+  grid-template-columns:minmax(200px, 248px) 1fr;
+  gap:2rem;
+  padding-left:1rem;
+  padding-right:1rem;
+  align-items:start;
+}
+@media (max-width:700px){
+  .patchnotes-container--with-sidebar{
+    grid-template-columns:1fr;
+    padding-left:0.75rem;
+    padding-right:0.75rem;
+  }
+}
+@media (max-width:480px){
+  .patchnotes-container--with-sidebar{padding-left:0.5rem; padding-right:0.5rem}
+  .patchnotes-version{padding:1.2rem 1rem}
+  .patchnotes-version-header{flex-direction:column; align-items:flex-start}
+}
+.patchnotes-sidebar{
+  position:sticky;
+  top:2rem;
+  height:fit-content;
+  padding:1rem 1rem 1.15rem;
+  border-radius:16px;
+  background:linear-gradient(180deg, rgba(12,24,48,.5) 0%, rgba(6,12,24,.4) 100%);
+  border:1px solid rgba(126,205,242,.14);
+  box-shadow:0 10px 32px rgba(0,0,0,.35);
+}
+.patchnotes-sidebar-header{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:0.75rem;
+  margin-bottom:1rem;
+  padding-bottom:0.75rem;
+  border-bottom:1px solid rgba(126,205,242,.15);
+}
+.patchnotes-sidebar-title{
+  margin:0;
+  font-size:0.72rem;
+  font-weight:800;
+  color:rgba(255,255,255,.45);
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+}
+.patchnotes-lang-selector{flex-shrink:0}
+.patchnotes-sidebar-nav{
+  display:flex;
+  flex-direction:column;
+  gap:0.45rem;
+}
+.patchnotes-sidebar-item{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:0.2rem;
+  width:100%;
+  padding:0.8rem 1rem;
+  border-radius:12px;
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+  font-size:0.9rem;
+  text-align:left;
+  cursor:pointer;
+  transition:background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  border:1px solid rgba(255,255,255,.06);
+}
+.patchnotes-sidebar-item:hover{
+  background:rgba(255,255,255,.09);
+  border-color:rgba(126,205,242,.2);
+}
+.patchnotes-sidebar-item--selected{
+  background:rgba(126,205,242,.12);
+  border-color:rgba(126,205,242,.45);
+  box-shadow:0 0 20px -8px rgba(126,205,242,.5);
+}
+.patchnotes-sidebar-item-version{font-weight:700; font-size:0.92rem}
+.patchnotes-sidebar-item-date{font-size:0.78rem; color:var(--muted)}
+.patchnotes-main{min-width:0}
 
 /* ===== ADMIN PANEL — PARAMÈTRES UNIFIÉS ===== */
 .admin-settings-unified {

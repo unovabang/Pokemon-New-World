@@ -70,12 +70,12 @@ export default function PatchNotesPage() {
         <div className="patchnotes-main">
           <header className="patchnotes-header">
             <h1 className="patchnotes-title">
-              <i className="fa-solid fa-file-lines" aria-hidden />
-              {t('patchNotesPage.title')}
+              <span className="patchnotes-title-icon" aria-hidden>
+                <i className="fa-solid fa-scroll" />
+              </span>
+              <span className="patchnotes-title-text">{t("patchNotesPage.title")}</span>
             </h1>
-            <p className="patchnotes-desc">
-              {t('patchNotesPage.description')}
-            </p>
+            <p className="patchnotes-desc">{t("patchNotesPage.description")}</p>
           </header>
 
           {loading ? (
@@ -91,8 +91,10 @@ export default function PatchNotesPage() {
           ) : selectedVersion ? (
             <section className="patchnotes-version card patchnotes-version--single">
               <div className="patchnotes-version-header">
-                <h2>Version {selectedVersion.version}</h2>
-                {selectedVersion.date && <span className="patchnotes-version-date">{selectedVersion.date}</span>}
+                <h2 className="patchnotes-version-heading">Version {selectedVersion.version}</h2>
+                {selectedVersion.date ? (
+                  <span className="patchnotes-version-date-badge">{selectedVersion.date}</span>
+                ) : null}
               </div>
               {selectedVersion.image && (
                 <div className="patchnotes-version-image-wrap">
@@ -108,7 +110,7 @@ export default function PatchNotesPage() {
               <div className="patchnotes-version-sections">
                 {(selectedVersion.sections || []).map((section, i) => (
                   <div key={i} className="patchnotes-section">
-                    <h3>{section.title}</h3>
+                    <h3 className="patchnotes-section-title">{section.title}</h3>
                     {section.image && (
                       <div className="patchnotes-section-image-wrap">
                         <img
