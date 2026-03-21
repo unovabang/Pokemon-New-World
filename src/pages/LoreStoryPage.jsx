@@ -5,6 +5,7 @@ import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../contexts/LanguageContext";
 import { usePageSeo } from "../hooks/usePageSeo";
 import { plainTextFromMarkdown } from "../utils/pageSeo";
+import { renderInlineMarkdown } from "../utils/inlineMarkdown";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -39,61 +40,6 @@ function getBanner(story, index) {
   return CHAPTER_BANNER_IMAGES[index >= 0 ? index % CHAPTER_BANNER_IMAGES.length : 0];
 }
 
-function renderMarkdown(text) {
-  if (!text || typeof text !== "string") return text;
-  let k = 0;
-
-  function parseBold(str) {
-    const out = [];
-    let rest = str;
-    while (rest) {
-      const a = rest.indexOf("**");
-      if (a === -1) { out.push(...parseItalic(rest)); break; }
-      const b = rest.indexOf("**", a + 2);
-      if (b === -1) { out.push(...parseItalic(rest)); break; }
-      if (a > 0) out.push(...parseItalic(rest.slice(0, a)));
-      out.push(<strong key={`b${k++}`}>{parseItalic(rest.slice(a + 2, b))}</strong>);
-      rest = rest.slice(b + 2);
-    }
-    return out;
-  }
-
-  function parseItalic(str) {
-    const out = [];
-    let rest = str;
-    while (rest) {
-      const a = rest.indexOf("*");
-      if (a === -1) { if (rest) out.push(rest); break; }
-      const b = rest.indexOf("*", a + 1);
-      if (b === -1) { out.push(rest); break; }
-      if (a > 0) out.push(rest.slice(0, a));
-      out.push(<em key={`i${k++}`}>{rest.slice(a + 1, b)}</em>);
-      rest = rest.slice(b + 1);
-    }
-    return out;
-  }
-
-  function parseTitle(str) {
-    const out = [];
-    let rest = str;
-    const openTag = "[TITLE]";
-    const closeTag = "[/TITLE]";
-    while (rest) {
-      const a = rest.indexOf(openTag);
-      if (a === -1) { out.push(...parseBold(rest)); break; }
-      const b = rest.indexOf(closeTag, a + openTag.length);
-      if (b === -1) { out.push(...parseBold(rest)); break; }
-      if (a > 0) out.push(...parseBold(rest.slice(0, a)));
-      out.push(<span key={`t${k++}`} className="lore-story-section-title">{parseBold(rest.slice(a + openTag.length, b))}</span>);
-      rest = rest.slice(b + closeTag.length);
-    }
-    return out;
-  }
-
-  const parts = parseTitle(text);
-  return parts.length ? parts : text;
-}
-
 function RenderContent({ paragraphs }) {
   if (!Array.isArray(paragraphs)) return null;
   return paragraphs.map((p, i) => {
@@ -106,7 +52,7 @@ function RenderContent({ paragraphs }) {
     const isTitleOnly = typeof p === "string" && /^\s*\[TITLE\].*\[\/TITLE\]\s*$/.test(p);
     return (
       <p key={i} className={`lore-story-p${isTitleOnly ? " lore-story-p--title" : ""}`}>
-        {renderMarkdown(p)}
+        {renderInlineMarkdown(p)}
       </p>
     );
   });

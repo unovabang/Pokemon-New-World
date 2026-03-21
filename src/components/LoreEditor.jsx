@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
+import MarkdownToolbar from "./MarkdownToolbar";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -41,33 +42,6 @@ function emptyStory() {
     content: [""],
     contentEn: [""],
   };
-}
-
-function MarkdownToolbar({ textareaRef, onUpdate }) {
-  const wrap = useCallback((before, after) => {
-    const ta = textareaRef.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const val = ta.value;
-    const selected = val.slice(start, end);
-    const replacement = `${before}${selected}${after}`;
-    const newVal = val.slice(0, start) + replacement + val.slice(end);
-    onUpdate(newVal);
-    requestAnimationFrame(() => {
-      ta.focus();
-      ta.selectionStart = start + before.length;
-      ta.selectionEnd = start + before.length + selected.length;
-    });
-  }, [textareaRef, onUpdate]);
-
-  return (
-    <div style={toolbarStyle}>
-      <button type="button" onClick={() => wrap("**", "**")} style={tbBtnStyle} title="Gras"><i className="fa-solid fa-bold" /></button>
-      <button type="button" onClick={() => wrap("*", "*")} style={tbBtnStyle} title="Italique"><i className="fa-solid fa-italic" /></button>
-      <button type="button" onClick={() => wrap("[TITLE]", "[/TITLE]")} style={tbBtnStyle} title="Titre (centré, majuscules, police différente)"><i className="fa-solid fa-heading" /></button>
-    </div>
-  );
 }
 
 function ContentBlock({ lang, items, onUpdate, onAdd, onRemove, onAddImage }) {
@@ -419,5 +393,3 @@ const cardStyle = { display: "flex", alignItems: "center", justifyContent: "spac
 const smallBtnStyle = { padding: "0.4rem 0.55rem", fontSize: "0.8rem", minWidth: 0 };
 const badgeNew = { display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.65rem", fontWeight: 700, padding: "0.15rem 0.5rem", borderRadius: 999, background: "rgba(212,175,55,0.12)", border: "1px solid rgba(212,175,55,0.35)", color: "#d4af37" };
 const badgeMusic = { display: "inline-flex", alignItems: "center", gap: "0.3rem", fontSize: "0.65rem", fontWeight: 700, padding: "0.15rem 0.5rem", borderRadius: 999, background: "rgba(100,160,255,0.1)", border: "1px solid rgba(100,160,255,0.3)", color: "#7eb8f0" };
-const toolbarStyle = { display: "flex", gap: "0.3rem", marginBottom: "0.3rem" };
-const tbBtnStyle = { padding: "0.3rem 0.5rem", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.7)", cursor: "pointer", fontSize: "0.8rem" };

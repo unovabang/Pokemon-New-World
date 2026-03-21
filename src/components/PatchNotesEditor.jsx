@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import MarkdownToolbar from './MarkdownToolbar';
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -33,6 +34,12 @@ const PatchNotesEditor = ({ onSave }) => {
     sections: []
   });
   const [isEditing, setIsEditing] = useState(false);
+  const itemTextareaRefs = useRef({});
+  const getItemTextareaRef = (sectionIndex, itemIndex) => {
+    const key = `${sectionIndex}-${itemIndex}`;
+    if (!itemTextareaRefs.current[key]) itemTextareaRefs.current[key] = { current: null };
+    return itemTextareaRefs.current[key];
+  };
 
   const normalizeSection = (s) => ({
     title: s?.title || '',
@@ -572,12 +579,31 @@ const PatchNotesEditor = ({ onSave }) => {
                         <span>Éléments</span>
                         <button type="button" onClick={() => addItem(sectionIndex)} className="btn btn-ghost"><i className="fa-solid fa-plus" /> Ajouter</button>
                       </div>
-                      {(section.items || []).map((item, itemIndex) => (
-                        <div key={itemIndex} className="patchnotes-editor-item-row">
-                          <input type="text" value={item || ''} onChange={(e) => updateItem(sectionIndex, itemIndex, e.target.value)} placeholder="Description…" className="patchnotes-editor-input" />
-                          <button type="button" onClick={() => deleteItem(sectionIndex, itemIndex)} className="patchnotes-editor-delete-btn" title="Supprimer"><i className="fa-solid fa-trash" /></button>
-                        </div>
-                      ))}
+                      <p className="patchnotes-editor-md-hint">
+                        Markdown (comme le Lore) : retours ligne, <code className="patchnotes-editor-md-code">**gras**</code>,{' '}
+                        <code className="patchnotes-editor-md-code">*italique*</code>,{' '}
+                        <code className="patchnotes-editor-md-code">[TITLE]…[/TITLE]</code> — ou les boutons ci‑dessous.
+                      </p>
+                      {(section.items || []).map((item, itemIndex) => {
+                        const taRef = getItemTextareaRef(sectionIndex, itemIndex);
+                        return (
+                          <div key={itemIndex} className="patchnotes-editor-item-row patchnotes-editor-item-row--md">
+                            <div className="patchnotes-editor-item-md-wrap">
+                              <MarkdownToolbar textareaRef={taRef} onUpdate={(v) => updateItem(sectionIndex, itemIndex, v)} />
+                              <textarea
+                                ref={(el) => { taRef.current = el; }}
+                                value={item || ''}
+                                onChange={(e) => updateItem(sectionIndex, itemIndex, e.target.value)}
+                                rows={3}
+                                placeholder="Texte… (**gras**, *italique*, retours ligne)"
+                                className="patchnotes-editor-input patchnotes-editor-item-textarea"
+                                spellCheck
+                              />
+                            </div>
+                            <button type="button" onClick={() => deleteItem(sectionIndex, itemIndex)} className="patchnotes-editor-delete-btn" title="Supprimer"><i className="fa-solid fa-trash" /></button>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}

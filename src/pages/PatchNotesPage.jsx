@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 import PatchSectionHeading from "../components/PatchSectionHeading";
+import PatchMarkdownText from "../components/PatchMarkdownText";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const API_BASE = import.meta.env.VITE_API_URL
@@ -130,7 +131,7 @@ export default function PatchNotesPage() {
                     )}
                     <ul>
                       {(section.items || []).map((item, j) => (
-                        <li key={j}>{item}</li>
+                        <li key={j}><PatchMarkdownText text={item} /></li>
                       ))}
                     </ul>
                   </div>

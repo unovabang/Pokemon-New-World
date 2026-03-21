@@ -9,6 +9,7 @@ import NewsBanner from "../components/NewsBanner";
 import LanguageSelector from "../components/LanguageSelector";
 import Sidebar from "../components/Sidebar";
 import PatchSectionHeading from "../components/PatchSectionHeading";
+import PatchMarkdownText from "../components/PatchMarkdownText";
 import { useLanguage } from "../contexts/LanguageContext";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -679,7 +680,7 @@ const HomePage = () => {
                     )}
                     <ul>
                       {(section.items || []).map((item, itemIndex) => (
-                        <li key={itemIndex}>{item}</li>
+                        <li key={itemIndex}><PatchMarkdownText text={item} /></li>
                       ))}
                     </ul>
                   </div>
