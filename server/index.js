@@ -354,6 +354,44 @@ app.use((error, req, res, next) => {
 
 // === PATCH NOTES API ===
 
+/** Compare deux chaînes de version type "0.8", "1.0.2" (ordre décroissant = plus récent en premier). */
+function comparePatchVersionStringsDesc(va, vb) {
+  const parse = (v) => {
+    if (v == null || typeof v !== 'string') return [0];
+    const s = String(v).trim().replace(/^v/i, '');
+    if (!s) return [0];
+    return s.split('.').map((p) => {
+      const n = parseInt(p, 10);
+      return Number.isFinite(n) ? n : 0;
+    });
+  };
+  const A = parse(va);
+  const B = parse(vb);
+  const len = Math.max(A.length, B.length);
+  for (let i = 0; i < len; i++) {
+    const x = A[i] ?? 0;
+    const y = B[i] ?? 0;
+    if (x !== y) return y - x;
+  }
+  return 0;
+}
+
+function sortPatchnotesVersionsByVersionDesc(versions) {
+  if (!Array.isArray(versions)) return [];
+  return [...versions].sort((a, b) =>
+    comparePatchVersionStringsDesc(a?.version, b?.version)
+  );
+}
+
+/** Réponse API : versions toujours triées par numéro (plus récent en premier), sans modifier l’ordre stocké sur disque. */
+function patchnotesResponsePayload(data) {
+  if (!data || typeof data !== 'object') return data;
+  return {
+    ...data,
+    versions: sortPatchnotesVersionsByVersionDesc(data.versions),
+  };
+}
+
 // GET /api/patchnotes et /api/patchnotes/:lang - Lister toutes les notes de patch (avec support multilingue)
 app.get('/api/patchnotes', (req, res) => {
   req.params.lang = 'fr';
@@ -377,7 +415,7 @@ function handlePatchnotesGet(req, res) {
         background: null
       };
       fs.writeJsonSync(patchnotesPath, defaultData, { spaces: 2 });
-      return res.json({ success: true, patchnotes: defaultData });
+      return res.json({ success: true, patchnotes: patchnotesResponsePayload(defaultData) });
     }
     
     let data = fs.readJsonSync(patchnotesPath);
@@ -408,8 +446,8 @@ function handlePatchnotesGet(req, res) {
     if (data.background === undefined) {
       data.background = null;
     }
-    
-    res.json({ success: true, patchnotes: data });
+
+    res.json({ success: true, patchnotes: patchnotesResponsePayload(data) });
   } catch (error) {
     console.error('❌ Erreur API /api/patchnotes:', error);
     res.status(500).json({ success: false, error: error.message });
@@ -613,7 +651,7 @@ app.post('/api/patchnotes/:lang/version', (req, res) => {
     res.json({ 
       success: true, 
       message: `Version ${version} ajoutée avec succès`,
-      patchnotes: data 
+      patchnotes: patchnotesResponsePayload(data) 
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -651,7 +689,7 @@ app.put('/api/patchnotes/:lang/version/:version', (req, res) => {
     res.json({ 
       success: true, 
       message: `Version ${version} mise à jour`,
-      patchnotes: data 
+      patchnotes: patchnotesResponsePayload(data) 
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -685,7 +723,7 @@ app.delete('/api/patchnotes/:lang/version/:version', (req, res) => {
     res.json({ 
       success: true, 
       message: `Version ${version} supprimée`,
-      patchnotes: data 
+      patchnotes: patchnotesResponsePayload(data) 
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -713,7 +751,7 @@ app.put('/api/patchnotes/:lang/reorder', (req, res) => {
     }
     data.versions = reordered;
     fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
-    res.json({ success: true, patchnotes: data });
+    res.json({ success: true, patchnotes: patchnotesResponsePayload(data) });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -731,7 +769,7 @@ app.put('/api/patchnotes/background', (req, res) => {
     }
     data.background = background !== undefined && background !== null && String(background).trim() ? String(background).trim() : null;
     fs.writeJsonSync(patchnotesPath, data, { spaces: 2 });
-    res.json({ success: true, patchnotes: data });
+    res.json({ success: true, patchnotes: patchnotesResponsePayload(data) });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -768,7 +806,7 @@ app.post('/api/patchnotes/version/:version/section', (req, res) => {
     res.json({ 
       success: true, 
       message: `Section "${title}" ajoutée à la version ${version}`,
-      patchnotes: data 
+      patchnotes: patchnotesResponsePayload(data) 
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

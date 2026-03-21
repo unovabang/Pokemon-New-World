@@ -328,21 +328,23 @@ const PatchNotesEditor = ({ onSave }) => {
     }
   };
 
-  const commonSectionTitles = currentLang === 'fr' ? [
-    '🆕 Nouveautés',
-    '🔧 Corrections', 
-    '⚖️ Équilibrage',
-    '🎨 Améliorations visuelles',
-    '🎵 Audio',
-    '🌟 Contenu'
-  ] : [
-    '🆕 New Features',
-    '🔧 Bug Fixes', 
-    '⚖️ Balance Changes',
-    '🎨 Visual Improvements',
-    '🎵 Audio',
-    '🌟 Content'
-  ];
+  const commonQuickSections = currentLang === 'fr'
+    ? [
+        { icon: 'fa-solid fa-wand-magic-sparkles', title: 'Nouveautés' },
+        { icon: 'fa-solid fa-wrench', title: 'Corrections' },
+        { icon: 'fa-solid fa-scale-balanced', title: 'Équilibrage' },
+        { icon: 'fa-solid fa-palette', title: 'Améliorations visuelles' },
+        { icon: 'fa-solid fa-music', title: 'Audio' },
+        { icon: 'fa-solid fa-box-open', title: 'Contenu' },
+      ]
+    : [
+        { icon: 'fa-solid fa-wand-magic-sparkles', title: 'New Features' },
+        { icon: 'fa-solid fa-wrench', title: 'Bug Fixes' },
+        { icon: 'fa-solid fa-scale-balanced', title: 'Balance Changes' },
+        { icon: 'fa-solid fa-palette', title: 'Visual Improvements' },
+        { icon: 'fa-solid fa-music', title: 'Audio' },
+        { icon: 'fa-solid fa-box-open', title: 'Content' },
+      ];
 
   return (
     <div className="patchnotes-editor">
@@ -501,11 +503,22 @@ const PatchNotesEditor = ({ onSave }) => {
               <div className="patchnotes-editor-sections card">
                 <h3 className="patchnotes-editor-sections-title"><i className="fa-solid fa-list" /> Sections</h3>
                 <div className="patchnotes-editor-quick">
-                  <span>Sections rapides</span>
+                  <span className="patchnotes-editor-quick-label">Sections rapides</span>
                   <div className="patchnotes-editor-quick-btns">
-                    {commonSectionTitles.map((title, index) => (
-                      <button key={index} type="button" className="btn btn-ghost patchnotes-editor-quick-btn" onClick={() => setCurrentPatch(prev => ({ ...prev, sections: [...prev.sections, { title, image: '', items: [''] }] }))}>
-                        {title}
+                    {commonQuickSections.map((sec, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        className="btn btn-ghost patchnotes-editor-quick-btn"
+                        onClick={() =>
+                          setCurrentPatch((prev) => ({
+                            ...prev,
+                            sections: [...prev.sections, { title: sec.title, image: '', items: [''] }],
+                          }))
+                        }
+                      >
+                        <i className={sec.icon} aria-hidden />
+                        <span>{sec.title}</span>
                       </button>
                     ))}
                   </div>
@@ -523,7 +536,7 @@ const PatchNotesEditor = ({ onSave }) => {
                     </div>
                     <label className="patchnotes-editor-field">
                       <span>Titre</span>
-                      <input type="text" value={section.title || ''} onChange={(e) => updateSectionTitle(sectionIndex, e.target.value)} placeholder="Ex: 🆕 Nouveautés" className="patchnotes-editor-input" />
+                      <input type="text" value={section.title || ''} onChange={(e) => updateSectionTitle(sectionIndex, e.target.value)} placeholder="Ex: Nouveautés" className="patchnotes-editor-input" />
                     </label>
                     <label className="patchnotes-editor-field">
                       <span>URL image (optionnel)</span>
