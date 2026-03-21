@@ -5451,12 +5451,13 @@ a.dex-panel--active{cursor:default}
   opacity:.95;
   font-size:1em;
 }
-.patch-section ul{
+/* Liste JSON uniquement (pas les <li> markdown à l’intérieur) */
+.patch-section > ul{
   margin:0;
   padding:0;
   list-style:none;
 }
-.patch-section li{
+.patch-section > ul > li{
   margin-bottom:0.65rem;
   padding:0.55rem 0.65rem 0.55rem 1.35rem;
   position:relative;
@@ -5467,8 +5468,8 @@ a.dex-panel--active{cursor:default}
   border-radius:10px;
   border:1px solid rgba(255,255,255,.05);
 }
-.patch-section li:last-child{margin-bottom:0}
-.patch-section li::before{
+.patch-section > ul > li:last-child{margin-bottom:0}
+.patch-section > ul > li::before{
   content:"";
   position:absolute;
   left:0.65rem;
@@ -5481,7 +5482,7 @@ a.dex-panel--active{cursor:default}
   box-shadow:0 0 10px rgba(126,205,242,.45);
 }
 /* Évite double puce + puce « flottante » au milieu : le markdown fournit déjà les puces */
-.patch-section li:has(.patch-md-ul)::before{
+.patch-section > ul > li:has(.patch-md-ul)::before{
   display:none;
 }
 .patch-section .patch-md-inline strong,
@@ -5507,8 +5508,8 @@ a.dex-panel--active{cursor:default}
 }
 .patch-md-root{display:block;white-space:normal;}
 /* Puces markdown : pas de list-style navigateur (évite double marqueur avec le li parent) */
-.patch-section li .patch-md-root .patch-md-ul,
-.patchnotes-section li .patch-md-root .patch-md-ul{
+.patch-section > ul > li .patch-md-root .patch-md-ul,
+.patchnotes-section > ul > li .patch-md-root .patch-md-ul{
   margin:0.25rem 0 0.15rem;
   padding-left:0;
   list-style:none;
@@ -5525,8 +5526,8 @@ a.dex-panel--active{cursor:default}
   line-height:1.5;
   list-style:none;
 }
-.patch-section li .patch-md-ul > .patch-md-li::before,
-.patchnotes-section li .patch-md-ul > .patch-md-li::before{
+.patch-section > ul > li .patch-md-ul > .patch-md-li::before,
+.patchnotes-section > ul > li .patch-md-ul > .patch-md-li::before{
   content:"";
   position:absolute;
   left:0;
@@ -5537,8 +5538,8 @@ a.dex-panel--active{cursor:default}
   background:linear-gradient(135deg,var(--primary-2),#bfe8ff);
   box-shadow:0 0 10px rgba(126,205,242,.45);
 }
-.patch-section li .patch-md-ul .patch-md-ul > .patch-md-li::before,
-.patchnotes-section li .patch-md-ul .patch-md-ul > .patch-md-li::before{
+.patch-section > ul > li .patch-md-ul .patch-md-ul > .patch-md-li::before,
+.patchnotes-section > ul > li .patch-md-ul .patch-md-ul > .patch-md-li::before{
   top:0.55em;
   width:5px;
   height:5px;
@@ -5746,12 +5747,12 @@ a.dex-panel--active{cursor:default}
   opacity:.95;
   font-size:1em;
 }
-.patchnotes-section ul{
+.patchnotes-section > ul{
   margin:0;
   padding:0;
   list-style:none;
 }
-.patchnotes-section li{
+.patchnotes-section > ul > li{
   margin-bottom:0.6rem;
   padding:0.5rem 0.65rem 0.5rem 1.3rem;
   position:relative;
@@ -5762,8 +5763,8 @@ a.dex-panel--active{cursor:default}
   border-radius:10px;
   border:1px solid rgba(255,255,255,.06);
 }
-.patchnotes-section li:last-child{margin-bottom:0}
-.patchnotes-section li::before{
+.patchnotes-section > ul > li:last-child{margin-bottom:0}
+.patchnotes-section > ul > li::before{
   content:"";
   position:absolute;
   left:0.6rem;
@@ -5775,7 +5776,7 @@ a.dex-panel--active{cursor:default}
   background:linear-gradient(135deg,var(--primary-2),#bfe8ff);
   box-shadow:0 0 10px rgba(126,205,242,.45);
 }
-.patchnotes-section li:has(.patch-md-ul)::before{
+.patchnotes-section > ul > li:has(.patch-md-ul)::before{
   display:none;
 }
 .patchnotes-section-image-wrap{margin:0 0 1rem; text-align:center}
