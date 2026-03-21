@@ -411,7 +411,7 @@ const HomePage = () => {
 
             <section className="section card dual-section">
               <h2>
-                <img src="https://i.imgur.com/3CksZou.png" alt="" className="section-icon" />
+                <img src="https://i.imgur.com/c3Naj4W.png" alt="" className="section-icon" />
                 {" "}
                 {t('sections.patchNotes.title')}
               </h2>
