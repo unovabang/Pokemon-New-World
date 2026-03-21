@@ -1634,6 +1634,13 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   vertical-align: -0.25em;
   margin-right: 0.5rem;
 }
+/* Titres TikTok / patch notes : icônes imgur plus lisibles */
+.dual-section.card h2 .section-icon {
+  width: 2.65em;
+  height: 2.65em;
+  vertical-align: -0.45em;
+  object-fit: contain;
+}
 
 .nav-cta{margin-left:.4rem}.nav-cta .btn{padding:.7rem 1rem}
 .burger{display:none; background:transparent; border:1px solid rgba(126,205,242,.25); color:var(--text); padding:.5rem .7rem; border-radius:10px}

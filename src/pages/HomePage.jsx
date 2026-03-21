@@ -386,7 +386,7 @@ const HomePage = () => {
               <div className="dual-content">
                 <div className="dual-image-container">
                   <img
-                    src="https://i.imgur.com/Pw770I9.png"
+                    src="/TIKTOK.png"
                     alt=""
                     className="dual-image"
                     decoding="async"
