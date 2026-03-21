@@ -5472,13 +5472,17 @@ a.dex-panel--active{cursor:default}
   content:"";
   position:absolute;
   left:0.65rem;
-  top:50%;
-  transform:translateY(-50%);
+  top:0.85rem;
+  transform:none;
   width:6px;
   height:6px;
   border-radius:50%;
   background:linear-gradient(135deg,var(--primary-2),#bfe8ff);
   box-shadow:0 0 10px rgba(126,205,242,.45);
+}
+/* Évite double puce + puce « flottante » au milieu : le markdown fournit déjà les puces */
+.patch-section li:has(.patch-md-ul)::before{
+  display:none;
 }
 .patch-section .patch-md-inline strong,
 .patchnotes-section .patch-md-inline strong{
@@ -5502,20 +5506,45 @@ a.dex-panel--active{cursor:default}
   line-height:1.35;
 }
 .patch-md-root{display:block;white-space:normal;}
+/* Puces markdown : pas de list-style navigateur (évite double marqueur avec le li parent) */
 .patch-section li .patch-md-root .patch-md-ul,
 .patchnotes-section li .patch-md-root .patch-md-ul{
-  margin:0.35rem 0 0.2rem;
-  padding-left:1.35rem;
-  list-style-type:disc;
+  margin:0.25rem 0 0.15rem;
+  padding-left:0;
+  list-style:none;
   color:rgba(255,255,255,.9);
 }
 .patch-md-ul .patch-md-ul{
-  list-style-type:circle;
   margin:0.25rem 0 0.15rem;
+  padding-left:0.85rem;
 }
 .patch-md-li{
+  position:relative;
   margin:0.2rem 0;
+  padding-left:1rem;
   line-height:1.5;
+  list-style:none;
+}
+.patch-section li .patch-md-ul > .patch-md-li::before,
+.patchnotes-section li .patch-md-ul > .patch-md-li::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0.55em;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--primary-2),#bfe8ff);
+  box-shadow:0 0 10px rgba(126,205,242,.45);
+}
+.patch-section li .patch-md-ul .patch-md-ul > .patch-md-li::before,
+.patchnotes-section li .patch-md-ul .patch-md-ul > .patch-md-li::before{
+  top:0.55em;
+  width:5px;
+  height:5px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.72);
+  box-shadow:none;
 }
 .patch-md-li-content{display:inline;}
 .patch-section-image-wrap{margin:0 0 1rem; text-align:center}
@@ -5738,13 +5767,16 @@ a.dex-panel--active{cursor:default}
   content:"";
   position:absolute;
   left:0.6rem;
-  top:50%;
-  transform:translateY(-50%);
+  top:0.85rem;
+  transform:none;
   width:6px;
   height:6px;
   border-radius:50%;
   background:linear-gradient(135deg,var(--primary-2),#bfe8ff);
   box-shadow:0 0 10px rgba(126,205,242,.45);
+}
+.patchnotes-section li:has(.patch-md-ul)::before{
+  display:none;
 }
 .patchnotes-section-image-wrap{margin:0 0 1rem; text-align:center}
 .patchnotes-section-image{
