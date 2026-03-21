@@ -379,18 +379,15 @@ const HomePage = () => {
           <div className="dual-sections">
             <section className="section card dual-section">
               <h2>
-                <img src="/TIKTOK.png" alt="" className="section-icon" />
+                <i className="fa-brands fa-tiktok section-icon" aria-hidden />
                 {" "}
                 {t('sections.tiktok.title')}
               </h2>
               <div className="dual-content">
                 <div className="dual-image-container">
-                  <img
-                    src="/TIKTOK.png"
-                    alt=""
-                    className="dual-image"
-                    decoding="async"
-                  />
+                  <div className="dual-image dual-image--pending dual-image--tiktok" aria-hidden>
+                    <i className="fa-brands fa-tiktok dual-image-tiktok-icon" />
+                  </div>
                   <div className="dual-overlay">
                     <div className="dual-cta">
                       <h3>{t('sections.tiktok.heading')}</h3>
