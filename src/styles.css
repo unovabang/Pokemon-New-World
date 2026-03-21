@@ -1641,6 +1641,20 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   vertical-align: -0.35em;
   object-fit: contain;
 }
+/* TikTok : même taille d’icône que « DERNIÈRES NOUVEAUTÉS » (section pleine largeur) */
+.dual-section.card h2 .section-icon.section-icon--match-news {
+  width: 1.3em;
+  height: 1.3em;
+  vertical-align: -0.25em;
+}
+
+/* Bloc TikTok : textes en capitales comme le titre de la section actualités */
+.dual-section--tiktok h2,
+.dual-section--tiktok .dual-cta h3,
+.dual-section--tiktok .dual-cta p,
+.dual-section--tiktok .dual-btn {
+  text-transform: uppercase;
+}
 
 .nav-cta{margin-left:.4rem}.nav-cta .btn{padding:.7rem 1rem}
 .burger{display:none; background:transparent; border:1px solid rgba(126,205,242,.25); color:var(--text); padding:.5rem .7rem; border-radius:10px}
@@ -5050,13 +5064,15 @@ a.dex-panel--active{cursor:default}
 /* ===== Dual Sections (TikTok & Patch) ===== */
 .dual-sections{
   display:grid; 
-  grid-template-columns:1fr 1fr; 
+  /* minmax(0,1fr) : colonnes strictement égales (évite min-content > 1fr sur le contenu) */
+  grid-template-columns:repeat(2, minmax(0, 1fr)); 
   gap:20px; 
   margin-top:32px;
+  align-items:stretch;
 }
 @media (max-width:900px){
   .dual-sections{
-    grid-template-columns:1fr;
+    grid-template-columns:minmax(0, 1fr);
     gap:16px;
   }
   .dual-image{
@@ -5065,12 +5081,29 @@ a.dex-panel--active{cursor:default}
 }
 .dual-section{
   margin-top:0;
+  min-width:0;
 }
-.dual-content{
+/* Même hauteur de ligne de titre pour aligner les deux visuels (TikTok vs titre plus long) */
+.dual-section.card{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  min-height:0;
+}
+.dual-section.card h2{
+  min-height:clamp(3.25rem, 5.5vw, 5.75rem);
+}
+.dual-section .dual-content{
   margin-top:16px;
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  min-height:0;
 }
 .dual-image-container{
   position:relative; 
+  width:100%;
   border-radius:20px; 
   overflow:hidden; 
   border:1px solid rgba(126,205,242,.15); 

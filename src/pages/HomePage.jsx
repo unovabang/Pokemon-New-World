@@ -377,9 +377,9 @@ const HomePage = () => {
 
           {/* SECTIONS TIKTOK & PATCH */}
           <div className="dual-sections">
-            <section className="section card dual-section">
+            <section className="section card dual-section dual-section--tiktok">
               <h2>
-                <img src="https://i.imgur.com/v9porTU.png" alt="" className="section-icon" />
+                <img src="https://i.imgur.com/v9porTU.png" alt="" className="section-icon section-icon--match-news" />
                 {" "}
                 {t('sections.tiktok.title')}
               </h2>
