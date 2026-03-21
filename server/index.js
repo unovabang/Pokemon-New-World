@@ -1115,6 +1115,22 @@ function buildLauncherManifestBody(dl, version, downloadUrl) {
   };
 }
 
+// GET /api/downloads/launcher-update — Version + URL du setup pour mise à jour in-app du launcher
+app.get('/api/downloads/launcher-update', (req, res) => {
+  try {
+    const dl = getConfig('downloads') || {};
+    const version = String(dl.launcherVersion || '').trim();
+    const downloadUrl = String(dl.launcher || '').trim();
+    if (!version || !downloadUrl) {
+      return res.json({ configured: false, version: null, downloadUrl: null });
+    }
+    res.json({ configured: true, version, downloadUrl });
+  } catch (error) {
+    console.error('❌ Erreur API /api/downloads/launcher-update:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET /api/downloads/version-hints — Versions distantes FR/EN pour migration launcher (sans URLs lourdes)
 app.get('/api/downloads/version-hints', (req, res) => {
   try {

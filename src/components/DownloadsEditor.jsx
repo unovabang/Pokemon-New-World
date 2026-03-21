@@ -267,6 +267,7 @@ const DownloadsEditor = ({ onSave }) => {
   const [windowsLink, setWindowsLink] = useState('');
   const [windowsEnLink, setWindowsEnLink] = useState('');
   const [launcherLink, setLauncherLink] = useState('');
+  const [launcherVersion, setLauncherVersion] = useState('');
   const [gameVersion, setGameVersion] = useState('');
   const [gameVersionEn, setGameVersionEn] = useState('');
   const [launcherBackgroundUrl, setLauncherBackgroundUrl] = useState('');
@@ -300,6 +301,7 @@ const DownloadsEditor = ({ onSave }) => {
         setWindowsLink(data.downloads.windows || '');
         setWindowsEnLink(data.downloads.windowsEn || '');
         setLauncherLink(data.downloads.launcher || '');
+        setLauncherVersion(data.downloads.launcherVersion || '');
         setGameVersion(data.downloads.gameVersion || '');
         setGameVersionEn(data.downloads.gameVersionEn || '');
         setLauncherBackgroundUrl(data.downloads.launcherBackgroundUrl || '');
@@ -389,6 +391,24 @@ const DownloadsEditor = ({ onSave }) => {
       );
       return;
     }
+    const launcherUrl = (launcherLink || '').trim();
+    const launcherVer = (launcherVersion || '').trim();
+    if (launcherUrl && !launcherVer) {
+      showMessage(
+        'Version du launcher requise',
+        'Un lien Launcher est renseigné : indiquez aussi la version (semver), ex. 1.0.1, pour que les launchers installés puissent proposer la mise à jour. Sinon videz le lien Launcher.',
+        'error',
+      );
+      return;
+    }
+    if (launcherVer && !launcherUrl) {
+      showMessage(
+        'Lien Launcher manquant',
+        'Une version du launcher est indiquée sans URL de téléchargement. Ajoutez le fichier / le lien R2 ou effacez la version.',
+        'error',
+      );
+      return;
+    }
     showConfirm(
       'Confirmer la sauvegarde',
       'Êtes-vous sûr de vouloir sauvegarder les modifications des téléchargements ?',
@@ -400,6 +420,7 @@ const DownloadsEditor = ({ onSave }) => {
             windowsEn: windowsEnLink,
             patch: '',
             launcher: launcherLink,
+            launcherVersion: launcherVersion.trim() || undefined,
             patchVideo: '',
             gameVersion: gameVersion,
             gameVersionEn: gameVersionEn,
@@ -698,6 +719,39 @@ const DownloadsEditor = ({ onSave }) => {
           }
           extraContent={
             <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 'bold', color: 'var(--primary-2, #7ecdf2)' }}>
+                  <i className="fa-solid fa-tag"></i> Version du launcher (semver)
+                </label>
+                <input
+                  type="text"
+                  value={launcherVersion}
+                  onChange={(e) => setLauncherVersion(e.target.value)}
+                  placeholder="ex. 1.0.1"
+                  style={{
+                    width: '100%',
+                    maxWidth: '12rem',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    background: 'rgba(255,255,255,0.1)',
+                    color: 'white',
+                    fontSize: '1rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <div style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  padding: '0.85rem',
+                  borderRadius: '5px',
+                  fontSize: '0.88rem',
+                  opacity: 0.9,
+                  marginTop: '0.5rem',
+                }}>
+                  <i className="fa-solid fa-info-circle"></i>{' '}
+                  Même numéro que dans le build (ex. <code style={{ opacity: 0.95 }}>1.0.1</code>). Le launcher installé compare cette valeur à la sienne pour proposer une mise à jour (avec le lien ci-dessus).
+                </div>
+              </div>
               <div style={{ marginBottom: '0.75rem' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 'bold', color: 'var(--primary-2, #7ecdf2)' }}>
                   <i className="fa-solid fa-image"></i> Image de fond du Launcher
