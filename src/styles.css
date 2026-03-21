@@ -5109,28 +5109,36 @@ a.dex-panel--active{cursor:default}
 .dual-section-heading-start{
   display:inline-flex;
   align-items:center;
-  gap:12px;
+  gap:0.65rem;
   min-width:0;
 }
+/* Icônes titre : pas de « boîte », glyphe seul + léger relief (lisible sur fond sombre) */
 .dual-section-heading-icon{
-  width:40px;
-  height:40px;
-  border-radius:12px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  font-size:1.15rem;
   flex-shrink:0;
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 4px 16px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08);
+  width:auto;
+  height:auto;
+  padding:0;
+  margin:0;
+  border:none;
+  background:none;
+  box-shadow:none;
+  line-height:1;
+  font-size:clamp(1.45rem,2.4vw,1.85rem);
 }
-.dual-section-heading-icon--tiktok{
-  background:linear-gradient(145deg,rgba(0,242,234,.35),rgba(255,0,80,.28));
-  color:#fff;
+.dual-section-heading-icon i{
+  display:block;
+  line-height:1;
 }
-.dual-section-heading-icon--patch{
-  background:linear-gradient(145deg,rgba(251,191,36,.22),rgba(245,158,11,.12));
+.dual-section-heading-icon--tiktok i{
+  color:#25f4ee;
+  filter:drop-shadow(0 0 10px rgba(37,244,238,.55)) drop-shadow(0 0 14px rgba(254,44,85,.4));
+}
+.dual-section--patch .dual-section-heading-icon--patch i{
   color:#fde68a;
+  filter:drop-shadow(0 0 10px rgba(251,191,36,.28));
 }
 .dual-section-version-pill{
   font-size:.72rem;

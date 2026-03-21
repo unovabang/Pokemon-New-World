@@ -421,7 +421,7 @@ const HomePage = () => {
               <h2 className="dual-section-heading">
                 <span className="dual-section-heading-start">
                   <span className="dual-section-heading-icon dual-section-heading-icon--patch" aria-hidden>
-                    <i className="fa-solid fa-file-lines" />
+                    <i className="fa-solid fa-scroll" />
                   </span>
                   {t("sections.patchNotes.title")}
                 </span>
