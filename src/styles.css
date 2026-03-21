@@ -5441,6 +5441,16 @@ a.dex-panel--active{cursor:default}
   line-height:1.35;
   color:#fff;
 }
+.patch-section-heading-inner{
+  display:inline-flex;
+  align-items:center;
+  gap:0.55rem;
+}
+.patch-section-title .patch-section-heading-inner i{
+  color:var(--primary-2,#7ecdf2);
+  opacity:.95;
+  font-size:1em;
+}
 .patch-section ul{
   margin:0;
   padding:0;
@@ -5658,6 +5668,16 @@ a.dex-panel--active{cursor:default}
   letter-spacing:.02em;
   line-height:1.35;
   color:#fff;
+}
+.patchnotes-section-title-inner{
+  display:inline-flex;
+  align-items:center;
+  gap:0.55rem;
+}
+.patchnotes-section-title .patchnotes-section-title-inner i{
+  color:var(--primary-2,#7ecdf2);
+  opacity:.95;
+  font-size:1em;
 }
 .patchnotes-section ul{
   margin:0;

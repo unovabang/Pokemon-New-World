@@ -5,8 +5,9 @@
       "date": "Janvier 2025",
       "sections": [
         {
-          "_comment": "Section des nouveautés - utilisez des emojis pour rendre plus attractif",
-          "title": "🆕 Nouveautés ",
+          "_comment": "Section des nouveautés",
+          "title": "Nouveautés",
+          "icon": "fa-solid fa-wand-magic-sparkles",
           "items": [
             "Ajout de la suite du jeu (environ 5h de jeu)",
             "Arrivée de la Méga-Évolution",
@@ -18,7 +19,8 @@
         },
         {
           "_comment": "Section des corrections de bugs",
-          "title": "🔧 Corrections",
+          "title": "Corrections",
+          "icon": "fa-solid fa-wrench",
           "items": [
             "Correction du crash lié à la Lune Ball",
             "Correction du crash lié au Fmod (pendant évolution)",
@@ -30,7 +32,8 @@
         },
         {
           "_comment": "Section de l'équilibrage - pour les ajustements de gameplay",
-          "title": "⚖️ Équilibrage ",
+          "title": "Équilibrage",
+          "icon": "fa-solid fa-scale-balanced",
           "items": [
             "Nerf de Encornus",
             "Buff de Aligatueur"

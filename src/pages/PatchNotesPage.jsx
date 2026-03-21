@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
+import PatchSectionHeading from "../components/PatchSectionHeading";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const API_BASE = import.meta.env.VITE_API_URL
@@ -110,7 +111,12 @@ export default function PatchNotesPage() {
               <div className="patchnotes-version-sections">
                 {(selectedVersion.sections || []).map((section, i) => (
                   <div key={i} className="patchnotes-section">
-                    <h3 className="patchnotes-section-title">{section.title}</h3>
+                    <PatchSectionHeading
+                      section={section}
+                      as="h3"
+                      className="patchnotes-section-title"
+                      innerClassName="patchnotes-section-title-inner"
+                    />
                     {section.image && (
                       <div className="patchnotes-section-image-wrap">
                         <img

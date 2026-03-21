@@ -10,6 +10,7 @@ import { initDb } from './db.js';
 import authRoutes from './auth.js';
 import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command, ListMultipartUploadsCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { stripLeadingEmojiFromTitle } from '../src/utils/patchSectionTitle.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -501,7 +502,8 @@ async function sendPatchnoteToDiscord(patch) {
   const sections = Array.isArray(patch.sections) ? patch.sections : [];
   const maxFieldValue = 900;
   for (const section of sections.slice(0, 25)) {
-    const title = (section.title || 'Sans titre').slice(0, 150);
+    const displayTitle = stripLeadingEmojiFromTitle(section.title || '') || (section.title || '').trim();
+    const title = (displayTitle || 'Sans titre').slice(0, 150);
     let body = (section.items || []).filter(Boolean).map((item) => `• ${item}`).join('\n');
     if (body.length > maxFieldValue) body = body.slice(0, maxFieldValue - 3) + '…';
     if (!body) body = '—';

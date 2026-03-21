@@ -5,7 +5,8 @@
       "date": "January 2025",
       "sections": [
         {
-          "title": "🆕 New Features ",
+          "title": "New Features",
+          "icon": "fa-solid fa-wand-magic-sparkles",
           "items": [
             "Added game continuation (approximately 5 hours of gameplay)",
             "Introduction of Mega Evolution",
@@ -16,7 +17,8 @@
           ]
         },
         {
-          "title": "🔧 Bug Fixes",
+          "title": "Bug Fixes",
+          "icon": "fa-solid fa-wrench",
           "items": [
             "Fixed crash related to Moon Ball",
             "Fixed crash related to Fmod (during evolution)",
@@ -27,7 +29,8 @@
           ]
         },
         {
-          "title": "⚖️ Balance Changes",
+          "title": "Balance Changes",
+          "icon": "fa-solid fa-scale-balanced",
           "items": [
             "Nerfed Encornus",
             "Buffed Feraligatr"

@@ -37,6 +37,7 @@ const PatchNotesEditor = ({ onSave }) => {
   const normalizeSection = (s) => ({
     title: s?.title || '',
     image: s?.image || '',
+    icon: typeof s?.icon === 'string' ? s.icon : '',
     items: Array.isArray(s?.items) ? s.items : ['']
   });
   const normalizePatch = (v) => ({
@@ -153,6 +154,7 @@ const PatchNotesEditor = ({ onSave }) => {
     const sectionsToSave = currentPatch.sections.map(s => ({
       title: s.title || '',
       image: s.image || undefined,
+      ...(typeof s.icon === 'string' && s.icon.trim() ? { icon: s.icon.trim() } : {}),
       items: (s.items || []).filter(Boolean)
     }));
 
@@ -218,7 +220,7 @@ const PatchNotesEditor = ({ onSave }) => {
 
   // Ajouter une section
   const addSection = () => {
-    setCurrentPatch(prev => ({ ...prev, sections: [...prev.sections, { title: '', image: '', items: [''] }] }));
+    setCurrentPatch(prev => ({ ...prev, sections: [...prev.sections, { title: '', image: '', icon: '', items: [''] }] }));
   };
 
   const updateSectionImage = (sectionIndex, value) => {
@@ -232,6 +234,13 @@ const PatchNotesEditor = ({ onSave }) => {
   const updateSectionTitle = (sectionIndex, title) => {
     const newSections = [...currentPatch.sections];
     newSections[sectionIndex].title = title;
+    setCurrentPatch(prev => ({ ...prev, sections: newSections }));
+  };
+
+  const updateSectionIcon = (sectionIndex, icon) => {
+    const newSections = [...currentPatch.sections];
+    if (!newSections[sectionIndex]) return;
+    newSections[sectionIndex] = { ...newSections[sectionIndex], icon };
     setCurrentPatch(prev => ({ ...prev, sections: newSections }));
   };
 
@@ -513,7 +522,7 @@ const PatchNotesEditor = ({ onSave }) => {
                         onClick={() =>
                           setCurrentPatch((prev) => ({
                             ...prev,
-                            sections: [...prev.sections, { title: sec.title, image: '', items: [''] }],
+                            sections: [...prev.sections, { title: sec.title, icon: sec.icon, image: '', items: [''] }],
                           }))
                         }
                       >
@@ -537,6 +546,17 @@ const PatchNotesEditor = ({ onSave }) => {
                     <label className="patchnotes-editor-field">
                       <span>Titre</span>
                       <input type="text" value={section.title || ''} onChange={(e) => updateSectionTitle(sectionIndex, e.target.value)} placeholder="Ex: Nouveautés" className="patchnotes-editor-input" />
+                    </label>
+                    <label className="patchnotes-editor-field">
+                      <span>Icône Font Awesome</span>
+                      <input
+                        type="text"
+                        value={section.icon || ''}
+                        onChange={(e) => updateSectionIcon(sectionIndex, e.target.value)}
+                        placeholder="fa-solid fa-wand-magic-sparkles"
+                        className="patchnotes-editor-input"
+                        spellCheck={false}
+                      />
                     </label>
                     <label className="patchnotes-editor-field">
                       <span>URL image (optionnel)</span>

@@ -8,6 +8,7 @@ import YouTubeAudio from "../components/YouTubeAudio";
 import NewsBanner from "../components/NewsBanner";
 import LanguageSelector from "../components/LanguageSelector";
 import Sidebar from "../components/Sidebar";
+import PatchSectionHeading from "../components/PatchSectionHeading";
 import { useLanguage } from "../contexts/LanguageContext";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -660,7 +661,11 @@ const HomePage = () => {
                 )}
                 {(patchNotesFromApi.versions[0].sections || []).map((section, index) => (
                   <div key={index} className="patch-section">
-                    <h4 className="patch-section-title">{section.title}</h4>
+                    <PatchSectionHeading
+                      section={section}
+                      as="h4"
+                      className="patch-section-title"
+                    />
                     {section.image && (
                       <div className="patch-section-image-wrap">
                         <img
