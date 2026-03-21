@@ -582,8 +582,8 @@ const PatchNotesEditor = ({ onSave }) => {
                       <p className="patchnotes-editor-md-hint">
                         Markdown : retours ligne, <code className="patchnotes-editor-md-code">**gras**</code>,{' '}
                         <code className="patchnotes-editor-md-code">*italique*</code>,{' '}
-                        <code className="patchnotes-editor-md-code">[TITLE]…[/TITLE]</code>, listes <code className="patchnotes-editor-md-code">- </code> ou{' '}
-                        <code className="patchnotes-editor-md-code">  - </code> (2 espaces pour sous-niveau) — ou les boutons ci‑dessous.
+                        <code className="patchnotes-editor-md-code">[TITLE]…[/TITLE]</code>,                         listes <code className="patchnotes-editor-md-code">- </code> ou{' '}
+                        <code className="patchnotes-editor-md-code">  - </code> (2 espaces pour sous-niveau) ; ligne suivante indentée (2+ espaces) = suite de la puce — ou les boutons ci‑dessous.
                       </p>
                       {(section.items || []).map((item, itemIndex) => {
                         const taRef = getItemTextareaRef(sectionIndex, itemIndex);
@@ -596,7 +596,7 @@ const PatchNotesEditor = ({ onSave }) => {
                                 value={item || ''}
                                 onChange={(e) => updateItem(sectionIndex, itemIndex, e.target.value)}
                                 rows={3}
-                                placeholder="Texte… (**gras**, *italique*, retours ligne)"
+                                placeholder="Texte… (**gras**, *italique*, Entrée = saut de ligne)"
                                 className="patchnotes-editor-input patchnotes-editor-item-textarea"
                                 spellCheck
                               />

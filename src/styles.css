@@ -5501,7 +5501,7 @@ a.dex-panel--active{cursor:default}
   margin:0.35rem 0 0.2rem;
   line-height:1.35;
 }
-.patch-md-root{display:block;}
+.patch-md-root{display:block;white-space:normal;}
 .patch-section li .patch-md-root .patch-md-ul,
 .patchnotes-section li .patch-md-root .patch-md-ul{
   margin:0.35rem 0 0.2rem;

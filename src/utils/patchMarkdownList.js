@@ -1,6 +1,19 @@
 /** Ligne de liste : espaces optionnels, - ou *, puis texte. */
 export const PATCH_LIST_LINE_PATTERN = /^(\s*)([-*])\s+(.*)$/;
 
+/** Ligne qui continue la puce précédente (indentée, sans nouveau tiret). */
+export function isContinuationLine(line) {
+  if (!line || PATCH_LIST_LINE_PATTERN.test(line)) return false;
+  return /^\s{2,}\S/.test(line);
+}
+
+function mergeListContinuation(lastLine, contLine) {
+  const m = lastLine.match(PATCH_LIST_LINE_PATTERN);
+  if (!m) return `${lastLine}\n${contLine}`;
+  const tail = contLine.replace(/^\s+/, "").trimEnd();
+  return `${m[1]}${m[2]} ${m[3]}\n${tail}`;
+}
+
 export function splitPatchMarkdownSegments(text) {
   const lines = String(text ?? "").split("\n");
   const segments = [];
@@ -9,8 +22,13 @@ export function splitPatchMarkdownSegments(text) {
     if (PATCH_LIST_LINE_PATTERN.test(lines[i])) {
       const listLines = [];
       while (i < lines.length && PATCH_LIST_LINE_PATTERN.test(lines[i])) {
-        listLines.push(lines[i]);
+        let row = lines[i];
         i++;
+        while (i < lines.length && isContinuationLine(lines[i])) {
+          row = mergeListContinuation(row, lines[i]);
+          i++;
+        }
+        listLines.push(row);
       }
       segments.push({ type: "list", lines: listLines });
     } else {
@@ -27,12 +45,15 @@ export function splitPatchMarkdownSegments(text) {
 
 export function parseListLinesToLevels(lines) {
   const parsed = [];
-  for (const line of lines) {
-    const m = line.match(PATCH_LIST_LINE_PATTERN);
+  for (const row of lines) {
+    const parts = row.split("\n");
+    const m = parts[0].match(PATCH_LIST_LINE_PATTERN);
     if (!m) continue;
+    const textBody =
+      parts.length > 1 ? [m[3], ...parts.slice(1)].join("\n").trimEnd() : m[3];
     const indent = m[1].length;
     const level = Math.floor(indent / 2);
-    parsed.push({ level, text: m[3] });
+    parsed.push({ level, text: textBody });
   }
   return parsed;
 }

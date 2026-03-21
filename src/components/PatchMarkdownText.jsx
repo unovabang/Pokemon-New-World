@@ -2,11 +2,22 @@ import { Fragment } from "react";
 import { renderInlineMarkdown } from "../utils/inlineMarkdown";
 import { splitPatchMarkdownSegments, parseListLinesToLevels, nestListItems } from "../utils/patchMarkdownList";
 
+/** Sauts de ligne à l’intérieur d’un même bloc (ligne physique ou texte de puce). */
+function renderInlineWithLineBreaks(text) {
+  const parts = String(text ?? "").split("\n");
+  return parts.map((part, i) => (
+    <Fragment key={i}>
+      {i > 0 && <br />}
+      {renderInlineMarkdown(part, { titleClassName: "patchnotes-inline-title" })}
+    </Fragment>
+  ));
+}
+
 function renderPlainLines(lines) {
   return lines.map((line, i) => (
     <Fragment key={i}>
       {i > 0 && <br />}
-      {renderInlineMarkdown(line, { titleClassName: "patchnotes-inline-title" })}
+      {renderInlineWithLineBreaks(line)}
     </Fragment>
   ));
 }
@@ -17,7 +28,7 @@ function renderListTree(nodes) {
     <ul className="patch-md-ul">
       {nodes.map((node, i) => (
         <li key={i} className="patch-md-li">
-          <span className="patch-md-li-content">{renderInlineMarkdown(node.text, { titleClassName: "patchnotes-inline-title" })}</span>
+          <span className="patch-md-li-content">{renderInlineWithLineBreaks(node.text)}</span>
           {node.children.length > 0 ? renderListTree(node.children) : null}
         </li>
       ))}
