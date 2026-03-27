@@ -126,7 +126,7 @@ function totalFromStats(stats) {
   );
 }
 
-function NerfBuffModal({ entry, pokedexList = [], onClose }) {
+export function NerfBuffModal({ entry, pokedexList = [], onClose }) {
   const overlayRef = useRef(null);
   useEffect(() => {
     const fn = (e) => e.key === "Escape" && onClose();
@@ -293,8 +293,9 @@ function NerfBuffModal({ entry, pokedexList = [], onClose }) {
   );
 }
 
-function NerfBuffGrid({ id, title, icon, entries, pokedexList, onSelect }) {
+export function NerfBuffGrid({ id, title, icon, entries, pokedexList, onSelect, idPrefix = "" }) {
   const list = Array.isArray(pokedexList) ? pokedexList : [];
+  const sectionDomId = idPrefix ? `${idPrefix}-${id}` : id;
   const rows = useMemo(() => {
     return (entries || []).map((entry) => {
       const dexEntry = findPokedexEntry(entry.name, list);
@@ -306,7 +307,7 @@ function NerfBuffGrid({ id, title, icon, entries, pokedexList, onSelect }) {
   }, [entries, list]);
 
   return (
-    <section id={`section-${id}`} className="bst-section bst-section--grid nerfbuff-section" data-accent={id}>
+    <section id={`section-${sectionDomId}`} className="bst-section bst-section--grid nerfbuff-section" data-accent={id}>
       <div className="bst-section-header">
         <i className={`fa-solid ${icon} bst-section-icon`} aria-hidden />
         <h2 className="bst-section-title">{title}</h2>
@@ -525,3 +526,5 @@ export default function NerfsAndBuffsPage() {
     </div>
   );
 }
+
+export { SECTIONS as NERFBUFF_DISPLAY_SECTIONS };

@@ -9776,3 +9776,25 @@ a.dex-panel--active{cursor:default}
   0%{ transform:translateX(-2px); }
   100%{ transform:translateX(2px); }
 }
+
+/* Grille équilibrage dans les notes de patch (même rendu que la page Nerfs & Buffs) */
+.patchnotes-nerfbuff-block{
+  margin-top:.75rem;
+}
+.patchnotes-nerfbuff-count{
+  margin:0 0 1rem;
+  font-size:.95rem;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+}
+.patchnotes-nerfbuff-sections-wrap{
+  margin-top:.25rem;
+}
+.patchnotes-nerfbuff-sections-wrap .bst-section-title{
+  font-size:clamp(1.05rem, 2.5vw, 1.25rem);
+}
+.patchnotes-nerfbuff-sections-wrap .bst-section-header{
+  margin-bottom:.65rem;
+}

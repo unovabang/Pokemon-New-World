@@ -10,6 +10,7 @@ import LanguageSelector from "../components/LanguageSelector";
 import Sidebar from "../components/Sidebar";
 import PatchSectionHeading from "../components/PatchSectionHeading";
 import PatchMarkdownText from "../components/PatchMarkdownText";
+import PatchNotesNerfsBuffsSection from "../components/PatchNotesNerfsBuffsSection";
 import { useLanguage } from "../contexts/LanguageContext";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -678,11 +679,29 @@ const HomePage = () => {
                         />
                       </div>
                     )}
-                    <ul>
-                      {(section.items || []).map((item, itemIndex) => (
-                        <li key={itemIndex}><PatchMarkdownText text={item} /></li>
-                      ))}
-                    </ul>
+                    {section.sectionKind === "nerfs-buffs" ? (
+                      <>
+                        {(section.items || []).filter(Boolean).length > 0 && (
+                          <ul className="patchnotes-section-intro-list">
+                            {(section.items || []).map((item, itemIndex) =>
+                              item ? (
+                                <li key={itemIndex}><PatchMarkdownText text={item} /></li>
+                              ) : null
+                            )}
+                          </ul>
+                        )}
+                        <PatchNotesNerfsBuffsSection
+                          nerfsBuffs={section.nerfsBuffs}
+                          idPrefix={`home-modal-v${String(patchNotesFromApi.versions[0].version || index)}-nb`}
+                        />
+                      </>
+                    ) : (
+                      <ul>
+                        {(section.items || []).map((item, itemIndex) => (
+                          <li key={itemIndex}><PatchMarkdownText text={item} /></li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 ))}
                 <div className="patch-modal-footer">

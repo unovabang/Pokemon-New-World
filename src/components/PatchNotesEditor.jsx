@@ -1,6 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import MarkdownToolbar from './MarkdownToolbar';
+import NerfsAndBuffsEditor from './NerfsAndBuffsEditor';
+
+const PATCH_NERFS_SECTION_KIND = 'nerfs-buffs';
+
+function normalizeNerfsBuffsForSection(nb) {
+  if (!nb || typeof nb !== 'object') {
+    return { nerfs: [], buffs: [], ajustements: [] };
+  }
+  return {
+    nerfs: Array.isArray(nb.nerfs) ? nb.nerfs : [],
+    buffs: Array.isArray(nb.buffs) ? nb.buffs : [],
+    ajustements: Array.isArray(nb.ajustements) ? nb.ajustements : [],
+  };
+}
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -41,12 +55,22 @@ const PatchNotesEditor = ({ onSave }) => {
     return itemTextareaRefs.current[key];
   };
 
-  const normalizeSection = (s) => ({
-    title: s?.title || '',
-    image: s?.image || '',
-    icon: typeof s?.icon === 'string' ? s.icon : '',
-    items: Array.isArray(s?.items) ? s.items : ['']
-  });
+  const normalizeSection = (s) => {
+    const base = {
+      title: s?.title || '',
+      image: s?.image || '',
+      icon: typeof s?.icon === 'string' ? s.icon : '',
+      items: Array.isArray(s?.items) ? s.items : [''],
+    };
+    if (s?.sectionKind === PATCH_NERFS_SECTION_KIND) {
+      return {
+        ...base,
+        sectionKind: PATCH_NERFS_SECTION_KIND,
+        nerfsBuffs: normalizeNerfsBuffsForSection(s.nerfsBuffs),
+      };
+    }
+    return base;
+  };
   const normalizePatch = (v) => ({
     version: v?.version || '',
     date: v?.date || '',
@@ -158,12 +182,22 @@ const PatchNotesEditor = ({ onSave }) => {
       showMessage('Erreur', 'Veuillez remplir la version et la date.', 'error');
       return;
     }
-    const sectionsToSave = currentPatch.sections.map(s => ({
-      title: s.title || '',
-      image: s.image || undefined,
-      ...(typeof s.icon === 'string' && s.icon.trim() ? { icon: s.icon.trim() } : {}),
-      items: (s.items || []).filter(Boolean)
-    }));
+    const sectionsToSave = currentPatch.sections.map((s) => {
+      const base = {
+        title: s.title || '',
+        image: s.image || undefined,
+        ...(typeof s.icon === 'string' && s.icon.trim() ? { icon: s.icon.trim() } : {}),
+        items: (s.items || []).filter(Boolean),
+      };
+      if (s.sectionKind === PATCH_NERFS_SECTION_KIND) {
+        return {
+          ...base,
+          sectionKind: PATCH_NERFS_SECTION_KIND,
+          nerfsBuffs: normalizeNerfsBuffsForSection(s.nerfsBuffs),
+        };
+      }
+      return base;
+    });
 
     try {
       if (selectedVersion === null) {
@@ -228,6 +262,36 @@ const PatchNotesEditor = ({ onSave }) => {
   // Ajouter une section
   const addSection = () => {
     setCurrentPatch(prev => ({ ...prev, sections: [...prev.sections, { title: '', image: '', icon: '', items: [''] }] }));
+  };
+
+  const updateSectionNerfsBuffs = (sectionIndex, nerfsBuffs) => {
+    const newSections = [...currentPatch.sections];
+    if (!newSections[sectionIndex]) return;
+    newSections[sectionIndex] = {
+      ...newSections[sectionIndex],
+      sectionKind: PATCH_NERFS_SECTION_KIND,
+      nerfsBuffs: normalizeNerfsBuffsForSection(nerfsBuffs),
+    };
+    setCurrentPatch(prev => ({ ...prev, sections: newSections }));
+  };
+
+  const setSectionNerfsBuffsMode = (sectionIndex, enabled) => {
+    const newSections = [...currentPatch.sections];
+    if (!newSections[sectionIndex]) return;
+    if (enabled) {
+      newSections[sectionIndex] = {
+        ...newSections[sectionIndex],
+        sectionKind: PATCH_NERFS_SECTION_KIND,
+        nerfsBuffs: normalizeNerfsBuffsForSection(newSections[sectionIndex].nerfsBuffs),
+      };
+    } else {
+      const next = { ...newSections[sectionIndex] };
+      delete next.sectionKind;
+      delete next.nerfsBuffs;
+      if (!Array.isArray(next.items) || next.items.length === 0) next.items = [''];
+      newSections[sectionIndex] = next;
+    }
+    setCurrentPatch(prev => ({ ...prev, sections: newSections }));
   };
 
   const updateSectionImage = (sectionIndex, value) => {
@@ -348,7 +412,7 @@ const PatchNotesEditor = ({ onSave }) => {
     ? [
         { icon: 'fa-solid fa-wand-magic-sparkles', title: 'Nouveautés' },
         { icon: 'fa-solid fa-wrench', title: 'Corrections' },
-        { icon: 'fa-solid fa-scale-balanced', title: 'Équilibrage' },
+        { icon: 'fa-solid fa-scale-balanced', title: 'Équilibrage', sectionKind: PATCH_NERFS_SECTION_KIND },
         { icon: 'fa-solid fa-palette', title: 'Améliorations visuelles' },
         { icon: 'fa-solid fa-music', title: 'Audio' },
         { icon: 'fa-solid fa-box-open', title: 'Contenu' },
@@ -356,7 +420,7 @@ const PatchNotesEditor = ({ onSave }) => {
     : [
         { icon: 'fa-solid fa-wand-magic-sparkles', title: 'New Features' },
         { icon: 'fa-solid fa-wrench', title: 'Bug Fixes' },
-        { icon: 'fa-solid fa-scale-balanced', title: 'Balance Changes' },
+        { icon: 'fa-solid fa-scale-balanced', title: 'Balance Changes', sectionKind: PATCH_NERFS_SECTION_KIND },
         { icon: 'fa-solid fa-palette', title: 'Visual Improvements' },
         { icon: 'fa-solid fa-music', title: 'Audio' },
         { icon: 'fa-solid fa-box-open', title: 'Content' },
@@ -529,7 +593,21 @@ const PatchNotesEditor = ({ onSave }) => {
                         onClick={() =>
                           setCurrentPatch((prev) => ({
                             ...prev,
-                            sections: [...prev.sections, { title: sec.title, icon: sec.icon, image: '', items: [''] }],
+                            sections: [
+                              ...prev.sections,
+                              {
+                                title: sec.title,
+                                icon: sec.icon,
+                                image: '',
+                                items: [''],
+                                ...(sec.sectionKind === PATCH_NERFS_SECTION_KIND
+                                  ? {
+                                      sectionKind: PATCH_NERFS_SECTION_KIND,
+                                      nerfsBuffs: { nerfs: [], buffs: [], ajustements: [] },
+                                    }
+                                  : {}),
+                              },
+                            ],
                           }))
                         }
                       >
@@ -574,9 +652,35 @@ const PatchNotesEditor = ({ onSave }) => {
                         <img src={section.image} alt="" className="patchnotes-editor-preview-img" onError={(e) => { e.target.style.display = 'none'; }} />
                       </div>
                     )}
+                    <div className="patchnotes-editor-section-mode" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                      {section.sectionKind === PATCH_NERFS_SECTION_KIND ? (
+                        <>
+                          <p className="patchnotes-editor-md-hint" style={{ margin: 0 }}>
+                            <i className="fa-solid fa-table-cells" aria-hidden /> Grille équilibrage : même présentation que la page publique « Nerfs &amp; Buffs » (cartes, détail des stats au clic).
+                          </p>
+                          <button
+                            type="button"
+                            className="btn btn-ghost"
+                            onClick={() =>
+                              showConfirm(
+                                'Repasser en texte seul',
+                                'Les fiches Pokémon enregistrées dans cette section seront retirées du patch. Continuer ?',
+                                () => setSectionNerfsBuffsMode(sectionIndex, false)
+                              )
+                            }
+                          >
+                            <i className="fa-solid fa-align-left" aria-hidden /> Repasser en liste Markdown uniquement
+                          </button>
+                        </>
+                      ) : (
+                        <button type="button" className="btn btn-ghost" onClick={() => setSectionNerfsBuffsMode(sectionIndex, true)}>
+                          <i className="fa-solid fa-scale-balanced" aria-hidden /> Ajouter la grille équilibrage (cartes + stats)
+                        </button>
+                      )}
+                    </div>
                     <div className="patchnotes-editor-items">
                       <div className="patchnotes-editor-items-head">
-                        <span>Éléments</span>
+                        <span>{section.sectionKind === PATCH_NERFS_SECTION_KIND ? 'Texte d’introduction (optionnel)' : 'Éléments'}</span>
                         <button type="button" onClick={() => addItem(sectionIndex)} className="btn btn-ghost"><i className="fa-solid fa-plus" /> Ajouter</button>
                       </div>
                       <p className="patchnotes-editor-md-hint">
@@ -584,6 +688,9 @@ const PatchNotesEditor = ({ onSave }) => {
                         <code className="patchnotes-editor-md-code">*italique*</code>,{' '}
                         <code className="patchnotes-editor-md-code">[TITLE]…[/TITLE]</code>,                         listes <code className="patchnotes-editor-md-code">- </code> ou{' '}
                         <code className="patchnotes-editor-md-code">  - </code> (2 espaces pour sous-niveau) ; ligne suivante indentée (2+ espaces) = suite de la puce — ou les boutons ci‑dessous.
+                        {section.sectionKind === PATCH_NERFS_SECTION_KIND && (
+                          <> En mode grille, ce texte s’affiche au-dessus des cartes sur la page publique.</>
+                        )}
                       </p>
                       {(section.items || []).map((item, itemIndex) => {
                         const taRef = getItemTextareaRef(sectionIndex, itemIndex);
@@ -606,6 +713,16 @@ const PatchNotesEditor = ({ onSave }) => {
                         );
                       })}
                     </div>
+                    {section.sectionKind === PATCH_NERFS_SECTION_KIND && (
+                      <div className="patchnotes-editor-nerfbuffs-wrap" style={{ marginTop: '1.25rem' }}>
+                        <NerfsAndBuffsEditor
+                          key={`${selectedVersion ?? 'new'}-nb-${sectionIndex}`}
+                          embedMode
+                          embedValue={section.nerfsBuffs}
+                          onEmbedChange={(nb) => updateSectionNerfsBuffs(sectionIndex, nb)}
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

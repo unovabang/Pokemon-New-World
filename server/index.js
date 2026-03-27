@@ -11,7 +11,7 @@ import authRoutes from './auth.js';
 import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command, ListMultipartUploadsCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { stripLeadingEmojiFromTitle } from '../src/utils/patchSectionTitle.js';
-import { stripPatchMarkdownForPlain } from './stripPatchMarkdown.js';
+import { stripPatchMarkdownForPlain, formatNerfsBuffsPlainSummary } from './stripPatchMarkdown.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -505,7 +505,14 @@ async function sendPatchnoteToDiscord(patch) {
   for (const section of sections.slice(0, 25)) {
     const displayTitle = stripLeadingEmojiFromTitle(section.title || '') || (section.title || '').trim();
     const title = (displayTitle || 'Sans titre').slice(0, 150);
-    let body = (section.items || []).filter(Boolean).map((item) => `• ${stripPatchMarkdownForPlain(String(item))}`).join('\n');
+    let body = '';
+    if (section.sectionKind === 'nerfs-buffs' && section.nerfsBuffs) {
+      body = formatNerfsBuffsPlainSummary(section.nerfsBuffs);
+      const fromItems = (section.items || []).filter(Boolean).map((item) => `• ${stripPatchMarkdownForPlain(String(item))}`).join('\n');
+      if (fromItems) body = body ? `${body}\n\n${fromItems}` : fromItems;
+    } else {
+      body = (section.items || []).filter(Boolean).map((item) => `• ${stripPatchMarkdownForPlain(String(item))}`).join('\n');
+    }
     if (body.length > maxFieldValue) body = body.slice(0, maxFieldValue - 3) + '…';
     if (!body) body = '—';
     const value = `> ### ${title}\n\n${body}`;

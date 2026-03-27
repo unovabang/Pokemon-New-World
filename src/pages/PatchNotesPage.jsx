@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import LanguageSelector from "../components/LanguageSelector";
 import PatchSectionHeading from "../components/PatchSectionHeading";
 import PatchMarkdownText from "../components/PatchMarkdownText";
+import PatchNotesNerfsBuffsSection from "../components/PatchNotesNerfsBuffsSection";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const API_BASE = import.meta.env.VITE_API_URL
@@ -129,11 +130,29 @@ export default function PatchNotesPage() {
                         />
                       </div>
                     )}
-                    <ul>
-                      {(section.items || []).map((item, j) => (
-                        <li key={j}><PatchMarkdownText text={item} /></li>
-                      ))}
-                    </ul>
+                    {section.sectionKind === "nerfs-buffs" ? (
+                      <>
+                        {(section.items || []).filter(Boolean).length > 0 && (
+                          <ul className="patchnotes-section-intro-list">
+                            {(section.items || []).map((item, j) =>
+                              item ? (
+                                <li key={j}><PatchMarkdownText text={item} /></li>
+                              ) : null
+                            )}
+                          </ul>
+                        )}
+                        <PatchNotesNerfsBuffsSection
+                          nerfsBuffs={section.nerfsBuffs}
+                          idPrefix={`patch-v${String(selectedVersion.version || i)}-nb`}
+                        />
+                      </>
+                    ) : (
+                      <ul>
+                        {(section.items || []).map((item, j) => (
+                          <li key={j}><PatchMarkdownText text={item} /></li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 ))}
               </div>

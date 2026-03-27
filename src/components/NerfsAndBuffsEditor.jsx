@@ -119,7 +119,19 @@ function formToEntry(form) {
   };
 }
 
-export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries = [], onSave }) {
+function emptyNerfsBuffsPayload() {
+  return { nerfs: [], buffs: [], ajustements: [] };
+}
+
+export default function NerfsAndBuffsEditor({
+  initialData,
+  initialPokedexEntries = [],
+  onSave,
+  /** Mode intégré (ex. notes de patch) : pas d’API dédiée, données contrôlées par le parent */
+  embedMode = false,
+  embedValue = null,
+  onEmbedChange = null,
+}) {
   const [data, setData] = useState({
     lastModified: null,
     nerfs: [],
@@ -145,6 +157,13 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
   const load = async () => {
     try {
       setLoading(true);
+      if (embedMode) {
+        const pokedexRes = await fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json());
+        if (pokedexRes?.success && Array.isArray(pokedexRes?.pokedex?.entries)) {
+          setPokedexEntries(pokedexRes.pokedex.entries);
+        }
+        return;
+      }
       const [apiRes, pokedexRes] = await Promise.all([
         fetch(`${API_BASE}/nerfs-and-buffs?t=${Date.now()}`).then((r) => r.json()),
         fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
@@ -171,13 +190,26 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
         setPokedexEntries(pokedexRes.pokedex.entries);
       }
     } catch {
-      if (initialData) setData({ ...initialData, background: initialData.background ?? "" });
+      if (!embedMode && initialData) setData({ ...initialData, background: initialData.background ?? "" });
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [embedMode]);
+
+  useEffect(() => {
+    if (!embedMode) return;
+    const ev = embedValue && typeof embedValue === "object" ? embedValue : emptyNerfsBuffsPayload();
+    setData((d) => ({
+      ...d,
+      lastModified: null,
+      background: "",
+      nerfs: Array.isArray(ev.nerfs) ? ev.nerfs : [],
+      buffs: Array.isArray(ev.buffs) ? ev.buffs : [],
+      ajustements: Array.isArray(ev.ajustements) ? ev.ajustements : [],
+    }));
+  }, [embedMode, embedValue]);
   useEffect(() => {
     if (!pokedexDropdownOpen) return;
     const onDocClick = (e) => {
@@ -208,8 +240,26 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
     });
   }, [pokedexEntries, pokedexSearch]);
 
+  const pushEmbed = (toSend) => {
+    onEmbedChange?.({
+      nerfs: Array.isArray(toSend.nerfs) ? toSend.nerfs : [],
+      buffs: Array.isArray(toSend.buffs) ? toSend.buffs : [],
+      ajustements: Array.isArray(toSend.ajustements) ? toSend.ajustements : [],
+    });
+  };
+
   const saveToApi = async (payload) => {
     const toSend = payload || data;
+    if (embedMode) {
+      setData((d) => ({
+        ...d,
+        nerfs: toSend.nerfs,
+        buffs: toSend.buffs,
+        ajustements: toSend.ajustements,
+      }));
+      pushEmbed(toSend);
+      return;
+    }
     setSaving(true);
     setSaveMessage(null);
     const lastModified = new Date().toISOString().slice(0, 10);
@@ -543,8 +593,11 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
     </div>
   );
 
+  const embedShellClass = embedMode ? " nerfs-buffs-editor--embed" : "";
+
   return (
-    <div className="admin-pokedex">
+    <div className={`admin-pokedex${embedShellClass}`}>
+      {!embedMode && (
       <section className="admin-pokedex-card">
         <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem", flexWrap: "wrap", alignItems: "center" }}>
           {SECTIONS.map((s) => (
@@ -560,6 +613,23 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
           ))}
         </div>
       </section>
+      )}
+
+      {embedMode && (
+        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem", flexWrap: "wrap", alignItems: "center" }}>
+          {SECTIONS.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => setActiveSection(s.id)}
+              className={`admin-panel-nav-btn ${activeSection === s.id ? "admin-panel-nav-btn--active" : ""}`}
+              style={{ padding: "0.5rem 1rem", fontSize: "0.9rem" }}
+            >
+              <i className={`fa-solid ${s.icon}`} aria-hidden /> {s.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <section className="admin-pokedex-card">
         <div className="admin-pokedex-toolbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
@@ -581,16 +651,19 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
             <button type="button" onClick={openAdd} className="admin-pokedex-btn admin-pokedex-btn-primary">
               <i className="fa-solid fa-plus" /> Ajouter
             </button>
-            {saveMessage && (
+            {!embedMode && saveMessage && (
               <span style={{ color: saveMessage.type === "success" ? "#86efac" : "#fca5a5", fontSize: "0.9rem", display: "flex", alignItems: "center", gap: "0.35rem" }}>
                 <i className={`fa-solid ${saveMessage.type === "success" ? "fa-check" : "fa-exclamation-triangle"}`} />
                 {saveMessage.text}
               </span>
             )}
+            {!embedMode && (
             <button type="button" onClick={() => saveToApi()} disabled={saving} className="admin-pokedex-btn admin-pokedex-btn-ghost">
               <i className={`fa-solid ${saving ? "fa-spinner fa-spin" : "fa-save"}`} /> {saving ? "Enregistrement…" : "Sauvegarder"}
             </button>
+            )}
           </div>
+          {!embedMode && (
           <div className="admin-bst-background-row" style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", width: "100%" }}>
             <label style={{ minWidth: "140px" }}><i className="fa-solid fa-image" aria-hidden /> URL image de fond (page publique)</label>
             <input
@@ -602,6 +675,13 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
               style={{ flex: "1", minWidth: "200px", maxWidth: "400px" }}
             />
           </div>
+          )}
+          {embedMode && (
+            <p style={{ margin: "0.75rem 0 0", fontSize: "0.85rem", color: "rgba(255,255,255,.65)", width: "100%" }}>
+              <i className="fa-solid fa-circle-info" aria-hidden style={{ marginRight: "0.35rem" }} />
+              Les changements sont enregistrés avec le bouton <strong>Sauvegarder</strong> des notes de patch (ci‑dessus).
+            </p>
+          )}
         </div>
 
         <div className="admin-bst-grid">
