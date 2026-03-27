@@ -5601,6 +5601,18 @@ a.dex-panel--active{cursor:default}
   flex:1;
   min-width:min(100%,12rem);
 }
+/* Moins d’air entre le badge+titre [TITLE] et le paragraphe (marges titre + ligne vide → double <br>) */
+.patchnotes-balance-li .patch-md-root > .patchnotes-inline-title{
+  margin:0 0 0.1rem;
+  line-height:1.25;
+}
+.patchnotes-balance-li .patch-md-root > .patchnotes-inline-title + br{
+  line-height:0;
+  margin:0;
+}
+.patchnotes-balance-li .patch-md-root > .patchnotes-inline-title + br + br{
+  display:none;
+}
 .patch-section-image-wrap{margin:0 0 1rem; text-align:center}
 .patch-section-image{
   max-width:100%;
