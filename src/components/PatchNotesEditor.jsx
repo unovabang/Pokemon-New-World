@@ -1,20 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import MarkdownToolbar from './MarkdownToolbar';
-import NerfsAndBuffsEditor from './NerfsAndBuffsEditor';
-
-const PATCH_NERFS_SECTION_KIND = 'nerfs-buffs';
-
-function normalizeNerfsBuffsForSection(nb) {
-  if (!nb || typeof nb !== 'object') {
-    return { nerfs: [], buffs: [], ajustements: [] };
-  }
-  return {
-    nerfs: Array.isArray(nb.nerfs) ? nb.nerfs : [],
-    buffs: Array.isArray(nb.buffs) ? nb.buffs : [],
-    ajustements: Array.isArray(nb.ajustements) ? nb.ajustements : [],
-  };
-}
+import {
+  normalizePatchItem,
+  normalizePatchSectionItems,
+  patchItemToStored,
+  resolveSectionBalanceKinds,
+  PATCH_BALANCE_KINDS,
+} from '../utils/patchNoteItem';
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -55,22 +48,13 @@ const PatchNotesEditor = ({ onSave }) => {
     return itemTextareaRefs.current[key];
   };
 
-  const normalizeSection = (s) => {
-    const base = {
-      title: s?.title || '',
-      image: s?.image || '',
-      icon: typeof s?.icon === 'string' ? s.icon : '',
-      items: Array.isArray(s?.items) ? s.items : [''],
-    };
-    if (s?.sectionKind === PATCH_NERFS_SECTION_KIND) {
-      return {
-        ...base,
-        sectionKind: PATCH_NERFS_SECTION_KIND,
-        nerfsBuffs: normalizeNerfsBuffsForSection(s.nerfsBuffs),
-      };
-    }
-    return base;
-  };
+  const normalizeSection = (s) => ({
+    title: s?.title || '',
+    image: s?.image || '',
+    icon: typeof s?.icon === 'string' ? s.icon : '',
+    balanceKinds: s?.balanceKinds,
+    items: normalizePatchSectionItems(s?.items),
+  });
   const normalizePatch = (v) => ({
     version: v?.version || '',
     date: v?.date || '',
@@ -183,20 +167,27 @@ const PatchNotesEditor = ({ onSave }) => {
       return;
     }
     const sectionsToSave = currentPatch.sections.map((s) => {
-      const base = {
+      const balanceActive = resolveSectionBalanceKinds(s);
+      const itemsOut = (s.items || [])
+        .map((item) => patchItemToStored(normalizePatchItem(item), balanceActive))
+        .filter((stored) =>
+          (typeof stored === 'string' ? stored.trim() : (stored.text || '').trim()).length > 0
+        );
+
+      const out = {
         title: s.title || '',
         image: s.image || undefined,
         ...(typeof s.icon === 'string' && s.icon.trim() ? { icon: s.icon.trim() } : {}),
-        items: (s.items || []).filter(Boolean),
+        items: itemsOut,
       };
-      if (s.sectionKind === PATCH_NERFS_SECTION_KIND) {
-        return {
-          ...base,
-          sectionKind: PATCH_NERFS_SECTION_KIND,
-          nerfsBuffs: normalizeNerfsBuffsForSection(s.nerfsBuffs),
-        };
+
+      if (s.balanceKinds === false) out.balanceKinds = false;
+      else if (s.balanceKinds === true) out.balanceKinds = true;
+      else if (itemsOut.some((i) => typeof i === 'object' && i && PATCH_BALANCE_KINDS.includes(i.kind))) {
+        out.balanceKinds = true;
       }
-      return base;
+
+      return out;
     });
 
     try {
@@ -261,37 +252,10 @@ const PatchNotesEditor = ({ onSave }) => {
 
   // Ajouter une section
   const addSection = () => {
-    setCurrentPatch(prev => ({ ...prev, sections: [...prev.sections, { title: '', image: '', icon: '', items: [''] }] }));
-  };
-
-  const updateSectionNerfsBuffs = (sectionIndex, nerfsBuffs) => {
-    const newSections = [...currentPatch.sections];
-    if (!newSections[sectionIndex]) return;
-    newSections[sectionIndex] = {
-      ...newSections[sectionIndex],
-      sectionKind: PATCH_NERFS_SECTION_KIND,
-      nerfsBuffs: normalizeNerfsBuffsForSection(nerfsBuffs),
-    };
-    setCurrentPatch(prev => ({ ...prev, sections: newSections }));
-  };
-
-  const setSectionNerfsBuffsMode = (sectionIndex, enabled) => {
-    const newSections = [...currentPatch.sections];
-    if (!newSections[sectionIndex]) return;
-    if (enabled) {
-      newSections[sectionIndex] = {
-        ...newSections[sectionIndex],
-        sectionKind: PATCH_NERFS_SECTION_KIND,
-        nerfsBuffs: normalizeNerfsBuffsForSection(newSections[sectionIndex].nerfsBuffs),
-      };
-    } else {
-      const next = { ...newSections[sectionIndex] };
-      delete next.sectionKind;
-      delete next.nerfsBuffs;
-      if (!Array.isArray(next.items) || next.items.length === 0) next.items = [''];
-      newSections[sectionIndex] = next;
-    }
-    setCurrentPatch(prev => ({ ...prev, sections: newSections }));
+    setCurrentPatch((prev) => ({
+      ...prev,
+      sections: [...prev.sections, { title: '', image: '', icon: '', balanceKinds: undefined, items: [{ text: '', kind: '' }] }],
+    }));
   };
 
   const updateSectionImage = (sectionIndex, value) => {
@@ -321,18 +285,37 @@ const PatchNotesEditor = ({ onSave }) => {
     if (!newSections[sectionIndex].items) {
       newSections[sectionIndex].items = [];
     }
-    newSections[sectionIndex].items.push('');
-    setCurrentPatch(prev => ({ ...prev, sections: newSections }));
+    newSections[sectionIndex].items.push({ text: '', kind: '' });
+    setCurrentPatch((prev) => ({ ...prev, sections: newSections }));
   };
 
-  // Mettre à jour un élément
   const updateItem = (sectionIndex, itemIndex, value) => {
     const newSections = [...currentPatch.sections];
     if (!newSections[sectionIndex].items) {
       newSections[sectionIndex].items = [];
     }
-    newSections[sectionIndex].items[itemIndex] = value;
-    setCurrentPatch(prev => ({ ...prev, sections: newSections }));
+    const prev = normalizePatchItem(newSections[sectionIndex].items[itemIndex]);
+    newSections[sectionIndex].items[itemIndex] = { ...prev, text: value };
+    setCurrentPatch((prev) => ({ ...prev, sections: newSections }));
+  };
+
+  const updateItemKind = (sectionIndex, itemIndex, kind) => {
+    const newSections = [...currentPatch.sections];
+    if (!newSections[sectionIndex].items) return;
+    const prev = normalizePatchItem(newSections[sectionIndex].items[itemIndex]);
+    const k = PATCH_BALANCE_KINDS.includes(kind) ? kind : '';
+    newSections[sectionIndex].items[itemIndex] = { ...prev, kind: k };
+    setCurrentPatch((prev) => ({ ...prev, sections: newSections }));
+  };
+
+  const updateSectionBalanceKinds = (sectionIndex, checked) => {
+    const newSections = [...currentPatch.sections];
+    if (!newSections[sectionIndex]) return;
+    newSections[sectionIndex] = {
+      ...newSections[sectionIndex],
+      balanceKinds: checked ? true : false,
+    };
+    setCurrentPatch((prev) => ({ ...prev, sections: newSections }));
   };
 
   // Supprimer un élément
@@ -412,7 +395,7 @@ const PatchNotesEditor = ({ onSave }) => {
     ? [
         { icon: 'fa-solid fa-wand-magic-sparkles', title: 'Nouveautés' },
         { icon: 'fa-solid fa-wrench', title: 'Corrections' },
-        { icon: 'fa-solid fa-scale-balanced', title: 'Équilibrage', sectionKind: PATCH_NERFS_SECTION_KIND },
+        { icon: 'fa-solid fa-scale-balanced', title: 'Équilibrage' },
         { icon: 'fa-solid fa-palette', title: 'Améliorations visuelles' },
         { icon: 'fa-solid fa-music', title: 'Audio' },
         { icon: 'fa-solid fa-box-open', title: 'Contenu' },
@@ -420,7 +403,7 @@ const PatchNotesEditor = ({ onSave }) => {
     : [
         { icon: 'fa-solid fa-wand-magic-sparkles', title: 'New Features' },
         { icon: 'fa-solid fa-wrench', title: 'Bug Fixes' },
-        { icon: 'fa-solid fa-scale-balanced', title: 'Balance Changes', sectionKind: PATCH_NERFS_SECTION_KIND },
+        { icon: 'fa-solid fa-scale-balanced', title: 'Balance Changes' },
         { icon: 'fa-solid fa-palette', title: 'Visual Improvements' },
         { icon: 'fa-solid fa-music', title: 'Audio' },
         { icon: 'fa-solid fa-box-open', title: 'Content' },
@@ -595,18 +578,7 @@ const PatchNotesEditor = ({ onSave }) => {
                             ...prev,
                             sections: [
                               ...prev.sections,
-                              {
-                                title: sec.title,
-                                icon: sec.icon,
-                                image: '',
-                                items: [''],
-                                ...(sec.sectionKind === PATCH_NERFS_SECTION_KIND
-                                  ? {
-                                      sectionKind: PATCH_NERFS_SECTION_KIND,
-                                      nerfsBuffs: { nerfs: [], buffs: [], ajustements: [] },
-                                    }
-                                  : {}),
-                              },
+                              { title: sec.title, icon: sec.icon, image: '', balanceKinds: undefined, items: [{ text: '', kind: '' }] },
                             ],
                           }))
                         }
@@ -652,35 +624,24 @@ const PatchNotesEditor = ({ onSave }) => {
                         <img src={section.image} alt="" className="patchnotes-editor-preview-img" onError={(e) => { e.target.style.display = 'none'; }} />
                       </div>
                     )}
-                    <div className="patchnotes-editor-section-mode" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                      {section.sectionKind === PATCH_NERFS_SECTION_KIND ? (
-                        <>
-                          <p className="patchnotes-editor-md-hint" style={{ margin: 0 }}>
-                            <i className="fa-solid fa-table-cells" aria-hidden /> Grille équilibrage : même présentation que la page publique « Nerfs &amp; Buffs » (cartes, détail des stats au clic).
-                          </p>
-                          <button
-                            type="button"
-                            className="btn btn-ghost"
-                            onClick={() =>
-                              showConfirm(
-                                'Repasser en texte seul',
-                                'Les fiches Pokémon enregistrées dans cette section seront retirées du patch. Continuer ?',
-                                () => setSectionNerfsBuffsMode(sectionIndex, false)
-                              )
-                            }
-                          >
-                            <i className="fa-solid fa-align-left" aria-hidden /> Repasser en liste Markdown uniquement
-                          </button>
-                        </>
-                      ) : (
-                        <button type="button" className="btn btn-ghost" onClick={() => setSectionNerfsBuffsMode(sectionIndex, true)}>
-                          <i className="fa-solid fa-scale-balanced" aria-hidden /> Ajouter la grille équilibrage (cartes + stats)
-                        </button>
-                      )}
-                    </div>
+                    <label className="patchnotes-editor-field patchnotes-editor-balance-toggle">
+                      <span>{currentLang === 'en' ? 'Balance line tags' : 'Équilibrage : types par ligne'}</span>
+                      <span className="patchnotes-editor-balance-toggle-row">
+                        <input
+                          type="checkbox"
+                          checked={resolveSectionBalanceKinds(section)}
+                          onChange={(e) => updateSectionBalanceKinds(sectionIndex, e.target.checked)}
+                        />
+                        <span className="patchnotes-editor-balance-toggle-label">
+                          {currentLang === 'en'
+                            ? 'Show nerf / buff / adjustment per line (for the balancing section or any custom block).'
+                            : 'Afficher Nerf / Buff / Ajustement sur chaque ligne (section Équilibrage ou bloc personnalisé).'}
+                        </span>
+                      </span>
+                    </label>
                     <div className="patchnotes-editor-items">
                       <div className="patchnotes-editor-items-head">
-                        <span>{section.sectionKind === PATCH_NERFS_SECTION_KIND ? 'Texte d’introduction (optionnel)' : 'Éléments'}</span>
+                        <span>Éléments</span>
                         <button type="button" onClick={() => addItem(sectionIndex)} className="btn btn-ghost"><i className="fa-solid fa-plus" /> Ajouter</button>
                       </div>
                       <p className="patchnotes-editor-md-hint">
@@ -688,19 +649,42 @@ const PatchNotesEditor = ({ onSave }) => {
                         <code className="patchnotes-editor-md-code">*italique*</code>,{' '}
                         <code className="patchnotes-editor-md-code">[TITLE]…[/TITLE]</code>,                         listes <code className="patchnotes-editor-md-code">- </code> ou{' '}
                         <code className="patchnotes-editor-md-code">  - </code> (2 espaces pour sous-niveau) ; ligne suivante indentée (2+ espaces) = suite de la puce — ou les boutons ci‑dessous.
-                        {section.sectionKind === PATCH_NERFS_SECTION_KIND && (
-                          <> En mode grille, ce texte s’affiche au-dessus des cartes sur la page publique.</>
-                        )}
+                        {resolveSectionBalanceKinds(section) ? (
+                          <>
+                            {' '}
+                            {currentLang === 'en'
+                              ? 'Use the dropdown on each line for nerf, buff, or adjustment.'
+                              : 'Utilisez le menu sur chaque ligne pour Nerf, Buff ou Ajustement.'}
+                          </>
+                        ) : null}
                       </p>
                       {(section.items || []).map((item, itemIndex) => {
                         const taRef = getItemTextareaRef(sectionIndex, itemIndex);
+                        const itemNorm = normalizePatchItem(item);
+                        const showKinds = resolveSectionBalanceKinds(section);
                         return (
                           <div key={itemIndex} className="patchnotes-editor-item-row patchnotes-editor-item-row--md">
+                            {showKinds ? (
+                              <div className="patchnotes-editor-balance-kind-col">
+                                <label className="patchnotes-editor-balance-kind-label">{currentLang === 'en' ? 'Type' : 'Type'}</label>
+                                <select
+                                  value={itemNorm.kind || ''}
+                                  onChange={(e) => updateItemKind(sectionIndex, itemIndex, e.target.value)}
+                                  className="patchnotes-editor-select patchnotes-editor-balance-select"
+                                  aria-label={currentLang === 'en' ? 'Balance change type' : "Type d'équilibrage"}
+                                >
+                                  <option value="">—</option>
+                                  <option value="nerf">Nerf</option>
+                                  <option value="buff">Buff</option>
+                                  <option value="ajustement">{currentLang === 'en' ? 'Adjustment' : 'Ajustement'}</option>
+                                </select>
+                              </div>
+                            ) : null}
                             <div className="patchnotes-editor-item-md-wrap">
                               <MarkdownToolbar textareaRef={taRef} onUpdate={(v) => updateItem(sectionIndex, itemIndex, v)} />
                               <textarea
                                 ref={(el) => { taRef.current = el; }}
-                                value={item || ''}
+                                value={itemNorm.text}
                                 onChange={(e) => updateItem(sectionIndex, itemIndex, e.target.value)}
                                 rows={3}
                                 placeholder="Texte… (**gras**, *italique*, Entrée = saut de ligne)"
@@ -713,16 +697,6 @@ const PatchNotesEditor = ({ onSave }) => {
                         );
                       })}
                     </div>
-                    {section.sectionKind === PATCH_NERFS_SECTION_KIND && (
-                      <div className="patchnotes-editor-nerfbuffs-wrap" style={{ marginTop: '1.25rem' }}>
-                        <NerfsAndBuffsEditor
-                          key={`${selectedVersion ?? 'new'}-nb-${sectionIndex}`}
-                          embedMode
-                          embedValue={section.nerfsBuffs}
-                          onEmbedChange={(nb) => updateSectionNerfsBuffs(sectionIndex, nb)}
-                        />
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>

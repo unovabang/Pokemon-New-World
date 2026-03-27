@@ -1,18 +1,18 @@
-/** Résumé texte d’un bloc nerfs/buffs (embed Discord). */
-export function formatNerfsBuffsPlainSummary(nb) {
-  if (!nb || typeof nb !== "object") return "";
-  const labels = { nerfs: "Nerf", buffs: "Buff", ajustements: "Ajustement" };
-  const parts = [];
-  for (const id of ["nerfs", "buffs", "ajustements"]) {
-    const arr = nb[id];
-    if (!Array.isArray(arr) || arr.length === 0) continue;
-    const names = arr
-      .map((e) => (e && e.name ? String(e.name).trim() : ""))
-      .filter(Boolean);
-    if (names.length === 0) continue;
-    parts.push(`${labels[id]}: ${names.join(", ")}`);
-  }
-  return parts.join("\n");
+/** Texte d’une ligne de patch (string legacy ou `{ text, kind }`). */
+export function patchItemPlainText(item) {
+  if (item == null || item === "") return "";
+  if (typeof item === "string") return item;
+  if (typeof item === "object" && typeof item.text === "string") return item.text;
+  return "";
+}
+
+/** Préfixe visuel Discord pour nerf / buff / ajustement. */
+export function patchItemDiscordPrefix(item) {
+  const k = item && typeof item === "object" ? item.kind : null;
+  if (k === "nerf") return "🔻 ";
+  if (k === "buff") return "🔺 ";
+  if (k === "ajustement") return "↔️ ";
+  return "";
 }
 
 /** Texte lisible pour Discord / logs (sans syntaxe markdown patch / lore). */
