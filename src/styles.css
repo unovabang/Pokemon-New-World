@@ -5601,14 +5601,13 @@ a.dex-panel--active{cursor:default}
   flex:1;
   min-width:min(100%,12rem);
 }
-/* Moins d’air entre le badge+titre [TITLE] et le paragraphe (marges titre + ligne vide → double <br>) */
+/* Moins d’air entre le badge+titre [TITLE] et le paragraphe (ligne vide markdown → <br> masqués) */
 .patchnotes-balance-li .patch-md-root > .patchnotes-inline-title{
-  margin:0 0 0.1rem;
+  margin:0;
   line-height:1.25;
 }
 .patchnotes-balance-li .patch-md-root > .patchnotes-inline-title + br{
-  line-height:0;
-  margin:0;
+  display:none;
 }
 .patchnotes-balance-li .patch-md-root > .patchnotes-inline-title + br + br{
   display:none;
