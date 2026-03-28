@@ -2933,6 +2933,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   padding:0.25rem;
   background:rgba(0,0,0,.2);
   overflow-x:auto;
+  overflow-y:hidden;
   -webkit-overflow-scrolling:touch;
   scrollbar-width:thin;
   border-radius:28px;
@@ -2979,7 +2980,7 @@ a.dex-panel{cursor:pointer}
   background-clip:text;
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  color:#7ecdf2;
+  color:transparent;
 }
 .dex-panel--pokedex .dex-panel-subtitle{color:rgba(255,255,255,.78)}
 .dex-panel--extradex{
@@ -3005,7 +3006,7 @@ a.dex-panel{cursor:pointer}
   background-clip:text;
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  color:#f8a0a0;
+  color:transparent;
 }
 .dex-panel--extradex .dex-panel-subtitle{color:rgba(255,255,255,.75)}
 .dex-panel--dimmed{
@@ -3036,6 +3037,8 @@ a.dex-panel--active{cursor:default}
   border-radius:22px;
   font-size:2.1rem;
   transition:transform .2s ease, box-shadow .25s ease;
+  /* Rogne la lueur du box-shadow : sinon une traînée bleue peut couvrir le titre à droite */
+  overflow:hidden;
 }
 .dex-panel:hover .dex-panel-icon{
   transform:scale(1.05);
