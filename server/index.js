@@ -8,6 +8,7 @@ import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import { initDb } from './db.js';
 import authRoutes from './auth.js';
+import { handleChatPublicPreview } from './chatPublicPreview.js';
 import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command, ListMultipartUploadsCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { stripLeadingEmojiFromTitle } from '../src/utils/patchSectionTitle.js';
@@ -1875,6 +1876,9 @@ app.put('/api/evs-location', (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
+// Aperçu chat (widget site, lecture seule — voir server/chatPublicPreview.js)
+app.get('/api/chat/public-preview', handleChatPublicPreview);
 
 // Servir le frontend React (build Vite) en production — doit être en dernier
 const DIST_DIR = path.join(__dirname, '../dist');

@@ -19,11 +19,13 @@ import ContactPage from "./pages/ContactPage";
 import DownloadPage from "./pages/DownloadPage";
 import Page404 from "./pages/Page404";
 import SecretPage from "./pages/SecretPage";
+import SiteChatWidget from "./components/SiteChatWidget";
 
 export default function App() {
   return (
     <Router>
       <RouteSeo />
+      <SiteChatWidget />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/patchnotes" element={<PatchNotesPage />} />
