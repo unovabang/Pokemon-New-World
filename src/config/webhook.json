@@ -1,0 +1,14 @@
+{
+  "webhookUrl": "",
+  "username": "",
+  "avatarUrl": "",
+  "embed": {
+    "title": "",
+    "description": "",
+    "color": "#5865F2",
+    "image": "",
+    "thumbnail": "",
+    "footer": ""
+  },
+  "intervalHours": 2
+}

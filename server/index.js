@@ -879,6 +879,101 @@ function getContactWebhookData() {
   return data || {};
 }
 
+/** Lecture webhook config (auto-message). */
+function getWebhookData() {
+  let data = getConfig('webhook');
+  if (!data) {
+    const seedPath = path.join(SOURCE_CONFIG_DIR, 'webhook.json');
+    if (fs.existsSync(seedPath)) {
+      try { data = fs.readJsonSync(seedPath); } catch {}
+    }
+  }
+  return data || {};
+}
+
+let webhookIntervalId = null;
+
+async function sendWebhookAutoMessage() {
+  const data = getWebhookData();
+  const url = (data.webhookUrl || '').trim();
+  const embed = data.embed || {};
+  if (!url || !embed.title) return;
+
+  const discordEmbed = {
+    title: embed.title,
+    description: embed.description || undefined,
+    color: parseInt((embed.color || '#5865F2').replace('#', ''), 16),
+    image: embed.image ? { url: embed.image } : undefined,
+    thumbnail: embed.thumbnail ? { url: embed.thumbnail } : undefined,
+    footer: embed.footer ? { text: embed.footer } : undefined,
+    timestamp: new Date().toISOString(),
+  };
+
+  const payload = { embeds: [discordEmbed] };
+  if (data.username) payload.username = data.username;
+  if (data.avatarUrl) payload.avatar_url = data.avatarUrl;
+
+  try {
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    console.log('✅ Webhook auto-message envoyé.');
+  } catch (e) {
+    console.warn('⚠️ Webhook auto-message erreur:', e.message);
+  }
+}
+
+function startWebhookInterval() {
+  if (webhookIntervalId) clearInterval(webhookIntervalId);
+  const data = getWebhookData();
+  const hours = data.intervalHours || 2;
+  const ms = hours * 60 * 60 * 1000;
+  webhookIntervalId = setInterval(sendWebhookAutoMessage, ms);
+  console.log(`⏰ Webhook auto-message: toutes les ${hours}h`);
+}
+
+app.get('/api/config/webhook', (req, res) => {
+  try {
+    const data = getWebhookData();
+    res.json({
+      success: true,
+      webhookUrl: (data.webhookUrl || '').trim(),
+      username: (data.username || '').trim(),
+      avatarUrl: (data.avatarUrl || '').trim(),
+      embed: data.embed || { title: '', description: '', color: '#5865F2', image: '', thumbnail: '', footer: '' },
+      intervalHours: data.intervalHours || 2,
+    });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+app.put('/api/config/webhook', (req, res) => {
+  try {
+    let { webhookUrl, username, avatarUrl, embed, intervalHours } = req.body || {};
+    webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
+    username = typeof username === 'string' ? username.trim() : '';
+    avatarUrl = typeof avatarUrl === 'string' ? avatarUrl.trim() : '';
+    embed = typeof embed === 'object' && embed ? embed : {};
+    intervalHours = typeof intervalHours === 'number' && intervalHours >= 1 ? intervalHours : 2;
+
+    if (webhookUrl && !webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+      return res.status(400).json({ success: false, error: 'URL de webhook Discord invalide.' });
+    }
+    const payload = { webhookUrl, username, avatarUrl, embed, intervalHours };
+    if (!saveConfig('webhook', payload)) {
+      return res.status(500).json({ success: false, error: 'Erreur sauvegarde.' });
+    }
+    autoCommitConfig('webhook.json');
+    startWebhookInterval();
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 app.get('/api/config/contact-webhook', (req, res) => {
   try {
     const data = getContactWebhookData();
@@ -1971,6 +2066,8 @@ app.listen(port, '0.0.0.0', async () => {
   } catch (err) {
     console.error('⚠️ Init DB:', err.message);
   }
+
+  startWebhookInterval();
 });
 
 export default app;
