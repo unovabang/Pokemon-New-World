@@ -1209,6 +1209,41 @@ app.get('/api/downloads/launcher-update', (req, res) => {
   }
 });
 
+// POST /api/downloads/launcher-push — Appelé automatiquement par le script post-build du launcher.
+// Met à jour la version, la signature et les notes sans toucher aux autres champs.
+// Sécurisé par un token secret (env LAUNCHER_PUSH_TOKEN).
+app.post('/api/downloads/launcher-push', (req, res) => {
+  try {
+    const token = (process.env.LAUNCHER_PUSH_TOKEN || '').trim();
+    if (!token) {
+      return res.status(503).json({ error: 'LAUNCHER_PUSH_TOKEN non configuré sur le serveur' });
+    }
+    const auth = (req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
+    if (auth !== token) {
+      return res.status(401).json({ error: 'Token invalide' });
+    }
+    const { version, signature, notes } = req.body;
+    if (!version || !signature) {
+      return res.status(400).json({ error: 'version et signature sont requis' });
+    }
+    const dl = getConfig('downloads') || {};
+    dl.launcherVersion = String(version).trim();
+    dl.launcherSignature = String(signature).trim();
+    if (notes !== undefined) {
+      dl.launcherNotes = String(notes).trim();
+    }
+    const success = saveConfig('downloads', dl);
+    if (!success) {
+      return res.status(500).json({ error: 'Erreur lors de la sauvegarde' });
+    }
+    console.log(`✅ Launcher push: v${dl.launcherVersion} (signature ${dl.launcherSignature.slice(0, 20)}…)`);
+    res.json({ success: true, version: dl.launcherVersion });
+  } catch (error) {
+    console.error('❌ Erreur API /api/downloads/launcher-push:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET /api/downloads/version-hints — Versions distantes FR/EN pour migration launcher (sans URLs lourdes)
 app.get('/api/downloads/version-hints', (req, res) => {
   try {

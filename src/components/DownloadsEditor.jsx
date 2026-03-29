@@ -762,24 +762,68 @@ const DownloadsEditor = ({ onSave }) => {
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 'bold', color: '#f1c40f' }}>
                   <i className="fa-solid fa-key"></i> Signature de mise à jour (tauri-plugin-updater)
                 </label>
-                <textarea
-                  value={launcherSignature}
-                  onChange={(e) => setLauncherSignature(e.target.value)}
-                  placeholder="Collez ici le contenu du fichier .sig généré par tauri build"
-                  rows={3}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(255,255,255,0.3)',
-                    background: 'rgba(255,255,255,0.1)',
-                    color: 'white',
-                    fontSize: '0.85rem',
-                    fontFamily: 'monospace',
-                    boxSizing: 'border-box',
-                    resize: 'vertical',
-                  }}
-                />
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                  <textarea
+                    value={launcherSignature}
+                    onChange={(e) => setLauncherSignature(e.target.value)}
+                    placeholder="Collez ici ou importez le fichier .sig"
+                    rows={3}
+                    style={{
+                      flex: 1,
+                      padding: '0.75rem 1rem',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      background: 'rgba(255,255,255,0.1)',
+                      color: 'white',
+                      fontSize: '0.85rem',
+                      fontFamily: 'monospace',
+                      boxSizing: 'border-box',
+                      resize: 'vertical',
+                    }}
+                  />
+                  <label
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.4rem',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '8px',
+                      border: '2px dashed rgba(241,196,15,0.4)',
+                      background: 'rgba(241,196,15,0.06)',
+                      color: '#f1c40f',
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      minHeight: '5rem',
+                      minWidth: '6rem',
+                      textAlign: 'center',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(241,196,15,0.12)'; e.currentTarget.style.borderColor = 'rgba(241,196,15,0.7)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(241,196,15,0.06)'; e.currentTarget.style.borderColor = 'rgba(241,196,15,0.4)'; }}
+                  >
+                    <i className="fa-solid fa-file-import" style={{ fontSize: '1.2rem' }}></i>
+                    <span>Importer<br />.sig</span>
+                    <input
+                      type="file"
+                      accept=".sig"
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          const text = (reader.result || '').toString().trim();
+                          if (text) setLauncherSignature(text);
+                        };
+                        reader.readAsText(file);
+                        e.target.value = '';
+                      }}
+                    />
+                  </label>
+                </div>
                 <div style={{
                   background: 'rgba(241,196,15,0.1)',
                   border: '1px solid rgba(241,196,15,0.25)',
