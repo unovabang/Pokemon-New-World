@@ -268,6 +268,8 @@ const DownloadsEditor = ({ onSave }) => {
   const [windowsEnLink, setWindowsEnLink] = useState('');
   const [launcherLink, setLauncherLink] = useState('');
   const [launcherVersion, setLauncherVersion] = useState('');
+  const [launcherSignature, setLauncherSignature] = useState('');
+  const [launcherNotes, setLauncherNotes] = useState('');
   const [gameVersion, setGameVersion] = useState('');
   const [gameVersionEn, setGameVersionEn] = useState('');
   const [launcherBackgroundUrl, setLauncherBackgroundUrl] = useState('');
@@ -302,6 +304,8 @@ const DownloadsEditor = ({ onSave }) => {
         setWindowsEnLink(data.downloads.windowsEn || '');
         setLauncherLink(data.downloads.launcher || '');
         setLauncherVersion(data.downloads.launcherVersion || '');
+        setLauncherSignature(data.downloads.launcherSignature || '');
+        setLauncherNotes(data.downloads.launcherNotes || '');
         setGameVersion(data.downloads.gameVersion || '');
         setGameVersionEn(data.downloads.gameVersionEn || '');
         setLauncherBackgroundUrl(data.downloads.launcherBackgroundUrl || '');
@@ -421,6 +425,8 @@ const DownloadsEditor = ({ onSave }) => {
             patch: '',
             launcher: launcherLink,
             launcherVersion: launcherVersion.trim() || undefined,
+            launcherSignature: launcherSignature.trim() || undefined,
+            launcherNotes: launcherNotes.trim() || undefined,
             patchVideo: '',
             gameVersion: gameVersion,
             gameVersionEn: gameVersionEn,
@@ -750,6 +756,76 @@ const DownloadsEditor = ({ onSave }) => {
                 }}>
                   <i className="fa-solid fa-info-circle"></i>{' '}
                   Même numéro que dans le build (ex. <code style={{ opacity: 0.95 }}>1.0.1</code>). Le launcher installé compare cette valeur à la sienne pour proposer une mise à jour (avec le lien ci-dessus).
+                </div>
+              </div>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 'bold', color: '#f1c40f' }}>
+                  <i className="fa-solid fa-key"></i> Signature de mise à jour (tauri-plugin-updater)
+                </label>
+                <textarea
+                  value={launcherSignature}
+                  onChange={(e) => setLauncherSignature(e.target.value)}
+                  placeholder="Collez ici le contenu du fichier .sig généré par tauri build"
+                  rows={3}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    background: 'rgba(255,255,255,0.1)',
+                    color: 'white',
+                    fontSize: '0.85rem',
+                    fontFamily: 'monospace',
+                    boxSizing: 'border-box',
+                    resize: 'vertical',
+                  }}
+                />
+                <div style={{
+                  background: 'rgba(241,196,15,0.1)',
+                  border: '1px solid rgba(241,196,15,0.25)',
+                  padding: '0.85rem',
+                  borderRadius: '5px',
+                  fontSize: '0.85rem',
+                  opacity: 0.9,
+                  marginTop: '0.5rem',
+                }}>
+                  <i className="fa-solid fa-shield-halved"></i>{' '}
+                  Contenu du fichier <code>.sig</code> généré par <code>tauri build</code>. Cette signature est vérifiée par le launcher avant d&apos;installer la mise à jour. Sans elle, la mise à jour automatique ne fonctionnera pas.
+                </div>
+              </div>
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontWeight: 'bold', color: '#2ecc71' }}>
+                  <i className="fa-solid fa-pen-to-square"></i> Notes de mise à jour
+                </label>
+                <textarea
+                  value={launcherNotes}
+                  onChange={(e) => setLauncherNotes(e.target.value)}
+                  placeholder={"Ex :\n- Correction d'un bug d'affichage\n- Nouvelle fonctionnalité GTS\n- Amélioration des performances"}
+                  rows={5}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    background: 'rgba(255,255,255,0.1)',
+                    color: 'white',
+                    fontSize: '0.9rem',
+                    boxSizing: 'border-box',
+                    resize: 'vertical',
+                    lineHeight: '1.5',
+                  }}
+                />
+                <div style={{
+                  background: 'rgba(46,204,113,0.1)',
+                  border: '1px solid rgba(46,204,113,0.25)',
+                  padding: '0.85rem',
+                  borderRadius: '5px',
+                  fontSize: '0.85rem',
+                  opacity: 0.9,
+                  marginTop: '0.5rem',
+                }}>
+                  <i className="fa-solid fa-circle-info"></i>{' '}
+                  Ces notes seront affichées sur l&apos;écran de mise à jour du launcher. Décrivez les changements pour que les joueurs sachent ce qui a changé.
                 </div>
               </div>
               <div style={{ marginBottom: '0.75rem' }}>

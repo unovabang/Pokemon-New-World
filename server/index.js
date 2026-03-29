@@ -17,6 +17,18 @@ import { stripPatchMarkdownForPlain, patchItemPlainText, patchItemDiscordPrefix 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/** Compare deux versions semver (ex. "1.0.4" vs "1.0.5"). Retourne <0 si a<b, 0 si a==b, >0 si a>b. */
+function compareSemver(a, b) {
+  const pa = String(a).split('.').map(Number);
+  const pb = String(b).split('.').map(Number);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const na = pa[i] || 0;
+    const nb = pb[i] || 0;
+    if (na !== nb) return na - nb;
+  }
+  return 0;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -1163,16 +1175,34 @@ function buildLauncherManifestBody(dl, version, downloadUrl) {
   };
 }
 
-// GET /api/downloads/launcher-update — Version + URL du setup pour mise à jour in-app du launcher
+// GET /api/downloads/launcher-update — tauri-plugin-updater endpoint
+// Retourne 200 + JSON si mise à jour dispo, 204 sinon.
 app.get('/api/downloads/launcher-update', (req, res) => {
   try {
     const dl = getConfig('downloads') || {};
     const version = String(dl.launcherVersion || '').trim();
     const downloadUrl = String(dl.launcher || '').trim();
-    if (!version || !downloadUrl) {
-      return res.json({ configured: false, version: null, downloadUrl: null });
+    const signature = String(dl.launcherSignature || '').trim();
+    if (!version || !downloadUrl || !signature) {
+      return res.status(204).end();
     }
-    res.json({ configured: true, version, downloadUrl });
+    // Si current_version est fourni, comparer pour ne renvoyer que si plus récent
+    const current = String(req.query.current_version || '').trim();
+    if (current) {
+      const cmp = compareSemver(current, version);
+      if (cmp >= 0) {
+        // Pas de mise à jour (version locale >= distante)
+        return res.status(204).end();
+      }
+    }
+    const notes = String(dl.launcherNotes || '').trim();
+    res.json({
+      version,
+      url: downloadUrl,
+      signature,
+      notes,
+      pub_date: new Date().toISOString(),
+    });
   } catch (error) {
     console.error('❌ Erreur API /api/downloads/launcher-update:', error);
     res.status(500).json({ error: error.message });
