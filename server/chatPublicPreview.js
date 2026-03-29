@@ -62,18 +62,40 @@ export async function handleChatPublicPreview(_req, res) {
       const ch = await supabaseGet(
         "channels?type=eq.public&select=id,name&order=id.asc&limit=1"
       );
-      if (!ch.ok || !Array.isArray(ch.body) || !ch.body.length) {
-        console.warn("[chat public-preview] channels:", ch.status, ch.body);
+      if (!ch.ok) {
+        console.warn("[chat public-preview] channels HTTP:", ch.status, ch.body);
+        const hint =
+          ch.status === 401 || ch.status === 403
+            ? " Clé refusée ou RLS : ajoute SUPABASE_SERVICE_ROLE_KEY sur Railway (la clé publishable seule ne suffit souvent pas)."
+            : "";
         return res.json({
           success: true,
           configured: true,
           channelName: "",
           messages: [],
-          error: "Aucun salon public trouvé.",
+          error: `Impossible de lire la liste des salons (${ch.status || "erreur"}).${hint}`,
+        });
+      }
+      if (!Array.isArray(ch.body) || !ch.body.length) {
+        console.warn("[chat public-preview] channels: liste vide (RLS ou aucun type « public »)");
+        return res.json({
+          success: true,
+          configured: true,
+          channelName: "",
+          messages: [],
+          error:
+            "Aucun salon « public » visible avec cette clé. Sur Railway, ajoute SUPABASE_SERVICE_ROLE_KEY (clé secrète sb_secret_…), ou définis PNW_PUBLIC_CHAT_CHANNEL_ID avec l’id numérique du salon (visible dans Supabase → Table Editor → channels).",
         });
       }
       channelId = ch.body[0].id;
       channelName = ch.body[0].name || "";
+    } else {
+      const meta = await supabaseGet(
+        `channels?id=eq.${channelId}&select=id,name&limit=1`
+      );
+      if (meta.ok && Array.isArray(meta.body) && meta.body[0]) {
+        channelName = meta.body[0].name || "";
+      }
     }
 
     const msg = await supabaseGet(
