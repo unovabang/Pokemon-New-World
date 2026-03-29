@@ -10,7 +10,7 @@ export default function WebhookEditor() {
   const [webhookUrl, setWebhookUrl] = useState("");
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [embed, setEmbed] = useState({ title: "", description: "", color: "#5865F2", image: "", thumbnail: "", footer: "" });
+  const [embed, setEmbed] = useState({ title: "", description: "", color: "#5865F2", image: "", thumbnail: "", footer: "", buttonLabel: "", buttonUrl: "" });
   const [intervalHours, setIntervalHours] = useState(2);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -24,7 +24,7 @@ export default function WebhookEditor() {
           setWebhookUrl(d.webhookUrl || "");
           setUsername(d.username || "");
           setAvatarUrl(d.avatarUrl || "");
-          setEmbed(d.embed || { title: "", description: "", color: "#5865F2", image: "", thumbnail: "", footer: "" });
+          setEmbed(d.embed || { title: "", description: "", color: "#5865F2", image: "", thumbnail: "", footer: "", buttonLabel: "", buttonUrl: "" });
           setIntervalHours(d.intervalHours || 2);
         }
       })
@@ -111,6 +111,19 @@ export default function WebhookEditor() {
       <label style={labelStyle}>
         <span style={spanStyle}>Footer</span>
         <input type="text" value={embed.footer} onChange={(e) => updateEmbed("footer", e.target.value)} placeholder="Texte du footer" style={inputStyle} />
+      </label>
+
+      {/* Button */}
+      <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "1rem", marginTop: "0.25rem" }}>
+        <span style={{ ...spanStyle, fontSize: "0.85rem", marginBottom: "0.5rem", display: "block" }}>Bouton (optionnel)</span>
+      </div>
+      <label style={labelStyle}>
+        <span style={spanStyle}>Texte du bouton</span>
+        <input type="text" value={embed.buttonLabel || ""} onChange={(e) => updateEmbed("buttonLabel", e.target.value)} placeholder="Rejoindre le serveur" style={inputStyle} />
+      </label>
+      <label style={labelStyle}>
+        <span style={spanStyle}>URL du bouton</span>
+        <input type="text" value={embed.buttonUrl || ""} onChange={(e) => updateEmbed("buttonUrl", e.target.value)} placeholder="https://exemple.com" style={inputStyle} />
       </label>
 
       {/* Interval */}

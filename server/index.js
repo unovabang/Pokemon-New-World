@@ -913,8 +913,20 @@ async function sendWebhookAutoMessage() {
   if (data.username) payload.username = data.username;
   if (data.avatarUrl) payload.avatar_url = data.avatarUrl;
 
+  const hasButton = embed.buttonLabel && embed.buttonUrl;
+  if (hasButton) {
+    payload.components = [{
+      type: 1,
+      components: [{ type: 2, style: 5, label: embed.buttonLabel, url: embed.buttonUrl }]
+    }];
+  }
+
+  const finalUrl = hasButton
+    ? url + (url.includes('?') ? '&' : '?') + 'with_components=true'
+    : url;
+
   try {
-    await fetch(url, {
+    await fetch(finalUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

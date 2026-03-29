@@ -8,7 +8,9 @@
     "color": "#5865F2",
     "image": "",
     "thumbnail": "",
-    "footer": ""
+    "footer": "",
+    "buttonLabel": "",
+    "buttonUrl": ""
   },
   "intervalHours": 2
 }
