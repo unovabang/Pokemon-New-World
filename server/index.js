@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 import { initDb } from './db.js';
 import authRoutes from './auth.js';
 import { handleChatPublicPreview } from './chatPublicPreview.js';
-import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command, ListMultipartUploadsCommand } from '@aws-sdk/client-s3';
+import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command, ListMultipartUploadsCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { stripLeadingEmojiFromTitle } from '../src/utils/patchSectionTitle.js';
 import { stripPatchMarkdownForPlain, patchItemPlainText, patchItemDiscordPrefix } from './stripPatchMarkdown.js';
@@ -1222,7 +1222,7 @@ app.post('/api/downloads/launcher-push', (req, res) => {
     if (auth !== token) {
       return res.status(401).json({ error: 'Token invalide' });
     }
-    const { version, signature, notes } = req.body;
+    const { version, signature, notes, launcherUrl } = req.body;
     if (!version || !signature) {
       return res.status(400).json({ error: 'version et signature sont requis' });
     }
@@ -1231,6 +1231,9 @@ app.post('/api/downloads/launcher-push', (req, res) => {
     dl.launcherSignature = String(signature).trim();
     if (notes !== undefined) {
       dl.launcherNotes = String(notes).trim();
+    }
+    if (launcherUrl) {
+      dl.launcher = String(launcherUrl).trim();
     }
     const success = saveConfig('downloads', dl);
     if (!success) {
