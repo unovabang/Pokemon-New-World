@@ -34,13 +34,7 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware (limite large pour PUT /api/pokedex et autres configs volumineuses — évolutif)
 app.use(cors({
-  origin: [
-    'https://pokemonnewworld.fr',
-    'https://www.pokemonnewworld.fr',
-    'http://tauri.localhost',
-    'https://tauri.localhost',
-    ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:3001'] : []),
-  ],
+  origin: true,
   credentials: true,
 }));
 app.use(express.json({ limit: '50mb' }));
