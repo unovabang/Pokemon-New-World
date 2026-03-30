@@ -118,11 +118,14 @@ export async function handleChatPublicPreview(_req, res) {
     });
     filtered.reverse();
 
+    // Strip sensitive fields (user_id) before sending to public endpoint
+    const sanitized = filtered.map(({ user_id, ...rest }) => rest);
+
     return res.json({
       success: true,
       configured: true,
       channelName,
-      messages: filtered,
+      messages: sanitized,
     });
   } catch (e) {
     console.error("[chat public-preview]", e);

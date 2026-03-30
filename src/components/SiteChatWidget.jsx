@@ -17,9 +17,9 @@ function formatTime(iso) {
 function sanitizePreview(content) {
   if (content == null || typeof content !== "string") return "";
   const t = content.trim();
-  if (t.startsWith("\u{1F4CB}LOG:")) return null;
-  if (t.startsWith("\u{1F3B4}POKEMON\u{1F3B4}")) return "[Carte Pok\u00e9mon]";
-  if (t.length > MAX_PREVIEW_LEN) return `${t.slice(0, MAX_PREVIEW_LEN - 1)}\u2026`;
+  if (t.startsWith("📋LOG:")) return null;
+  if (t.startsWith("🎴POKEMON🎴")) return "[Carte Pokémon]";
+  if (t.length > MAX_PREVIEW_LEN) return `${t.slice(0, MAX_PREVIEW_LEN - 1)}…`;
   return t;
 }
 
@@ -83,7 +83,7 @@ export default function SiteChatWidget() {
         .filter(Boolean);
       setMessages(mapped);
     } catch (e) {
-      setError("R\u00e9seau indisponible.");
+      setError("Réseau indisponible.");
       setMessages([]);
     } finally {
       setLoading(false);
@@ -114,7 +114,7 @@ export default function SiteChatWidget() {
           onClick={() => setOpen(true)}
           aria-expanded={false}
           aria-controls="pnw-site-chat-panel"
-          title="Aper\u00e7u du chat"
+          title="Aperçu du chat"
         >
           <span className="pnw-site-chat-fab-glow" aria-hidden />
           <i className="fa-solid fa-comments" aria-hidden />
@@ -128,7 +128,7 @@ export default function SiteChatWidget() {
           id="pnw-site-chat-panel"
           className="pnw-site-chat-panel"
           role="dialog"
-          aria-label="Aper\u00e7u du chat Pok\u00e9mon New World"
+          aria-label="Aperçu du chat Pokémon New World"
         >
           <div className="pnw-site-chat-accent-line" aria-hidden />
           <header className="pnw-site-chat-head">
@@ -148,7 +148,7 @@ export default function SiteChatWidget() {
               type="button"
               className="pnw-site-chat-icon-btn"
               onClick={() => setOpen(false)}
-              aria-label="R\u00e9duire le chat"
+              aria-label="Réduire le chat"
             >
               <i className="fa-solid fa-xmark" aria-hidden />
             </button>
@@ -157,7 +157,7 @@ export default function SiteChatWidget() {
           <div className="pnw-site-chat-body" ref={listRef}>
             {loading && messages.length === 0 && (
               <p className="pnw-site-chat-placeholder">
-                <i className="fa-solid fa-spinner fa-spin" aria-hidden /> Chargement\u2026
+                <i className="fa-solid fa-spinner fa-spin" aria-hidden /> Chargement…
               </p>
             )}
             {error && (
@@ -168,8 +168,8 @@ export default function SiteChatWidget() {
             {!loading && !error && messages.length === 0 && (
               <p className="pnw-site-chat-placeholder">
                 {configured
-                  ? "Aucun message r\u00e9cent sur le salon public."
-                  : "Le fil en direct sera affich\u00e9 ici une fois le serveur configur\u00e9 (Supabase)."}
+                  ? "Aucun message récent sur le salon public."
+                  : "Le fil en direct sera affiché ici une fois le serveur configuré (Supabase)."}
               </p>
             )}
             <ul className="pnw-site-chat-list">
@@ -199,11 +199,11 @@ export default function SiteChatWidget() {
           <footer className="pnw-site-chat-foot">
             <p className="pnw-site-chat-foot-hint">
               <i className="fa-solid fa-gamepad" aria-hidden /> Pour envoyer des messages, utilise le{" "}
-              <strong>launcher Pok\u00e9mon New World</strong>.
+              <strong>launcher Pokémon New World</strong>.
             </p>
             <Link to="/telechargement" className="pnw-site-chat-cta">
               <i className="fa-solid fa-download" aria-hidden />
-              T\u00e9l\u00e9charger le launcher
+              Télécharger le launcher
               <i className="fa-solid fa-arrow-right pnw-site-chat-cta-arrow" aria-hidden />
             </Link>
           </footer>

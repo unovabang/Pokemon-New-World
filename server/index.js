@@ -2053,7 +2053,34 @@ app.put('/api/evs-location', (req, res) => {
 });
 
 // Aperçu chat (widget site, lecture seule — voir server/chatPublicPreview.js)
-app.get('/api/chat/public-preview', handleChatPublicPreview);
+// Rate limiter simple : max 15 requêtes / minute par IP
+const chatRateLimitMap = new Map();
+function chatRateLimit(req, res, next) {
+  const ip = req.ip || req.connection?.remoteAddress || 'unknown';
+  const now = Date.now();
+  const window = 60_000; // 1 minute
+  const maxReqs = 15;
+  let entry = chatRateLimitMap.get(ip);
+  if (!entry || now - entry.start > window) {
+    entry = { start: now, count: 1 };
+    chatRateLimitMap.set(ip, entry);
+  } else {
+    entry.count++;
+  }
+  if (entry.count > maxReqs) {
+    return res.status(429).json({ success: false, error: 'Trop de requêtes. Réessayez dans quelques instants.' });
+  }
+  next();
+}
+// Nettoyage périodique (toutes les 5 min)
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of chatRateLimitMap) {
+    if (now - entry.start > 120_000) chatRateLimitMap.delete(ip);
+  }
+}, 300_000);
+
+app.get('/api/chat/public-preview', chatRateLimit, handleChatPublicPreview);
 
 // Servir le frontend React (build Vite) en production — doit être en dernier
 const DIST_DIR = path.join(__dirname, '../dist');
