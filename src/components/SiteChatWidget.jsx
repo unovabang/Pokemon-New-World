@@ -17,9 +17,9 @@ function formatTime(iso) {
 function sanitizePreview(content) {
   if (content == null || typeof content !== "string") return "";
   const t = content.trim();
-  if (t.startsWith("📋LOG:")) return null;
-  if (t.startsWith("🎴POKEMON🎴")) return "[Carte Pokémon]";
-  if (t.length > MAX_PREVIEW_LEN) return `${t.slice(0, MAX_PREVIEW_LEN - 1)}…`;
+  if (t.startsWith("\u{1F4CB}LOG:")) return null;
+  if (t.startsWith("\u{1F3B4}POKEMON\u{1F3B4}")) return "[Carte Pok\u00e9mon]";
+  if (t.length > MAX_PREVIEW_LEN) return `${t.slice(0, MAX_PREVIEW_LEN - 1)}\u2026`;
   return t;
 }
 
@@ -83,7 +83,7 @@ export default function SiteChatWidget() {
         .filter(Boolean);
       setMessages(mapped);
     } catch (e) {
-      setError("Réseau indisponible.");
+      setError("R\u00e9seau indisponible.");
       setMessages([]);
     } finally {
       setLoading(false);
@@ -114,10 +114,12 @@ export default function SiteChatWidget() {
           onClick={() => setOpen(true)}
           aria-expanded={false}
           aria-controls="pnw-site-chat-panel"
-          title="Aperçu du chat"
+          title="Aper\u00e7u du chat"
         >
+          <span className="pnw-site-chat-fab-glow" aria-hidden />
           <i className="fa-solid fa-comments" aria-hidden />
           <span className="pnw-site-chat-fab-label">Chat</span>
+          <span className="pnw-site-chat-fab-badge" aria-hidden />
         </button>
       )}
 
@@ -126,22 +128,27 @@ export default function SiteChatWidget() {
           id="pnw-site-chat-panel"
           className="pnw-site-chat-panel"
           role="dialog"
-          aria-label="Aperçu du chat Pokémon New World"
+          aria-label="Aper\u00e7u du chat Pok\u00e9mon New World"
         >
+          <div className="pnw-site-chat-accent-line" aria-hidden />
           <header className="pnw-site-chat-head">
             <div className="pnw-site-chat-head-text">
-              <span className="pnw-site-chat-title">Chat PNW</span>
-              {channelLabel ? (
-                <span className="pnw-site-chat-sub">{channelLabel}</span>
-              ) : (
-                <span className="pnw-site-chat-sub">Lecture seule</span>
-              )}
+              <div className="pnw-site-chat-title-row">
+                <i className="fa-solid fa-comments pnw-site-chat-title-icon" aria-hidden />
+                <span className="pnw-site-chat-title">Chat PNW</span>
+              </div>
+              <div className="pnw-site-chat-sub-row">
+                <span className="pnw-site-chat-live-dot" aria-hidden />
+                <span className="pnw-site-chat-sub">
+                  {channelLabel || "En direct"}
+                </span>
+              </div>
             </div>
             <button
               type="button"
               className="pnw-site-chat-icon-btn"
               onClick={() => setOpen(false)}
-              aria-label="Réduire le chat"
+              aria-label="R\u00e9duire le chat"
             >
               <i className="fa-solid fa-xmark" aria-hidden />
             </button>
@@ -150,7 +157,7 @@ export default function SiteChatWidget() {
           <div className="pnw-site-chat-body" ref={listRef}>
             {loading && messages.length === 0 && (
               <p className="pnw-site-chat-placeholder">
-                <i className="fa-solid fa-spinner fa-spin" aria-hidden /> Chargement…
+                <i className="fa-solid fa-spinner fa-spin" aria-hidden /> Chargement\u2026
               </p>
             )}
             {error && (
@@ -161,8 +168,8 @@ export default function SiteChatWidget() {
             {!loading && !error && messages.length === 0 && (
               <p className="pnw-site-chat-placeholder">
                 {configured
-                  ? "Aucun message récent sur le salon public."
-                  : "Le fil en direct sera affiché ici une fois le serveur configuré (Supabase)."}
+                  ? "Aucun message r\u00e9cent sur le salon public."
+                  : "Le fil en direct sera affich\u00e9 ici une fois le serveur configur\u00e9 (Supabase)."}
               </p>
             )}
             <ul className="pnw-site-chat-list">
@@ -191,12 +198,13 @@ export default function SiteChatWidget() {
 
           <footer className="pnw-site-chat-foot">
             <p className="pnw-site-chat-foot-hint">
-              <i className="fa-solid fa-download" aria-hidden /> Pour envoyer des messages, utilise le{" "}
-              <strong>launcher Pokémon New World</strong>.
+              <i className="fa-solid fa-gamepad" aria-hidden /> Pour envoyer des messages, utilise le{" "}
+              <strong>launcher Pok\u00e9mon New World</strong>.
             </p>
             <Link to="/telechargement" className="pnw-site-chat-cta">
-              Télécharger le launcher
-              <i className="fa-solid fa-arrow-right" aria-hidden />
+              <i className="fa-solid fa-download" aria-hidden />
+              T\u00e9l\u00e9charger le launcher
+              <i className="fa-solid fa-arrow-right pnw-site-chat-cta-arrow" aria-hidden />
             </Link>
           </footer>
         </div>
