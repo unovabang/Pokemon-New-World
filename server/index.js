@@ -37,6 +37,8 @@ app.use(cors({
   origin: [
     'https://pokemonnewworld.fr',
     'https://www.pokemonnewworld.fr',
+    'http://tauri.localhost',
+    'https://tauri.localhost',
     ...(process.env.NODE_ENV !== 'production' ? ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:3001'] : []),
   ],
   credentials: true,
