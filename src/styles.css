@@ -3506,20 +3506,20 @@ a.dex-panel--active{cursor:default}
 
 /* ── Surbrillance disponibilité ── */
 .pokedex-card--available-new{
-  border-color:rgba(74,222,128,.45);
-  box-shadow:0 4px 20px rgba(0,0,0,.2), 0 0 12px rgba(74,222,128,.2);
+  border-color:rgba(74,222,128,.55);
+  box-shadow:0 4px 20px rgba(0,0,0,.2), 0 0 24px rgba(74,222,128,.35), 0 0 48px rgba(74,222,128,.15);
 }
 .pokedex-card--available-new:hover{
-  border-color:rgba(74,222,128,.65);
-  box-shadow:0 24px 48px rgba(0,0,0,.4), 0 0 32px rgba(74,222,128,.35);
+  border-color:rgba(74,222,128,.75);
+  box-shadow:0 24px 48px rgba(0,0,0,.4), 0 0 40px rgba(74,222,128,.5), 0 0 80px rgba(74,222,128,.25);
 }
 .pokedex-card--unavailable{
-  border-color:rgba(248,113,113,.4);
-  box-shadow:0 4px 20px rgba(0,0,0,.2), 0 0 12px rgba(248,113,113,.18);
+  border-color:rgba(248,113,113,.5);
+  box-shadow:0 4px 20px rgba(0,0,0,.2), 0 0 24px rgba(248,113,113,.3), 0 0 48px rgba(248,113,113,.12);
 }
 .pokedex-card--unavailable:hover{
-  border-color:rgba(248,113,113,.6);
-  box-shadow:0 24px 48px rgba(0,0,0,.4), 0 0 32px rgba(248,113,113,.3);
+  border-color:rgba(248,113,113,.7);
+  box-shadow:0 24px 48px rgba(0,0,0,.4), 0 0 40px rgba(248,113,113,.45), 0 0 80px rgba(248,113,113,.2);
 }
 .pokedex-table-row--available-new > .pokedex-table-cell{
   border-left:3px solid rgba(74,222,128,.5);
