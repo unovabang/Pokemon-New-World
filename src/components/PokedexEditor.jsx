@@ -28,7 +28,7 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
   const [editingIndex, setEditingIndex] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [form, setForm] = useState({ num: "", name: "", imageUrl: "", types: [], rarity: "", obtention: "" });
+  const [form, setForm] = useState({ num: "", name: "", imageUrl: "", types: [], rarity: "", obtention: "", availability: "old" });
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saveMessage, setSaveMessage] = useState(null);
@@ -175,7 +175,7 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
   };
 
   const openAdd = () => {
-    setForm({ num: "", name: "", imageUrl: "", types: [], rarity: "", obtention: "" });
+    setForm({ num: "", name: "", imageUrl: "", types: [], rarity: "", obtention: "", availability: "old" });
     setEditingIndex(null);
     setShowAddModal(true);
   };
@@ -189,6 +189,7 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
       types: Array.isArray(e.types) ? [...e.types] : [],
       rarity: e.rarity || "",
       obtention: e.obtention || "",
+      availability: e.availability || "old",
     });
     setEditingIndex(index);
     setShowAddModal(true);
@@ -210,6 +211,7 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
       types: form.types.filter(Boolean),
       rarity: form.rarity.trim() || "",
       obtention: form.obtention.trim() || "",
+      availability: form.availability || "old",
     };
     if (editingIndex !== null) {
       const next = [...entries];
@@ -348,6 +350,20 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
             <button type="button" onClick={handleSaveAll} disabled={saving} className="admin-pokedex-btn admin-pokedex-btn-ghost">
               <i className="fa-solid fa-save" /> {saving ? "Enregistrement…" : "Sauvegarder maintenant"}
             </button>
+            {entries.some((e) => e.availability === "new") && (
+              <button
+                type="button"
+                onClick={() => {
+                  const next = entries.map((e) => e.availability === "new" ? { ...e, availability: "old" } : e);
+                  setEntries(next);
+                  saveToStorage(next, undefined, undefined);
+                }}
+                className="admin-pokedex-btn admin-pokedex-btn-ghost"
+                title="Passe tous les Pokémon 'MàJ actuelle' en 'Ancienne MàJ'"
+              >
+                <i className="fa-solid fa-rotate" /> Réinitialiser MàJ actuelle
+              </button>
+            )}
           </div>
         </div>
 
@@ -390,6 +406,11 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
                     </div>
                     <span className="admin-dex-card-num">#{e.num}</span>
                     <span className="admin-dex-card-name">{e.name}</span>
+                    {e.availability && e.availability !== "old" && (
+                      <span className={`admin-dex-card-availability admin-dex-card-availability--${e.availability}`}>
+                        {e.availability === "new" ? "MàJ actuelle" : "Pas dispo"}
+                      </span>
+                    )}
                     <span className="admin-dex-card-types">{(e.types || []).join(", ") || "—"}</span>
                   </div>
                 );
@@ -407,13 +428,14 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
                   <th>Types</th>
                   <th>Rareté</th>
                   <th>Obtention</th>
+                  <th>Dispo</th>
                   <th style={{ textAlign: "center" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredEntries.length === 0 ? (
                   <tr>
-                    <td colSpan={7} style={{ padding: "2rem", textAlign: "center", opacity: 0.7 }}>
+                    <td colSpan={8} style={{ padding: "2rem", textAlign: "center", opacity: 0.7 }}>
                       Aucun Pokémon. Cliquez sur &quot;Ajouter un Pokémon&quot;.
                     </td>
                   </tr>
@@ -439,6 +461,11 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
                         <td>{(e.types || []).join(", ") || "—"}</td>
                         <td style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis" }}>{e.rarity || "—"}</td>
                         <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }}>{e.obtention || "—"}</td>
+                        <td>
+                          <span className={`admin-dex-availability-badge admin-dex-availability-badge--${e.availability || "old"}`}>
+                            {e.availability === "new" ? "MàJ actuelle" : e.availability === "unavailable" ? "Pas dispo" : "Ancienne"}
+                          </span>
+                        </td>
                         <td style={{ textAlign: "center" }}>
                           <button type="button" onClick={() => openEdit(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.45rem 0.85rem", marginRight: "0.35rem" }}>
                             <i className="fa-solid fa-pen" aria-hidden />
@@ -515,6 +542,26 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
               <div>
                 <label className="admin-pokedex-label">Obtention</label>
                 <textarea className="admin-pokedex-textarea" value={form.obtention} onChange={(e) => setForm((f) => ({ ...f, obtention: e.target.value }))} placeholder="Comment obtenir ce Pokémon" rows={3} />
+              </div>
+              <div>
+                <label className="admin-pokedex-label">Disponibilité</label>
+                <div className="admin-pokedex-availability-options">
+                  <label className="admin-pokedex-radio-label">
+                    <input type="radio" name="availability" value="old" checked={form.availability === "old"} onChange={() => setForm((f) => ({ ...f, availability: "old" }))} />
+                    <span className="admin-pokedex-radio-dot admin-pokedex-radio-dot--old" />
+                    Ancienne MàJ
+                  </label>
+                  <label className="admin-pokedex-radio-label">
+                    <input type="radio" name="availability" value="new" checked={form.availability === "new"} onChange={() => setForm((f) => ({ ...f, availability: "new" }))} />
+                    <span className="admin-pokedex-radio-dot admin-pokedex-radio-dot--new" />
+                    MàJ actuelle
+                  </label>
+                  <label className="admin-pokedex-radio-label">
+                    <input type="radio" name="availability" value="unavailable" checked={form.availability === "unavailable"} onChange={() => setForm((f) => ({ ...f, availability: "unavailable" }))} />
+                    <span className="admin-pokedex-radio-dot admin-pokedex-radio-dot--unavailable" />
+                    Pas encore dispo
+                  </label>
+                </div>
               </div>
             </div>
             <div className="admin-pokedex-modal-footer">

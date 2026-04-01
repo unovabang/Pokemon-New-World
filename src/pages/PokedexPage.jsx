@@ -487,6 +487,16 @@ export default function PokedexPage() {
         </section>
 
         <section className="pokedex-content-wrap container">
+          <div className="pokedex-legend">
+            <span className="pokedex-legend-item pokedex-legend-item--new">
+              <span className="pokedex-legend-dot pokedex-legend-dot--new" />
+              Disponible dans la MàJ actuelle
+            </span>
+            <span className="pokedex-legend-item pokedex-legend-item--unavailable">
+              <span className="pokedex-legend-dot pokedex-legend-dot--unavailable" />
+              Pas encore disponible
+            </span>
+          </div>
           <p className="pokedex-count">
             <i className="fa-solid fa-list-check" aria-hidden /> {filtered.length} résultat{filtered.length !== 1 ? "s" : ""}
           </p>
@@ -496,7 +506,7 @@ export default function PokedexPage() {
                 <button
                   key={`grid-${i}-${pokemon.num}-${pokemon.name}`}
                   type="button"
-                  className="pokedex-card"
+                  className={`pokedex-card${pokemon.availability === "new" ? " pokedex-card--available-new" : ""}${pokemon.availability === "unavailable" ? " pokedex-card--unavailable" : ""}`}
                   onClick={() => setSelectedPokemon(pokemon)}
                 >
                   <div className="pokedex-card-sprite">
@@ -546,7 +556,7 @@ export default function PokedexPage() {
                 {filtered.map((pokemon, i) => (
                   <div
                     key={`table-${i}-${pokemon.num}-${pokemon.name}`}
-                    className="pokedex-table-row"
+                    className={`pokedex-table-row${pokemon.availability === "new" ? " pokedex-table-row--available-new" : ""}${pokemon.availability === "unavailable" ? " pokedex-table-row--unavailable" : ""}`}
                     role="row"
                     onClick={() => setSelectedPokemon(pokemon)}
                   >
@@ -625,6 +635,14 @@ export default function PokedexPage() {
                     ))
                   : "—"}
               </div>
+              {selectedPokemon.availability && selectedPokemon.availability !== "old" && (
+                <div className="pokedex-modal-row">
+                  <span className="pokedex-modal-label"><i className="fa-solid fa-circle-info" aria-hidden /> Disponibilité</span>
+                  <span className={`pokedex-availability-badge pokedex-availability-badge--${selectedPokemon.availability}`}>
+                    {selectedPokemon.availability === "new" ? "MàJ actuelle" : "Pas encore disponible"}
+                  </span>
+                </div>
+              )}
               {selectedPokemon.rarity && (
                 <div className="pokedex-modal-row">
                   <span className="pokedex-modal-label"><i className="fa-solid fa-gem" aria-hidden /> Rareté</span>
