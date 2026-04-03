@@ -8830,7 +8830,21 @@ a.dex-panel--active{cursor:default}
 .evs-editor-pokedex-option-sprite { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,.2); }
 .evs-editor-pokedex-option-sprite img { max-width: 100%; max-height: 100%; object-fit: contain; image-rendering: pixelated; }
 .evs-editor-pokedex-option-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.evs-editor-pokedex-option-num { font-size: .8rem; color: var(--muted); flex-shrink: 0; }
+.evs-editor-pokedex-option-meta { display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
+.evs-editor-pokedex-option-num { font-size: .8rem; color: var(--muted); }
+.evs-editor-pokedex-option-badge {
+  font-size: .65rem; padding: .15rem .4rem; border-radius: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .03em; line-height: 1;
+}
+.evs-editor-pokedex-option-badge--pokedex {
+  background: rgba(126,205,242,.15); color: rgba(126,205,242,.85); border: 1px solid rgba(126,205,242,.25);
+}
+.evs-editor-pokedex-option-badge--extradex {
+  background: rgba(200,140,255,.15); color: rgba(200,140,255,.9); border: 1px solid rgba(200,140,255,.25);
+}
+.evs-editor-pokedex-option--extradex {
+  border-left: 2px solid rgba(200,140,255,.4);
+}
 .evs-editor-custom-select { position: relative; }
 .evs-editor-select-trigger {
   width: 100%; display: flex; align-items: center; justify-content: space-between; gap: .5rem;

@@ -128,6 +128,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
     background: "",
   });
   const [pokedexEntries, setPokedexEntries] = useState(() => (Array.isArray(initialPokedexEntries) ? initialPokedexEntries : []));
+  const [extradexEntries, setExtradexEntries] = useState([]);
   const [activeSection, setActiveSection] = useState("buffs");
   const [showModal, setShowModal] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -145,9 +146,10 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
   const load = async () => {
     try {
       setLoading(true);
-      const [apiRes, pokedexRes] = await Promise.all([
+      const [apiRes, pokedexRes, extradexRes] = await Promise.all([
         fetch(`${API_BASE}/nerfs-and-buffs?t=${Date.now()}`).then((r) => r.json()),
         fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
+        fetch(`${API_BASE}/extradex?t=${Date.now()}`).then((r) => r.json()).catch(() => null),
       ]);
       if (apiRes?.success && apiRes?.nerfsBuffs) {
         const nb = apiRes.nerfsBuffs;
@@ -169,6 +171,9 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
       }
       if (pokedexRes?.success && Array.isArray(pokedexRes?.pokedex?.entries)) {
         setPokedexEntries(pokedexRes.pokedex.entries);
+      }
+      if (extradexRes?.success && Array.isArray(extradexRes?.extradex?.entries)) {
+        setExtradexEntries(extradexRes.extradex.entries);
       }
     } catch {
       if (initialData) setData({ ...initialData, background: initialData.background ?? "" });
@@ -196,17 +201,22 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
     return entries.filter((e) => (e.name || "").toLowerCase().includes(q));
   }, [entries, searchQuery]);
 
+  const allDexEntries = useMemo(() => [
+    ...pokedexEntries.map((e) => ({ ...e, _source: "pokedex" })),
+    ...extradexEntries.map((e) => ({ ...e, _source: "extradex" })),
+  ], [pokedexEntries, extradexEntries]);
+
   const filteredPokedex = useMemo(() => {
     const raw = pokedexSearch.trim();
-    if (!raw) return pokedexEntries;
-    const words = normalizeName(raw).split(/\s+/).filter(Boolean);
-    if (words.length === 0) return pokedexEntries;
-    return pokedexEntries.filter((e) => {
+    if (!raw) return allDexEntries;
+    const q = normalizeName(raw);
+    if (!q) return allDexEntries;
+    return allDexEntries.filter((e) => {
       const n = normalizeName(e.name);
       const num = (e.num || "").toString();
-      return words.every((w) => n.includes(w) || num.includes(w));
+      return n.includes(q) || num === q || num.startsWith(q);
     });
-  }, [pokedexEntries, pokedexSearch]);
+  }, [allDexEntries, pokedexSearch]);
 
   const saveToApi = async (payload) => {
     const toSend = payload || data;
@@ -350,7 +360,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
 
           {editingIndex === null && addSource === "pokedex" && (
             <div className="evs-editor-pokedex-pick" ref={pokedexDropdownRef} style={{ marginBottom: "1rem" }}>
-              <label className="evs-editor-label">Choisir un Pokémon du Pokédex ({pokedexEntries.length} au total)</label>
+              <label className="evs-editor-label">Choisir un Pokémon ({allDexEntries.length} au total — Pokédex + Extradex)</label>
               <div className="evs-editor-pokedex-dropdown">
                 <div className="evs-editor-pokedex-search-row">
                   <input
@@ -369,18 +379,18 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
                 {pokedexDropdownOpen && (
                   <div className="evs-editor-pokedex-list" role="listbox">
                     <div className="evs-editor-pokedex-list-header">
-                      <span>{pokedexSearch.trim() ? `${filteredPokedex.length} résultat(s)` : `Tous les Pokémon (${pokedexEntries.length})`}</span>
+                      <span>{pokedexSearch.trim() ? `${filteredPokedex.length} résultat(s)` : `Tous (${allDexEntries.length})`}</span>
                       <button type="button" className="evs-editor-pokedex-list-close" onClick={() => setPokedexDropdownOpen(false)}><i className="fa-solid fa-times" /> Fermer</button>
                     </div>
                     <div className="evs-editor-pokedex-list-body">
                       {filteredPokedex.length === 0 ? (
                         <div className="evs-editor-pokedex-list-empty">Aucun Pokémon trouvé.</div>
                       ) : (
-                        filteredPokedex.map((entry) => (
+                        filteredPokedex.map((entry, idx) => (
                           <button
-                            key={entry.num || entry.name}
+                            key={`${entry._source}-${entry.num || idx}-${entry.name}`}
                             type="button"
-                            className="evs-editor-pokedex-option"
+                            className={`evs-editor-pokedex-option${entry._source === "extradex" ? " evs-editor-pokedex-option--extradex" : ""}`}
                             role="option"
                             onClick={() => selectPokedexEntry(entry)}
                           >
@@ -388,7 +398,12 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
                               <img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
                             </span>
                             <span className="evs-editor-pokedex-option-name">{entry.name}</span>
-                            {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
+                            <span className="evs-editor-pokedex-option-meta">
+                              {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
+                              <span className={`evs-editor-pokedex-option-badge evs-editor-pokedex-option-badge--${entry._source}`}>
+                                {entry._source === "extradex" ? "Extradex" : "Pokédex"}
+                              </span>
+                            </span>
                           </button>
                         ))
                       )}
