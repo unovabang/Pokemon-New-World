@@ -3664,19 +3664,21 @@ a.dex-panel--active{cursor:default}
   margin-bottom:.35rem;
 }
 .pokedex-modal-values{
-  display:flex; flex-direction:column; gap:.35rem;
+  display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.25rem;
 }
 .pokedex-modal-values > span{
-  display:block;
-  padding:.4rem .7rem;
-  background:rgba(255,255,255,.04);
-  border-left:2px solid rgba(255,255,255,.15);
-  border-radius:0 6px 6px 0;
+  display:inline-block;
+  padding:.3rem .65rem;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;
+  font-size:.88rem;
 }
 .pokedex-modal-values > span:only-child{
   background:none;
-  border-left:none;
+  border:none;
   padding:0;
+  font-size:inherit;
   border-radius:0;
 }
 
