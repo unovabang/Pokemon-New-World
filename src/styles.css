@@ -7117,8 +7117,7 @@ a.dex-panel--active{cursor:default}
 .nerfbuff-admin-stat-btn:hover { background: rgba(126,205,242,.2); color: var(--primary-2); }
 .nerfbuff-admin-stat-btn i { font-size: 0.7rem; }
 .nerfbuff-admin-stat-arrow { color: var(--muted); font-size: 0.85rem; display: flex; align-items: center; justify-content: center; }
-.nerfbuff-admin-modal .evs-editor-pokedex-list { max-height: 420px; }
-.nerfbuff-admin-modal .evs-editor-pokedex-list-body { max-height: 360px; overflow-y: auto; }
+.nerfbuff-admin-modal .evs-editor-pokedex-list { max-height: 450px; }
 .admin-nerfbuff-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -8803,7 +8802,7 @@ a.dex-panel--active{cursor:default}
 }
 .evs-editor-pokedex-toggle:hover { background: rgba(126,205,242,.15); border-color: rgba(126,205,242,.3); }
 .evs-editor-pokedex-list {
-  position: absolute; top: 100%; left: 0; right: 0; margin-top: .35rem; max-height: 320px; overflow: hidden;
+  position: absolute; top: 100%; left: 0; right: 0; margin-top: .35rem; max-height: 450px; overflow: hidden;
   background: rgba(12,18,32,.98); border: 1px solid rgba(126,205,242,.25); border-radius: 12px;
   box-shadow: 0 12px 32px rgba(0,0,0,.4); z-index: 100; display: flex; flex-direction: column;
 }
@@ -8832,7 +8831,7 @@ a.dex-panel--active{cursor:default}
 .evs-editor-pokedex-option-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .evs-editor-pokedex-option-num { font-size: .8rem; color: var(--muted); flex-shrink: 0; }
 .evs-editor-pokedex-columns {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 0; flex: 1; overflow: hidden;
 }
 .evs-editor-pokedex-col {
   display: flex; flex-direction: column; min-height: 0;
@@ -8894,7 +8893,9 @@ a.dex-panel--active{cursor:default}
   .evs-editor-search { width: 100%; }
   .evs-editor-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: .75rem; }
   .evs-editor-card-sprite { width: 56px; height: 56px; }
-  .evs-editor-pokedex-list { max-height: 180px; }
+  .evs-editor-pokedex-list { max-height: 350px; }
+  .evs-editor-pokedex-columns { grid-template-columns: 1fr; }
+  .evs-editor-pokedex-col-body { max-height: 150px; }
   .evs-editor-pokedex-option { padding: .45rem .65rem; font-size: .85rem; }
   .evs-editor-pokedex-option-sprite { width: 32px; height: 32px; }
 }
