@@ -64,6 +64,7 @@ export default function EVsLocationEditor({ onSave }) {
   const [entries, setEntries] = useState([]);
   const [background, setBackground] = useState("");
   const [pokedexEntries, setPokedexEntries] = useState([]);
+  const [extradexEntries, setExtradexEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeSection, setActiveSection] = useState("pv");
@@ -85,9 +86,10 @@ export default function EVsLocationEditor({ onSave }) {
   const load = async () => {
     try {
       setLoading(true);
-      const [evsRes, pokedexRes] = await Promise.all([
+      const [evsRes, pokedexRes, extradexRes] = await Promise.all([
         fetch(`${API_BASE}/evs-location?t=${Date.now()}`).then((r) => r.json()),
         fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
+        fetch(`${API_BASE}/extradex?t=${Date.now()}`).then((r) => r.json()).catch(() => null),
       ]);
       if (evsRes?.success && Array.isArray(evsRes?.evs?.entries)) {
         const raw = evsRes.evs.entries;
@@ -108,6 +110,9 @@ export default function EVsLocationEditor({ onSave }) {
         setPokedexEntries(pokedexRes.pokedex.entries);
       } else {
         setPokedexEntries([]);
+      }
+      if (extradexRes?.success && Array.isArray(extradexRes?.extradex?.entries)) {
+        setExtradexEntries(extradexRes.extradex.entries);
       }
     } catch {
       setEntries([]);
@@ -174,18 +179,29 @@ export default function EVsLocationEditor({ onSave }) {
     return list.filter((p) => (typeof p === "object" ? (p.name || "").toLowerCase().includes(q) : String(p).toLowerCase().includes(q)));
   }, [pokemonList, searchQuery, zoneFilterAdmin]);
 
-  const filteredPokedexForDropdown = useMemo(() => {
+  const allDexEntries = useMemo(() => [
+    ...pokedexEntries.map((e) => ({ ...e, _source: "pokedex" })),
+    ...extradexEntries.map((e) => ({ ...e, _source: "extradex" })),
+  ], [pokedexEntries, extradexEntries]);
+
+  const sortByNum = (a, b) => (parseInt(String(a.num), 10) || 0) - (parseInt(String(b.num), 10) || 0);
+
+  const dexFilter = (list) => {
     const raw = pokedexSearch.trim();
-    if (!raw) return pokedexEntries;
-    const words = normalizeName(raw).split(/\s+/).filter(Boolean);
-    if (words.length === 0) return pokedexEntries;
-    return pokedexEntries.filter((e) => {
-      const nameNorm = normalizeName(e.name);
-      const numStr = (e.num || "").toString().trim();
-      const matchWords = words.every((w) => nameNorm.includes(w) || (numStr && numStr.includes(w)));
-      return matchWords;
+    const sorted = [...list].sort(sortByNum);
+    if (!raw) return sorted;
+    const q = normalizeName(raw);
+    if (!q) return sorted;
+    return sorted.filter((e) => {
+      const n = normalizeName(e.name);
+      const num = (e.num || "").toString();
+      return n.includes(q) || num === q || num.startsWith(q);
     });
-  }, [pokedexEntries, pokedexSearch]);
+  };
+
+  const filteredPokedexCol = useMemo(() => dexFilter(pokedexEntries), [pokedexEntries, pokedexSearch]);
+  const filteredExtradexCol = useMemo(() => dexFilter(extradexEntries), [extradexEntries, pokedexSearch]);
+  const filteredPokedexForDropdown = useMemo(() => [...filteredPokedexCol, ...filteredExtradexCol], [filteredPokedexCol, filteredExtradexCol]);
 
   const saveToApi = async (entriesToSave) => {
     const payload = Array.isArray(entriesToSave) ? entriesToSave : entries;
@@ -374,7 +390,7 @@ export default function EVsLocationEditor({ onSave }) {
 
         {modalMode === "add" && addSource === "pokedex" && (
           <div className="evs-editor-pokedex-pick">
-            <label className="evs-editor-label">Choisir un Pokémon du Pokédex ({pokedexEntries.length} au total)</label>
+            <label className="evs-editor-label">Choisir un Pokémon ({allDexEntries.length} au total — Pokédex + Extradex)</label>
             <div className="evs-editor-pokedex-dropdown" ref={pokedexDropdownRef}>
               <div className="evs-editor-pokedex-search-row">
                 <input
@@ -399,35 +415,64 @@ export default function EVsLocationEditor({ onSave }) {
               {pokedexDropdownOpen && (
                 <div className="evs-editor-pokedex-list" role="listbox">
                   <div className="evs-editor-pokedex-list-header">
-                    <span>{pokedexSearch.trim() ? `${filteredPokedexForDropdown.length} résultat(s)` : `Tous les Pokémon (${pokedexEntries.length})`}</span>
+                    <span>{pokedexSearch.trim() ? `${filteredPokedexForDropdown.length} résultat(s)` : `${allDexEntries.length} Pokémon`}</span>
                     <button type="button" className="evs-editor-pokedex-list-close" onClick={() => setPokedexDropdownOpen(false)} title="Fermer la liste">
                       <i className="fa-solid fa-times" /> Fermer
                     </button>
                   </div>
-                  <div className="evs-editor-pokedex-list-body">
-                  {filteredPokedexForDropdown.length === 0 ? (
-                    <div className="evs-editor-pokedex-list-empty">Aucun Pokémon trouvé. Essayez un autre terme.</div>
-                  ) : (
-                    filteredPokedexForDropdown.map((entry) => (
-                      <button
-                        key={entry.num || entry.name}
-                        type="button"
-                        className="evs-editor-pokedex-option"
-                        role="option"
-                        onClick={() => {
-                          selectPokedexEntry(entry);
-                          setPokedexDropdownOpen(false);
-                          setPokedexSearch("");
-                        }}
-                      >
-                        <span className="evs-editor-pokedex-option-sprite">
-                          <img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
-                        </span>
-                        <span className="evs-editor-pokedex-option-name">{entry.name}</span>
-                        {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
-                      </button>
-                    ))
-                  )}
+                  <div className="evs-editor-pokedex-columns">
+                    <div className="evs-editor-pokedex-col">
+                      <div className="evs-editor-pokedex-col-header evs-editor-pokedex-col-header--pokedex">
+                        <i className="fa-solid fa-book" /> Pokédex <span className="evs-editor-pokedex-col-count">({filteredPokedexCol.length})</span>
+                      </div>
+                      <div className="evs-editor-pokedex-col-body">
+                        {filteredPokedexCol.length === 0 ? (
+                          <div className="evs-editor-pokedex-list-empty">Aucun résultat</div>
+                        ) : (
+                          filteredPokedexCol.map((entry, idx) => (
+                            <button
+                              key={`pokedex-${entry.num || idx}-${entry.name}-${idx}`}
+                              type="button"
+                              className="evs-editor-pokedex-option"
+                              role="option"
+                              onClick={() => { selectPokedexEntry(entry); setPokedexDropdownOpen(false); setPokedexSearch(""); }}
+                            >
+                              <span className="evs-editor-pokedex-option-sprite">
+                                <img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
+                              </span>
+                              <span className="evs-editor-pokedex-option-name">{entry.name}</span>
+                              {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                    <div className="evs-editor-pokedex-col">
+                      <div className="evs-editor-pokedex-col-header evs-editor-pokedex-col-header--extradex">
+                        <i className="fa-solid fa-book" /> Extradex <span className="evs-editor-pokedex-col-count">({filteredExtradexCol.length})</span>
+                      </div>
+                      <div className="evs-editor-pokedex-col-body">
+                        {filteredExtradexCol.length === 0 ? (
+                          <div className="evs-editor-pokedex-list-empty">Aucun résultat</div>
+                        ) : (
+                          filteredExtradexCol.map((entry, idx) => (
+                            <button
+                              key={`extradex-${entry.num || idx}-${entry.name}-${idx}`}
+                              type="button"
+                              className="evs-editor-pokedex-option evs-editor-pokedex-option--extradex"
+                              role="option"
+                              onClick={() => { selectPokedexEntry(entry); setPokedexDropdownOpen(false); setPokedexSearch(""); }}
+                            >
+                              <span className="evs-editor-pokedex-option-sprite">
+                                <img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
+                              </span>
+                              <span className="evs-editor-pokedex-option-name">{entry.name}</span>
+                              {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
