@@ -8789,6 +8789,7 @@ a.dex-panel--active{cursor:default}
 .evs-editor-btn-edit:hover { background: rgba(126,205,242,.35); }
 .evs-editor-btn-del { background: rgba(239,68,68,.2); color: #f87171; }
 .evs-editor-btn-del:hover { background: rgba(239,68,68,.35); }
+.evs-editor-modal { max-width: 700px; }
 .evs-editor-modal .evs-editor-modal-tabs { display: flex; gap: .5rem; margin-bottom: 1rem; }
 .evs-editor-modal-tabs .admin-panel-nav-btn { width: auto; padding: .5rem 1rem; }
 .evs-editor-pokedex-pick { margin-bottom: 1rem; }

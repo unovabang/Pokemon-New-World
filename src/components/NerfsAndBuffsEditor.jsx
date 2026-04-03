@@ -340,7 +340,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
 
   const modalContent = showModal && (
     <div className="admin-pokedex-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="nerfbuff-admin-modal-title" onClick={() => setShowModal(false)}>
-      <div className="admin-pokedex-modal admin-bst-modal nerfbuff-admin-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "620px" }}>
+      <div className="admin-pokedex-modal admin-bst-modal nerfbuff-admin-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "700px" }}>
         <div className="admin-pokedex-modal-header">
           <h2 id="nerfbuff-admin-modal-title">{editingIndex !== null ? "Modifier l'entrée" : "Ajouter un Pokémon"}</h2>
           <button type="button" className="admin-pokedex-modal-close" onClick={() => setShowModal(false)} aria-label="Fermer"><i className="fa-solid fa-xmark" /></button>
