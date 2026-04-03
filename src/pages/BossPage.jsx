@@ -128,7 +128,7 @@ function DifficultyBar({ level }) {
 
 function BossCard({ boss }) {
   const [teamOpen, setTeamOpen] = useState(false);
-  const [tipsOpen, setTipsOpen] = useState(false);
+  const [tipsOpen, setTipsOpen] = useState(true);
   const hasTips = boss.tips && boss.tips.length > 0;
   const diffClass = boss.difficulty ? ` boss-card--${boss.difficulty.toLowerCase()}` : "";
   return (
