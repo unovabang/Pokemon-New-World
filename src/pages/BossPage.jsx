@@ -130,8 +130,9 @@ function BossCard({ boss }) {
   const [teamOpen, setTeamOpen] = useState(false);
   const [tipsOpen, setTipsOpen] = useState(false);
   const hasTips = boss.tips && boss.tips.length > 0;
+  const diffClass = boss.difficulty ? ` boss-card--${boss.difficulty.toLowerCase()}` : "";
   return (
-    <article className="boss-card">
+    <article className={`boss-card${diffClass}`}>
       <div className="boss-card-layout">
         <div className="boss-card-main">
           <div className="boss-card-trainer">

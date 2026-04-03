@@ -1640,6 +1640,47 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   box-shadow: 0 16px 48px rgba(0,0,0,.4), 0 0 30px rgba(251,191,36,.06);
 }
 
+/* Auras par difficulté */
+.boss-card--facile {
+  border-color: rgba(74,222,128,.2);
+  animation: boss-aura-facile 4s ease-in-out infinite;
+}
+.boss-card--facile:hover { border-color: rgba(74,222,128,.4); }
+@keyframes boss-aura-facile {
+  0%,100% { box-shadow: 0 0 15px rgba(74,222,128,.06), 0 0 40px rgba(74,222,128,.03), 0 12px 40px rgba(0,0,0,.35); }
+  50% { box-shadow: 0 0 25px rgba(74,222,128,.12), 0 0 60px rgba(74,222,128,.06), 0 12px 40px rgba(0,0,0,.35); }
+}
+
+.boss-card--moyen {
+  border-color: rgba(251,191,36,.2);
+  animation: boss-aura-moyen 3.5s ease-in-out infinite;
+}
+.boss-card--moyen:hover { border-color: rgba(251,191,36,.4); }
+@keyframes boss-aura-moyen {
+  0%,100% { box-shadow: 0 0 15px rgba(251,191,36,.06), 0 0 40px rgba(251,191,36,.03), 0 12px 40px rgba(0,0,0,.35); }
+  50% { box-shadow: 0 0 25px rgba(251,191,36,.14), 0 0 60px rgba(251,191,36,.07), 0 12px 40px rgba(0,0,0,.35); }
+}
+
+.boss-card--difficile {
+  border-color: rgba(248,113,113,.2);
+  animation: boss-aura-difficile 3s ease-in-out infinite;
+}
+.boss-card--difficile:hover { border-color: rgba(248,113,113,.45); }
+@keyframes boss-aura-difficile {
+  0%,100% { box-shadow: 0 0 18px rgba(248,113,113,.08), 0 0 45px rgba(248,113,113,.04), 0 12px 40px rgba(0,0,0,.35); }
+  50% { box-shadow: 0 0 30px rgba(248,113,113,.18), 0 0 70px rgba(248,113,113,.08), 0 12px 40px rgba(0,0,0,.35); }
+}
+
+.boss-card--extreme {
+  border-color: rgba(192,132,252,.25);
+  animation: boss-aura-extreme 2.5s ease-in-out infinite;
+}
+.boss-card--extreme:hover { border-color: rgba(192,132,252,.5); }
+@keyframes boss-aura-extreme {
+  0%,100% { box-shadow: 0 0 20px rgba(192,132,252,.1), 0 0 50px rgba(192,132,252,.05), 0 0 80px rgba(248,113,113,.03), 0 12px 40px rgba(0,0,0,.35); }
+  50% { box-shadow: 0 0 35px rgba(192,132,252,.22), 0 0 70px rgba(192,132,252,.1), 0 0 100px rgba(248,113,113,.06), 0 12px 40px rgba(0,0,0,.35); }
+}
+
 /* Difficulty bar */
 .boss-difficulty { display: flex; align-items: center; gap: .6rem; margin-top: .5rem; }
 .boss-difficulty-label {
