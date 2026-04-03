@@ -137,6 +137,11 @@ function BossCard({ boss }) {
       <div className="boss-card-layout">
         <div className="boss-card-main">
           <div className="boss-card-trainer">
+            {hasStory && (
+              <a href={boss.storyUrl} target="_blank" rel="noopener noreferrer" className="boss-card-story-btn">
+                <i className="fa-solid fa-book-open" aria-hidden /> Histoire
+              </a>
+            )}
             <div className="boss-card-artwork">
               {boss.artworkUrl ? (
                 <img src={boss.artworkUrl} alt={boss.name} />
@@ -151,18 +156,11 @@ function BossCard({ boss }) {
               <h2 className="boss-card-name">{boss.name}</h2>
               {boss.difficulty && <DifficultyBar level={boss.difficulty} />}
               {boss.description && <p className="boss-card-description">{boss.description}</p>}
-              <div className="boss-card-actions">
-                {boss.reward && (
-                  <div className="boss-card-reward">
-                    <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}{!/₱/.test(boss.reward) && " ₱"}
-                  </div>
-                )}
-                {hasStory && (
-                  <a href={boss.storyUrl} target="_blank" rel="noopener noreferrer" className="boss-card-story-btn">
-                    <i className="fa-solid fa-book-open" aria-hidden /> Histoire
-                  </a>
-                )}
-              </div>
+              {boss.reward && (
+                <div className="boss-card-reward" style={{ marginTop: ".6rem" }}>
+                  <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}{!/₱/.test(boss.reward) && " ₱"}
+                </div>
+              )}
             </div>
           </div>
 
