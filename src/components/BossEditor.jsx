@@ -536,12 +536,15 @@ export default function BossEditor({ onSave }) {
                       </div>
 
                       {/* URL image */}
-                      <input type="url" className="admin-pokedex-input" value={poke.imageUrl} onChange={(e) => updatePokemon(pIdx, "imageUrl", e.target.value)} placeholder="URL sprite (optionnel)" style={{ marginBottom: ".5rem" }} />
+                      <div style={{ marginBottom: ".5rem" }}>
+                        <span className="boss-editor-ev-label" style={{ textAlign: "left", marginBottom: ".2rem" }}><i className="fa-solid fa-image" style={{ marginRight: ".25rem" }} />URL Sprite</span>
+                        <input type="url" className="admin-pokedex-input" value={poke.imageUrl} onChange={(e) => updatePokemon(pIdx, "imageUrl", e.target.value)} placeholder="https://... (optionnel)" style={{ marginBottom: 0 }} />
+                      </div>
 
                       {/* Types */}
                       <div style={{ marginBottom: ".5rem" }}>
-                        <span style={{ fontSize: ".72rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".04em" }}>Types (max 2)</span>
-                        <div className="admin-pokedex-type-chips" style={{ marginTop: ".25rem" }}>
+                        <span className="boss-editor-ev-label" style={{ textAlign: "left", marginBottom: ".25rem" }}><i className="fa-solid fa-bolt" style={{ marginRight: ".25rem" }} />Types (max 2)</span>
+                        <div className="admin-pokedex-type-chips" style={{ marginTop: ".15rem" }}>
                           {KNOWN_TYPES.map((t) => (
                             <button key={t} type="button" onClick={() => togglePokemonType(pIdx, t)} className={`admin-pokedex-type-chip ${poke.types.includes(t) ? "selected" : ""}`}>
                               {t}
@@ -551,11 +554,14 @@ export default function BossEditor({ onSave }) {
                       </div>
 
                       {/* Talent */}
-                      <input type="text" className="admin-pokedex-input" value={poke.ability} onChange={(e) => updatePokemon(pIdx, "ability", e.target.value)} placeholder="Talent (ex: Intimidation)" style={{ marginBottom: ".5rem" }} />
+                      <div style={{ marginBottom: ".5rem" }}>
+                        <span className="boss-editor-ev-label" style={{ textAlign: "left", marginBottom: ".2rem" }}><i className="fa-solid fa-star" style={{ marginRight: ".25rem" }} />Talent</span>
+                        <input type="text" className="admin-pokedex-input" value={poke.ability} onChange={(e) => updatePokemon(pIdx, "ability", e.target.value)} placeholder="Ex: Intimidation" style={{ marginBottom: 0 }} />
+                      </div>
 
                       {/* Attaques */}
                       <div style={{ marginBottom: ".5rem" }}>
-                        <span style={{ fontSize: ".72rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".04em" }}>Attaques</span>
+                        <span className="boss-editor-ev-label" style={{ textAlign: "left", marginBottom: ".25rem" }}><i className="fa-solid fa-crosshairs" style={{ marginRight: ".25rem" }} />Attaques</span>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: ".35rem", marginTop: ".25rem" }}>
                           {poke.moves.map((m, mIdx) => (
                             <input key={mIdx} type="text" className="admin-pokedex-input" value={m} onChange={(e) => updatePokemonMove(pIdx, mIdx, e.target.value)} placeholder={`Attaque ${mIdx + 1}`} style={{ marginBottom: 0 }} />
