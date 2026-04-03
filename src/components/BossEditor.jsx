@@ -429,9 +429,18 @@ export default function BossEditor({ onSave }) {
               {/* Difficulté */}
               <div>
                 <label className="admin-pokedex-label">Difficulté</label>
-                <select className="admin-pokedex-input" value={form.difficulty} onChange={(e) => updateForm("difficulty", e.target.value)} style={{ cursor: "pointer" }}>
-                  {DIFFICULTIES.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
-                </select>
+                <div className="boss-editor-difficulty-pills">
+                  {DIFFICULTIES.map((d) => (
+                    <button
+                      key={d.value}
+                      type="button"
+                      className={`boss-editor-difficulty-pill boss-editor-difficulty-pill--${d.value}${form.difficulty === d.value ? " boss-editor-difficulty-pill--active" : ""}`}
+                      onClick={() => updateForm("difficulty", d.value)}
+                    >
+                      {d.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Artwork URL */}
@@ -510,9 +519,20 @@ export default function BossEditor({ onSave }) {
                       />
 
                       {/* Nom + Niveau */}
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 80px", gap: ".5rem", marginBottom: ".5rem" }}>
-                        <input type="text" className="admin-pokedex-input" value={poke.name} onChange={(e) => updatePokemon(pIdx, "name", e.target.value)} placeholder="Nom du Pokémon" style={{ marginBottom: 0 }} />
-                        <input type="number" className="admin-pokedex-input" value={poke.level} onChange={(e) => updatePokemon(pIdx, "level", e.target.value)} placeholder="Nv" style={{ marginBottom: 0 }} />
+                      <div style={{ display: "flex", gap: ".5rem", marginBottom: ".5rem", alignItems: "flex-end" }}>
+                        <div style={{ flex: 1 }}>
+                          <input type="text" className="admin-pokedex-input" value={poke.name} onChange={(e) => updatePokemon(pIdx, "name", e.target.value)} placeholder="Nom du Pokémon" style={{ marginBottom: 0 }} />
+                        </div>
+                        <div>
+                          <span className="boss-editor-ev-label" style={{ marginBottom: ".2rem" }}>Niveau</span>
+                          <div className="nerfbuff-admin-stat-cell">
+                            <input type="number" className="nerfbuff-admin-stat-input" value={poke.level} onChange={(e) => updatePokemon(pIdx, "level", e.target.value)} min={1} max={100} />
+                            <div className="nerfbuff-admin-stat-btns">
+                              <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => updatePokemon(pIdx, "level", Math.min((Number(poke.level) || 1) + 1, 100))}><i className="fa-solid fa-chevron-up" /></button>
+                              <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => updatePokemon(pIdx, "level", Math.max((Number(poke.level) || 1) - 1, 1))}><i className="fa-solid fa-chevron-down" /></button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
                       {/* URL image */}
@@ -546,11 +566,23 @@ export default function BossEditor({ onSave }) {
                       {/* EVs */}
                       <div>
                         <span style={{ fontSize: ".72rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".04em" }}>EVs</span>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: ".3rem", marginTop: ".25rem" }}>
+                        <div className="boss-editor-evs-grid">
                           {EV_KEYS.map((k) => (
-                            <div key={k} style={{ textAlign: "center" }}>
-                              <span style={{ fontSize: ".65rem", color: "var(--muted)", display: "block" }}>{EV_LABELS[k]}</span>
-                              <input type="number" className="admin-pokedex-input" value={poke.evs[k]} onChange={(e) => updatePokemonEv(pIdx, k, e.target.value)} style={{ marginBottom: 0, textAlign: "center", padding: ".35rem .2rem", fontSize: ".8rem" }} min={0} max={252} />
+                            <div key={k} className="boss-editor-ev-col">
+                              <span className="boss-editor-ev-label">{EV_LABELS[k]}</span>
+                              <div className="nerfbuff-admin-stat-cell">
+                                <input
+                                  type="number"
+                                  className="nerfbuff-admin-stat-input"
+                                  value={poke.evs[k]}
+                                  onChange={(e) => updatePokemonEv(pIdx, k, e.target.value)}
+                                  min={0} max={252}
+                                />
+                                <div className="nerfbuff-admin-stat-btns">
+                                  <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => updatePokemonEv(pIdx, k, Math.min((Number(poke.evs[k]) || 0) + 4, 252))}><i className="fa-solid fa-chevron-up" /></button>
+                                  <button type="button" className="nerfbuff-admin-stat-btn" onClick={() => updatePokemonEv(pIdx, k, Math.max((Number(poke.evs[k]) || 0) - 4, 0))}><i className="fa-solid fa-chevron-down" /></button>
+                                </div>
+                              </div>
                             </div>
                           ))}
                         </div>

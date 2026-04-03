@@ -1886,6 +1886,38 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.2);
 }
 
+/* Boss Editor admin */
+.boss-editor-difficulty-pills {
+  display: flex; gap: .4rem; flex-wrap: wrap;
+}
+.boss-editor-difficulty-pill {
+  padding: .5rem 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04); color: var(--muted); font-size: .85rem; font-weight: 600;
+  cursor: pointer; transition: all .18s;
+}
+.boss-editor-difficulty-pill:hover { background: rgba(255,255,255,.08); }
+.boss-editor-difficulty-pill--facile.boss-editor-difficulty-pill--active {
+  background: rgba(74,222,128,.15); border-color: rgba(74,222,128,.4); color: #4ade80;
+}
+.boss-editor-difficulty-pill--moyen.boss-editor-difficulty-pill--active {
+  background: rgba(251,191,36,.15); border-color: rgba(251,191,36,.4); color: #fbbf24;
+}
+.boss-editor-difficulty-pill--difficile.boss-editor-difficulty-pill--active {
+  background: rgba(248,113,113,.15); border-color: rgba(248,113,113,.4); color: #f87171;
+}
+.boss-editor-difficulty-pill--extreme.boss-editor-difficulty-pill--active {
+  background: rgba(192,132,252,.15); border-color: rgba(192,132,252,.4); color: #c084fc;
+}
+.boss-editor-evs-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-top: .3rem;
+}
+.boss-editor-ev-col { display: flex; flex-direction: column; align-items: center; }
+.boss-editor-ev-label {
+  font-size: .68rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .04em; display: block; text-align: center;
+  margin-bottom: .2rem;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   .boss-card-layout { flex-direction: column; }
