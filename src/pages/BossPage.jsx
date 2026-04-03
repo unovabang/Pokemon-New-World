@@ -129,9 +129,8 @@ function DifficultyBar({ level }) {
 function BossCard({ boss }) {
   const [teamOpen, setTeamOpen] = useState(false);
   const [tipsOpen, setTipsOpen] = useState(true);
-  const [storyOpen, setStoryOpen] = useState(false);
   const hasTips = boss.tips && boss.tips.length > 0;
-  const hasStory = boss.story && boss.story.trim();
+  const hasStory = boss.storyUrl && boss.storyUrl.trim();
   const diffClass = boss.difficulty ? ` boss-card--${boss.difficulty.toLowerCase()}` : "";
   return (
     <article className={`boss-card${diffClass}`}>
@@ -159,26 +158,13 @@ function BossCard({ boss }) {
                   </div>
                 )}
                 {hasStory && (
-                  <button type="button" className="boss-card-story-btn" onClick={() => setStoryOpen(true)}>
+                  <a href={boss.storyUrl} target="_blank" rel="noopener noreferrer" className="boss-card-story-btn">
                     <i className="fa-solid fa-book-open" aria-hidden /> Histoire
-                  </button>
+                  </a>
                 )}
               </div>
             </div>
           </div>
-
-          {/* Modal Histoire */}
-          {storyOpen && hasStory && (
-            <div className="boss-story-overlay" onClick={() => setStoryOpen(false)}>
-              <div className="boss-story-modal" onClick={(e) => e.stopPropagation()}>
-                <button type="button" className="boss-story-close" onClick={() => setStoryOpen(false)}>
-                  <i className="fa-solid fa-xmark" />
-                </button>
-                <h3 className="boss-story-title"><i className="fa-solid fa-book-open" aria-hidden /> Histoire de {boss.name}</h3>
-                <p className="boss-story-text">{boss.story}</p>
-              </div>
-            </div>
-          )}
 
           <div className="boss-card-sections">
             <div className="boss-card-section">

@@ -37,7 +37,7 @@ const emptyPokemon = () => ({
 });
 
 const emptyForm = () => ({
-  name: "", class: "", difficulty: "moyen", artworkUrl: "", description: "", story: "",
+  name: "", class: "", difficulty: "moyen", artworkUrl: "", description: "", storyUrl: "",
   showReward: false, reward: "",
   showTips: false, tips: [""],
   team: [emptyPokemon()],
@@ -228,7 +228,7 @@ export default function BossEditor({ onSave }) {
       difficulty: b.difficulty || "moyen",
       artworkUrl: b.artworkUrl || "",
       description: b.description || "",
-      story: b.story || "",
+      storyUrl: b.storyUrl || "",
       showReward: !!b.reward,
       reward: b.reward || "",
       showTips: !!(b.tips && b.tips.length > 0),
@@ -255,7 +255,7 @@ export default function BossEditor({ onSave }) {
       difficulty: form.difficulty,
       artworkUrl: form.artworkUrl.trim() || "",
       description: form.description.trim(),
-      story: form.story.trim(),
+      storyUrl: form.storyUrl.trim(),
       reward: form.showReward ? form.reward.trim() : "",
       tips: form.showTips ? form.tips.map((t) => t.trim()).filter(Boolean) : [],
       team: form.team.map((p) => ({
@@ -462,10 +462,10 @@ export default function BossEditor({ onSave }) {
                 <textarea className="admin-pokedex-textarea" value={form.description} onChange={(e) => updateForm("description", e.target.value)} placeholder="Description courte du boss..." rows={2} />
               </div>
 
-              {/* Histoire */}
+              {/* Histoire (lien) */}
               <div>
-                <label className="admin-pokedex-label"><i className="fa-solid fa-book-open" style={{ marginRight: ".35rem" }} />Histoire (optionnel)</label>
-                <textarea className="admin-pokedex-textarea" value={form.story} onChange={(e) => updateForm("story", e.target.value)} placeholder="Lore / backstory du boss... (optionnel, affiche un bouton 'Histoire' sur la page publique)" rows={3} />
+                <label className="admin-pokedex-label"><i className="fa-solid fa-book-open" style={{ marginRight: ".35rem" }} />Lien Histoire (optionnel)</label>
+                <input type="url" className="admin-pokedex-input" value={form.storyUrl} onChange={(e) => updateForm("storyUrl", e.target.value)} placeholder="https://... (lien vers la page lore, affiche un bouton 'Histoire')" />
               </div>
 
               {/* Récompense (optionnel) */}
