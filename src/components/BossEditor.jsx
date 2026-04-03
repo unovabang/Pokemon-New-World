@@ -9,6 +9,11 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 const STORAGE_KEY = "admin_boss_data";
 
+function normalizeName(str) {
+  if (!str) return "";
+  return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
+}
+
 const KNOWN_TYPES = [
   "acier", "aspic", "combat", "dragon", "eau", "electr", "fee", "feu", "glace",
   "insecte", "malice", "normal", "plante", "poison", "psy", "roche", "sol",
@@ -38,9 +43,103 @@ const emptyForm = () => ({
   team: [emptyPokemon()],
 });
 
+const PLACEHOLDER_SPRITE = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+function BossPokemonPicker({ pokedexEntries, extradexEntries, onSelect }) {
+  const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("click", onClick, true);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("click", onClick, true); document.removeEventListener("keydown", onKey); };
+  }, [open]);
+
+  const sortByNum = (a, b) => (parseInt(String(a.num), 10) || 0) - (parseInt(String(b.num), 10) || 0);
+  const filterList = (list) => {
+    const sorted = [...list].sort(sortByNum);
+    const q = normalizeName(search);
+    if (!q) return sorted;
+    return sorted.filter((e) => {
+      const n = normalizeName(e.name);
+      const num = (e.num || "").toString();
+      return n.includes(q) || num === q || num.startsWith(q);
+    });
+  };
+  const filteredPdx = filterList(pokedexEntries);
+  const filteredExt = filterList(extradexEntries);
+
+  return (
+    <div ref={ref} style={{ position: "relative", marginBottom: ".5rem" }}>
+      <div style={{ display: "flex", gap: ".35rem" }}>
+        <input
+          type="text"
+          className="admin-pokedex-input"
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)}
+          placeholder="Chercher dans le Pokédex..."
+          style={{ marginBottom: 0, flex: 1 }}
+        />
+        <button type="button" className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: ".4rem .6rem" }} onClick={() => setOpen((o) => !o)}>
+          <i className={`fa-solid fa-chevron-${open ? "up" : "down"}`} />
+        </button>
+      </div>
+      {open && (
+        <div className="evs-editor-pokedex-list" style={{ position: "absolute", top: "100%", left: 0, right: 0, zIndex: 120, marginTop: ".3rem", maxHeight: "320px" }}>
+          <div className="evs-editor-pokedex-list-header">
+            <span>{search.trim() ? `${filteredPdx.length + filteredExt.length} résultat(s)` : `${pokedexEntries.length + extradexEntries.length} Pokémon`}</span>
+            <button type="button" className="evs-editor-pokedex-list-close" onClick={() => setOpen(false)}><i className="fa-solid fa-times" /> Fermer</button>
+          </div>
+          <div className="evs-editor-pokedex-columns">
+            <div className="evs-editor-pokedex-col">
+              <div className="evs-editor-pokedex-col-header evs-editor-pokedex-col-header--pokedex">
+                <i className="fa-solid fa-book" /> Pokédex <span className="evs-editor-pokedex-col-count">({filteredPdx.length})</span>
+              </div>
+              <div className="evs-editor-pokedex-col-body">
+                {filteredPdx.length === 0 ? (
+                  <div className="evs-editor-pokedex-list-empty">Aucun résultat</div>
+                ) : filteredPdx.map((entry, idx) => (
+                  <button key={`p-${entry.num || idx}-${idx}`} type="button" className="evs-editor-pokedex-option" onClick={() => { onSelect(entry); setOpen(false); setSearch(""); }}>
+                    <span className="evs-editor-pokedex-option-sprite"><img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} /></span>
+                    <span className="evs-editor-pokedex-option-name">{entry.name}</span>
+                    {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="evs-editor-pokedex-col">
+              <div className="evs-editor-pokedex-col-header evs-editor-pokedex-col-header--extradex">
+                <i className="fa-solid fa-book" /> Extradex <span className="evs-editor-pokedex-col-count">({filteredExt.length})</span>
+              </div>
+              <div className="evs-editor-pokedex-col-body">
+                {filteredExt.length === 0 ? (
+                  <div className="evs-editor-pokedex-list-empty">Aucun résultat</div>
+                ) : filteredExt.map((entry, idx) => (
+                  <button key={`e-${entry.num || idx}-${idx}`} type="button" className="evs-editor-pokedex-option evs-editor-pokedex-option--extradex" onClick={() => { onSelect(entry); setOpen(false); setSearch(""); }}>
+                    <span className="evs-editor-pokedex-option-sprite"><img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} /></span>
+                    <span className="evs-editor-pokedex-option-name">{entry.name}</span>
+                    {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function BossEditor({ onSave }) {
   const [bosses, setBosses] = useState([]);
   const [background, setBackground] = useState("");
+  const [pokedexEntries, setPokedexEntries] = useState([]);
+  const [extradexEntries, setExtradexEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState(null);
@@ -55,12 +154,21 @@ export default function BossEditor({ onSave }) {
     async function load() {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE}/boss?t=${Date.now()}`);
-        const data = await res.json();
+        const [bossRes, pokedexRes, extradexRes] = await Promise.all([
+          fetch(`${API_BASE}/boss?t=${Date.now()}`).then((r) => r.json()),
+          fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()),
+          fetch(`${API_BASE}/extradex?t=${Date.now()}`).then((r) => r.json()).catch(() => null),
+        ]);
         if (cancelled) return;
-        if (data.success && data.boss) {
-          setBosses(data.boss.bosses || []);
-          setBackground(data.boss.background || "");
+        if (bossRes.success && bossRes.boss) {
+          setBosses(bossRes.boss.bosses || []);
+          setBackground(bossRes.boss.background || "");
+        }
+        if (pokedexRes?.success && Array.isArray(pokedexRes?.pokedex?.entries)) {
+          setPokedexEntries(pokedexRes.pokedex.entries);
+        }
+        if (extradexRes?.success && Array.isArray(extradexRes?.extradex?.entries)) {
+          setExtradexEntries(extradexRes.extradex.entries);
         }
       } catch {
         const stored = localStorage.getItem(STORAGE_KEY);
@@ -214,6 +322,19 @@ export default function BossEditor({ onSave }) {
     tips[idx] = val;
     return { ...f, tips };
   });
+
+  const selectPokedexForPokemon = (pIdx, entry) => {
+    setForm((f) => {
+      const team = [...f.team];
+      team[pIdx] = {
+        ...team[pIdx],
+        name: entry.name || team[pIdx].name,
+        imageUrl: (entry.imageUrl || "").trim() || team[pIdx].imageUrl,
+        types: Array.isArray(entry.types) && entry.types.length > 0 ? [...entry.types] : team[pIdx].types,
+      };
+      return { ...f, team };
+    });
+  };
 
   if (loading) {
     return (
@@ -369,6 +490,13 @@ export default function BossEditor({ onSave }) {
                           </button>
                         )}
                       </div>
+
+                      {/* Picker depuis Pokédex */}
+                      <BossPokemonPicker
+                        pokedexEntries={pokedexEntries}
+                        extradexEntries={extradexEntries}
+                        onSelect={(entry) => selectPokedexForPokemon(pIdx, entry)}
+                      />
 
                       {/* Nom + Niveau */}
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 80px", gap: ".5rem", marginBottom: ".5rem" }}>
