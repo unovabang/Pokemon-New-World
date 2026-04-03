@@ -154,7 +154,7 @@ function BossCard({ boss }) {
               <div className="boss-card-actions">
                 {boss.reward && (
                   <div className="boss-card-reward">
-                    <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}
+                    <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}{!/₱/.test(boss.reward) && " ₱"}
                   </div>
                 )}
                 {hasStory && (
