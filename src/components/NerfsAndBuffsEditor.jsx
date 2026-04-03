@@ -206,17 +206,21 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
     ...extradexEntries.map((e) => ({ ...e, _source: "extradex" })),
   ], [pokedexEntries, extradexEntries]);
 
-  const filteredPokedex = useMemo(() => {
+  const dexFilter = (list) => {
     const raw = pokedexSearch.trim();
-    if (!raw) return allDexEntries;
+    if (!raw) return list;
     const q = normalizeName(raw);
-    if (!q) return allDexEntries;
-    return allDexEntries.filter((e) => {
+    if (!q) return list;
+    return list.filter((e) => {
       const n = normalizeName(e.name);
       const num = (e.num || "").toString();
       return n.includes(q) || num === q || num.startsWith(q);
     });
-  }, [allDexEntries, pokedexSearch]);
+  };
+
+  const filteredPokedexCol = useMemo(() => dexFilter(pokedexEntries), [pokedexEntries, pokedexSearch]);
+  const filteredExtradexCol = useMemo(() => dexFilter(extradexEntries), [extradexEntries, pokedexSearch]);
+  const filteredPokedex = useMemo(() => [...filteredPokedexCol, ...filteredExtradexCol], [filteredPokedexCol, filteredExtradexCol]);
 
   const saveToApi = async (payload) => {
     const toSend = payload || data;
@@ -379,34 +383,62 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
                 {pokedexDropdownOpen && (
                   <div className="evs-editor-pokedex-list" role="listbox">
                     <div className="evs-editor-pokedex-list-header">
-                      <span>{pokedexSearch.trim() ? `${filteredPokedex.length} résultat(s)` : `Tous (${allDexEntries.length})`}</span>
+                      <span>{pokedexSearch.trim() ? `${filteredPokedex.length} résultat(s)` : `${allDexEntries.length} Pokémon`}</span>
                       <button type="button" className="evs-editor-pokedex-list-close" onClick={() => setPokedexDropdownOpen(false)}><i className="fa-solid fa-times" /> Fermer</button>
                     </div>
-                    <div className="evs-editor-pokedex-list-body">
-                      {filteredPokedex.length === 0 ? (
-                        <div className="evs-editor-pokedex-list-empty">Aucun Pokémon trouvé.</div>
-                      ) : (
-                        filteredPokedex.map((entry, idx) => (
-                          <button
-                            key={`${entry._source}-${entry.num || idx}-${entry.name}`}
-                            type="button"
-                            className={`evs-editor-pokedex-option${entry._source === "extradex" ? " evs-editor-pokedex-option--extradex" : ""}`}
-                            role="option"
-                            onClick={() => selectPokedexEntry(entry)}
-                          >
-                            <span className="evs-editor-pokedex-option-sprite">
-                              <img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
-                            </span>
-                            <span className="evs-editor-pokedex-option-name">{entry.name}</span>
-                            <span className="evs-editor-pokedex-option-meta">
-                              {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
-                              <span className={`evs-editor-pokedex-option-badge evs-editor-pokedex-option-badge--${entry._source}`}>
-                                {entry._source === "extradex" ? "Extradex" : "Pokédex"}
-                              </span>
-                            </span>
-                          </button>
-                        ))
-                      )}
+                    <div className="evs-editor-pokedex-columns">
+                      <div className="evs-editor-pokedex-col">
+                        <div className="evs-editor-pokedex-col-header evs-editor-pokedex-col-header--pokedex">
+                          <i className="fa-solid fa-book" /> Pokédex <span className="evs-editor-pokedex-col-count">({filteredPokedexCol.length})</span>
+                        </div>
+                        <div className="evs-editor-pokedex-col-body">
+                          {filteredPokedexCol.length === 0 ? (
+                            <div className="evs-editor-pokedex-list-empty">Aucun résultat</div>
+                          ) : (
+                            filteredPokedexCol.map((entry, idx) => (
+                              <button
+                                key={`pokedex-${entry.num || idx}-${entry.name}-${idx}`}
+                                type="button"
+                                className="evs-editor-pokedex-option"
+                                role="option"
+                                onClick={() => selectPokedexEntry(entry)}
+                              >
+                                <span className="evs-editor-pokedex-option-sprite">
+                                  <img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
+                                </span>
+                                <span className="evs-editor-pokedex-option-name">{entry.name}</span>
+                                {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                      <div className="evs-editor-pokedex-col">
+                        <div className="evs-editor-pokedex-col-header evs-editor-pokedex-col-header--extradex">
+                          <i className="fa-solid fa-book-sparkles fa-book" /> Extradex <span className="evs-editor-pokedex-col-count">({filteredExtradexCol.length})</span>
+                        </div>
+                        <div className="evs-editor-pokedex-col-body">
+                          {filteredExtradexCol.length === 0 ? (
+                            <div className="evs-editor-pokedex-list-empty">Aucun résultat</div>
+                          ) : (
+                            filteredExtradexCol.map((entry, idx) => (
+                              <button
+                                key={`extradex-${entry.num || idx}-${entry.name}-${idx}`}
+                                type="button"
+                                className="evs-editor-pokedex-option evs-editor-pokedex-option--extradex"
+                                role="option"
+                                onClick={() => selectPokedexEntry(entry)}
+                              >
+                                <span className="evs-editor-pokedex-option-sprite">
+                                  <img src={entry.imageUrl || PLACEHOLDER_SPRITE} alt="" onError={(e) => { e.target.src = PLACEHOLDER_SPRITE; }} />
+                                </span>
+                                <span className="evs-editor-pokedex-option-name">{entry.name}</span>
+                                {entry.num && <span className="evs-editor-pokedex-option-num">#{entry.num}</span>}
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
