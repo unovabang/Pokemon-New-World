@@ -280,6 +280,11 @@ export default function BossPage() {
           </div>
         </header>
 
+        <div className="boss-spoiler-warning">
+          <i className="fa-solid fa-triangle-exclamation" aria-hidden />
+          <span>Attention, risque de spoil !</span>
+        </div>
+
         <section className="boss-content container">
           {bosses.length === 0 ? (
             <p className="boss-empty">
