@@ -213,9 +213,14 @@ export default function GuidePage() {
       <div className="guide-wrap">
         <header className="guide-hero">
           <div className="container guide-hero-content">
-            <Link to="/" className="guide-back">
-              <i className="fa-solid fa-arrow-left" /> Retour
-            </Link>
+            <div className="guide-nav-row">
+              <Link to="/" className="guide-back">
+                <i className="fa-solid fa-arrow-left" /> Retour
+              </Link>
+              <Link to="/boss" className="guide-boss-btn">
+                <i className="fa-solid fa-crown" /> Boss du jeu
+              </Link>
+            </div>
             <div className="guide-title-block">
               <h1 className="guide-title">{title || "Guide"}</h1>
               {subtitle && <p className="guide-subtitle">{subtitle}</p>}

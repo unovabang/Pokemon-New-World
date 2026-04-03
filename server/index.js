@@ -1817,6 +1817,35 @@ app.put('/api/guide', (req, res) => {
   }
 });
 
+// === BOSS API ===
+// GET /api/boss - Lire les boss du jeu
+app.get('/api/boss', (req, res) => {
+  try {
+    let raw = getConfig('boss');
+    if (!raw) {
+      const seedPath = path.join(__dirname, '../src/config/boss.json');
+      if (fs.existsSync(seedPath)) {
+        try { raw = fs.readJsonSync(seedPath); } catch { raw = { bosses: [] }; }
+      } else {
+        raw = { bosses: [] };
+      }
+    }
+    const bossData = unwrapConfig(raw, 'boss');
+    res.json({
+      success: true,
+      boss: {
+        title: bossData.title || 'Boss du jeu',
+        subtitle: bossData.subtitle || '',
+        bosses: Array.isArray(bossData.bosses) ? bossData.bosses : [],
+        background: bossData.background && String(bossData.background).trim() ? String(bossData.background).trim() : null
+      }
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/boss:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // PUT /api/extradex - Sauvegarder l'Extradex (écrit dans extradex.json)
 app.put('/api/extradex', (req, res) => {
   try {

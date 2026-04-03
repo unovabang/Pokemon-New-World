@@ -1,0 +1,55 @@
+{
+  "title": "Boss du jeu",
+  "subtitle": "Affrontez les dresseurs les plus redoutables de Pokémon New World",
+  "background": "",
+  "bosses": [
+    {
+      "name": "Vice",
+      "class": "Archéologue",
+      "artworkUrl": "https://media.discordapp.net/attachments/1489049265853435955/1489255239017038014/172_big.png?ex=69d06946&is=69cf17c6&hm=8494e2d47306460251dfe5c5bd04d698f5b1464fd65b46389d3a3de683ff4197&=&format=webp&quality=lossless",
+      "reward": "9720 ₱",
+      "team": [
+        {
+          "name": "Notulero",
+          "imageUrl": "",
+          "level": 52,
+          "types": ["spectre"],
+          "ability": "Momie",
+          "moves": ["Ball'Ombre", "Abri", "Psyko", "Toxik"]
+        },
+        {
+          "name": "Gamblast",
+          "imageUrl": "",
+          "level": 52,
+          "types": ["eau", "sol"],
+          "ability": "Glissade",
+          "moves": ["Ocroupi", "Danse-Pluie", "Séisme", "Cradovague"]
+        },
+        {
+          "name": "Flambusard",
+          "imageUrl": "",
+          "level": 52,
+          "types": ["feu", "vol"],
+          "ability": "Brasier",
+          "moves": ["Nitrocharge", "Acrobatie", "Danse-Plumes", "Aéropique"]
+        },
+        {
+          "name": "Gromago",
+          "imageUrl": "",
+          "level": 52,
+          "types": ["electr"],
+          "ability": "Lévitation",
+          "moves": ["Éclair Fou", "Lance-Flammes", "Acrobatie", "Mâchouille"]
+        },
+        {
+          "name": "Crocbouton",
+          "imageUrl": "",
+          "level": 52,
+          "types": ["plante", "fee"],
+          "ability": "Engrais",
+          "moves": ["Éco-Sphère", "Danse-Fleurs", "Rayon Lune", "Bomb-Beurk"]
+        }
+      ]
+    }
+  ]
+}
