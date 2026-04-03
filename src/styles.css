@@ -1703,12 +1703,32 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 .boss-difficulty-track {
   flex: 1; max-width: 160px; height: 8px; border-radius: 4px;
-  background: rgba(255,255,255,.08); overflow: hidden;
+  background: rgba(255,255,255,.08); overflow: hidden; position: relative;
 }
 .boss-difficulty-fill {
   height: 100%; border-radius: 4px;
   background: linear-gradient(90deg, #4ade80, #fbbf24, #f87171, #c084fc);
-  transition: width .4s ease;
+  background-size: 200% 100%;
+  animation: boss-diff-gradient 3s ease-in-out infinite, boss-diff-glow 2s ease-in-out infinite;
+  position: relative;
+}
+.boss-difficulty-fill::after {
+  content: ""; position: absolute; inset: 0; border-radius: 4px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.3) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: boss-diff-shimmer 2.5s ease-in-out infinite;
+}
+@keyframes boss-diff-gradient {
+  0%,100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes boss-diff-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes boss-diff-glow {
+  0%,100% { box-shadow: 0 0 4px rgba(251,191,36,.2); }
+  50% { box-shadow: 0 0 10px rgba(251,191,36,.4), 0 0 20px rgba(248,113,113,.15); }
 }
 
 /* Layout main + sidebar */
