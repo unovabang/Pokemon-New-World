@@ -1852,6 +1852,28 @@ app.get('/api/boss', (req, res) => {
   }
 });
 
+// PUT /api/boss - Sauvegarder les boss
+app.put('/api/boss', (req, res) => {
+  try {
+    const { title, subtitle, bosses, background } = req.body;
+    const updated = {
+      title: typeof title === 'string' ? title : 'Boss du jeu',
+      subtitle: typeof subtitle === 'string' ? subtitle : '',
+      bosses: Array.isArray(bosses) ? bosses : [],
+      background: background && String(background).trim() ? String(background).trim() : null,
+    };
+    const opts = { spaces: 2 };
+    fs.writeJsonSync(path.join(CONFIG_DIR, 'boss.json'), updated, opts);
+    fs.ensureDirSync(SOURCE_CONFIG_DIR);
+    fs.writeJsonSync(path.join(SOURCE_CONFIG_DIR, 'boss.json'), updated, opts);
+    autoCommitConfig('boss.json');
+    res.json({ success: true, message: 'Boss sauvegardés.', boss: updated });
+  } catch (error) {
+    console.error('❌ Erreur API PUT /api/boss:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // PUT /api/extradex - Sauvegarder l'Extradex (écrit dans extradex.json)
 app.put('/api/extradex', (req, res) => {
   try {

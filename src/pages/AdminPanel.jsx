@@ -24,6 +24,7 @@ import EVsLocationEditor from "../components/EVsLocationEditor";
 import EmbedEditor from "../components/EmbedEditor";
 import TeamEditor from "../components/TeamEditor";
 import LoreEditor from "../components/LoreEditor";
+import BossEditor from "../components/BossEditor";
 import DownloadPageEditor from "../components/DownloadPageEditor";
 import UnderConstructionPage from "./UnderConstructionPage";
 
@@ -105,6 +106,7 @@ const AdminPanel = () => {
         { id: 'pokedex', name: 'Pokédex', icon: 'fa-book-open', description: 'Pokédex & Extradex' },
         { id: 'bst', name: 'All BST + Abilities', icon: 'fa-chart-line', description: 'Stats & capacités' },
         { id: 'guide', name: 'Guide', icon: 'fa-route', description: 'Walkthrough' },
+        { id: 'boss', name: 'Boss', icon: 'fa-crown', description: 'Boss du jeu' },
         { id: 'itemlocation', name: 'Item Location', icon: 'fa-location-dot', description: 'Localisation des objets' },
         { id: 'evs', name: 'EVs Location', icon: 'fa-map-location-dot', description: 'Emplacements des EVs' },
         { id: 'nerfs', name: 'Nerfs and Buffs', icon: 'fa-balance-scale', description: 'Nerfs et buffs' },
@@ -397,6 +399,10 @@ const AdminPanel = () => {
               initialData={guideData || { title: "", subtitle: "", disclaimer: "", steps: [] }}
               onSave={() => {}}
             />
+          )}
+
+          {activeTab === 'boss' && (
+            <BossEditor onSave={() => {}} />
           )}
 
           {activeTab === 'evs' && (
