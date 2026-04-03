@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
@@ -92,7 +92,6 @@ function PokemonCard({ pokemon }) {
           <div className="boss-pokemon-evs">
             {Object.entries(EV_LABELS).map(([key, label]) => {
               const val = evs[key] || 0;
-              if (val === 0) return null;
               return (
                 <div key={key} className="boss-pokemon-ev">
                   <span className="boss-pokemon-ev-label">{label}</span>
@@ -110,67 +109,88 @@ function PokemonCard({ pokemon }) {
   );
 }
 
-const DIFFICULTY_CONFIG = {
-  facile: { color: "#4ade80", icon: "fa-face-smile", label: "Facile" },
-  moyen: { color: "#fbbf24", icon: "fa-face-meh", label: "Moyen" },
-  difficile: { color: "#f87171", icon: "fa-face-angry", label: "Difficile" },
-  extreme: { color: "#c084fc", icon: "fa-skull", label: "Extreme" },
-};
+const DIFFICULTY_LEVELS = { facile: 25, moyen: 50, difficile: 75, extreme: 100 };
+const DIFFICULTY_LABELS = { facile: "Facile", moyen: "Moyen", difficile: "Difficile", extreme: "Extrême" };
+
+function DifficultyBar({ level }) {
+  const pct = DIFFICULTY_LEVELS[(level || "").toLowerCase()] || 0;
+  const label = DIFFICULTY_LABELS[(level || "").toLowerCase()] || level;
+  if (!pct) return null;
+  return (
+    <div className="boss-difficulty">
+      <span className="boss-difficulty-label">{label}</span>
+      <div className="boss-difficulty-track">
+        <div className="boss-difficulty-fill" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
 
 function BossCard({ boss }) {
-  const diff = DIFFICULTY_CONFIG[(boss.difficulty || "").toLowerCase()] || null;
+  const [teamOpen, setTeamOpen] = useState(false);
+  const [tipsOpen, setTipsOpen] = useState(false);
   return (
     <article className="boss-card">
-      <div className="boss-card-layout">
-        <div className="boss-card-main">
-          <div className="boss-card-trainer">
-            <div className="boss-card-artwork">
-              {boss.artworkUrl ? (
-                <img src={boss.artworkUrl} alt={boss.name} />
-              ) : (
-                <div className="boss-card-artwork-placeholder">
-                  <i className="fa-solid fa-user-shield" />
-                </div>
-              )}
+      <div className="boss-card-trainer">
+        <div className="boss-card-artwork">
+          {boss.artworkUrl ? (
+            <img src={boss.artworkUrl} alt={boss.name} />
+          ) : (
+            <div className="boss-card-artwork-placeholder">
+              <i className="fa-solid fa-user-shield" />
             </div>
-            <div className="boss-card-identity">
-              <span className="boss-card-class">{boss.class}</span>
-              <h2 className="boss-card-name">{boss.name}</h2>
-              {diff && (
-                <div className="boss-card-difficulty" style={{ color: diff.color, borderColor: `${diff.color}33`, background: `${diff.color}12` }}>
-                  <i className={`fa-solid ${diff.icon}`} aria-hidden /> {diff.label}
-                </div>
-              )}
-              {boss.description && <p className="boss-card-description">{boss.description}</p>}
-              {boss.reward && (
-                <div className="boss-card-reward">
-                  <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}
-                </div>
-              )}
+          )}
+        </div>
+        <div className="boss-card-identity">
+          <span className="boss-card-class">{boss.class}</span>
+          <h2 className="boss-card-name">{boss.name}</h2>
+          {boss.difficulty && <DifficultyBar level={boss.difficulty} />}
+          {boss.description && <p className="boss-card-description">{boss.description}</p>}
+          {boss.reward && (
+            <div className="boss-card-reward">
+              <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}
             </div>
-          </div>
-          <div className="boss-card-team">
-            <h3 className="boss-card-team-title">
-              <i className="fa-solid fa-users" aria-hidden /> Equipe ({boss.team?.length || 0})
-            </h3>
+          )}
+        </div>
+      </div>
+
+      <div className="boss-card-sections">
+        <div className="boss-card-section">
+          <button
+            type="button"
+            className={`boss-card-section-toggle${teamOpen ? " boss-card-section-toggle--open" : ""}`}
+            onClick={() => setTeamOpen((o) => !o)}
+          >
+            <span><i className="fa-solid fa-users" aria-hidden /> Voir l'equipe ({boss.team?.length || 0})</span>
+            <i className={`fa-solid fa-chevron-${teamOpen ? "up" : "down"}`} />
+          </button>
+          {teamOpen && (
             <div className="boss-card-team-grid">
               {(boss.team || []).map((p, i) => (
                 <PokemonCard key={`${p.name}-${i}`} pokemon={p} />
               ))}
             </div>
-          </div>
+          )}
         </div>
+
         {boss.tips && boss.tips.length > 0 && (
-          <aside className="boss-card-sidebar">
-            <h3 className="boss-card-sidebar-title">
-              <i className="fa-solid fa-lightbulb" aria-hidden /> Astuces
-            </h3>
-            <ul className="boss-card-tips">
-              {boss.tips.map((tip, i) => (
-                <li key={i} className="boss-card-tip">{tip}</li>
-              ))}
-            </ul>
-          </aside>
+          <div className="boss-card-section">
+            <button
+              type="button"
+              className={`boss-card-section-toggle boss-card-section-toggle--tips${tipsOpen ? " boss-card-section-toggle--open" : ""}`}
+              onClick={() => setTipsOpen((o) => !o)}
+            >
+              <span><i className="fa-solid fa-lightbulb" aria-hidden /> Astuces ({boss.tips.length})</span>
+              <i className={`fa-solid fa-chevron-${tipsOpen ? "up" : "down"}`} />
+            </button>
+            {tipsOpen && (
+              <ul className="boss-card-tips">
+                {boss.tips.map((tip, i) => (
+                  <li key={i} className="boss-card-tip">{tip}</li>
+                ))}
+              </ul>
+            )}
+          </div>
         )}
       </div>
     </article>

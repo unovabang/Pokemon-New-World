@@ -1629,26 +1629,50 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   box-shadow: 0 16px 48px rgba(0,0,0,.4), 0 0 30px rgba(251,191,36,.06);
 }
 
-/* Layout avec sidebar */
-.boss-card-layout { display: flex; gap: 0; }
-.boss-card-main { flex: 1; min-width: 0; }
+/* Difficulty bar */
+.boss-difficulty { display: flex; align-items: center; gap: .6rem; margin-top: .5rem; }
+.boss-difficulty-label {
+  font-size: .75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; color: var(--muted); width: 55px; flex-shrink: 0;
+}
+.boss-difficulty-track {
+  flex: 1; max-width: 160px; height: 8px; border-radius: 4px;
+  background: rgba(255,255,255,.08); overflow: hidden;
+}
+.boss-difficulty-fill {
+  height: 100%; border-radius: 4px;
+  background: linear-gradient(90deg, #4ade80, #fbbf24, #f87171, #c084fc);
+  transition: width .4s ease;
+}
 
-/* Sidebar astuces */
-.boss-card-sidebar {
-  width: 220px; flex-shrink: 0; padding: 1.25rem;
-  background: rgba(251,191,36,.03);
-  border-left: 1px solid rgba(251,191,36,.12);
+/* Collapsible sections */
+.boss-card-sections { border-top: 1px solid rgba(255,255,255,.06); }
+.boss-card-section { border-bottom: 1px solid rgba(255,255,255,.04); }
+.boss-card-section:last-child { border-bottom: none; }
+.boss-card-section-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 1rem 1.75rem; border: none; background: transparent;
+  color: var(--muted); font-size: .88rem; font-weight: 600; cursor: pointer;
+  transition: color .15s, background .15s;
 }
-.boss-card-sidebar-title {
-  font-size: .8rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .05em; color: rgba(251,191,36,.8); margin: 0 0 .75rem;
+.boss-card-section-toggle:hover { color: var(--text); background: rgba(255,255,255,.03); }
+.boss-card-section-toggle--open { color: var(--text); }
+.boss-card-section-toggle span { display: flex; align-items: center; gap: .4rem; }
+.boss-card-section-toggle span i { font-size: .8rem; }
+.boss-card-section-toggle--tips span i { color: rgba(251,191,36,.6); }
+
+/* Team grid inside collapsible */
+.boss-card-sections .boss-card-team-grid { padding: 0 1.5rem 1.25rem; }
+
+/* Tips inside collapsible */
+.boss-card-tips {
+  list-style: none; margin: 0; padding: 0 1.5rem 1.25rem;
+  display: flex; flex-direction: column; gap: .5rem;
 }
-.boss-card-sidebar-title i { margin-right: .35rem; }
-.boss-card-tips { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .6rem; }
 .boss-card-tip {
-  font-size: .82rem; color: rgba(255,255,255,.75); line-height: 1.45;
-  padding: .55rem .7rem; border-radius: 10px;
-  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06);
+  font-size: .84rem; color: rgba(255,255,255,.75); line-height: 1.5;
+  padding: .55rem .75rem; border-radius: 10px;
+  background: rgba(251,191,36,.04); border: 1px solid rgba(251,191,36,.08);
 }
 
 /* Trainer section */
@@ -1676,13 +1700,6 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   font-size: 1.6rem; font-weight: 800; margin: 0; color: var(--text);
   line-height: 1.2;
 }
-.boss-card-difficulty {
-  display: inline-flex; align-items: center; gap: .35rem;
-  margin-top: .5rem; padding: .25rem .65rem; border-radius: 12px;
-  border: 1px solid; font-size: .78rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .04em;
-}
-.boss-card-difficulty i { font-size: .7rem; }
 .boss-card-description {
   margin: .6rem 0 0; font-size: .88rem; color: rgba(255,255,255,.6);
   line-height: 1.5; max-width: 500px;
@@ -1695,13 +1712,6 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 }
 .boss-card-reward i { font-size: .7rem; }
 
-/* Team section */
-.boss-card-team { padding: 1.25rem 1.75rem 1.5rem; }
-.boss-card-team-title {
-  font-size: .8rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .05em; color: var(--muted); margin: 0 0 1rem;
-}
-.boss-card-team-title i { margin-right: .35rem; }
 .boss-card-team-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem;
 }
@@ -1785,15 +1795,15 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 
 /* Mobile */
 @media (max-width: 768px) {
-  .boss-card-layout { flex-direction: column; }
-  .boss-card-sidebar { width: auto; border-left: none; border-top: 1px solid rgba(251,191,36,.12); }
   .boss-card-trainer { flex-direction: column; text-align: center; }
   .boss-card-artwork { width: auto; padding: 1.25rem 1rem 0; }
   .boss-card-artwork img { max-height: 160px; }
   .boss-card-identity { padding: 1rem 1.25rem; align-items: center; }
   .boss-card-description { max-width: none; }
   .boss-card-team-grid { grid-template-columns: repeat(2, 1fr); }
-  .boss-card-team { padding: 1rem; }
+  .boss-card-section-toggle { padding: .85rem 1rem; }
+  .boss-card-sections .boss-card-team-grid { padding: 0 1rem 1rem; }
+  .boss-card-tips { padding: 0 1rem 1rem; }
   .boss-title { font-size: 1.5rem; }
 }
 @media (max-width: 480px) {
