@@ -1637,8 +1637,8 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
 .boss-card-artwork {
-  width: 110px; height: 110px; flex-shrink: 0;
-  border-radius: 16px; overflow: hidden;
+  width: 200px; height: 200px; flex-shrink: 0;
+  border-radius: 18px; overflow: hidden;
   background: rgba(0,0,0,.3);
   border: 2px solid rgba(251,191,36,.25);
   box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 16px rgba(251,191,36,.08);
@@ -1721,7 +1721,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 /* Mobile */
 @media (max-width: 768px) {
   .boss-card-trainer { flex-direction: column; text-align: center; gap: 1rem; padding: 1.25rem; }
-  .boss-card-artwork { width: 90px; height: 90px; }
+  .boss-card-artwork { width: 140px; height: 140px; }
   .boss-card-team-grid { grid-template-columns: repeat(2, 1fr); }
   .boss-card-team { padding: 1rem; }
   .boss-title { font-size: 1.5rem; }
