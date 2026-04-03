@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
@@ -129,7 +129,9 @@ function DifficultyBar({ level }) {
 function BossCard({ boss }) {
   const [teamOpen, setTeamOpen] = useState(false);
   const [tipsOpen, setTipsOpen] = useState(true);
+  const [storyOpen, setStoryOpen] = useState(false);
   const hasTips = boss.tips && boss.tips.length > 0;
+  const hasStory = boss.story && boss.story.trim();
   const diffClass = boss.difficulty ? ` boss-card--${boss.difficulty.toLowerCase()}` : "";
   return (
     <article className={`boss-card${diffClass}`}>
@@ -150,13 +152,33 @@ function BossCard({ boss }) {
               <h2 className="boss-card-name">{boss.name}</h2>
               {boss.difficulty && <DifficultyBar level={boss.difficulty} />}
               {boss.description && <p className="boss-card-description">{boss.description}</p>}
-              {boss.reward && (
-                <div className="boss-card-reward">
-                  <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}
-                </div>
-              )}
+              <div className="boss-card-actions">
+                {boss.reward && (
+                  <div className="boss-card-reward">
+                    <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}
+                  </div>
+                )}
+                {hasStory && (
+                  <button type="button" className="boss-card-story-btn" onClick={() => setStoryOpen(true)}>
+                    <i className="fa-solid fa-book-open" aria-hidden /> Histoire
+                  </button>
+                )}
+              </div>
             </div>
           </div>
+
+          {/* Modal Histoire */}
+          {storyOpen && hasStory && (
+            <div className="boss-story-overlay" onClick={() => setStoryOpen(false)}>
+              <div className="boss-story-modal" onClick={(e) => e.stopPropagation()}>
+                <button type="button" className="boss-story-close" onClick={() => setStoryOpen(false)}>
+                  <i className="fa-solid fa-xmark" />
+                </button>
+                <h3 className="boss-story-title"><i className="fa-solid fa-book-open" aria-hidden /> Histoire de {boss.name}</h3>
+                <p className="boss-story-text">{boss.story}</p>
+              </div>
+            </div>
+          )}
 
           <div className="boss-card-sections">
             <div className="boss-card-section">
