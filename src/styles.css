@@ -8846,12 +8846,12 @@ a.dex-panel--active{cursor:default}
   background: rgba(126,205,242,.1); color: rgba(126,205,242,.9); border-bottom: 2px solid rgba(126,205,242,.3);
 }
 .evs-editor-pokedex-col-header--extradex {
-  background: rgba(200,140,255,.1); color: rgba(200,140,255,.9); border-bottom: 2px solid rgba(200,140,255,.3);
+  background: rgba(248,160,160,.1); color: rgba(248,160,160,.9); border-bottom: 2px solid rgba(248,160,160,.3);
 }
 .evs-editor-pokedex-col-header i { margin-right: .35rem; }
 .evs-editor-pokedex-col-count { font-weight: 400; opacity: .7; }
 .evs-editor-pokedex-col-body { flex: 1; overflow-y: auto; max-height: 300px; }
-.evs-editor-pokedex-option--extradex:hover { background: rgba(200,140,255,.12); }
+.evs-editor-pokedex-option--extradex:hover { background: rgba(248,160,160,.12); }
 .evs-editor-custom-select { position: relative; }
 .evs-editor-select-trigger {
   width: 100%; display: flex; align-items: center; justify-content: space-between; gap: .5rem;
