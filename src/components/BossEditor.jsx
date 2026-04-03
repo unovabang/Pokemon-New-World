@@ -356,6 +356,17 @@ export default function BossEditor({ onSave }) {
         </div>
       </div>
 
+      <div style={{ marginBottom: "1.25rem" }}>
+        <label className="admin-pokedex-label"><i className="fa-solid fa-image" style={{ marginRight: ".35rem" }} />URL du fond de page</label>
+        <input
+          type="url"
+          className="admin-pokedex-input"
+          value={background}
+          onChange={(e) => { setBackground(e.target.value); saveToApi(undefined, e.target.value); }}
+          placeholder="https://... (optionnel, laissez vide pour le fond par défaut)"
+        />
+      </div>
+
       {bosses.length === 0 ? (
         <p style={{ textAlign: "center", color: "var(--muted)", padding: "2rem" }}>Aucun boss. Cliquez sur "Ajouter un boss".</p>
       ) : (

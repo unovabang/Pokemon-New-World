@@ -262,9 +262,16 @@ export default function BossPage() {
   }
 
   const bosses = data.bosses || [];
+  const hasBg = data.background && String(data.background).trim();
 
   return (
-    <main className="page page-with-sidebar boss-page">
+    <main className={`page page-with-sidebar boss-page${hasBg ? " boss-page--has-bg" : ""}`}>
+      {hasBg && (
+        <>
+          <div className="boss-page-bg" aria-hidden><img src={data.background} alt="" /></div>
+          <div className="boss-page-overlay" aria-hidden />
+        </>
+      )}
       <Sidebar />
       <div className="boss-wrap">
         <header className="boss-hero">
