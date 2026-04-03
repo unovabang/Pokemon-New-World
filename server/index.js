@@ -1821,21 +1821,16 @@ app.put('/api/guide', (req, res) => {
 // GET /api/boss - Lire les boss du jeu (toujours depuis src/config car pas d'admin editor)
 app.get('/api/boss', (req, res) => {
   try {
-    // Priorité : volume data, puis src/config (repo à jour après deploy)
+    // Priorité : volume (modifié par l'admin), fallback vers src/config (repo)
     let raw = getConfig('boss');
-    const repoPath = path.join(__dirname, '../src/config/boss.json');
-    if (fs.existsSync(repoPath)) {
-      try {
-        const repoData = fs.readJsonSync(repoPath);
-        // Si le repo a plus de champs que le volume, utiliser le repo
-        if (repoData && repoData.bosses && (!raw || !raw.bosses || JSON.stringify(repoData) !== JSON.stringify(raw))) {
-          raw = repoData;
-          // Mettre à jour le volume pour les prochaines lectures
-          saveConfig('boss', repoData);
-        }
-      } catch { /* ignore */ }
+    if (!raw) {
+      const repoPath = path.join(__dirname, '../src/config/boss.json');
+      if (fs.existsSync(repoPath)) {
+        try { raw = fs.readJsonSync(repoPath); } catch { raw = { bosses: [] }; }
+      } else {
+        raw = { bosses: [] };
+      }
     }
-    if (!raw) raw = { bosses: [] };
     const bossData = unwrapConfig(raw, 'boss');
     res.json({
       success: true,
