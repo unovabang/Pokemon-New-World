@@ -22,7 +22,8 @@
           "level": 52,
           "types": ["spectre"],
           "ability": "Momie",
-          "moves": ["Ball'Ombre", "Abri", "Psyko", "Toxik"]
+          "moves": ["Ball'Ombre", "Abri", "Psyko", "Toxik"],
+          "evs": { "hp": 252, "spa": 252, "spe": 4 }
         },
         {
           "name": "Gamblast",
@@ -30,7 +31,8 @@
           "level": 52,
           "types": ["eau", "sol"],
           "ability": "Glissade",
-          "moves": ["Ocroupi", "Danse-Pluie", "Séisme", "Cradovague"]
+          "moves": ["Ocroupi", "Danse-Pluie", "Séisme", "Cradovague"],
+          "evs": { "hp": 128, "atk": 252, "def": 128 }
         },
         {
           "name": "Flambusard",
@@ -38,7 +40,8 @@
           "level": 52,
           "types": ["feu", "vol"],
           "ability": "Brasier",
-          "moves": ["Nitrocharge", "Acrobatie", "Danse-Plumes", "Aéropique"]
+          "moves": ["Nitrocharge", "Acrobatie", "Danse-Plumes", "Aéropique"],
+          "evs": { "atk": 252, "spe": 252, "hp": 4 }
         },
         {
           "name": "Gromago",
@@ -46,7 +49,8 @@
           "level": 52,
           "types": ["electr"],
           "ability": "Lévitation",
-          "moves": ["Éclair Fou", "Lance-Flammes", "Acrobatie", "Mâchouille"]
+          "moves": ["Éclair Fou", "Lance-Flammes", "Acrobatie", "Mâchouille"],
+          "evs": { "spa": 252, "spe": 252, "hp": 4 }
         },
         {
           "name": "Crocbouton",
@@ -54,7 +58,8 @@
           "level": 52,
           "types": ["plante", "fee"],
           "ability": "Engrais",
-          "moves": ["Éco-Sphère", "Danse-Fleurs", "Rayon Lune", "Bomb-Beurk"]
+          "moves": ["Éco-Sphère", "Danse-Fleurs", "Rayon Lune", "Bomb-Beurk"],
+          "evs": { "hp": 252, "spa": 252, "spd": 4 }
         }
       ]
     }

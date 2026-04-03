@@ -1708,8 +1708,42 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .boss-pokemon {
   background: rgba(0,0,0,.2); border: 1px solid rgba(255,255,255,.08);
   border-radius: 14px; padding: .85rem; transition: border-color .15s;
+  position: relative; overflow: hidden;
 }
 .boss-pokemon:hover { border-color: rgba(255,255,255,.18); }
+.boss-pokemon-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  background: rgba(10,10,25,.92); backdrop-filter: blur(6px);
+  border-radius: 14px; padding: .85rem;
+  display: flex; flex-direction: column; justify-content: center;
+  opacity: 0; transition: opacity .2s;
+  pointer-events: none;
+}
+.boss-pokemon:hover .boss-pokemon-overlay { opacity: 1; pointer-events: auto; }
+.boss-pokemon-overlay-title {
+  font-size: .75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: rgba(251,191,36,.85); margin-bottom: .6rem;
+}
+.boss-pokemon-overlay-title i { margin-right: .3rem; }
+.boss-pokemon-evs { display: flex; flex-direction: column; gap: .4rem; }
+.boss-pokemon-ev { display: flex; align-items: center; gap: .4rem; }
+.boss-pokemon-ev-label {
+  width: 50px; font-size: .72rem; font-weight: 600; color: var(--muted);
+  text-align: right; flex-shrink: 0;
+}
+.boss-pokemon-ev-bar {
+  flex: 1; height: 6px; border-radius: 3px;
+  background: rgba(255,255,255,.08); overflow: hidden;
+}
+.boss-pokemon-ev-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, rgba(251,191,36,.7), rgba(251,191,36,.95));
+  transition: width .3s ease;
+}
+.boss-pokemon-ev-val {
+  width: 28px; font-size: .72rem; font-weight: 700; color: var(--text);
+  text-align: left; flex-shrink: 0;
+}
 .boss-pokemon-header { display: flex; align-items: center; gap: .6rem; margin-bottom: .5rem; }
 .boss-pokemon-sprite {
   width: 48px; height: 48px; flex-shrink: 0; border-radius: 10px;

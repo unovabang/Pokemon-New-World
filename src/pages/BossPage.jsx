@@ -49,7 +49,11 @@ function getTypeLabel(key) {
   return TYPE_LABELS[k] || (k.charAt(0).toUpperCase() + k.slice(1));
 }
 
+const EV_LABELS = { hp: "PV", atk: "Atk", def: "Déf", spa: "Atk Spé", spd: "Déf Spé", spe: "Vit" };
+
 function PokemonCard({ pokemon }) {
+  const evs = pokemon.evs;
+  const hasEvs = evs && Object.values(evs).some((v) => v > 0);
   return (
     <div className="boss-pokemon">
       <div className="boss-pokemon-header">
@@ -81,6 +85,26 @@ function PokemonCard({ pokemon }) {
             <li key={i}>{m}</li>
           ))}
         </ul>
+      )}
+      {hasEvs && (
+        <div className="boss-pokemon-overlay">
+          <div className="boss-pokemon-overlay-title"><i className="fa-solid fa-chart-bar" aria-hidden /> EVs</div>
+          <div className="boss-pokemon-evs">
+            {Object.entries(EV_LABELS).map(([key, label]) => {
+              const val = evs[key] || 0;
+              if (val === 0) return null;
+              return (
+                <div key={key} className="boss-pokemon-ev">
+                  <span className="boss-pokemon-ev-label">{label}</span>
+                  <div className="boss-pokemon-ev-bar">
+                    <div className="boss-pokemon-ev-fill" style={{ width: `${Math.min(val / 252 * 100, 100)}%` }} />
+                  </div>
+                  <span className="boss-pokemon-ev-val">{val}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       )}
     </div>
   );
