@@ -300,7 +300,7 @@ export default function PokedexPage() {
         setLoadError(true);
       }
       if (extradexRes.success && extradexRes.extradex && Array.isArray(extradexRes.extradex.entries)) {
-        setExtradexCount(extradexRes.extradex.entries.length);
+        setExtradexCount(extradexRes.extradex.entries.filter((p) => !p.name || !p.name.startsWith("Méga-")).length);
       }
       setIsReady(true);
     }).catch(() => {

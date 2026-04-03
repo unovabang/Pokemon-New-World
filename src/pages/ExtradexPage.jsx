@@ -155,7 +155,7 @@ export default function ExtradexPage() {
           entries: list,
           customTypes: extradexRes.extradex.customTypes || [],
         });
-        setExtradexCount(list.length);
+        setExtradexCount(list.filter((p) => !p.name || !p.name.startsWith("Méga-")).length);
         const bg = extradexRes.extradex.background && extradexRes.extradex.background.trim();
         setExtradexBgSrc(bg ? bg.trim() : extradexBgImg);
       } else {
