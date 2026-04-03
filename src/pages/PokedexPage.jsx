@@ -576,8 +576,8 @@ export default function PokedexPage() {
                           ))
                         : "—"}
                     </div>
-                    <div className="pokedex-table-cell pokedex-table-rarity" role="cell">{pokemon.rarity ?? "—"}</div>
-                    <div className="pokedex-table-cell pokedex-table-obtention" role="cell">{pokemon.obtention ?? "—"}</div>
+                    <div className="pokedex-table-cell pokedex-table-rarity" role="cell">{(pokemon.rarities || (pokemon.rarity ? [pokemon.rarity] : [])).join(" / ") || "—"}</div>
+                    <div className="pokedex-table-cell pokedex-table-obtention" role="cell">{(pokemon.obtentions || (pokemon.obtention ? [pokemon.obtention] : [])).join(" / ") || "—"}</div>
                   </div>
                 ))}
               </div>
@@ -643,16 +643,16 @@ export default function PokedexPage() {
                   </span>
                 </div>
               )}
-              {selectedPokemon.rarity && (
+              {((selectedPokemon.rarities && selectedPokemon.rarities.length > 0) || selectedPokemon.rarity) && (
                 <div className="pokedex-modal-row">
                   <span className="pokedex-modal-label"><i className="fa-solid fa-gem" aria-hidden /> Rareté</span>
-                  <span>{selectedPokemon.rarity}</span>
+                  <span>{(selectedPokemon.rarities || [selectedPokemon.rarity]).filter(Boolean).join(" / ")}</span>
                 </div>
               )}
-              {selectedPokemon.obtention && (
+              {((selectedPokemon.obtentions && selectedPokemon.obtentions.length > 0) || selectedPokemon.obtention) && (
                 <div className="pokedex-modal-row">
                   <span className="pokedex-modal-label"><i className="fa-solid fa-map-location-dot" aria-hidden /> Obtention</span>
-                  <span>{selectedPokemon.obtention}</span>
+                  <span>{(selectedPokemon.obtentions || [selectedPokemon.obtention]).filter(Boolean).join(" / ")}</span>
                 </div>
               )}
             </div>

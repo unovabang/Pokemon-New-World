@@ -29,7 +29,7 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
   const [editingIndex, setEditingIndex] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [form, setForm] = useState({ num: "", name: "", imageUrl: "", types: [], rarity: "", obtention: "" });
+  const [form, setForm] = useState({ num: "", name: "", imageUrl: "", types: [], rarities: [""], obtentions: [""] });
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saveMessage, setSaveMessage] = useState(null);
@@ -184,20 +184,24 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
 
 
   const openAdd = () => {
-    setForm({ num: "", name: "", imageUrl: "", types: [], rarity: "", obtention: "" });
+    setForm({ num: "", name: "", imageUrl: "", types: [], rarities: [""], obtentions: [""] });
     setEditingIndex(null);
     setShowAddModal(true);
   };
 
+  const toArray = (val) => Array.isArray(val) ? val : (val ? [val] : []);
+
   const openEdit = (index) => {
     const e = entries[index];
+    const r = toArray(e.rarities || e.rarity);
+    const o = toArray(e.obtentions || e.obtention);
     setForm({
       num: e.num || "",
       name: e.name || "",
       imageUrl: e.imageUrl || "",
       types: Array.isArray(e.types) ? [...e.types] : [],
-      rarity: e.rarity || "",
-      obtention: e.obtention || "",
+      rarities: r.length ? [...r] : [""],
+      obtentions: o.length ? [...o] : [""],
     });
     setEditingIndex(index);
     setShowAddModal(true);
@@ -217,8 +221,8 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
       name: form.name.trim(),
       imageUrl: form.imageUrl.trim() || null,
       types: form.types.filter(Boolean),
-      rarity: form.rarity.trim() || "",
-      obtention: form.obtention.trim() || "",
+      rarities: form.rarities.map((s) => s.trim()).filter(Boolean),
+      obtentions: form.obtentions.map((s) => s.trim()).filter(Boolean),
     };
     if (editingIndex !== null) {
       const next = [...entries];
@@ -452,8 +456,8 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
                           )}
                         </td>
                         <td>{(e.types || []).join(", ") || "—"}</td>
-                        <td style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis" }}>{e.rarity || "—"}</td>
-                        <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }}>{e.obtention || "—"}</td>
+                        <td style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis" }}>{(e.rarities || (e.rarity ? [e.rarity] : [])).join(" / ") || "—"}</td>
+                        <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }}>{(e.obtentions || (e.obtention ? [e.obtention] : [])).join(" / ") || "—"}</td>
                         <td style={{ textAlign: "center" }}>
                           <button type="button" onClick={() => openEdit(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.45rem 0.85rem", marginRight: "0.35rem" }}>
                             <i className="fa-solid fa-pen" aria-hidden />
@@ -520,11 +524,79 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
               </div>
               <div>
                 <label className="admin-pokedex-label">Rareté</label>
-                <input type="text" className="admin-pokedex-input" value={form.rarity} onChange={(e) => setForm((f) => ({ ...f, rarity: e.target.value }))} placeholder="Optionnel" />
+                {form.rarities.map((val, idx) => (
+                  <div key={idx} style={{ display: "flex", gap: "0.4rem", marginBottom: "0.35rem", alignItems: "center" }}>
+                    <input
+                      type="text"
+                      className="admin-pokedex-input"
+                      style={{ flex: 1, marginBottom: 0 }}
+                      value={val}
+                      onChange={(e) => {
+                        const next = [...form.rarities];
+                        next[idx] = e.target.value;
+                        setForm((f) => ({ ...f, rarities: next }));
+                      }}
+                      placeholder="Optionnel"
+                    />
+                    {form.rarities.length > 1 && (
+                      <button
+                        type="button"
+                        className="admin-pokedex-btn admin-pokedex-btn-danger"
+                        style={{ padding: "0.4rem 0.6rem", fontSize: "0.8rem" }}
+                        onClick={() => setForm((f) => ({ ...f, rarities: f.rarities.filter((_, i) => i !== idx) }))}
+                        title="Supprimer"
+                      >
+                        <i className="fa-solid fa-xmark" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="admin-pokedex-btn admin-pokedex-btn-ghost"
+                  style={{ padding: "0.3rem 0.7rem", fontSize: "0.8rem", marginTop: "0.2rem" }}
+                  onClick={() => setForm((f) => ({ ...f, rarities: [...f.rarities, ""] }))}
+                >
+                  <i className="fa-solid fa-plus" /> Ajouter une rareté
+                </button>
               </div>
               <div>
                 <label className="admin-pokedex-label">Obtention</label>
-                <textarea className="admin-pokedex-textarea" value={form.obtention} onChange={(e) => setForm((f) => ({ ...f, obtention: e.target.value }))} placeholder="Comment obtenir cette créature" rows={3} />
+                {form.obtentions.map((val, idx) => (
+                  <div key={idx} style={{ display: "flex", gap: "0.4rem", marginBottom: "0.35rem", alignItems: "center" }}>
+                    <textarea
+                      className="admin-pokedex-textarea"
+                      style={{ flex: 1, marginBottom: 0 }}
+                      value={val}
+                      onChange={(e) => {
+                        const next = [...form.obtentions];
+                        next[idx] = e.target.value;
+                        setForm((f) => ({ ...f, obtentions: next }));
+                      }}
+                      placeholder="Comment obtenir cette créature"
+                      rows={2}
+                    />
+                    {form.obtentions.length > 1 && (
+                      <button
+                        type="button"
+                        className="admin-pokedex-btn admin-pokedex-btn-danger"
+                        style={{ padding: "0.4rem 0.6rem", fontSize: "0.8rem" }}
+                        onClick={() => setForm((f) => ({ ...f, obtentions: f.obtentions.filter((_, i) => i !== idx) }))}
+                        title="Supprimer"
+                      >
+                        <i className="fa-solid fa-xmark" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="admin-pokedex-btn admin-pokedex-btn-ghost"
+                  style={{ padding: "0.3rem 0.7rem", fontSize: "0.8rem", marginTop: "0.2rem" }}
+                  onClick={() => setForm((f) => ({ ...f, obtentions: [...f.obtentions, ""] }))}
+                >
+                  <i className="fa-solid fa-plus" /> Ajouter une obtention
+                </button>
               </div>
             </div>
             <div className="admin-pokedex-modal-footer">
