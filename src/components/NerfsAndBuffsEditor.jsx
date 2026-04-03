@@ -206,12 +206,15 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
     ...extradexEntries.map((e) => ({ ...e, _source: "extradex" })),
   ], [pokedexEntries, extradexEntries]);
 
+  const sortByNum = (a, b) => (parseInt(String(a.num), 10) || 0) - (parseInt(String(b.num), 10) || 0);
+
   const dexFilter = (list) => {
     const raw = pokedexSearch.trim();
-    if (!raw) return list;
+    const sorted = [...list].sort(sortByNum);
+    if (!raw) return sorted;
     const q = normalizeName(raw);
-    if (!q) return list;
-    return list.filter((e) => {
+    if (!q) return sorted;
+    return sorted.filter((e) => {
       const n = normalizeName(e.name);
       const num = (e.num || "").toString();
       return n.includes(q) || num === q || num.startsWith(q);
