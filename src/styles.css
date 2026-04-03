@@ -1659,14 +1659,10 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
 .boss-card-artwork {
-  width: 200px; height: 200px; flex-shrink: 0;
-  border-radius: 18px; overflow: hidden;
-  background: rgba(0,0,0,.3);
-  border: 2px solid rgba(251,191,36,.25);
-  box-shadow: 0 8px 24px rgba(0,0,0,.3), 0 0 16px rgba(251,191,36,.08);
+  flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
 }
-.boss-card-artwork img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+.boss-card-artwork img { max-height: 200px; width: auto; object-fit: contain; image-rendering: pixelated; }
 .boss-card-artwork-placeholder { font-size: 2.5rem; color: rgba(255,255,255,.15); }
 .boss-card-identity { flex: 1; min-width: 0; }
 .boss-card-class {
@@ -1756,7 +1752,7 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   .boss-card-layout { flex-direction: column; }
   .boss-card-sidebar { width: auto; border-left: none; border-top: 1px solid rgba(251,191,36,.12); }
   .boss-card-trainer { flex-direction: column; text-align: center; gap: 1rem; padding: 1.25rem; }
-  .boss-card-artwork { width: 140px; height: 140px; }
+  .boss-card-artwork img { max-height: 140px; }
   .boss-card-description { max-width: none; }
   .boss-card-team-grid { grid-template-columns: repeat(2, 1fr); }
   .boss-card-team { padding: 1rem; }
