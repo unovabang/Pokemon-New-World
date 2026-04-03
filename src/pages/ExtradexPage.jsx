@@ -155,14 +155,14 @@ export default function ExtradexPage() {
           entries: list,
           customTypes: extradexRes.extradex.customTypes || [],
         });
-        setExtradexCount(list.filter((p) => !p.name || !p.name.startsWith("Méga-")).length);
+        setExtradexCount(new Set(list.filter((p) => !p.name || !p.name.startsWith("Méga-")).map((p) => p.num)).size);
         const bg = extradexRes.extradex.background && extradexRes.extradex.background.trim();
         setExtradexBgSrc(bg ? bg.trim() : extradexBgImg);
       } else {
         setLoadError(true);
       }
       if (pokedexRes.success && pokedexRes.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
-        setPokedexCount(pokedexRes.pokedex.entries.filter((p) => !p.name || !p.name.startsWith("Méga-")).length);
+        setPokedexCount(new Set(pokedexRes.pokedex.entries.filter((p) => !p.name || !p.name.startsWith("Méga-")).map((p) => p.num)).size);
       }
       setIsReady(true);
     }).catch(() => {
