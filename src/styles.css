@@ -1629,6 +1629,28 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   box-shadow: 0 16px 48px rgba(0,0,0,.4), 0 0 30px rgba(251,191,36,.06);
 }
 
+/* Layout avec sidebar */
+.boss-card-layout { display: flex; gap: 0; }
+.boss-card-main { flex: 1; min-width: 0; }
+
+/* Sidebar astuces */
+.boss-card-sidebar {
+  width: 220px; flex-shrink: 0; padding: 1.25rem;
+  background: rgba(251,191,36,.03);
+  border-left: 1px solid rgba(251,191,36,.12);
+}
+.boss-card-sidebar-title {
+  font-size: .8rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: rgba(251,191,36,.8); margin: 0 0 .75rem;
+}
+.boss-card-sidebar-title i { margin-right: .35rem; }
+.boss-card-tips { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .6rem; }
+.boss-card-tip {
+  font-size: .82rem; color: rgba(255,255,255,.75); line-height: 1.45;
+  padding: .55rem .7rem; border-radius: 10px;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.06);
+}
+
 /* Trainer section */
 .boss-card-trainer {
   display: flex; align-items: center; gap: 1.5rem;
@@ -1655,6 +1677,17 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 .boss-card-name {
   font-size: 1.6rem; font-weight: 800; margin: 0; color: var(--text);
   line-height: 1.2;
+}
+.boss-card-difficulty {
+  display: inline-flex; align-items: center; gap: .35rem;
+  margin-top: .5rem; padding: .25rem .65rem; border-radius: 12px;
+  border: 1px solid; font-size: .78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.boss-card-difficulty i { font-size: .7rem; }
+.boss-card-description {
+  margin: .6rem 0 0; font-size: .88rem; color: rgba(255,255,255,.6);
+  line-height: 1.5; max-width: 500px;
 }
 .boss-card-reward {
   display: inline-flex; align-items: center; gap: .35rem;
@@ -1720,8 +1753,11 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 
 /* Mobile */
 @media (max-width: 768px) {
+  .boss-card-layout { flex-direction: column; }
+  .boss-card-sidebar { width: auto; border-left: none; border-top: 1px solid rgba(251,191,36,.12); }
   .boss-card-trainer { flex-direction: column; text-align: center; gap: 1rem; padding: 1.25rem; }
   .boss-card-artwork { width: 140px; height: 140px; }
+  .boss-card-description { max-width: none; }
   .boss-card-team-grid { grid-template-columns: repeat(2, 1fr); }
   .boss-card-team { padding: 1rem; }
   .boss-title { font-size: 1.5rem; }

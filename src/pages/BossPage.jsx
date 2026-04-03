@@ -86,38 +86,68 @@ function PokemonCard({ pokemon }) {
   );
 }
 
+const DIFFICULTY_CONFIG = {
+  facile: { color: "#4ade80", icon: "fa-face-smile", label: "Facile" },
+  moyen: { color: "#fbbf24", icon: "fa-face-meh", label: "Moyen" },
+  difficile: { color: "#f87171", icon: "fa-face-angry", label: "Difficile" },
+  extreme: { color: "#c084fc", icon: "fa-skull", label: "Extreme" },
+};
+
 function BossCard({ boss }) {
+  const diff = DIFFICULTY_CONFIG[(boss.difficulty || "").toLowerCase()] || null;
   return (
     <article className="boss-card">
-      <div className="boss-card-trainer">
-        <div className="boss-card-artwork">
-          {boss.artworkUrl ? (
-            <img src={boss.artworkUrl} alt={boss.name} />
-          ) : (
-            <div className="boss-card-artwork-placeholder">
-              <i className="fa-solid fa-user-shield" />
+      <div className="boss-card-layout">
+        <div className="boss-card-main">
+          <div className="boss-card-trainer">
+            <div className="boss-card-artwork">
+              {boss.artworkUrl ? (
+                <img src={boss.artworkUrl} alt={boss.name} />
+              ) : (
+                <div className="boss-card-artwork-placeholder">
+                  <i className="fa-solid fa-user-shield" />
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <div className="boss-card-identity">
-          <span className="boss-card-class">{boss.class}</span>
-          <h2 className="boss-card-name">{boss.name}</h2>
-          {boss.reward && (
-            <div className="boss-card-reward">
-              <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}
+            <div className="boss-card-identity">
+              <span className="boss-card-class">{boss.class}</span>
+              <h2 className="boss-card-name">{boss.name}</h2>
+              {diff && (
+                <div className="boss-card-difficulty" style={{ color: diff.color, borderColor: `${diff.color}33`, background: `${diff.color}12` }}>
+                  <i className={`fa-solid ${diff.icon}`} aria-hidden /> {diff.label}
+                </div>
+              )}
+              {boss.description && <p className="boss-card-description">{boss.description}</p>}
+              {boss.reward && (
+                <div className="boss-card-reward">
+                  <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}
+                </div>
+              )}
             </div>
-          )}
+          </div>
+          <div className="boss-card-team">
+            <h3 className="boss-card-team-title">
+              <i className="fa-solid fa-users" aria-hidden /> Equipe ({boss.team?.length || 0})
+            </h3>
+            <div className="boss-card-team-grid">
+              {(boss.team || []).map((p, i) => (
+                <PokemonCard key={`${p.name}-${i}`} pokemon={p} />
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="boss-card-team">
-        <h3 className="boss-card-team-title">
-          <i className="fa-solid fa-users" aria-hidden /> Equipe ({boss.team?.length || 0})
-        </h3>
-        <div className="boss-card-team-grid">
-          {(boss.team || []).map((p, i) => (
-            <PokemonCard key={`${p.name}-${i}`} pokemon={p} />
-          ))}
-        </div>
+        {boss.tips && boss.tips.length > 0 && (
+          <aside className="boss-card-sidebar">
+            <h3 className="boss-card-sidebar-title">
+              <i className="fa-solid fa-lightbulb" aria-hidden /> Astuces
+            </h3>
+            <ul className="boss-card-tips">
+              {boss.tips.map((tip, i) => (
+                <li key={i} className="boss-card-tip">{tip}</li>
+              ))}
+            </ul>
+          </aside>
+        )}
       </div>
     </article>
   );

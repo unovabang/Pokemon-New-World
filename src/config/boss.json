@@ -6,8 +6,15 @@
     {
       "name": "Vice",
       "class": "Archéologue",
+      "difficulty": "difficile",
+      "description": "Un archéologue redoutable qui maîtrise une équipe variée et équilibrée. Ne le sous-estimez pas.",
       "artworkUrl": "https://media.discordapp.net/attachments/1489049265853435955/1489255239017038014/172_big.png?ex=69d06946&is=69cf17c6&hm=8494e2d47306460251dfe5c5bd04d698f5b1464fd65b46389d3a3de683ff4197&=&format=webp&quality=lossless",
       "reward": "9720 ₱",
+      "tips": [
+        "Emmenez un Pokémon de type Glace pour contrer son Flambusard et son Crocbouton",
+        "Attention à Gromago qui a Lévitation, les attaques Sol ne marcheront pas",
+        "Gamblast peut utiliser Danse-Pluie, anticipez avec un Pokémon Plante ou Electrik"
+      ],
       "team": [
         {
           "name": "Notulero",
