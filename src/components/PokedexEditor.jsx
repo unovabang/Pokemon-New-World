@@ -463,8 +463,8 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
                           )}
                         </td>
                         <td>{(e.types || []).join(", ") || "—"}</td>
-                        <td style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis" }}>{(e.rarities || (e.rarity ? [e.rarity] : [])).join(" / ") || "—"}</td>
-                        <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }}>{(e.obtentions || (e.obtention ? [e.obtention] : [])).join(" / ") || "—"}</td>
+                        <td style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis" }}>{(() => { const arr = (e.rarities || (e.rarity ? [e.rarity] : [])).filter(Boolean); return arr.length ? arr.map((r, i) => <div key={i}>{r}</div>) : "—"; })()}</td>
+                        <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }}>{(() => { const arr = (e.obtentions || (e.obtention ? [e.obtention] : [])).filter(Boolean); return arr.length ? arr.map((o, i) => <div key={i}>{o}</div>) : "—"; })()}</td>
                         <td>
                           <span className={`admin-dex-availability-badge admin-dex-availability-badge--${e.availability || "old"}`}>
                             {e.availability === "new" ? "MàJ actuelle" : e.availability === "unavailable" ? "Pas dispo" : "Ancienne"}

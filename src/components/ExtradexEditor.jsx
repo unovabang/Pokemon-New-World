@@ -456,8 +456,8 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
                           )}
                         </td>
                         <td>{(e.types || []).join(", ") || "—"}</td>
-                        <td style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis" }}>{(e.rarities || (e.rarity ? [e.rarity] : [])).join(" / ") || "—"}</td>
-                        <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }}>{(e.obtentions || (e.obtention ? [e.obtention] : [])).join(" / ") || "—"}</td>
+                        <td style={{ maxWidth: "140px", overflow: "hidden", textOverflow: "ellipsis" }}>{(() => { const arr = (e.rarities || (e.rarity ? [e.rarity] : [])).filter(Boolean); return arr.length ? arr.map((r, i) => <div key={i}>{r}</div>) : "—"; })()}</td>
+                        <td style={{ maxWidth: "200px", overflow: "hidden", textOverflow: "ellipsis" }}>{(() => { const arr = (e.obtentions || (e.obtention ? [e.obtention] : [])).filter(Boolean); return arr.length ? arr.map((o, i) => <div key={i}>{o}</div>) : "—"; })()}</td>
                         <td style={{ textAlign: "center" }}>
                           <button type="button" onClick={() => openEdit(globalIndex)} className="admin-pokedex-btn admin-pokedex-btn-ghost" style={{ padding: "0.45rem 0.85rem", marginRight: "0.35rem" }}>
                             <i className="fa-solid fa-pen" aria-hidden />

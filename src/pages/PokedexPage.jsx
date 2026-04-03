@@ -576,8 +576,8 @@ export default function PokedexPage() {
                           ))
                         : "—"}
                     </div>
-                    <div className="pokedex-table-cell pokedex-table-rarity" role="cell">{(pokemon.rarities || (pokemon.rarity ? [pokemon.rarity] : [])).join(" / ") || "—"}</div>
-                    <div className="pokedex-table-cell pokedex-table-obtention" role="cell">{(pokemon.obtentions || (pokemon.obtention ? [pokemon.obtention] : [])).join(" / ") || "—"}</div>
+                    <div className="pokedex-table-cell pokedex-table-rarity" role="cell">{(() => { const arr = (pokemon.rarities || (pokemon.rarity ? [pokemon.rarity] : [])).filter(Boolean); return arr.length ? arr.map((r, i) => <div key={i}>{r}</div>) : "—"; })()}</div>
+                    <div className="pokedex-table-cell pokedex-table-obtention" role="cell">{(() => { const arr = (pokemon.obtentions || (pokemon.obtention ? [pokemon.obtention] : [])).filter(Boolean); return arr.length ? arr.map((o, i) => <div key={i}>{o}</div>) : "—"; })()}</div>
                   </div>
                 ))}
               </div>
@@ -643,18 +643,18 @@ export default function PokedexPage() {
                   </span>
                 </div>
               )}
-              {((selectedPokemon.rarities && selectedPokemon.rarities.length > 0) || selectedPokemon.rarity) && (
-                <div className="pokedex-modal-row">
+              {(selectedPokemon.rarities || (selectedPokemon.rarity ? [selectedPokemon.rarity] : [])).filter(Boolean).map((r, i) => (
+                <div key={`rarity-${i}`} className="pokedex-modal-row">
                   <span className="pokedex-modal-label"><i className="fa-solid fa-gem" aria-hidden /> Rareté</span>
-                  <span>{(selectedPokemon.rarities || [selectedPokemon.rarity]).filter(Boolean).join(" / ")}</span>
+                  <span>{r}</span>
                 </div>
-              )}
-              {((selectedPokemon.obtentions && selectedPokemon.obtentions.length > 0) || selectedPokemon.obtention) && (
-                <div className="pokedex-modal-row">
+              ))}
+              {(selectedPokemon.obtentions || (selectedPokemon.obtention ? [selectedPokemon.obtention] : [])).filter(Boolean).map((o, i) => (
+                <div key={`obtention-${i}`} className="pokedex-modal-row">
                   <span className="pokedex-modal-label"><i className="fa-solid fa-map-location-dot" aria-hidden /> Obtention</span>
-                  <span>{(selectedPokemon.obtentions || [selectedPokemon.obtention]).filter(Boolean).join(" / ")}</span>
+                  <span>{o}</span>
                 </div>
-              )}
+              ))}
             </div>
           </div>
         </div>
