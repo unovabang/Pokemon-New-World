@@ -129,68 +129,77 @@ function DifficultyBar({ level }) {
 function BossCard({ boss }) {
   const [teamOpen, setTeamOpen] = useState(false);
   const [tipsOpen, setTipsOpen] = useState(false);
+  const hasTips = boss.tips && boss.tips.length > 0;
   return (
     <article className="boss-card">
-      <div className="boss-card-trainer">
-        <div className="boss-card-artwork">
-          {boss.artworkUrl ? (
-            <img src={boss.artworkUrl} alt={boss.name} />
-          ) : (
-            <div className="boss-card-artwork-placeholder">
-              <i className="fa-solid fa-user-shield" />
+      <div className="boss-card-layout">
+        <div className="boss-card-main">
+          <div className="boss-card-trainer">
+            <div className="boss-card-artwork">
+              {boss.artworkUrl ? (
+                <img src={boss.artworkUrl} alt={boss.name} />
+              ) : (
+                <div className="boss-card-artwork-placeholder">
+                  <i className="fa-solid fa-user-shield" />
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <div className="boss-card-identity">
-          <span className="boss-card-class">{boss.class}</span>
-          <h2 className="boss-card-name">{boss.name}</h2>
-          {boss.difficulty && <DifficultyBar level={boss.difficulty} />}
-          {boss.description && <p className="boss-card-description">{boss.description}</p>}
-          {boss.reward && (
-            <div className="boss-card-reward">
-              <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}
+            <div className="boss-card-identity">
+              <span className="boss-card-class">{boss.class}</span>
+              <h2 className="boss-card-name">{boss.name}</h2>
+              {boss.difficulty && <DifficultyBar level={boss.difficulty} />}
+              {boss.description && <p className="boss-card-description">{boss.description}</p>}
+              {boss.reward && (
+                <div className="boss-card-reward">
+                  <i className="fa-solid fa-coins" aria-hidden /> {boss.reward}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
 
-      <div className="boss-card-sections">
-        <div className="boss-card-section">
-          <button
-            type="button"
-            className={`boss-card-section-toggle${teamOpen ? " boss-card-section-toggle--open" : ""}`}
-            onClick={() => setTeamOpen((o) => !o)}
-          >
-            <span><i className="fa-solid fa-users" aria-hidden /> Voir l'equipe ({boss.team?.length || 0})</span>
-            <i className={`fa-solid fa-chevron-${teamOpen ? "up" : "down"}`} />
-          </button>
-          {teamOpen && (
-            <div className="boss-card-team-grid">
-              {(boss.team || []).map((p, i) => (
-                <PokemonCard key={`${p.name}-${i}`} pokemon={p} />
-              ))}
+          <div className="boss-card-sections">
+            <div className="boss-card-section">
+              <button
+                type="button"
+                className={`boss-card-section-toggle${teamOpen ? " boss-card-section-toggle--open" : ""}`}
+                onClick={() => setTeamOpen((o) => !o)}
+              >
+                <span><i className="fa-solid fa-users" aria-hidden /> Voir l'equipe ({boss.team?.length || 0})</span>
+                <i className={`fa-solid fa-chevron-${teamOpen ? "up" : "down"}`} />
+              </button>
+              {teamOpen && (
+                <div className="boss-card-team-grid">
+                  {(boss.team || []).map((p, i) => (
+                    <PokemonCard key={`${p.name}-${i}`} pokemon={p} />
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
-        {boss.tips && boss.tips.length > 0 && (
-          <div className="boss-card-section">
+        {hasTips && (
+          <aside className="boss-card-sidebar">
             <button
               type="button"
-              className={`boss-card-section-toggle boss-card-section-toggle--tips${tipsOpen ? " boss-card-section-toggle--open" : ""}`}
+              className={`boss-sidebar-toggle${tipsOpen ? " boss-sidebar-toggle--open" : ""}`}
               onClick={() => setTipsOpen((o) => !o)}
             >
-              <span><i className="fa-solid fa-lightbulb" aria-hidden /> Astuces ({boss.tips.length})</span>
-              <i className={`fa-solid fa-chevron-${tipsOpen ? "up" : "down"}`} />
+              <span className="boss-sidebar-toggle-icon"><i className="fa-solid fa-lightbulb" /></span>
+              <span>Astuces</span>
+              <i className={`fa-solid fa-chevron-${tipsOpen ? "up" : "down"} boss-sidebar-chevron`} />
             </button>
             {tipsOpen && (
-              <ul className="boss-card-tips">
+              <div className="boss-sidebar-content">
                 {boss.tips.map((tip, i) => (
-                  <li key={i} className="boss-card-tip">{tip}</li>
+                  <div key={i} className="boss-sidebar-tip">
+                    <span className="boss-sidebar-tip-num">{i + 1}</span>
+                    <p className="boss-sidebar-tip-text">{tip}</p>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
-          </div>
+          </aside>
         )}
       </div>
     </article>
