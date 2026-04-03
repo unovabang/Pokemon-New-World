@@ -1653,18 +1653,20 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 
 /* Trainer section */
 .boss-card-trainer {
-  display: flex; align-items: center; gap: 1.5rem;
-  padding: 1.5rem 1.75rem;
+  display: flex; align-items: stretch; gap: 0;
   background: linear-gradient(135deg, rgba(251,191,36,.06) 0%, transparent 60%);
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
 .boss-card-artwork {
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; width: 220px;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: linear-gradient(180deg, transparent 0%, rgba(251,191,36,.04) 100%);
+  padding: 1rem 0.5rem 0;
+  overflow: hidden;
 }
-.boss-card-artwork img { max-height: 200px; width: auto; object-fit: contain; image-rendering: pixelated; }
+.boss-card-artwork img { max-height: 220px; width: auto; object-fit: contain; filter: drop-shadow(0 4px 16px rgba(0,0,0,.5)); }
 .boss-card-artwork-placeholder { font-size: 2.5rem; color: rgba(255,255,255,.15); }
-.boss-card-identity { flex: 1; min-width: 0; }
+.boss-card-identity { flex: 1; min-width: 0; padding: 1.5rem 1.75rem 1.5rem 1.25rem; display: flex; flex-direction: column; justify-content: center; }
 .boss-card-class {
   display: inline-block; font-size: .75rem; font-weight: 600;
   text-transform: uppercase; letter-spacing: .06em;
@@ -1785,8 +1787,10 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
 @media (max-width: 768px) {
   .boss-card-layout { flex-direction: column; }
   .boss-card-sidebar { width: auto; border-left: none; border-top: 1px solid rgba(251,191,36,.12); }
-  .boss-card-trainer { flex-direction: column; text-align: center; gap: 1rem; padding: 1.25rem; }
-  .boss-card-artwork img { max-height: 140px; }
+  .boss-card-trainer { flex-direction: column; text-align: center; }
+  .boss-card-artwork { width: auto; padding: 1.25rem 1rem 0; }
+  .boss-card-artwork img { max-height: 160px; }
+  .boss-card-identity { padding: 1rem 1.25rem; align-items: center; }
   .boss-card-description { max-width: none; }
   .boss-card-team-grid { grid-template-columns: repeat(2, 1fr); }
   .boss-card-team { padding: 1rem; }
