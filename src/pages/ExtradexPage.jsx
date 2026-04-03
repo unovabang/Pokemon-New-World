@@ -162,7 +162,7 @@ export default function ExtradexPage() {
         setLoadError(true);
       }
       if (pokedexRes.success && pokedexRes.pokedex && Array.isArray(pokedexRes.pokedex.entries)) {
-        setPokedexCount(pokedexRes.pokedex.entries.length);
+        setPokedexCount(pokedexRes.pokedex.entries.filter((p) => !p.name || !p.name.startsWith("Méga-")).length);
       }
       setIsReady(true);
     }).catch(() => {
@@ -261,7 +261,7 @@ export default function ExtradexPage() {
                 <div className="dex-panel-text">
                   <h1 className="dex-panel-title">Pokédex</h1>
                   <p className="dex-panel-subtitle">
-                    Pokémon New World — {pokedexCount !== null ? pokedexCount : "…"} créatures
+                    Pokémon New World — {pokedexCount !== null ? pokedexCount : "…"} Pokémon
                   </p>
                 </div>
               </Link>
@@ -272,7 +272,7 @@ export default function ExtradexPage() {
                 <div className="dex-panel-text">
                   <h1 className="dex-panel-title">Extradex</h1>
                   <p className="dex-panel-subtitle">
-                    Pokémon New World — {extradexCount !== null ? extradexCount : "…"} créatures
+                    Pokémon New World — {extradexCount !== null ? extradexCount : "…"} Pokémon
                   </p>
                 </div>
               </div>
