@@ -249,6 +249,7 @@ export default function PokedexPage() {
   const [search, setSearch] = useState("");
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
+  const [availabilityFilter, setAvailabilityFilter] = useState(null);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [entries, setEntries] = useState([]);
   const [pokedexBgSrc, setPokedexBgSrc] = useState(pokedexBgImg);
@@ -339,13 +340,14 @@ export default function PokedexPage() {
     const list = entries.filter((e) => {
       const matchSearch = !q || (e.name && e.name.toLowerCase().includes(q)) || (e.num && String(e.num).includes(q));
       if (!matchSearch) return false;
+      if (availabilityFilter && (e.availability || "old") !== availabilityFilter) return false;
       if (typeFilters.length === 0) return true;
       const types = (Array.isArray(e.types) ? e.types : []).map((x) => String(x).toLowerCase().trim());
       const hasAll = typeFilters.every((tf) => types.includes(tf));
       return hasAll;
     });
     return [...list].sort(sortByNum);
-  }, [entries, search, selectedTypes]);
+  }, [entries, search, selectedTypes, availabilityFilter]);
 
   if (!isReady) {
     return (
@@ -488,14 +490,22 @@ export default function PokedexPage() {
 
         <section className="pokedex-content-wrap container">
           <div className="pokedex-legend">
-            <span className="pokedex-legend-item pokedex-legend-item--new">
+            <button
+              type="button"
+              className={`pokedex-legend-btn pokedex-legend-btn--new${availabilityFilter === "new" ? " pokedex-legend-btn--active" : ""}`}
+              onClick={() => setAvailabilityFilter((f) => f === "new" ? null : "new")}
+            >
               <span className="pokedex-legend-dot pokedex-legend-dot--new" />
-              Disponible dans la MàJ actuelle
-            </span>
-            <span className="pokedex-legend-item pokedex-legend-item--unavailable">
+              MàJ actuelle
+            </button>
+            <button
+              type="button"
+              className={`pokedex-legend-btn pokedex-legend-btn--unavailable${availabilityFilter === "unavailable" ? " pokedex-legend-btn--active" : ""}`}
+              onClick={() => setAvailabilityFilter((f) => f === "unavailable" ? null : "unavailable")}
+            >
               <span className="pokedex-legend-dot pokedex-legend-dot--unavailable" />
               Pas encore disponible
-            </span>
+            </button>
           </div>
           <p className="pokedex-count">
             <i className="fa-solid fa-list-check" aria-hidden /> {filtered.length} résultat{filtered.length !== 1 ? "s" : ""}
