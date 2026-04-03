@@ -62,6 +62,127 @@
           "evs": { "hp": 252, "spa": 252, "spd": 4 }
         }
       ]
+    },
+    {
+      "name": "Pragya",
+      "class": "Mystique",
+      "difficulty": "extreme",
+      "description": "Une combattante mystérieuse aux pouvoirs psychiques dévastateurs. Son équipe est parfaitement synchronisée.",
+      "artworkUrl": "https://i.imgur.com/lhZ6ymE.png",
+      "reward": "14400 ₱",
+      "tips": [
+        "Ses Pokémon Psy sont vulnérables au type Ténèbres, emmenez-en au moins un",
+        "Méfiez-vous de son Mistigrix qui peut inverser vos statistiques",
+        "Préparez un Pokémon avec Mur Lumière pour tanker les attaques spéciales",
+        "Son dernier Pokémon est le plus dangereux, gardez vos soins pour la fin"
+      ],
+      "team": [
+        {
+          "name": "Mistigrix",
+          "imageUrl": "",
+          "level": 58,
+          "types": ["psy"],
+          "ability": "Infiltrateur",
+          "moves": ["Psyko", "Ball'Ombre", "Choc Psy", "Hypnose"],
+          "evs": { "spa": 252, "spe": 252, "hp": 4 }
+        },
+        {
+          "name": "Lugulabre",
+          "imageUrl": "",
+          "level": 58,
+          "types": ["spectre", "feu"],
+          "ability": "Torche",
+          "moves": ["Feu Follet", "Ball'Ombre", "Lance-Flammes", "Psyko"],
+          "evs": { "spa": 252, "hp": 252, "spd": 4 }
+        },
+        {
+          "name": "Mélodelfe",
+          "imageUrl": "",
+          "level": 59,
+          "types": ["fee"],
+          "ability": "Garde Magik",
+          "moves": ["Rayon Lune", "Tonnerre", "Lance-Flammes", "Pouvoir Lunaire"],
+          "evs": { "hp": 252, "def": 128, "spd": 128 }
+        },
+        {
+          "name": "Hexadron",
+          "imageUrl": "",
+          "level": 58,
+          "types": ["psy", "acier"],
+          "ability": "Lévitation",
+          "moves": ["Psyko", "Luminocanon", "Tonnerre", "Exploforce"],
+          "evs": { "spa": 252, "spe": 252, "def": 4 }
+        },
+        {
+          "name": "Sépiatroce",
+          "imageUrl": "",
+          "level": 59,
+          "types": ["tenebres", "psy"],
+          "ability": "Envers",
+          "moves": ["Retournement", "Psyko", "Surpuissance", "Lame de Roc"],
+          "evs": { "atk": 252, "spe": 252, "hp": 4 }
+        },
+        {
+          "name": "Baggaïd",
+          "imageUrl": "",
+          "level": 60,
+          "types": ["tenebres", "combat"],
+          "ability": "Intimidation",
+          "moves": ["Close Combat", "Tranche-Nuit", "Bluff", "Surpuissance"],
+          "evs": { "atk": 252, "spe": 252, "hp": 4 }
+        }
+      ]
+    },
+    {
+      "name": "Néron",
+      "class": "Champion d'Arène",
+      "difficulty": "moyen",
+      "description": "Le champion de la première arène. Son style repose sur la vitesse et les attaques physiques dévastatrices.",
+      "artworkUrl": "https://i.imgur.com/rFFOg6x.png",
+      "reward": "5280 ₱",
+      "tips": [
+        "Un Pokémon de type Roche ou Acier résiste bien à son équipe",
+        "Attention à la vitesse de ses Pokémon, priorisez les attaques prioritaires",
+        "Son Dracolosse peut utiliser Danse Draco, ne le laissez pas se renforcer"
+      ],
+      "team": [
+        {
+          "name": "Scalproie",
+          "imageUrl": "",
+          "level": 32,
+          "types": ["acier", "tenebres"],
+          "ability": "Acharné",
+          "moves": ["Tranche-Nuit", "Lame de Roc", "Plaie-Croix", "Fulmifer"],
+          "evs": { "atk": 252, "spe": 200, "hp": 56 }
+        },
+        {
+          "name": "Frison",
+          "imageUrl": "",
+          "level": 32,
+          "types": ["normal"],
+          "ability": "Téméraire",
+          "moves": ["Peignée", "Éclair Fou", "Séisme", "Direct Toxik"],
+          "evs": { "atk": 252, "spe": 252, "hp": 4 }
+        },
+        {
+          "name": "Kravarech",
+          "imageUrl": "",
+          "level": 33,
+          "types": ["poison", "dragon"],
+          "ability": "Adaptabilité",
+          "moves": ["Draco-Queue", "Bomb-Beurk", "Aqua-Queue", "Mâchouille"],
+          "evs": { "atk": 252, "hp": 128, "def": 128 }
+        },
+        {
+          "name": "Dracolosse",
+          "imageUrl": "",
+          "level": 34,
+          "types": ["dragon", "vol"],
+          "ability": "Multiécaille",
+          "moves": ["Danse Draco", "Vitesse Extrême", "Casse-Brique", "Dracogriffe"],
+          "evs": { "atk": 252, "spe": 252, "hp": 4 }
+        }
+      ]
     }
   ]
 }
