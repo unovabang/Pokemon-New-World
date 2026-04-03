@@ -473,7 +473,7 @@ export default function ExtradexPage() {
                 return rarities.length > 0 && (
                   <div className="pokedex-modal-row">
                     <span className="pokedex-modal-label"><i className="fa-solid fa-gem" aria-hidden /> Rareté</span>
-                    <span>{rarities.map((r, i) => <div key={i}>{r}</div>)}</span>
+                    <div className="pokedex-modal-values">{rarities.map((r, i) => <span key={i}>{r}</span>)}</div>
                   </div>
                 );
               })()}
@@ -482,7 +482,7 @@ export default function ExtradexPage() {
                 return obtentions.length > 0 && (
                   <div className="pokedex-modal-row">
                     <span className="pokedex-modal-label"><i className="fa-solid fa-map-location-dot" aria-hidden /> Obtention</span>
-                    <span>{obtentions.map((o, i) => <div key={i}>{o}</div>)}</span>
+                    <div className="pokedex-modal-values">{obtentions.map((o, i) => <span key={i}>{o}</span>)}</div>
                   </div>
                 );
               })()}
