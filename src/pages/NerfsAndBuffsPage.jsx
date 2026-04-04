@@ -5,9 +5,7 @@ import Sidebar from "../components/Sidebar";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
-  : import.meta.env.DEV
-    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
-    : `${window.location.origin}/api`;
+  : `${window.location.origin}/api`;
 
 const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Crect fill='%23222' width='96' height='96' rx='12'/%3E%3Ctext x='48' y='56' fill='%23555' font-size='24' text-anchor='middle' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E";
 

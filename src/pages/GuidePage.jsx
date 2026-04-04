@@ -3,10 +3,8 @@ import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 
 const API_BASE = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/api`
-  : import.meta.env.DEV
-    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
-    : `${window.location.origin}/api`;
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : `${window.location.origin}/api`;
 
 /** Découpe le texte en segments (texte normal / termes à mettre en évidence) */
 function splitByHighlights(text, highlight = []) {

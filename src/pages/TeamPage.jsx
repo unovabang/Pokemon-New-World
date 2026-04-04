@@ -5,9 +5,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
-  : import.meta.env.DEV
-    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
-    : `${window.location.origin}/api`;
+  : `${window.location.origin}/api`;
 
 const DEFAULT_AVATAR = "data:image/svg+xml," + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle fill="%23313538" cx="50" cy="50" r="50"/><circle fill="%237ecdf2" cx="50" cy="38" r="18"/><path fill="%237ecdf2" d="M20 95c0-25 13-40 30-40s30 15 30 40z"/></svg>'

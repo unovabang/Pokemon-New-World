@@ -6,9 +6,7 @@ const AUTO_SAVE_DELAY_MS = 0;
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
-  : import.meta.env.DEV
-    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
-    : `${window.location.origin}/api`;
+  : `${window.location.origin}/api`;
 
 const STORAGE_ENTRIES = "admin_extradex_entries";
 const STORAGE_TITLE = "admin_extradex_title";

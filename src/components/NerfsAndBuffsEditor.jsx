@@ -4,9 +4,7 @@ import { authHeaders } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
-  : import.meta.env.DEV
-    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
-    : `${window.location.origin}/api`;
+  : `${window.location.origin}/api`;
 
 const PLACEHOLDER_SPRITE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect fill='%23333' width='64' height='64' rx='8'/%3E%3Ctext x='32' y='38' fill='%23666' font-size='20' text-anchor='middle' font-family='sans-serif'%3E?%3C/text%3E%3C/svg%3E";
 

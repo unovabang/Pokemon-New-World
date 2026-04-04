@@ -1,38 +1,29 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-const API_BASE = import.meta.env.VITE_API_URL
-  || (import.meta.env.DEV ? `${window.location.protocol}//${window.location.hostname}:3001` : window.location.origin);
+const API_BASE = import.meta.env.VITE_API_URL || window.location.origin;
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem('admin_token') || null);
   const [admin, setAdmin] = useState(null);
-  const [loading, setLoading] = useState(!!token);
+  const [loading, setLoading] = useState(true);
 
   const fetchMe = useCallback(async () => {
-    if (!token) return;
     try {
-      const res = await fetch(`${API_BASE}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch(`${API_BASE}/api/auth/me`);
       const data = await res.json();
       if (data.success) setAdmin(data.admin);
-      else setToken(null);
+      else setAdmin(null);
     } catch {
-      setToken(null);
+      setAdmin(null);
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
-    if (token) fetchMe();
-    else {
-      setAdmin(null);
-      setLoading(false);
-    }
-  }, [token, fetchMe]);
+    fetchMe();
+  }, [fetchMe]);
 
   const login = async (email, password) => {
     const res = await fetch(`${API_BASE}/api/auth/login`, {
@@ -42,20 +33,19 @@ export function AuthProvider({ children }) {
     });
     const data = await res.json();
     if (!data.success) throw new Error(data.error || 'Connexion échouée');
-    localStorage.setItem('admin_token', data.token);
-    setToken(data.token);
     setAdmin(data.admin);
     return data;
   };
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('admin_token');
-    setToken(null);
+  const logout = useCallback(async () => {
+    try {
+      await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST' });
+    } catch { /* ignore */ }
     setAdmin(null);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, admin, loading, login, logout, fetchMe }}>
+    <AuthContext.Provider value={{ admin, loading, login, logout, fetchMe }}>
       {children}
     </AuthContext.Provider>
   );

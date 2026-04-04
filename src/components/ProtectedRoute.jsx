@@ -2,7 +2,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const { token, loading } = useAuth();
+  const { admin, loading } = useAuth();
 
   if (loading) {
     return (
@@ -22,7 +22,7 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  if (!token) {
+  if (!admin) {
     return <Navigate to="/admin-login" replace />;
   }
 

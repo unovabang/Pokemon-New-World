@@ -22,9 +22,17 @@ function createToken(admin) {
   );
 }
 
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+};
+
 export function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
-  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+  const token = req.cookies?.token
+    || (authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null);
   if (!token) {
     return res.status(401).json({ success: false, error: 'Token manquant' });
   }
@@ -64,9 +72,9 @@ router.post('/login', async (req, res) => {
 
     await logConnection(email, ip, userAgent, true);
     const token = createToken(admin);
+    res.cookie('token', token, COOKIE_OPTIONS);
     return res.json({
       success: true,
-      token,
       admin: { id: admin.id, email: admin.email, name: admin.name }
     });
   } catch (err) {
@@ -111,6 +119,12 @@ router.get('/logs', requireAuth, async (req, res) => {
     console.error('Erreur récupération logs:', err);
     return res.status(500).json({ success: false, error: 'Erreur serveur' });
   }
+});
+
+// POST /api/auth/logout — Déconnexion (suppression du cookie)
+router.post('/logout', (req, res) => {
+  res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'strict' });
+  res.json({ success: true });
 });
 
 export default router;

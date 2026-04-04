@@ -5,9 +5,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
-  : import.meta.env.DEV
-    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
-    : `${window.location.origin}/api`;
+  : `${window.location.origin}/api`;
 
 const CATEGORIES = [
   { id: "bug", label: "Bug / Problème technique", labelEn: "Bug / Technical issue", icon: "fa-bug", color: "#e74c3c" },

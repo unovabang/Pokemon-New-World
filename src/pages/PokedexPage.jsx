@@ -127,10 +127,8 @@ function GighastonEasterEgg({ onClose }) {
 }
 
 const API_BASE = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/api`
-  : import.meta.env.DEV
-    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
-    : `${window.location.origin}/api`;
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
+  : `${window.location.origin}/api`;
 
 const TYPE_COLORS = {
   plante: { bg: "rgba(126,200,80,.35)", border: "rgba(126,200,80,.6)", text: "#a6e88a" },

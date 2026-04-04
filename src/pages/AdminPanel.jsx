@@ -42,11 +42,10 @@ import guideData from "../config/guide.json";
 import bstData from "../config/bst.json";
 import nerfsBuffsData from "../config/nerfs-and-buffs.json";
 
-const API_BASE = import.meta.env.VITE_API_URL
-  || (import.meta.env.DEV ? `${window.location.protocol}//${window.location.hostname}:3001` : window.location.origin);
+const API_BASE = import.meta.env.VITE_API_URL || window.location.origin;
 
 const AdminPanel = () => {
-  const { admin, logout, token } = useAuth();
+  const { admin, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [pokedexSubTab, setPokedexSubTab] = useState('pokedex'); // 'pokedex' | 'extradex'
@@ -140,14 +139,14 @@ const AdminPanel = () => {
   const tabs = navSections.flatMap(s => s.items);
 
   useEffect(() => {
-    if (activeTab === 'logs' && token) {
+    if (activeTab === 'logs' && admin) {
       setLogsLoading(true);
-      fetch(`${API_BASE}/api/auth/logs`, { headers: { Authorization: `Bearer ${token}` } })
+      fetch(`${API_BASE}/api/auth/logs`)
         .then((r) => r.json())
         .then((d) => { if (d.success) setLogs(d.logs); })
         .finally(() => setLogsLoading(false));
     }
-  }, [activeTab, token]);
+  }, [activeTab, admin]);
 
   if (editingConfig) {
     return (

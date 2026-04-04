@@ -2,6 +2,9 @@ await import('dotenv/config').catch(() => {});
 import express from 'express';
 import multer from 'multer';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 import fs from 'fs-extra';
 import path from 'path';
 import { exec } from 'child_process';
@@ -34,10 +37,39 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware (limite large pour PUT /api/pokedex et autres configs volumineuses — évolutif)
 app.use(cors({
-  origin: true,
+  origin: (origin, callback) => {
+    // Autorise : pas d'origin (Tauri, curl, requêtes serveur), site officiel, localhost dev
+    if (!origin
+      || origin.endsWith('pokemonnewworld.fr')
+      || origin.startsWith('http://localhost')
+      || origin.startsWith('http://127.0.0.1')
+      || origin === 'tauri://localhost'
+      || origin.startsWith('https://tauri.')
+    ) {
+      return callback(null, true);
+    }
+    callback(new Error('CORS non autorisé'));
+  },
   credentials: true,
 }));
+app.use(helmet());
+app.use(cookieParser());
 app.use(express.json({ limit: '50mb' }));
+
+// Rate limit global : 100 requêtes / minute par IP
+const globalLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 100,
+  message: { success: false, error: 'Trop de requêtes. Réessayez dans quelques instants.' },
+});
+app.use('/api/', globalLimiter);
+
+// Rate limit strict pour le contact : 3 requêtes / 5 min par IP
+const contactLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 3,
+  message: { success: false, error: 'Trop de messages envoyés. Réessayez dans quelques minutes.' },
+});
 
 // Auth & logs (login, /me, /logs)
 app.use('/api/auth', authRoutes);
@@ -1595,7 +1627,7 @@ const CONTACT_CATEGORY_LABELS = {
   autre: { label: 'Autre', color: 0x95a5a6 },
 };
 
-app.post('/api/contact', async (req, res) => {
+app.post('/api/contact', contactLimiter, async (req, res) => {
   try {
     const { category, contact, subject, message } = req.body;
     if (!category || !contact || !subject || !message) {
@@ -2115,34 +2147,7 @@ app.put('/api/evs-location', requireAuth, (req, res) => {
 });
 
 // Aperçu chat (widget site, lecture seule — voir server/chatPublicPreview.js)
-// Rate limiter simple : max 15 requêtes / minute par IP
-const chatRateLimitMap = new Map();
-function chatRateLimit(req, res, next) {
-  const ip = req.ip || req.connection?.remoteAddress || 'unknown';
-  const now = Date.now();
-  const window = 60_000; // 1 minute
-  const maxReqs = 15;
-  let entry = chatRateLimitMap.get(ip);
-  if (!entry || now - entry.start > window) {
-    entry = { start: now, count: 1 };
-    chatRateLimitMap.set(ip, entry);
-  } else {
-    entry.count++;
-  }
-  if (entry.count > maxReqs) {
-    return res.status(429).json({ success: false, error: 'Trop de requêtes. Réessayez dans quelques instants.' });
-  }
-  next();
-}
-// Nettoyage périodique (toutes les 5 min)
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, entry] of chatRateLimitMap) {
-    if (now - entry.start > 120_000) chatRateLimitMap.delete(ip);
-  }
-}, 300_000);
-
-app.get('/api/chat/public-preview', chatRateLimit, handleChatPublicPreview);
+app.get('/api/chat/public-preview', handleChatPublicPreview);
 
 // Servir le frontend React (build Vite) en production — doit être en dernier
 const DIST_DIR = path.join(__dirname, '../dist');

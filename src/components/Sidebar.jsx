@@ -3,9 +3,7 @@ import { Link } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
-  : import.meta.env.DEV
-    ? `${window.location.protocol}//${window.location.hostname}:3001/api`
-    : `${window.location.origin}/api`;
+  : `${window.location.origin}/api`;
 
 const DEFAULT_ITEMS = [
   { id: "accueil", label: "Accueil", icon: "fa-house", to: "/" },

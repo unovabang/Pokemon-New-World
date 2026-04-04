@@ -1,9 +1,8 @@
 /**
- * Retourne les headers d'authentification pour les requêtes admin.
- * À utiliser avec le spread operator dans les options de fetch :
- *   fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...authHeaders() } })
+ * Headers d'authentification pour les requêtes admin.
+ * L'authentification est gérée par cookies httpOnly (envoyés automatiquement).
+ * Cette fonction est conservée pour compatibilité avec les imports existants.
  */
 export function authHeaders() {
-  const token = localStorage.getItem('admin_token');
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return {};
 }
