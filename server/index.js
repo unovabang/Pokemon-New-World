@@ -53,7 +53,20 @@ app.use(cors({
   },
   credentials: true,
 }));
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      connectSrc: ["'self'", "https:"],
+      mediaSrc: ["'self'", "https:"],
+      frameSrc: ["'self'", "https://www.youtube.com", "https://youtube.com"],
+    },
+  },
+}));
 app.use(cookieParser());
 app.use(express.json({ limit: '50mb' }));
 
