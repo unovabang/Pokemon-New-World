@@ -44,6 +44,7 @@ app.use(cors({
       || origin.startsWith('http://localhost')
       || origin.startsWith('http://127.0.0.1')
       || origin === 'tauri://localhost'
+      || origin === 'http://tauri.localhost'
       || origin.startsWith('https://tauri.')
     ) {
       return callback(null, true);
