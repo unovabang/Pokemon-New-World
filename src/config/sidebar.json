@@ -5,7 +5,6 @@
     { "id": "lore", "label": "Le Lore", "icon": "fa-scroll", "to": "/lore", "highlight": true },
     { "id": "pokedex", "label": "Pokedex", "icon": "fa-book", "to": "/pokedex" },
     { "id": "guide", "label": "Guide", "icon": "fa-book-open", "to": "/guide" },
-    { "id": "boss", "label": "Boss du jeu", "icon": "fa-crown", "to": "/boss" },
     { "id": "patchnotes", "label": "PatchNotes", "icon": "fa-file-lines", "to": "/patchnotes" },
     { "id": "telechargement", "label": "Télécharger", "icon": "fa-cloud-arrow-down", "to": "/telechargement" },
     { "id": "items", "label": "Items locations", "icon": "fa-location-dot", "to": "/item-location" },
