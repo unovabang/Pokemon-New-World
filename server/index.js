@@ -40,7 +40,8 @@ app.use(cors({
   origin: (origin, callback) => {
     // Autorise : pas d'origin (Tauri, curl, requêtes serveur), site officiel, localhost dev
     if (!origin
-      || origin.endsWith('pokemonnewworld.fr')
+      || origin === 'https://pokemonnewworld.fr'
+      || origin === 'https://www.pokemonnewworld.fr'
       || origin.startsWith('http://localhost')
       || origin.startsWith('http://127.0.0.1')
       || origin === 'tauri://localhost'
@@ -76,6 +77,14 @@ const contactLimiter = rateLimit({
   max: 3,
   message: { success: false, error: 'Trop de messages envoyés. Réessayez dans quelques minutes.' },
 });
+
+// Rate limit login : 5 tentatives / 15 min par IP (anti brute-force)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { success: false, error: 'Trop de tentatives de connexion. Réessayez dans 15 minutes.' },
+});
+app.use('/api/auth/login', loginLimiter);
 
 // Auth & logs (login, /me, /logs)
 app.use('/api/auth', authRoutes);
@@ -1064,6 +1073,9 @@ app.put('/api/config/contact-webhook', requireAuth, (req, res) => {
 app.get('/api/config/:name', (req, res) => {
   try {
     const { name } = req.params;
+    if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+      return res.status(400).json({ success: false, error: 'Nom de configuration invalide' });
+    }
     let configData = getConfig(name);
     if (!configData && name === 'news') {
       configData = { banners: [], interval: 5000, bannerMaxHeight: 400 };
@@ -1266,7 +1278,7 @@ app.post('/api/r2/abort-upload', requireAuth, async (req, res) => {
 });
 
 // GET /api/r2/list-multipart-uploads — Liste les uploads multipart en cours (incomplets)
-app.get('/api/r2/list-multipart-uploads', async (req, res) => {
+app.get('/api/r2/list-multipart-uploads', requireAuth, async (req, res) => {
   try {
     if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
     const result = await r2Client.send(new ListMultipartUploadsCommand({ Bucket: R2_BUCKET, MaxUploads: 100 }));
@@ -1295,7 +1307,7 @@ app.delete('/api/r2/object/:key', requireAuth, async (req, res) => {
 });
 
 // GET /api/r2/list — List objects in the bucket
-app.get('/api/r2/list', async (req, res) => {
+app.get('/api/r2/list', requireAuth, async (req, res) => {
   try {
     if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
     const result = await r2Client.send(new ListObjectsV2Command({ Bucket: R2_BUCKET, MaxKeys: 100 }));
