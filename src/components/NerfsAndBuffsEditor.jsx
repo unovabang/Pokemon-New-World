@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
+import { authHeaders } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -233,7 +234,7 @@ export default function NerfsAndBuffsEditor({ initialData, initialPokedexEntries
     try {
       const res = await fetch(`${API_BASE}/nerfs-and-buffs`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({
           lastModified,
           nerfs: toSend.nerfs,

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { authHeaders } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -40,7 +41,7 @@ export default function WebhookEditor() {
     try {
       const res = await fetch(`${API_BASE}/config/webhook`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ webhookUrl: webhookUrl.trim(), username: username.trim(), avatarUrl: avatarUrl.trim(), embed, intervalHours }),
       });
       const data = await res.json();

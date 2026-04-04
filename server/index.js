@@ -7,7 +7,7 @@ import path from 'path';
 import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import { initDb } from './db.js';
-import authRoutes from './auth.js';
+import authRoutes, { requireAuth } from './auth.js';
 import { handleChatPublicPreview } from './chatPublicPreview.js';
 import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command, ListMultipartUploadsCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -206,7 +206,7 @@ app.get('/api/banners', (req, res) => {
 });
 
 // POST /api/banners/upload - Upload une nouvelle bannière
-app.post('/api/banners/upload', upload.single('banner'), (req, res) => {
+app.post('/api/banners/upload', requireAuth, upload.single('banner'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, error: 'Aucun fichier fourni' });
@@ -229,11 +229,14 @@ app.post('/api/banners/upload', upload.single('banner'), (req, res) => {
 });
 
 // DELETE /api/banners/:filename - Supprimer une bannière
-app.delete('/api/banners/:filename', (req, res) => {
+app.delete('/api/banners/:filename', requireAuth, (req, res) => {
   try {
     const filename = req.params.filename;
+    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+      return res.status(400).json({ success: false, error: 'Nom de fichier invalide' });
+    }
     const filePath = path.join(NEWS_IMAGES_DIR, filename);
-    
+
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ success: false, error: 'Fichier non trouvé' });
     }
@@ -250,7 +253,7 @@ app.delete('/api/banners/:filename', (req, res) => {
 });
 
 // PUT /api/banners/reposition - Réorganiser les positions des bannières
-app.put('/api/banners/reposition', (req, res) => {
+app.put('/api/banners/reposition', requireAuth, (req, res) => {
   try {
     const { changes } = req.body; // { "banniere1.png": 3, "banniere2.png": 1 }
     
@@ -297,7 +300,7 @@ app.put('/api/banners/reposition', (req, res) => {
 });
 
 // PUT /api/banners/:filename/position - Changer la position d'une bannière spécifique
-app.put('/api/banners/:filename/position', (req, res) => {
+app.put('/api/banners/:filename/position', requireAuth, (req, res) => {
   try {
     const { filename } = req.params;
     const { position } = req.body;
@@ -618,7 +621,7 @@ app.get('/api/config/discord-webhook', (req, res) => {
 });
 
 // PUT /api/config/discord-webhook - Enregistrer l’URL du webhook
-app.put('/api/config/discord-webhook', (req, res) => {
+app.put('/api/config/discord-webhook', requireAuth, (req, res) => {
   try {
     let { webhookUrl, imageStyle } = req.body || {};
     webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
@@ -635,7 +638,7 @@ app.put('/api/config/discord-webhook', (req, res) => {
 });
 
 // POST /api/patchnotes/:lang/version - Ajouter une nouvelle version
-app.post('/api/patchnotes/:lang/version', (req, res) => {
+app.post('/api/patchnotes/:lang/version', requireAuth, (req, res) => {
   try {
     const lang = req.params.lang || 'fr';
     const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
@@ -684,7 +687,7 @@ app.post('/api/patchnotes/:lang/version', (req, res) => {
 });
 
 // PUT /api/patchnotes/:lang/version/:version - Modifier une version
-app.put('/api/patchnotes/:lang/version/:version', (req, res) => {
+app.put('/api/patchnotes/:lang/version/:version', requireAuth, (req, res) => {
   try {
     const lang = req.params.lang || 'fr';
     const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
@@ -722,7 +725,7 @@ app.put('/api/patchnotes/:lang/version/:version', (req, res) => {
 });
 
 // DELETE /api/patchnotes/:lang/version/:version - Supprimer une version
-app.delete('/api/patchnotes/:lang/version/:version', (req, res) => {
+app.delete('/api/patchnotes/:lang/version/:version', requireAuth, (req, res) => {
   try {
     const lang = req.params.lang || 'fr';
     const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
@@ -756,7 +759,7 @@ app.delete('/api/patchnotes/:lang/version/:version', (req, res) => {
 });
 
 // PUT /api/patchnotes/:lang/reorder - Réordonner les versions (ordre = [versionId, ...])
-app.put('/api/patchnotes/:lang/reorder', (req, res) => {
+app.put('/api/patchnotes/:lang/reorder', requireAuth, (req, res) => {
   try {
     const lang = req.params.lang || 'fr';
     const filename = lang === 'en' ? 'patchnotes-en.json' : 'patchnotes.json';
@@ -783,7 +786,7 @@ app.put('/api/patchnotes/:lang/reorder', (req, res) => {
 });
 
 // PUT /api/patchnotes/background - Mettre à jour l'image de fond (patchnotes.json fr)
-app.put('/api/patchnotes/background', (req, res) => {
+app.put('/api/patchnotes/background', requireAuth, (req, res) => {
   try {
     const { background } = req.body || {};
     const patchnotesPath = path.join(CONFIG_DIR, 'patchnotes.json');
@@ -801,7 +804,7 @@ app.put('/api/patchnotes/background', (req, res) => {
 });
 
 // POST /api/patchnotes/version/:version/section - Ajouter une section à une version
-app.post('/api/patchnotes/version/:version/section', (req, res) => {
+app.post('/api/patchnotes/version/:version/section', requireAuth, (req, res) => {
   try {
     const { version } = req.params;
     const { title, items } = req.body;
@@ -965,7 +968,7 @@ app.get('/api/config/webhook', (req, res) => {
   }
 });
 
-app.put('/api/config/webhook', (req, res) => {
+app.put('/api/config/webhook', requireAuth, (req, res) => {
   try {
     let { webhookUrl, username, avatarUrl, embed, intervalHours } = req.body || {};
     webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
@@ -1000,7 +1003,7 @@ app.get('/api/config/contact-webhook', (req, res) => {
   }
 });
 
-app.put('/api/config/contact-webhook', (req, res) => {
+app.put('/api/config/contact-webhook', requireAuth, (req, res) => {
   try {
     let { webhookUrl, backgroundImage } = req.body || {};
     webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
@@ -1082,15 +1085,19 @@ app.get('/api/config/:name', (req, res) => {
 });
 
 // POST /api/config/:name - Sauvegarder une configuration
-app.post('/api/config/:name', (req, res) => {
+app.post('/api/config/:name', requireAuth, (req, res) => {
   try {
     const { name } = req.params;
     const { config } = req.body;
-    
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+      return res.status(400).json({ success: false, error: 'Nom de configuration invalide' });
+    }
+
     if (!config) {
       return res.status(400).json({ success: false, error: 'Données de configuration manquantes' });
     }
-    
+
     const success = saveConfig(name, config);
     
     if (!success) {
@@ -1122,7 +1129,7 @@ const R2_BUCKET = process.env.R2_BUCKET_NAME || 'pokemon-new-world';
 const R2_PUBLIC_URL = (process.env.R2_PUBLIC_URL || '').replace(/\/$/, '');
 
 // POST /api/r2/start-upload — Initiate multipart upload
-app.post('/api/r2/start-upload', async (req, res) => {
+app.post('/api/r2/start-upload', requireAuth, async (req, res) => {
   try {
     if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
     const { filename, contentType } = req.body;
@@ -1143,7 +1150,7 @@ app.post('/api/r2/start-upload', async (req, res) => {
 });
 
 // POST /api/r2/get-presigned-urls — Generate presigned URLs for direct browser→R2 upload
-app.post('/api/r2/get-presigned-urls', async (req, res) => {
+app.post('/api/r2/get-presigned-urls', requireAuth, async (req, res) => {
   try {
     if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
     const { key, uploadId, totalParts } = req.body;
@@ -1170,7 +1177,7 @@ app.post('/api/r2/get-presigned-urls', async (req, res) => {
 });
 
 // POST /api/r2/complete-upload — Complete multipart upload
-app.post('/api/r2/complete-upload', async (req, res) => {
+app.post('/api/r2/complete-upload', requireAuth, async (req, res) => {
   try {
     if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
     const { key, uploadId, parts } = req.body;
@@ -1206,7 +1213,7 @@ app.post('/api/r2/complete-upload', async (req, res) => {
 });
 
 // POST /api/r2/abort-upload — Abort a multipart upload
-app.post('/api/r2/abort-upload', async (req, res) => {
+app.post('/api/r2/abort-upload', requireAuth, async (req, res) => {
   try {
     if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
     const { key, uploadId } = req.body;
@@ -1238,7 +1245,7 @@ app.get('/api/r2/list-multipart-uploads', async (req, res) => {
 });
 
 // DELETE /api/r2/object/:key — Delete an object from R2
-app.delete('/api/r2/object/:key', async (req, res) => {
+app.delete('/api/r2/object/:key', requireAuth, async (req, res) => {
   try {
     if (!r2Client) return res.status(500).json({ success: false, error: 'R2 non configuré' });
     await r2Client.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: req.params.key }));
@@ -1420,7 +1427,7 @@ app.get('/api/downloads', (req, res) => {
   }
 });
 
-app.post('/api/downloads', (req, res) => {
+app.post('/api/downloads', requireAuth, (req, res) => {
   try {
     const { downloads } = req.body;
     const prevDownloads = getConfig('downloads') || {};
@@ -1503,7 +1510,7 @@ app.get('/api/download-page', (req, res) => {
   }
 });
 
-app.put('/api/download-page', (req, res) => {
+app.put('/api/download-page', requireAuth, (req, res) => {
   try {
     const body = req.body || {};
     const data = {
@@ -1557,7 +1564,7 @@ app.get('/api/lore', (req, res) => {
 });
 
 // PUT /api/lore - Sauvegarder les chapitres du lore
-app.put('/api/lore', (req, res) => {
+app.put('/api/lore', requireAuth, (req, res) => {
   try {
     const { stories, pageBackground } = req.body;
     if (!Array.isArray(stories)) {
@@ -1656,7 +1663,7 @@ app.get('/api/pokedex', (req, res) => {
 });
 
 // PUT /api/pokedex - Sauvegarder le Pokédex (écrit dans pokedex.json)
-app.put('/api/pokedex', (req, res) => {
+app.put('/api/pokedex', requireAuth, (req, res) => {
   try {
     const { entries, background, customTypes } = req.body;
     const pokedexPath = path.join(CONFIG_DIR, 'pokedex.json');
@@ -1779,7 +1786,7 @@ app.get('/api/guide', (req, res) => {
 });
 
 // PUT /api/guide - Sauvegarder le guide (écrit dans guide.json)
-app.put('/api/guide', (req, res) => {
+app.put('/api/guide', requireAuth, (req, res) => {
   try {
     const { title, subtitle, disclaimer, steps, background } = req.body;
     const guidePath = path.join(CONFIG_DIR, 'guide.json');
@@ -1848,7 +1855,7 @@ app.get('/api/boss', (req, res) => {
 });
 
 // PUT /api/boss - Sauvegarder les boss
-app.put('/api/boss', (req, res) => {
+app.put('/api/boss', requireAuth, (req, res) => {
   try {
     const { title, subtitle, bosses, background } = req.body;
     const updated = {
@@ -1870,7 +1877,7 @@ app.put('/api/boss', (req, res) => {
 });
 
 // PUT /api/extradex - Sauvegarder l'Extradex (écrit dans extradex.json)
-app.put('/api/extradex', (req, res) => {
+app.put('/api/extradex', requireAuth, (req, res) => {
   try {
     const { title, entries, background, customTypes } = req.body;
     const extradexPath = path.join(CONFIG_DIR, 'extradex.json');
@@ -1948,7 +1955,7 @@ app.get('/api/nerfs-and-buffs', (req, res) => {
 });
 
 // PUT /api/nerfs-and-buffs - Sauvegarder Nerfs & Buffs
-app.put('/api/nerfs-and-buffs', (req, res) => {
+app.put('/api/nerfs-and-buffs', requireAuth, (req, res) => {
   try {
     const { lastModified, nerfs, buffs, ajustements, background } = req.body;
     const configPath = path.join(CONFIG_DIR, 'nerfs-and-buffs.json');
@@ -2010,7 +2017,7 @@ app.get('/api/bst', (req, res) => {
 });
 
 // PUT /api/bst - Sauvegarder le BST (écrit dans bst.json)
-app.put('/api/bst', (req, res) => {
+app.put('/api/bst', requireAuth, (req, res) => {
   try {
     const { fakemon, megas, speciaux, background } = req.body;
     const bstPath = path.join(CONFIG_DIR, 'bst.json');
@@ -2074,7 +2081,7 @@ app.get('/api/evs-location', (req, res) => {
 });
 
 // PUT /api/evs-location - Sauvegarder la table EVs (écrit dans evs-location.json)
-app.put('/api/evs-location', (req, res) => {
+app.put('/api/evs-location', requireAuth, (req, res) => {
   try {
     const { entries, background } = req.body;
     const evsPath = path.join(CONFIG_DIR, 'evs-location.json');

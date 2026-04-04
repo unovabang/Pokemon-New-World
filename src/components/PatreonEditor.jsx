@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdvancedModal from './AdvancedModal';
+import { authHeaders } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -135,6 +136,7 @@ const PatreonEditor = ({ onSave }) => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              ...authHeaders(),
             },
             body: JSON.stringify({ config: patreonConfig })
           });

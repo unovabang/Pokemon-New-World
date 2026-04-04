@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { authHeaders } from "../utils/authHeaders";
 
 const AUTO_SAVE_DELAY_MS = 0;
 
@@ -101,7 +102,7 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
       try {
         const res = await fetch(`${API_BASE}/extradex`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...authHeaders() },
           body: JSON.stringify({ title: t, entries: e, background: bg || null, customTypes: ct }),
         });
         const data = await res.json();
@@ -125,7 +126,7 @@ export default function ExtradexEditor({ initialData = {}, onSave }) {
     setSaveMessage(null);
     fetch(`${API_BASE}/extradex`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({
         title,
         entries,

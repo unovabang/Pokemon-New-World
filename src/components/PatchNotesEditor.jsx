@@ -8,6 +8,7 @@ import {
   resolveSectionBalanceKinds,
   PATCH_BALANCE_KINDS,
 } from '../utils/patchNoteItem';
+import { authHeaders } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -88,7 +89,7 @@ const PatchNotesEditor = ({ onSave }) => {
     try {
       const res = await fetch(`${API_BASE}/config/discord-webhook`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ webhookUrl: discordWebhookUrl.trim(), imageStyle: discordImageStyle })
       });
       const data = await res.json();
@@ -106,7 +107,7 @@ const PatchNotesEditor = ({ onSave }) => {
     try {
       const res = await fetch(`${API_BASE}/patchnotes/background`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ background: pageBackground.trim() || null })
       });
       const data = await res.json();
@@ -194,7 +195,7 @@ const PatchNotesEditor = ({ onSave }) => {
       if (selectedVersion === null) {
         const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...authHeaders() },
           body: JSON.stringify({
             version: currentPatch.version.trim(),
             date: currentPatch.date.trim(),
@@ -210,7 +211,7 @@ const PatchNotesEditor = ({ onSave }) => {
       } else {
         const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${encodeURIComponent(selectedVersion)}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...authHeaders() },
           body: JSON.stringify({
             version: currentPatch.version.trim(),
             date: currentPatch.date.trim(),
@@ -353,7 +354,7 @@ const PatchNotesEditor = ({ onSave }) => {
   const deleteVersion = (version) => {
     showConfirm('Supprimer cette version', `Supprimer la version ${version} ?`, async () => {
       try {
-        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${version}`, { method: 'DELETE' });
+        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${version}`, { method: 'DELETE', headers: { ...authHeaders() } });
         const data = await res.json();
         if (data.success) {
           setAllVersions(data.patchnotes.versions);
@@ -378,7 +379,7 @@ const PatchNotesEditor = ({ onSave }) => {
     try {
       const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/reorder`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ order: versions })
       });
       const data = await res.json();

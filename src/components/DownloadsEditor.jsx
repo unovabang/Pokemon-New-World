@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import AdvancedModal from './AdvancedModal';
+import { authHeaders } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -54,7 +55,7 @@ function useR2Upload() {
       // 1. Start multipart upload (via notre serveur)
       const startRes = await fetch(`${API_BASE}/r2/start-upload`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ filename: file.name, contentType: file.type || 'application/octet-stream' }),
       });
       const startData = await startRes.json();
@@ -67,7 +68,7 @@ function useR2Upload() {
       setStatus('Préparation des URLs...');
       const urlsRes = await fetch(`${API_BASE}/r2/get-presigned-urls`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ key, uploadId, totalParts }),
       });
       const urlsData = await urlsRes.json();
@@ -79,7 +80,7 @@ function useR2Upload() {
         if (abortRef.current) {
           await fetch(`${API_BASE}/r2/abort-upload`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...authHeaders() },
             body: JSON.stringify({ key, uploadId }),
           });
           throw new Error('Upload annulé');
@@ -102,7 +103,7 @@ function useR2Upload() {
       setStatus('Finalisation...');
       const completeRes = await fetch(`${API_BASE}/r2/complete-upload`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
         body: JSON.stringify({ key, uploadId, parts }),
       });
       const completeData = await completeRes.json();
@@ -344,7 +345,7 @@ const DownloadsEditor = ({ onSave }) => {
         try {
           const res = await fetch(`${API_BASE}/r2/abort-upload`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...authHeaders() },
             body: JSON.stringify({ key, uploadId }),
           });
           const data = await res.json();
@@ -437,7 +438,7 @@ const DownloadsEditor = ({ onSave }) => {
           
           const response = await fetch(`${API_BASE}/downloads`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...authHeaders() },
             body: JSON.stringify({ downloads: downloadsConfig })
           });
           
@@ -465,7 +466,7 @@ const DownloadsEditor = ({ onSave }) => {
       `Êtes-vous sûr de vouloir supprimer "${key}" du stockage R2 ? Cette action est irréversible.`,
       async () => {
         try {
-          const res = await fetch(`${API_BASE}/r2/object/${encodeURIComponent(key)}`, { method: 'DELETE' });
+          const res = await fetch(`${API_BASE}/r2/object/${encodeURIComponent(key)}`, { method: 'DELETE', headers: { ...authHeaders() } });
           const data = await res.json();
           if (data.success) {
             showMessage('Succès', `Fichier "${key}" supprimé.`, 'success');

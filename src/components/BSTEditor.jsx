@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { authHeaders } from "../utils/authHeaders";
 
 const AUTO_SAVE_DELAY_MS = 0;
 
@@ -258,7 +259,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
       try {
         const res = await fetch(`${API_BASE}/bst`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...authHeaders() },
           body: JSON.stringify(payload),
         });
         const json = await res.json();
@@ -282,7 +283,7 @@ export default function BSTEditor({ initialData, initialPokedexEntries = [], onS
     setSaveMessage(null);
     fetch(`${API_BASE}/bst`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify(data),
     })
       .then((r) => r.json())

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import AdvancedModal from './AdvancedModal';
+import { authHeaders } from "../utils/authHeaders";
 
 /** Extrait l'ID d'une vidéo YouTube depuis une URL (watch, youtu.be, embed) ou retourne la chaîne si c'est déjà un ID. */
 function extractYoutubeId(urlOrId) {
@@ -145,6 +146,7 @@ const SiteEditor = ({ onSave }) => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              ...authHeaders(),
             },
             body: JSON.stringify({ config: siteConfig })
           });

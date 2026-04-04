@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
+import { authHeaders } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -210,7 +211,7 @@ export default function EVsLocationEditor({ onSave }) {
     try {
       const res = await fetch(`${API_BASE}/evs-location`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ entries: payload, background: background && String(background).trim() ? String(background).trim() : null }),
       });
       const data = await res.json();

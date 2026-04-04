@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import MarkdownToolbar from "./MarkdownToolbar";
+import { authHeaders } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -143,7 +144,7 @@ export default function LoreEditor() {
     try {
       const res = await fetch(`${API_BASE}/lore`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ stories: newStories, pageBackground: newBg !== undefined ? newBg : pageBackground }),
       });
       const data = await res.json();

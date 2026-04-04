@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { authHeaders } from "../utils/authHeaders";
 
 const AUTO_SAVE_DELAY_MS = 0;
 
@@ -95,7 +96,7 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
       try {
         const res = await fetch(`${API_BASE}/pokedex`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...authHeaders() },
           body: JSON.stringify({ entries: e, background: bg || null, customTypes: ct }),
         });
         const data = await res.json();
@@ -133,7 +134,7 @@ export default function PokedexEditor({ initialEntries = [], onSave }) {
     try {
       const res = await fetch(`${API_BASE}/pokedex`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({
           entries,
           background: backgroundUrl || null,

@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from "react";
+import { authHeaders } from "../utils/authHeaders";
 
 const DEFAULT_COLOR_HEX = "#5865F2";
 
@@ -228,7 +229,7 @@ export default function EmbedEditor() {
     setSending(true);
     setSendResult(null);
     try {
-      const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", ...authHeaders() }, body: JSON.stringify(payload) });
       setSendResult(res.ok ? { ok: true, message: "Message envoyé avec succès." } : { ok: false, message: `Erreur ${res.status}` });
     } catch (err) {
       setSendResult({ ok: false, message: err.message || "Erreur réseau." });
