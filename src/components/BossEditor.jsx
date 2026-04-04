@@ -31,7 +31,7 @@ const EV_KEYS = ["hp", "atk", "def", "spa", "spd", "spe"];
 const EV_LABELS = { hp: "PV", atk: "Atk", def: "Déf", spa: "Atk Spé", spd: "Déf Spé", spe: "Vit" };
 
 const emptyPokemon = () => ({
-  name: "", imageUrl: "", level: 50, types: [], ability: "",
+  name: "", imageUrl: "", level: 50, types: [], ability: "", item: "",
   moves: ["", "", "", ""],
   evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
 });
@@ -239,6 +239,7 @@ export default function BossEditor({ onSave }) {
         level: p.level || 50,
         types: Array.isArray(p.types) ? [...p.types] : [],
         ability: p.ability || "",
+        item: p.item || "",
         moves: [...(p.moves || []), "", "", "", ""].slice(0, 4),
         evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0, ...(p.evs || {}) },
       })),
@@ -264,6 +265,7 @@ export default function BossEditor({ onSave }) {
         level: Number(p.level) || 50,
         types: p.types.filter(Boolean),
         ability: p.ability.trim(),
+        item: p.item.trim(),
         moves: p.moves.map((m) => m.trim()).filter(Boolean),
         evs: Object.fromEntries(EV_KEYS.map((k) => [k, Number(p.evs[k]) || 0])),
       })).filter((p) => p.name),
@@ -285,6 +287,15 @@ export default function BossEditor({ onSave }) {
     setBosses(next);
     saveToApi(next);
     setDeleteConfirm(null);
+  };
+
+  const moveBoss = (index, direction) => {
+    const target = direction === "up" ? index - 1 : index + 1;
+    if (target < 0 || target >= bosses.length) return;
+    const next = [...bosses];
+    [next[index], next[target]] = [next[target], next[index]];
+    setBosses(next);
+    saveToApi(next);
   };
 
   // Form helpers
@@ -382,14 +393,17 @@ export default function BossEditor({ onSave }) {
               onClick={() => openEdit(i)}
               onKeyDown={(e) => e.key === "Enter" && openEdit(i)}
             >
-              <button
-                type="button"
-                className="admin-dex-card-delete"
-                onClick={(e) => { e.stopPropagation(); setDeleteConfirm(i); }}
-                title="Supprimer"
-              >
-                <i className="fa-solid fa-trash" />
-              </button>
+              <div style={{ position: "absolute", top: ".4rem", right: ".4rem", display: "flex", gap: ".25rem", zIndex: 2 }}>
+                <button type="button" className="admin-dex-card-delete" style={{ position: "static" }} onClick={(e) => { e.stopPropagation(); moveBoss(i, "up"); }} disabled={i === 0} title="Monter">
+                  <i className="fa-solid fa-chevron-up" />
+                </button>
+                <button type="button" className="admin-dex-card-delete" style={{ position: "static" }} onClick={(e) => { e.stopPropagation(); moveBoss(i, "down"); }} disabled={i === bosses.length - 1} title="Descendre">
+                  <i className="fa-solid fa-chevron-down" />
+                </button>
+                <button type="button" className="admin-dex-card-delete" style={{ position: "static" }} onClick={(e) => { e.stopPropagation(); setDeleteConfirm(i); }} title="Supprimer">
+                  <i className="fa-solid fa-trash" />
+                </button>
+              </div>
               <div className="admin-dex-card-sprite">
                 {b.artworkUrl ? (
                   <img src={b.artworkUrl} alt="" onError={(e) => (e.target.style.display = "none")} />
@@ -565,6 +579,12 @@ export default function BossEditor({ onSave }) {
                       <div style={{ marginBottom: ".5rem" }}>
                         <span className="boss-editor-ev-label" style={{ textAlign: "left", marginBottom: ".2rem" }}><i className="fa-solid fa-star" style={{ marginRight: ".25rem" }} />Talent</span>
                         <input type="text" className="admin-pokedex-input" value={poke.ability} onChange={(e) => updatePokemon(pIdx, "ability", e.target.value)} placeholder="Ex: Intimidation" style={{ marginBottom: 0 }} />
+                      </div>
+
+                      {/* Objet tenu */}
+                      <div style={{ marginBottom: ".5rem" }}>
+                        <span className="boss-editor-ev-label" style={{ textAlign: "left", marginBottom: ".2rem" }}><i className="fa-solid fa-suitcase" style={{ marginRight: ".25rem" }} />Objet tenu</span>
+                        <input type="text" className="admin-pokedex-input" value={poke.item} onChange={(e) => updatePokemon(pIdx, "item", e.target.value)} placeholder="Ex: Restes (optionnel)" style={{ marginBottom: 0 }} />
                       </div>
 
                       {/* Attaques */}

@@ -79,6 +79,11 @@ function PokemonCard({ pokemon }) {
           <i className="fa-solid fa-star" aria-hidden /> {pokemon.ability}
         </div>
       )}
+      {pokemon.item && (
+        <div className="boss-pokemon-item">
+          <i className="fa-solid fa-suitcase" aria-hidden /> {pokemon.item}
+        </div>
+      )}
       {pokemon.moves && pokemon.moves.length > 0 && (
         <ul className="boss-pokemon-moves">
           {pokemon.moves.map((m, i) => (

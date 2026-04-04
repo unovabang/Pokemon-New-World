@@ -1905,6 +1905,11 @@ body{margin:0; font-family:"Outfit",system-ui,-apple-system,Segoe UI,Roboto,Helv
   margin-bottom: .4rem;
 }
 .boss-pokemon-ability i { font-size: .6rem; margin-right: .25rem; color: rgba(251,191,36,.5); font-style: normal; }
+.boss-pokemon-item {
+  font-size: .75rem; font-style: italic; color: var(--muted);
+  margin-bottom: .4rem;
+}
+.boss-pokemon-item i { font-size: .6rem; margin-right: .25rem; color: rgba(147,197,253,.5); font-style: normal; }
 .boss-pokemon-moves {
   list-style: none; margin: 0; padding: 0;
   display: flex; flex-direction: column; gap: .15rem;
@@ -7352,6 +7357,11 @@ a.dex-panel--active{cursor:default}
 .admin-dex-card-delete:hover {
   background: rgba(239,68,68,.35);
   color: #fca5a5;
+}
+.admin-dex-card-delete:disabled {
+  opacity: .3;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* ===== ADMIN BST EDITOR (grille) ===== */
