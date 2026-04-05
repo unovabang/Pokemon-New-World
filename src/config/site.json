@@ -44,6 +44,11 @@
   "discord": {
     "invite": "#"
   },
+  "easterEggs": {
+    "runicEnigma": true,
+    "secretPage": true,
+    "gighaston": true
+  },
   "maintenance": {
     "enabled": false,
     "title": "Maintenance en cours",

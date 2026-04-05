@@ -32,6 +32,10 @@ const HomePage = () => {
     ? { ...effectiveContent, downloads: { ...(effectiveContent.downloads || {}), ...downloadsFromApi } }
     : effectiveContent;
   const { backgrounds, heroVideo, game, carousel, downloads, tiktok, youtube, twitter, instagram, facebook, github, reddit, footer } = effectiveContentWithDownloads;
+  // Easter eggs : activés par défaut, désactivables via l'admin
+  const easterEggs = siteConfigFromApi?.easterEggs ?? content.easterEggs ?? {};
+  const enigmaEnabled = easterEggs.runicEnigma !== false;
+
   // Lien Discord : peut être une string (config external) ou un objet legacy { invite } (config site)
   const discord = typeof effectiveContent.discord === 'string'
     ? effectiveContent.discord
@@ -171,12 +175,13 @@ const HomePage = () => {
   const patreonHeroImageUrl = typeof patreonContent?.image === "string" && patreonContent.image.trim() ? patreonContent.image.trim() : null;
 
   const handleSecretClick = () => {
+    if (!enigmaEnabled) return;
     setOpenEnigmaModal(true);
     setEnigmaAnswer("");
   };
 
   const handleSecretZoneClick = () => {
-    if (showSecretButton) return;
+    if (!enigmaEnabled || showSecretButton) return;
     const next = secretZoneClicks + 1;
     setSecretZoneClicks(next);
     if (next >= 3) setShowSecretButton(true);

@@ -36,6 +36,11 @@ const SiteEditor = ({ onSave }) => {
   const [backgroundDim, setBackgroundDim] = useState(0.01);
   const [heroVideoUrl, setHeroVideoUrl] = useState('');
 
+  // Easter eggs
+  const [eeRunicEnigma, setEeRunicEnigma] = useState(true);
+  const [eeSecretPage, setEeSecretPage] = useState(true);
+  const [eeGighaston, setEeGighaston] = useState(true);
+
   // Maintenance
   const [maintenanceEnabled, setMaintenanceEnabled] = useState(false);
   const [maintenanceTitle, setMaintenanceTitle] = useState('Maintenance en cours');
@@ -78,6 +83,10 @@ const SiteEditor = ({ onSave }) => {
         setBackgroundBlur(config.backgrounds?.blur || 0.5);
         setBackgroundDim(config.backgrounds?.dim || 0.01);
         setHeroVideoUrl(config.heroVideo?.youtubeId ? `https://www.youtube.com/watch?v=${config.heroVideo.youtubeId}` : '');
+        // Easter eggs
+        setEeRunicEnigma(config.easterEggs?.runicEnigma !== false);
+        setEeSecretPage(config.easterEggs?.secretPage !== false);
+        setEeGighaston(config.easterEggs?.gighaston !== false);
         // Maintenance
         setMaintenanceEnabled(config.maintenance?.enabled || false);
         setMaintenanceTitle(config.maintenance?.title || 'Maintenance en cours');
@@ -150,6 +159,11 @@ const SiteEditor = ({ onSave }) => {
             },
             discord: {
               invite: "#"
+            },
+            easterEggs: {
+              runicEnigma: eeRunicEnigma,
+              secretPage: eeSecretPage,
+              gighaston: eeGighaston,
             },
             maintenance: {
               enabled: maintenanceEnabled,
@@ -274,6 +288,31 @@ const SiteEditor = ({ onSave }) => {
           </div>
         </div>
       )}
+
+      {/* Easter eggs */}
+      <div style={{ padding: "1.25rem 1.5rem", background: "rgba(168,85,247,.06)", border: "1px solid rgba(168,85,247,.15)", borderRadius: "12px", marginBottom: "1.5rem" }}>
+        <h3 style={{ margin: "0 0 1rem", fontSize: ".95rem", color: "#c084fc", display: "flex", alignItems: "center", gap: ".5rem" }}>
+          <i className="fa-solid fa-ghost" /> Easter eggs
+        </h3>
+        <div style={{ display: "flex", flexDirection: "column", gap: ".75rem" }}>
+          {[
+            { label: "Enigme Darkrai (bouton runique)", desc: "Zone secrete 3 clics sur le hero → enigme → page secrete", value: eeRunicEnigma, set: setEeRunicEnigma },
+            { label: "Page secrete (Chemin des Larmes)", desc: "Route /la-lune-brillera-ce-soir accessible", value: eeSecretPage, set: setEeSecretPage },
+            { label: "Gighaston (Pokedex)", desc: "Recherche secrete dans le Pokedex → entree corrompue", value: eeGighaston, set: setEeGighaston },
+          ].map(({ label, desc, value, set }) => (
+            <div key={label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", padding: ".5rem .75rem", background: "rgba(255,255,255,.03)", borderRadius: "8px" }}>
+              <div>
+                <div style={{ fontWeight: 600, fontSize: ".88rem", color: "#fff" }}>{label}</div>
+                <div style={{ fontSize: ".78rem", color: "rgba(255,255,255,.4)", marginTop: "2px" }}>{desc}</div>
+              </div>
+              <label className="maintenance-toggle-switch">
+                <input type="checkbox" checked={value} onChange={(e) => set(e.target.checked)} />
+                <span className="maintenance-toggle-slider" style={value ? { background: "#a855f7" } : {}} />
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="site-editor-grid" style={{ display: 'grid', gap: '2rem' }}>
         {/* Logo global : une seule URL pour tout le site public qui affiche le logo */}

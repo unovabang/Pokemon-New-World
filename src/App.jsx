@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect } from "react";
+import { lazy, Suspense, useState, useEffect, createContext, useContext } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import RouteSeo from "./components/RouteSeo";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -31,12 +31,17 @@ const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
   : `${window.location.origin}/api`;
 
+// Context pour les easter eggs (accessible partout)
+const EasterEggsContext = createContext({ runicEnigma: true, secretPage: true, gighaston: true });
+export function useEasterEggs() { return useContext(EasterEggsContext); }
+
 function MaintenanceGuard({ children }) {
   const { admin, loading: authLoading } = useAuth();
   const { pathname } = useLocation();
   const [maintenance, setMaintenance] = useState(null);
   const [discord, setDiscord] = useState("#");
   const [logoUrl, setLogoUrl] = useState("/logo.png");
+  const [easterEggs, setEasterEggs] = useState({ runicEnigma: true, secretPage: true, gighaston: true });
 
   useEffect(() => {
     const safeFetch = (url) => fetch(url).then((r) => r.json()).catch(() => null);
@@ -48,8 +53,8 @@ function MaintenanceGuard({ children }) {
         setMaintenance(siteData.config.maintenance || null);
         setDiscord(siteData.config.discord?.invite || "#");
         if (siteData.config.branding?.logo) setLogoUrl(siteData.config.branding.logo);
+        if (siteData.config.easterEggs) setEasterEggs(siteData.config.easterEggs);
       }
-      // Le lien Discord peut être dans external (string) ou site (objet)
       if (externalData?.success && externalData?.config) {
         const ext = externalData.config;
         const d = typeof ext.discord === "string" ? ext.discord : ext.discord?.invite;
@@ -58,22 +63,24 @@ function MaintenanceGuard({ children }) {
     });
   }, []);
 
-  // Toujours laisser passer admin et login admin
   const isAdminRoute = pathname.startsWith("/admin");
-  if (isAdminRoute) return children;
+  if (isAdminRoute) return <EasterEggsContext.Provider value={easterEggs}>{children}</EasterEggsContext.Provider>;
 
-  // Attendre le chargement auth + config avant de bloquer
-  if (authLoading || maintenance === null) return children;
+  if (authLoading || maintenance === null) return <EasterEggsContext.Provider value={easterEggs}>{children}</EasterEggsContext.Provider>;
 
-  // Admin connecte : jamais bloquer
-  if (admin) return children;
+  if (admin) return <EasterEggsContext.Provider value={easterEggs}>{children}</EasterEggsContext.Provider>;
 
-  // Maintenance active : afficher la page maintenance
   if (maintenance?.enabled) {
     return <MaintenancePage config={maintenance} discord={discord} logoUrl={logoUrl} />;
   }
 
-  return children;
+  return <EasterEggsContext.Provider value={easterEggs}>{children}</EasterEggsContext.Provider>;
+}
+
+function SecretRoute() {
+  const ee = useEasterEggs();
+  if (ee.secretPage === false) return <Navigate to="/" replace />;
+  return <SecretPage />;
 }
 
 export default function App() {
@@ -99,7 +106,7 @@ export default function App() {
             <Route path="/nerfs-and-buffs" element={<NerfsAndBuffsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/telechargement" element={<DownloadPage />} />
-            <Route path="/la-lune-brillera-ce-soir" element={<SecretPage />} />
+            <Route path="/la-lune-brillera-ce-soir" element={<SecretRoute />} />
             <Route path="/chemin-des-larmes" element={<Navigate to="/la-lune-brillera-ce-soir" replace />} />
             <Route path="/admin-login" element={<LoginAdmin />} />
             <Route path="/admin" element={
@@ -107,7 +114,6 @@ export default function App() {
                 <AdminPanel />
               </ProtectedRoute>
             } />
-            {/* Route catch-all pour les pages inexistantes */}
             <Route path="*" element={<Page404 />} />
           </Routes>
         </Suspense>

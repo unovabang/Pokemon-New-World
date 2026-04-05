@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import { useEasterEggs } from "../App";
 import content from "../config/index.js";
 import pokedexBgImg from "../assets/pokedex-background.jpg";
 
@@ -244,6 +245,7 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
 }
 
 export default function PokedexPage() {
+  const easterEggs = useEasterEggs();
   const [search, setSearch] = useState("");
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
@@ -261,7 +263,7 @@ export default function PokedexPage() {
   const handleSearchChange = useCallback(async (value) => {
     setSearch(value);
     const inputHash = await hashString(value);
-    if (inputHash === SECRET_HASH) {
+    if (inputHash === SECRET_HASH && easterEggs.gighaston !== false) {
       setShowEasterEgg(true);
       setSearch("");
     }
