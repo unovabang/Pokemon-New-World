@@ -4,6 +4,9 @@ export default function MaintenancePage({ config, discord, logoUrl }) {
   const { language } = useLanguage();
   const isEn = language === "en";
 
+  // Nettoyer le chemin logo (site.json peut stocker "public/logo.png")
+  const logo = (logoUrl || "/logo.png").replace(/^public\//, "/");
+
   const title = isEn
     ? (config?.titleEn || "Under Maintenance")
     : (config?.title || "Maintenance en cours");
@@ -27,7 +30,7 @@ export default function MaintenancePage({ config, discord, logoUrl }) {
         {/* Logo */}
         <div className="maintenance-logo-wrap">
           <img
-            src={logoUrl || "/logo.png"}
+            src={logo}
             alt="Pokémon New World"
             className="maintenance-logo"
           />

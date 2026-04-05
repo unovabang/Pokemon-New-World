@@ -2170,6 +2170,121 @@ app.put('/api/evs-location', requireAuth, (req, res) => {
 // Aperçu chat (widget site, lecture seule — voir server/chatPublicPreview.js)
 app.get('/api/chat/public-preview', handleChatPublicPreview);
 
+// === SEO AUDIT API ===
+
+// PageSpeed Insights proxy (évite CORS)
+app.get('/api/seo/pagespeed', requireAuth, async (req, res) => {
+  try {
+    const targetUrl = req.query.url || SITE_URL || 'https://www.pokemonnewworld.fr';
+    const strategy = req.query.strategy || 'mobile';
+    const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(targetUrl)}&category=performance&category=seo&category=accessibility&category=best-practices&strategy=${strategy}`;
+
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    if (data.error) {
+      return res.status(502).json({ success: false, error: data.error.message || 'Erreur PageSpeed API' });
+    }
+
+    const cats = data.lighthouseResult?.categories || {};
+    const audits = data.lighthouseResult?.audits || {};
+
+    const scores = {
+      performance: Math.round((cats.performance?.score || 0) * 100),
+      seo: Math.round((cats.seo?.score || 0) * 100),
+      accessibility: Math.round((cats.accessibility?.score || 0) * 100),
+      bestPractices: Math.round((cats['best-practices']?.score || 0) * 100),
+    };
+
+    const webVitals = {
+      lcp: { value: audits['largest-contentful-paint']?.displayValue || '—', score: audits['largest-contentful-paint']?.score },
+      fid: { value: audits['max-potential-fid']?.displayValue || audits['total-blocking-time']?.displayValue || '—', score: audits['total-blocking-time']?.score },
+      cls: { value: audits['cumulative-layout-shift']?.displayValue || '—', score: audits['cumulative-layout-shift']?.score },
+      fcp: { value: audits['first-contentful-paint']?.displayValue || '—', score: audits['first-contentful-paint']?.score },
+      ttfb: { value: audits['server-response-time']?.displayValue || '—', score: audits['server-response-time']?.score },
+      si: { value: audits['speed-index']?.displayValue || '—', score: audits['speed-index']?.score },
+    };
+
+    res.json({ success: true, scores, webVitals, strategy, url: targetUrl });
+  } catch (error) {
+    console.error('❌ Erreur API /api/seo/pagespeed:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Audit SEO interne
+app.get('/api/seo/audit', requireAuth, async (req, res) => {
+  try {
+    const baseUrl = SITE_URL || 'https://www.pokemonnewworld.fr';
+    const pages = ['/', '/patchnotes', '/pokedex', '/extradex', '/guide', '/boss',
+      '/lore', '/bst', '/item-location', '/equipe', '/evs-location',
+      '/nerfs-and-buffs', '/contact', '/telechargement'];
+
+    const results = [];
+
+    for (const page of pages) {
+      try {
+        const r = await fetch(`${baseUrl}${page}`, { redirect: 'follow', signal: AbortSignal.timeout(8000) });
+        const html = await r.text();
+
+        const getTag = (regex) => { const m = html.match(regex); return m ? m[1].trim() : ''; };
+
+        const title = getTag(/<title[^>]*>([^<]*)<\/title>/i);
+        const description = getTag(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["']/i)
+          || getTag(/<meta[^>]*content=["']([^"']*)["'][^>]*name=["']description["']/i);
+        const canonical = getTag(/<link[^>]*rel=["']canonical["'][^>]*href=["']([^"']*)["']/i);
+        const ogTitle = getTag(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']*)["']/i);
+        const ogDesc = getTag(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']*)["']/i);
+        const ogImage = getTag(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']*)["']/i);
+        const h1Count = (html.match(/<h1[\s>]/gi) || []).length;
+        const imgNoAlt = (html.match(/<img(?![^>]*alt=["'][^"']+["'])[^>]*>/gi) || []).length;
+
+        const issues = [];
+        if (!title) issues.push('Titre manquant');
+        else if (title.length > 60) issues.push('Titre trop long (>' + 60 + ')');
+        if (!description) issues.push('Description manquante');
+        else if (description.length < 120) issues.push('Description courte (<120)');
+        else if (description.length > 160) issues.push('Description longue (>160)');
+        if (!ogTitle) issues.push('og:title manquant');
+        if (!ogImage) issues.push('og:image manquant');
+        if (h1Count === 0) issues.push('Pas de H1');
+        if (h1Count > 1) issues.push(h1Count + ' H1 (1 attendu)');
+        if (imgNoAlt > 0) issues.push(imgNoAlt + ' img sans alt');
+
+        results.push({
+          page, status: r.status, title, description,
+          ogTitle: !!ogTitle, ogDesc: !!ogDesc, ogImage: !!ogImage,
+          canonical: !!canonical, h1Count, imgNoAlt, issues,
+        });
+      } catch (e) {
+        results.push({ page, status: 0, title: '', description: '', issues: ['Erreur: ' + e.message] });
+      }
+    }
+
+    // Vérifier robots.txt et sitemap
+    const checks = {};
+    try {
+      const rb = await fetch(`${baseUrl}/robots.txt`, { signal: AbortSignal.timeout(5000) });
+      checks.robotsTxt = rb.status === 200;
+    } catch { checks.robotsTxt = false; }
+    try {
+      const sm = await fetch(`${baseUrl}/sitemap.xml`, { signal: AbortSignal.timeout(5000) });
+      const smText = await sm.text();
+      checks.sitemap = sm.status === 200;
+      checks.sitemapPages = (smText.match(/<url>/gi) || []).length;
+    } catch { checks.sitemap = false; checks.sitemapPages = 0; }
+    try {
+      const mf = await fetch(`${baseUrl}/manifest.webmanifest`, { signal: AbortSignal.timeout(5000) });
+      checks.manifest = mf.status === 200;
+    } catch { checks.manifest = false; }
+
+    res.json({ success: true, pages: results, checks, baseUrl });
+  } catch (error) {
+    console.error('❌ Erreur API /api/seo/audit:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // === SITEMAP XML DYNAMIQUE ===
 const SITE_URL = 'https://www.pokemonnewworld.fr';
 const STATIC_ROUTES = [

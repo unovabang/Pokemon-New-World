@@ -27,6 +27,7 @@ import LoreEditor from "../components/LoreEditor";
 import BossEditor from "../components/BossEditor";
 import DownloadPageEditor from "../components/DownloadPageEditor";
 import UnderConstructionPage from "./UnderConstructionPage";
+import SeoAuditPanel from "../components/SeoAuditPanel";
 
 // Import des configurations JSON
 import siteConfig from "../config/site.json";
@@ -119,6 +120,7 @@ const AdminPanel = () => {
       title: 'Site',
       items: [
         { id: 'settings', name: 'Paramètres', icon: 'fa-sliders', description: 'Site, Patreon, pied de page' },
+        { id: 'seo', name: 'SEO', icon: 'fa-magnifying-glass-chart', description: 'Audit SEO & PageSpeed' },
         { id: 'team', name: "L'équipe", icon: 'fa-users', description: "Membres de l'équipe & remerciements" }
       ]
     },
@@ -426,6 +428,8 @@ const AdminPanel = () => {
             <ItemLocationEditor onSave={(config) => handleSaveConfig('item-location', config)} />
           )}
 
+          {activeTab === 'seo' && <SeoAuditPanel />}
+
           {activeTab === 'embed' && <EmbedEditor />}
 
           {activeTab === 'team' && <TeamEditor />}
@@ -475,7 +479,7 @@ const AdminPanel = () => {
           )}
 
           {activeTab !== 'dashboard' && activeTab !== 'news' && activeTab !== 'downloads' && activeTab !== 'downloadpage' && activeTab !== 'patchnotes' &&
-           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'boss' && activeTab !== 'itemlocation' && activeTab !== 'evs' && activeTab !== 'nerfs' && activeTab !== 'settings' && activeTab !== 'team' && activeTab !== 'lore' && activeTab !== 'embed' && activeTab !== 'tips' && activeTab !== 'logs' && (
+           activeTab !== 'pokedex' && activeTab !== 'bst' && activeTab !== 'guide' && activeTab !== 'boss' && activeTab !== 'itemlocation' && activeTab !== 'evs' && activeTab !== 'nerfs' && activeTab !== 'settings' && activeTab !== 'seo' && activeTab !== 'team' && activeTab !== 'lore' && activeTab !== 'embed' && activeTab !== 'tips' && activeTab !== 'logs' && (
             <div className="admin-panel-card">
               <div className="admin-panel-card-head">
                 <h2 className="admin-panel-card-title">
