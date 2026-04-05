@@ -521,7 +521,7 @@ export default function PokedexPage() {
                     {pokemon.imageUrl ? (
                       <img
                         src={pokemon.imageUrl}
-                        alt=""
+                        alt={pokemon.name}
                         loading="lazy"
                         onError={(e) => {
                           e.target.style.display = "none";
@@ -572,7 +572,7 @@ export default function PokedexPage() {
                     <div className="pokedex-table-cell pokedex-table-name" role="cell">{pokemon.name}</div>
                     <div className="pokedex-table-cell pokedex-table-sprite" role="cell">
                       {pokemon.imageUrl ? (
-                        <img src={pokemon.imageUrl} alt="" loading="lazy" onError={(e) => { e.target.style.display = "none"; }} />
+                        <img src={pokemon.imageUrl} alt={pokemon.name} loading="lazy" onError={(e) => { e.target.style.display = "none"; }} />
                       ) : (
                         <i className="fa-solid fa-paw" />
                       )}
@@ -621,7 +621,7 @@ export default function PokedexPage() {
             <div className="pokedex-modal-content">
               <div className="pokedex-modal-sprite">
                 {selectedPokemon.imageUrl ? (
-                  <img src={selectedPokemon.imageUrl} alt="" />
+                  <img src={selectedPokemon.imageUrl} alt={selectedPokemon.name} />
                 ) : (
                   <i className="fa-solid fa-paw" />
                 )}

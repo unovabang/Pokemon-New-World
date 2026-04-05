@@ -57,7 +57,7 @@ function PokemonCard({ pokemon }) {
       <div className="boss-pokemon-header">
         <div className="boss-pokemon-sprite">
           {pokemon.imageUrl ? (
-            <img src={pokemon.imageUrl} alt="" onError={(e) => { e.target.style.display = "none"; }} />
+            <img src={pokemon.imageUrl} alt={pokemon.name} onError={(e) => { e.target.style.display = "none"; }} />
           ) : (
             <i className="fa-solid fa-question" />
           )}

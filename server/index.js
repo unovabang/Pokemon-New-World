@@ -3,6 +3,7 @@ import express from 'express';
 import multer from 'multer';
 import cors from 'cors';
 import helmet from 'helmet';
+import compression from 'compression';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import fs from 'fs-extra';
@@ -54,6 +55,7 @@ app.use(cors({
   },
   credentials: true,
 }));
+app.use(compression());
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
@@ -2168,10 +2170,62 @@ app.put('/api/evs-location', requireAuth, (req, res) => {
 // Aperçu chat (widget site, lecture seule — voir server/chatPublicPreview.js)
 app.get('/api/chat/public-preview', handleChatPublicPreview);
 
+// === SITEMAP XML DYNAMIQUE ===
+const SITE_URL = 'https://www.pokemonnewworld.fr';
+const STATIC_ROUTES = [
+  '/', '/patchnotes', '/pokedex', '/extradex', '/guide', '/lore',
+  '/bst', '/item-location', '/equipe', '/evs-location',
+  '/nerfs-and-buffs', '/contact', '/telechargement', '/boss',
+];
+
+app.get('/sitemap.xml', (req, res) => {
+  try {
+    const loreData = getConfig('lore');
+    const loreSlugs = (loreData?.stories || [])
+      .filter(s => s.slug)
+      .map(s => `/lore/${s.slug}`);
+
+    const allRoutes = [...STATIC_ROUTES, ...loreSlugs];
+    const today = new Date().toISOString().split('T')[0];
+
+    const urls = allRoutes.map(route => {
+      const priority = route === '/' ? '1.0' : route.startsWith('/lore/') ? '0.6' : '0.8';
+      const changefreq = route === '/patchnotes' ? 'weekly' : 'monthly';
+      return `  <url>
+    <loc>${SITE_URL}${route}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>`;
+    }).join('\n');
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`;
+
+    res.set('Content-Type', 'application/xml');
+    res.set('Cache-Control', 'public, max-age=3600');
+    res.send(xml);
+  } catch (error) {
+    console.error('❌ Erreur génération sitemap:', error);
+    res.status(500).send('Erreur génération sitemap');
+  }
+});
+
 // Servir le frontend React (build Vite) en production — doit être en dernier
 const DIST_DIR = path.join(__dirname, '../dist');
 if (fs.existsSync(DIST_DIR)) {
-  app.use(express.static(DIST_DIR));
+  // Assets Vite (hachés) : cache longue durée ; index.html : pas de cache
+  app.use(express.static(DIST_DIR, {
+    maxAge: '1y',
+    immutable: true,
+    setHeaders(res, filePath) {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+    },
+  }));
   app.get('*', (req, res) => res.sendFile(path.join(DIST_DIR, 'index.html')));
 }
 

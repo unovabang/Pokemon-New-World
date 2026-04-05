@@ -121,7 +121,7 @@ export default function PatchNotesPage() {
                         <img
                           key={section.image}
                           src={section.image}
-                          alt=""
+                          alt={section.title || "Section patch notes"}
                           className="patchnotes-section-image"
                           decoding="async"
                         />

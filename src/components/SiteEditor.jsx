@@ -36,6 +36,13 @@ const SiteEditor = ({ onSave }) => {
   const [backgroundDim, setBackgroundDim] = useState(0.01);
   const [heroVideoUrl, setHeroVideoUrl] = useState('');
 
+  // Maintenance
+  const [maintenanceEnabled, setMaintenanceEnabled] = useState(false);
+  const [maintenanceTitle, setMaintenanceTitle] = useState('Maintenance en cours');
+  const [maintenanceTitleEn, setMaintenanceTitleEn] = useState('Under Maintenance');
+  const [maintenanceMessage, setMaintenanceMessage] = useState('Le site est temporairement indisponible. Revenez bientôt !');
+  const [maintenanceMessageEn, setMaintenanceMessageEn] = useState('The site is temporarily unavailable. Come back soon!');
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -71,6 +78,12 @@ const SiteEditor = ({ onSave }) => {
         setBackgroundBlur(config.backgrounds?.blur || 0.5);
         setBackgroundDim(config.backgrounds?.dim || 0.01);
         setHeroVideoUrl(config.heroVideo?.youtubeId ? `https://www.youtube.com/watch?v=${config.heroVideo.youtubeId}` : '');
+        // Maintenance
+        setMaintenanceEnabled(config.maintenance?.enabled || false);
+        setMaintenanceTitle(config.maintenance?.title || 'Maintenance en cours');
+        setMaintenanceTitleEn(config.maintenance?.titleEn || 'Under Maintenance');
+        setMaintenanceMessage(config.maintenance?.message || 'Le site est temporairement indisponible. Revenez bientôt !');
+        setMaintenanceMessageEn(config.maintenance?.messageEn || 'The site is temporarily unavailable. Come back soon!');
       }
     } catch (error) {
       console.error('Erreur lors du chargement de la config site:', error);
@@ -137,6 +150,13 @@ const SiteEditor = ({ onSave }) => {
             },
             discord: {
               invite: "#"
+            },
+            maintenance: {
+              enabled: maintenanceEnabled,
+              title: maintenanceTitle,
+              titleEn: maintenanceTitleEn,
+              message: maintenanceMessage,
+              messageEn: maintenanceMessageEn,
             }
           };
           
@@ -205,6 +225,55 @@ const SiteEditor = ({ onSave }) => {
           )}
         </button>
       </div>
+
+      {/* Mode maintenance */}
+      <div className={`maintenance-toggle-section${maintenanceEnabled ? " active" : ""}`}>
+        <div className="maintenance-toggle-info">
+          <i className={`fa-solid ${maintenanceEnabled ? "fa-triangle-exclamation" : "fa-wrench"}`} />
+          <div>
+            <div className="maintenance-toggle-label">Mode maintenance</div>
+            <div className={`maintenance-toggle-status ${maintenanceEnabled ? "on" : "off"}`}>
+              {maintenanceEnabled ? "Le site est en maintenance — les visiteurs voient la page de maintenance" : "Le site est accessible normalement"}
+            </div>
+          </div>
+        </div>
+        <label className="maintenance-toggle-switch">
+          <input
+            type="checkbox"
+            checked={maintenanceEnabled}
+            onChange={(e) => setMaintenanceEnabled(e.target.checked)}
+          />
+          <span className="maintenance-toggle-slider" />
+        </label>
+      </div>
+
+      {maintenanceEnabled && (
+        <div style={{ display: "grid", gap: "1rem", marginBottom: "1rem", padding: "1.25rem", background: "rgba(239,68,68,.06)", borderRadius: "12px", border: "1px solid rgba(239,68,68,.15)" }}>
+          <h3 style={{ margin: 0, fontSize: ".95rem", color: "#ef4444" }}>
+            <i className="fa-solid fa-language" /> Messages de maintenance
+          </h3>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div>
+              <label style={{ fontSize: ".85rem", color: "rgba(255,255,255,.6)", marginBottom: ".25rem", display: "block" }}>Titre (FR)</label>
+              <input type="text" value={maintenanceTitle} onChange={(e) => setMaintenanceTitle(e.target.value)} style={{ width: "100%", padding: ".5rem .75rem", background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: "8px", color: "#fff", fontSize: ".9rem" }} />
+            </div>
+            <div>
+              <label style={{ fontSize: ".85rem", color: "rgba(255,255,255,.6)", marginBottom: ".25rem", display: "block" }}>Title (EN)</label>
+              <input type="text" value={maintenanceTitleEn} onChange={(e) => setMaintenanceTitleEn(e.target.value)} style={{ width: "100%", padding: ".5rem .75rem", background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: "8px", color: "#fff", fontSize: ".9rem" }} />
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div>
+              <label style={{ fontSize: ".85rem", color: "rgba(255,255,255,.6)", marginBottom: ".25rem", display: "block" }}>Message (FR)</label>
+              <textarea value={maintenanceMessage} onChange={(e) => setMaintenanceMessage(e.target.value)} rows={3} style={{ width: "100%", padding: ".5rem .75rem", background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: "8px", color: "#fff", fontSize: ".9rem", resize: "vertical" }} />
+            </div>
+            <div>
+              <label style={{ fontSize: ".85rem", color: "rgba(255,255,255,.6)", marginBottom: ".25rem", display: "block" }}>Message (EN)</label>
+              <textarea value={maintenanceMessageEn} onChange={(e) => setMaintenanceMessageEn(e.target.value)} rows={3} style={{ width: "100%", padding: ".5rem .75rem", background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", borderRadius: "8px", color: "#fff", fontSize: ".9rem", resize: "vertical" }} />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="site-editor-grid" style={{ display: 'grid', gap: '2rem' }}>
         {/* Logo global : une seule URL pour tout le site public qui affiche le logo */}

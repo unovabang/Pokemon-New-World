@@ -235,7 +235,7 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
         <div className="bst-modal-sprite-wrap">
           <img
             src={pokemon.sprite || PLACEHOLDER_SPRITE}
-            alt=""
+            alt={pokemon.name}
             className="bst-modal-sprite"
             onError={(e) => (e.target.src = PLACEHOLDER_SPRITE)}
           />
@@ -336,7 +336,7 @@ function BSTTable({ id, title, icon, data, pokedexList = [], onSelect, viewMode 
               <div className="bst-card-sprite-wrap">
                 <img
                   src={row.sprite}
-                  alt=""
+                  alt={row.name}
                   className="bst-card-sprite"
                   loading="lazy"
                   onError={(e) => (e.target.src = PLACEHOLDER_SPRITE)}
@@ -390,7 +390,7 @@ function BSTTable({ id, title, icon, data, pokedexList = [], onSelect, viewMode 
                   <div className="bst-sprite-wrap">
                     <img
                       src={row.sprite}
-                      alt=""
+                      alt={row.name}
                       className="bst-sprite"
                       loading="lazy"
                       onError={(e) => (e.target.src = PLACEHOLDER_SPRITE)}

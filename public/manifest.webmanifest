@@ -1,0 +1,17 @@
+{
+  "name": "Pokemon New World",
+  "short_name": "PNW",
+  "description": "Site officiel du fangame Pokemon New World",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a1a",
+  "theme_color": "#1a1a2e",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ]
+}

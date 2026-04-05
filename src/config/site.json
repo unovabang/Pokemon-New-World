@@ -43,5 +43,12 @@
   },
   "discord": {
     "invite": "#"
+  },
+  "maintenance": {
+    "enabled": false,
+    "title": "Maintenance en cours",
+    "titleEn": "Under Maintenance",
+    "message": "Le site est temporairement indisponible. Revenez bientôt !",
+    "messageEn": "The site is temporarily unavailable. Come back soon!"
   }
 }

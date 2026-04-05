@@ -171,7 +171,7 @@ function NerfBuffModal({ entry, pokedexList = [], onClose }) {
         <div className="bst-modal-sprite-wrap">
           <img
             src={sprite}
-            alt=""
+            alt={entry.name}
             className="bst-modal-sprite"
             onError={(e) => (e.target.src = PLACEHOLDER_SPRITE)}
           />
@@ -321,7 +321,7 @@ function NerfBuffGrid({ id, title, icon, entries, pokedexList, onSelect }) {
             <div className="bst-card-sprite-wrap">
               <img
                 src={row.sprite}
-                alt=""
+                alt={row.name}
                 className="bst-card-sprite"
                 loading="lazy"
                 onError={(e) => (e.target.src = PLACEHOLDER_SPRITE)}

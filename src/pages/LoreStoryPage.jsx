@@ -38,13 +38,13 @@ function getBanner(story, index) {
   return CHAPTER_BANNER_IMAGES[index >= 0 ? index % CHAPTER_BANNER_IMAGES.length : 0];
 }
 
-function RenderContent({ paragraphs }) {
+function RenderContent({ paragraphs, storyTitle }) {
   if (!Array.isArray(paragraphs)) return null;
   return paragraphs.map((p, i) => {
     if (typeof p === "string" && p.startsWith("![")) {
       const m = p.match(/!\[.*?\]\((.*?)\)/);
       const src = m ? m[1] : "";
-      if (src) return <img key={i} src={src} alt="" className="lore-story-image" />;
+      if (src) return <img key={i} src={src} alt={`Illustration - ${storyTitle || "lore"}`} className="lore-story-image" />;
       return null;
     }
     const isTitleOnly = typeof p === "string" && /^\s*\[TITLE\].*\[\/TITLE\]\s*$/.test(p);
@@ -223,14 +223,13 @@ export default function LoreStoryPage() {
             <span className="lore-story-reading-time" aria-hidden><i className="fa-regular fa-clock" aria-hidden />{readingTime} min {isEn ? "read" : "lecture"}</span>
           </div>
 
-          <span className="lore-story-chapter-label">{isEn ? "Chapter" : "Chapitre"}</span>
-          <h2 className="lore-story-content-title">{title}</h2>
+          <h2 className="lore-story-content-title"><span className="lore-story-chapter-label">{isEn ? "Chapter" : "Chapitre"}</span> {title}</h2>
           <div className="lore-story-meta">
             <p className="lore-story-intro">{renderInlineMarkdown(intro)}</p>
             <p className="lore-story-author">{isEn ? "Reported by" : "Rapporté par"} {author}</p>
           </div>
           <div className="lore-story-body">
-            <RenderContent paragraphs={paragraphs} />
+            <RenderContent paragraphs={paragraphs} storyTitle={title} />
           </div>
           {hasOne && (
             <footer className="lore-story-footer">

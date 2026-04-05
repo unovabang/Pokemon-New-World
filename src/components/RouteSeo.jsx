@@ -131,6 +131,12 @@ function buildConfig(pathname, language, t) {
       path: "/telechargement",
       lang,
     }),
+    "/boss": () => ({
+      title: t("seo.pages.boss.title"),
+      description: t("seo.pages.boss.description"),
+      path: "/boss",
+      lang,
+    }),
   };
 
   const builder = pages[pathname];

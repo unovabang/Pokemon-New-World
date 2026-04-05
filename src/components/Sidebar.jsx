@@ -105,7 +105,7 @@ const Sidebar = () => {
         <div className="sidebar-inner" style={innerStyle}>
           <div className="sidebar-header">
             {logoUrl ? (
-              <img src={logoUrl} alt="" className="sidebar-logo" />
+              <img src={logoUrl} alt="Pokemon New World" className="sidebar-logo" />
             ) : (
               <span className="sidebar-brand-text">Pokémon New World</span>
             )}

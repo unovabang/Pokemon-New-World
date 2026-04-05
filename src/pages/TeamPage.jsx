@@ -79,7 +79,7 @@ export default function TeamPage() {
                   <div className="team-card-avatar-wrap">
                     <img
                       src={member.avatar || DEFAULT_AVATAR}
-                      alt=""
+                      alt={member.pseudo || "Membre"}
                       className="team-card-avatar"
                       loading="lazy"
                     />

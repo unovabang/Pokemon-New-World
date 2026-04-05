@@ -68,6 +68,33 @@ function setLinkCanonical(href) {
   el.setAttribute("href", href);
 }
 
+function setHreflang(href) {
+  if (!href) return;
+  const langs = ["fr", "en", "x-default"];
+  for (const lang of langs) {
+    const selector = `link[rel="alternate"][hreflang="${lang}"]`;
+    let el = document.querySelector(selector);
+    if (!el) {
+      el = document.createElement("link");
+      el.setAttribute("rel", "alternate");
+      el.setAttribute("hreflang", lang);
+      document.head.appendChild(el);
+    }
+    el.setAttribute("href", href);
+  }
+}
+
+function setJsonLd(id, data) {
+  let el = document.getElementById(id);
+  if (!el) {
+    el = document.createElement("script");
+    el.id = id;
+    el.type = "application/ld+json";
+    document.head.appendChild(el);
+  }
+  el.textContent = JSON.stringify(data);
+}
+
 /**
  * Met à jour title, description, Open Graph, Twitter et canonical (SPA).
  * @param {object} opts
@@ -115,14 +142,33 @@ export function applyPageSeo({
   setMetaByProperty("og:image", toAbsoluteUrl(imagePath));
   setMetaByProperty("og:locale", lang === "en" ? "en_US" : "fr_FR");
 
-  setMetaByProperty("twitter:card", "summary_large_image");
-  setMetaByProperty("twitter:title", title);
-  setMetaByProperty("twitter:description", description);
-  setMetaByProperty("twitter:image", toAbsoluteUrl(imagePath));
+  setMetaByName("twitter:card", "summary_large_image");
+  setMetaByName("twitter:title", title);
+  setMetaByName("twitter:description", description);
+  setMetaByName("twitter:image", toAbsoluteUrl(imagePath));
 
   setLinkCanonical(canonical);
+  setHreflang(canonical);
 
   document.documentElement.lang = lang === "en" ? "en" : "fr";
 
   setMetaByName("robots", robots || "index,follow");
+
+  // BreadcrumbList JSON-LD dynamique
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", position: 1, name: "Accueil", item: base },
+    ],
+  };
+  if (pathNormalized !== "/") {
+    breadcrumb.itemListElement.push({
+      "@type": "ListItem",
+      position: 2,
+      name: title.split("•")[0].split("|")[0].trim(),
+      item: canonical,
+    });
+  }
+  setJsonLd("seo-breadcrumb-ld", breadcrumb);
 }

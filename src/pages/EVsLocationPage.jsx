@@ -306,7 +306,7 @@ export default function EVsLocationPage() {
                             <div className="evs-location-pokemon-sprite-wrap">
                               <img
                                 src={spriteUrl}
-                                alt=""
+                                alt={name}
                                 className="evs-location-pokemon-sprite"
                                 loading="lazy"
                               />

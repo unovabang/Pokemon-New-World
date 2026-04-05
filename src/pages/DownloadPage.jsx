@@ -151,7 +151,7 @@ export default function DownloadPage() {
           </h2>
           <div className="download-cards">
             {(downloads?.launcherDownloadEnabled !== false && downloads?.launcher?.trim() && downloads.launcher !== "#") ? (
-              <a className="download-card-btn download-card-btn--launcher" href={downloads.launcher.trim()}>
+              <a className="download-card-btn download-card-btn--launcher" href={downloads.launcher.trim()} rel="noopener noreferrer">
                 <span className="download-card-btn-icon"><i className="fa-solid fa-rocket" /></span>
                 <span className="download-card-btn-body">
                   <span className="download-card-btn-title">{isEn ? "Download the Game" : "Télécharger le Jeu"}</span>
@@ -219,7 +219,7 @@ export default function DownloadPage() {
                   <i className="fa-solid fa-xmark" />
                 </button>
                 {gallery[galleryIndex] && (
-                  <img src={gallery[galleryIndex]} alt="" onClick={(e) => e.stopPropagation()} />
+                  <img src={gallery[galleryIndex]} alt={`Screenshot ${galleryIndex + 1}`} onClick={(e) => e.stopPropagation()} />
                 )}
               </div>
             )}
@@ -257,7 +257,7 @@ export default function DownloadPage() {
           <div className="footer-grid">
             <div className="footer-col footer-col--brand">
               <div className="footer-brand">
-                {logoUrl ? <img src={logoUrl} alt="" /> : null}
+                {logoUrl ? <img src={logoUrl} alt={effectiveContent.game?.title || "Pokemon New World"} /> : null}
                 <strong>{effectiveContent.game?.title || "Pokémon New World"}</strong>
               </div>
               <p className="footer-desc">{t("footer.description")}</p>

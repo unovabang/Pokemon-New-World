@@ -241,16 +241,16 @@ const HomePage = () => {
           {/* Sélecteur de langue */}
           <LanguageSelector className="language-selector-above-video" />
           
-          {/* HERO vidéo : on retire le H1 et on agrandit le logo */}
+          {/* HERO vidéo */}
           <section className="section" style={{ padding: 0 }}>
             <HeroVideo videoId={heroVideo.youtubeId}>
               <div>
+                <h1 className="sr-only">{game?.title || "Pokémon New World"} — {t("seo.description")}</h1>
                 {logoUrl ? (
-                  <img className="hero-logo" src={logoUrl} alt="" />
+                  <img className="hero-logo" src={logoUrl} alt={game?.title || "Pokemon New World"} />
                 ) : (
                   <p className="hero-logo hero-logo--text">{game?.title || "Pokémon New World"}</p>
                 )}
-                {/* Titre texte retiré */}
                 <div className="cta">
                   <div className="cta-row">
                     <button 
@@ -368,7 +368,7 @@ const HomePage = () => {
           {/* DERNIÈRES NOUVEAUTÉS */}
           <section id="news" className="section card">
             <h2>
-              <img src="/newsCLEAN3.png" alt="" className="section-icon" />
+              <img src="/newsCLEAN3.png" alt="Nouveautes" className="section-icon" />
               {" "}
               {t('sections.news.title')}
             </h2>
@@ -395,7 +395,7 @@ const HomePage = () => {
                 <div className="dual-media">
                   <img
                     src="/TIKTOK.png"
-                    alt=""
+                    alt="TikTok Pokemon New World"
                     className="dual-image"
                     decoding="async"
                   />
@@ -435,7 +435,7 @@ const HomePage = () => {
                     <img
                       key={patchNotesSectionImageSrc}
                       src={patchNotesSectionImageSrc}
-                      alt=""
+                      alt="Patch Notes"
                       className="dual-image"
                       decoding="async"
                     />
@@ -464,7 +464,7 @@ const HomePage = () => {
           <section id="patreon" className="section card">
             <h2>
               {patreonIconUrl ? (
-                <img src={patreonIconUrl} alt="" className="section-icon" />
+                <img src={patreonIconUrl} alt="Patreon" className="section-icon" />
               ) : (
                 <i className="fa-brands fa-patreon section-icon" aria-hidden />
               )}{" "}
@@ -481,7 +481,7 @@ const HomePage = () => {
                 aria-label={patreonOverlayOpen ? (t("sections.patreon.close") || "Fermer") : (t("sections.patreon.open") || "Voir le contenu Patreon")}
               >
                 {patreonHeroImageUrl ? (
-                  <img src={patreonHeroImageUrl} alt="" className="patreon-image" />
+                  <img src={patreonHeroImageUrl} alt="Contenu Patreon Pokemon New World" className="patreon-image" />
                 ) : (
                   <div className="patreon-image patreon-image--placeholder" aria-hidden>
                     <i className="fa-brands fa-patreon" />
@@ -513,7 +513,7 @@ const HomePage = () => {
             <div className="footer-grid">
               <div className="footer-col footer-col--brand">
                 <div className="footer-brand">
-                  {logoUrl ? <img src={logoUrl} alt="" /> : null}
+                  {logoUrl ? <img src={logoUrl} alt={game?.title || "Pokemon New World"} /> : null}
                   <strong>{game?.title || "Pokémon New World"}</strong>
                 </div>
                 <p className="footer-desc">{t('footer.description')}</p>
@@ -652,7 +652,7 @@ const HomePage = () => {
                     <img
                       key={patchNotesFromApi.versions[0].image}
                       src={patchNotesFromApi.versions[0].image}
-                      alt=""
+                      alt={`Patch ${patchNotesFromApi.versions[0].version || ""}`}
                       className="patch-image"
                       decoding="async"
                     />
@@ -670,7 +670,7 @@ const HomePage = () => {
                         <img
                           key={section.image}
                           src={section.image}
-                          alt=""
+                          alt={section.title || "Section patch notes"}
                           className="patch-section-image"
                           decoding="async"
                         />

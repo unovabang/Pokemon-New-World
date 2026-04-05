@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin-login
+Disallow: /api/
+Disallow: /la-lune-brillera-ce-soir
+
+Sitemap: https://www.pokemonnewworld.fr/sitemap.xml

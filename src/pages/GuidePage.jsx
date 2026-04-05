@@ -35,7 +35,7 @@ function CharacterBubble({ character, onClick }) {
       <div className="guide-character-bubble-inner">
         <img
           src={imgSrc}
-          alt=""
+          alt={character.name}
           className="guide-character-bubble-img"
           loading="lazy"
         />
