@@ -64,17 +64,15 @@ function MaintenanceGuard({ children }) {
   }, []);
 
   const isAdminRoute = pathname.startsWith("/admin");
-  if (isAdminRoute) return <EasterEggsContext.Provider value={easterEggs}>{children}</EasterEggsContext.Provider>;
+  const showMaintenance = !isAdminRoute && !authLoading && maintenance !== null && !admin && maintenance?.enabled;
 
-  if (authLoading || maintenance === null) return <EasterEggsContext.Provider value={easterEggs}>{children}</EasterEggsContext.Provider>;
-
-  if (admin) return <EasterEggsContext.Provider value={easterEggs}>{children}</EasterEggsContext.Provider>;
-
-  if (maintenance?.enabled) {
-    return <MaintenancePage config={maintenance} discord={discord} logoUrl={logoUrl} />;
-  }
-
-  return <EasterEggsContext.Provider value={easterEggs}>{children}</EasterEggsContext.Provider>;
+  return (
+    <EasterEggsContext.Provider value={easterEggs}>
+      {showMaintenance
+        ? <MaintenancePage config={maintenance} discord={discord} logoUrl={logoUrl} />
+        : children}
+    </EasterEggsContext.Provider>
+  );
 }
 
 function SecretRoute() {
