@@ -4,7 +4,6 @@ export default function MaintenancePage({ config, discord, logoUrl }) {
   const { language } = useLanguage();
   const isEn = language === "en";
 
-  // Nettoyer le chemin logo (site.json peut stocker "public/logo.png")
   const logo = (logoUrl || "/logo.png").replace(/^public\//, "/");
 
   const title = isEn
@@ -16,7 +15,26 @@ export default function MaintenancePage({ config, discord, logoUrl }) {
 
   return (
     <div className="maintenance-page">
-      {/* Particules animées */}
+      {/* Monde Distorsion background */}
+      <div className="distortion-bg" aria-hidden>
+        {/* Portail central */}
+        <div className="distortion-portal" />
+        <div className="distortion-portal distortion-portal--2" />
+        {/* Piliers flottants inversés */}
+        <div className="distortion-pillar distortion-pillar--1" />
+        <div className="distortion-pillar distortion-pillar--2" />
+        <div className="distortion-pillar distortion-pillar--3" />
+        <div className="distortion-pillar distortion-pillar--4" />
+        {/* Plateformes */}
+        <div className="distortion-platform distortion-platform--1" />
+        <div className="distortion-platform distortion-platform--2" />
+        <div className="distortion-platform distortion-platform--3" />
+        {/* Brume/fissures */}
+        <div className="distortion-mist distortion-mist--1" />
+        <div className="distortion-mist distortion-mist--2" />
+      </div>
+
+      {/* Particules spectrales */}
       <div className="maintenance-particles" aria-hidden>
         <div className="maintenance-particle maintenance-particle--1" />
         <div className="maintenance-particle maintenance-particle--2" />
@@ -24,20 +42,16 @@ export default function MaintenancePage({ config, discord, logoUrl }) {
         <div className="maintenance-particle maintenance-particle--4" />
         <div className="maintenance-particle maintenance-particle--5" />
         <div className="maintenance-particle maintenance-particle--6" />
+        <div className="maintenance-particle maintenance-particle--7" />
+        <div className="maintenance-particle maintenance-particle--8" />
       </div>
 
       <div className="maintenance-card">
-        {/* Logo */}
         <div className="maintenance-logo-wrap">
-          <img
-            src={logo}
-            alt="Pokémon New World"
-            className="maintenance-logo"
-          />
+          <img src={logo} alt="Pokemon New World" className="maintenance-logo" />
           <div className="maintenance-logo-glow" aria-hidden />
         </div>
 
-        {/* Icône + titre */}
         <div className="maintenance-badge">
           <i className="fa-solid fa-wrench" aria-hidden />
           {isEn ? "MAINTENANCE" : "MAINTENANCE"}
@@ -47,12 +61,7 @@ export default function MaintenancePage({ config, discord, logoUrl }) {
         <p className="maintenance-message">{message}</p>
 
         {discord && discord !== "#" && (
-          <a
-            href={discord}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="maintenance-discord-btn"
-          >
+          <a href={discord} target="_blank" rel="noopener noreferrer" className="maintenance-discord-btn">
             <i className="fa-brands fa-discord" aria-hidden />
             {isEn ? "Join our Discord" : "Rejoindre le Discord"}
           </a>

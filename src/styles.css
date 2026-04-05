@@ -10856,49 +10856,148 @@ a.dex-panel--active{cursor:default}
   .pnw-site-chat-body{ max-height:220px; }
 }
 
-/* ── Page de maintenance ─────────────────────────────────── */
+/* ── Page de maintenance — Monde Distorsion ──────────────── */
 .maintenance-page{
   min-height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
   padding:2rem;
-  background:#06060f;
+  background:#04030a;
   position:relative;
   overflow:hidden;
 }
-/* Fond animé : aurore boréale */
-.maintenance-page::before{
-  content:"";
+/* Fond distorsion : dégradés sombres violet/noir avec mouvement */
+.distortion-bg{
   position:absolute;
-  inset:-50%;
-  width:200%;
-  height:200%;
-  background:
-    conic-gradient(from 0deg at 30% 40%, rgba(102,126,234,.18) 0deg, transparent 60deg, transparent 300deg, rgba(102,126,234,.18) 360deg),
-    conic-gradient(from 180deg at 70% 60%, rgba(118,75,162,.14) 0deg, transparent 60deg, transparent 300deg, rgba(118,75,162,.14) 360deg),
-    conic-gradient(from 90deg at 50% 80%, rgba(59,130,246,.10) 0deg, transparent 60deg, transparent 300deg, rgba(59,130,246,.10) 360deg);
-  animation:maintenance-aurora 20s linear infinite;
+  inset:0;
   pointer-events:none;
+  background:
+    radial-gradient(ellipse 120% 80% at 50% 120%, rgba(75,0,130,.25) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 100% at 20% 0%, rgba(40,0,80,.2) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 80% at 90% 30%, rgba(100,0,150,.12) 0%, transparent 50%);
 }
-@keyframes maintenance-aurora{
-  from{transform:rotate(0deg)}
-  to{transform:rotate(360deg)}
+/* Portail central — anneau spectral tournant */
+.distortion-portal{
+  position:absolute;
+  width:500px;height:500px;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  border:2px solid rgba(130,80,200,.08);
+  box-shadow:
+    0 0 80px 20px rgba(100,50,180,.06),
+    inset 0 0 60px 10px rgba(80,30,150,.04);
+  animation:distortion-spin 40s linear infinite;
 }
+.distortion-portal--2{
+  position:absolute;
+  width:700px;height:700px;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  border:1px solid rgba(130,80,200,.04);
+  box-shadow:0 0 120px 30px rgba(80,20,140,.04);
+  animation:distortion-spin 60s linear infinite reverse;
+}
+@keyframes distortion-spin{
+  from{transform:translate(-50%,-50%) rotate(0deg)}
+  to{transform:translate(-50%,-50%) rotate(360deg)}
+}
+/* Piliers flottants inversés — barres verticales spectrales */
+.distortion-pillar{
+  position:absolute;
+  width:3px;
+  background:linear-gradient(to top, transparent, rgba(140,80,220,.15), rgba(140,80,220,.05), transparent);
+  animation:distortion-pillar-float ease-in-out infinite;
+}
+.distortion-pillar--1{
+  height:35vh;left:12%;bottom:0;
+  animation-duration:8s;
+  transform-origin:bottom center;
+}
+.distortion-pillar--2{
+  height:25vh;right:18%;top:0;
+  background:linear-gradient(to bottom, transparent, rgba(100,50,180,.12), transparent);
+  animation-duration:10s;animation-delay:2s;
+  transform-origin:top center;
+}
+.distortion-pillar--3{
+  height:40vh;left:75%;bottom:10%;
+  animation-duration:12s;animation-delay:4s;
+}
+.distortion-pillar--4{
+  height:20vh;left:30%;top:5%;
+  background:linear-gradient(to bottom, transparent, rgba(160,80,240,.08), transparent);
+  animation-duration:9s;animation-delay:1s;
+}
+@keyframes distortion-pillar-float{
+  0%,100%{opacity:.3;transform:scaleY(1) translateX(0)}
+  50%{opacity:.7;transform:scaleY(1.15) translateX(8px)}
+}
+/* Plateformes flottantes — rectangles inclinés */
+.distortion-platform{
+  position:absolute;
+  background:linear-gradient(135deg, rgba(80,40,140,.12), rgba(60,20,100,.06));
+  border:1px solid rgba(120,60,200,.08);
+  border-radius:4px;
+  animation:distortion-platform-drift ease-in-out infinite;
+}
+.distortion-platform--1{
+  width:120px;height:8px;
+  bottom:20%;left:8%;
+  transform:rotate(-8deg);
+  animation-duration:14s;
+}
+.distortion-platform--2{
+  width:80px;height:6px;
+  top:25%;right:12%;
+  transform:rotate(12deg);
+  animation-duration:11s;animation-delay:3s;
+}
+.distortion-platform--3{
+  width:100px;height:6px;
+  bottom:35%;right:25%;
+  transform:rotate(-5deg);
+  animation-duration:16s;animation-delay:6s;
+}
+@keyframes distortion-platform-drift{
+  0%,100%{transform:rotate(var(--r,0deg)) translateY(0);opacity:.4}
+  50%{transform:rotate(var(--r,0deg)) translateY(-15px);opacity:.8}
+}
+/* Brume spectrale */
+.distortion-mist{
+  position:absolute;
+  width:100%;height:30%;
+  background:linear-gradient(to top, rgba(60,20,100,.15), transparent);
+  animation:distortion-mist-pulse ease-in-out infinite;
+}
+.distortion-mist--1{bottom:0;animation-duration:6s}
+.distortion-mist--2{
+  top:0;
+  background:linear-gradient(to bottom, rgba(40,10,80,.1), transparent);
+  animation-duration:8s;animation-delay:3s;
+}
+@keyframes distortion-mist-pulse{
+  0%,100%{opacity:.5}
+  50%{opacity:1}
+}
+/* Vignette sombre */
 .maintenance-page::after{
   content:"";
   position:absolute;
   inset:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 50%, transparent 30%, #06060f 80%);
+  background:radial-gradient(ellipse 70% 60% at 50% 50%, transparent 20%, #04030a 85%);
   pointer-events:none;
+  z-index:0;
 }
-/* Particules flottantes */
+/* Particules spectrales (violet/rouge sombre) */
 .maintenance-particles{
   position:absolute;
   inset:0;
   pointer-events:none;
   overflow:hidden;
+  z-index:0;
 }
 .maintenance-particle{
   position:absolute;
@@ -10906,107 +11005,82 @@ a.dex-panel--active{cursor:default}
   opacity:0;
   animation:maintenance-float linear infinite;
 }
-.maintenance-particle--1{
-  width:4px;height:4px;background:#818cf8;
-  left:15%;animation-duration:12s;animation-delay:0s;
-}
-.maintenance-particle--2{
-  width:3px;height:3px;background:#a78bfa;
-  left:35%;animation-duration:15s;animation-delay:2s;
-}
-.maintenance-particle--3{
-  width:5px;height:5px;background:#6366f1;
-  left:55%;animation-duration:10s;animation-delay:4s;
-}
-.maintenance-particle--4{
-  width:3px;height:3px;background:#c084fc;
-  left:75%;animation-duration:14s;animation-delay:1s;
-}
-.maintenance-particle--5{
-  width:4px;height:4px;background:#7c3aed;
-  left:25%;animation-duration:11s;animation-delay:6s;
-}
-.maintenance-particle--6{
-  width:3px;height:3px;background:#818cf8;
-  left:65%;animation-duration:13s;animation-delay:3s;
-}
+.maintenance-particle--1{width:3px;height:3px;background:#9333ea;left:10%;animation-duration:14s;animation-delay:0s}
+.maintenance-particle--2{width:4px;height:4px;background:#7c3aed;left:25%;animation-duration:11s;animation-delay:2s}
+.maintenance-particle--3{width:3px;height:3px;background:#a855f7;left:40%;animation-duration:16s;animation-delay:1s}
+.maintenance-particle--4{width:5px;height:5px;background:#6d28d9;left:55%;animation-duration:12s;animation-delay:5s}
+.maintenance-particle--5{width:3px;height:3px;background:#c084fc;left:70%;animation-duration:13s;animation-delay:3s}
+.maintenance-particle--6{width:4px;height:4px;background:#581c87;left:85%;animation-duration:15s;animation-delay:7s}
+.maintenance-particle--7{width:3px;height:3px;background:#dc2626;left:20%;animation-duration:18s;animation-delay:4s}
+.maintenance-particle--8{width:3px;height:3px;background:#a855f7;left:60%;animation-duration:10s;animation-delay:8s}
 @keyframes maintenance-float{
   0%{transform:translateY(100vh) scale(0);opacity:0}
-  10%{opacity:.7}
-  90%{opacity:.7}
-  100%{transform:translateY(-20vh) scale(1);opacity:0}
+  8%{opacity:.6}
+  92%{opacity:.6}
+  100%{transform:translateY(-15vh) scale(1.2);opacity:0}
 }
-/* Card */
+/* Card — verre sombre distorsion */
 .maintenance-card{
   position:relative;
   z-index:1;
   text-align:center;
   max-width:480px;
   width:100%;
-  background:linear-gradient(160deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,.02) 100%);
-  border-radius:28px;
+  background:linear-gradient(160deg, rgba(60,20,100,.15) 0%, rgba(20,5,40,.25) 100%);
+  border-radius:24px;
   padding:2.5rem 2.5rem 2rem;
-  border:1px solid rgba(255,255,255,.08);
-  backdrop-filter:blur(24px);
+  border:1px solid rgba(140,80,220,.12);
+  backdrop-filter:blur(20px);
   box-shadow:
-    0 30px 80px rgba(0,0,0,.5),
-    inset 0 1px 0 rgba(255,255,255,.06);
-  animation:maintenance-fade-in .7s cubic-bezier(.22,1,.36,1);
+    0 30px 80px rgba(0,0,0,.6),
+    0 0 40px rgba(100,40,180,.08),
+    inset 0 1px 0 rgba(200,150,255,.05);
+  animation:maintenance-fade-in .8s cubic-bezier(.22,1,.36,1);
 }
 @keyframes maintenance-fade-in{
-  from{opacity:0;transform:translateY(30px) scale(.97)}
+  from{opacity:0;transform:translateY(30px) scale(.96)}
   to{opacity:1;transform:translateY(0) scale(1)}
 }
 /* Logo */
 .maintenance-logo-wrap{
   position:relative;
-  width:120px;
-  height:120px;
+  width:120px;height:120px;
   margin:0 auto 1.25rem;
 }
 .maintenance-logo{
-  width:100%;
-  height:100%;
+  width:100%;height:100%;
   object-fit:contain;
-  position:relative;
-  z-index:1;
-  filter:drop-shadow(0 4px 20px rgba(102,126,234,.3));
-  animation:maintenance-logo-float 4s ease-in-out infinite;
+  position:relative;z-index:1;
+  filter:drop-shadow(0 0 20px rgba(140,80,220,.35)) drop-shadow(0 0 40px rgba(100,40,180,.15));
+  animation:maintenance-logo-float 5s ease-in-out infinite;
 }
 @keyframes maintenance-logo-float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-8px)}
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  25%{transform:translateY(-6px) rotate(.5deg)}
+  75%{transform:translateY(-6px) rotate(-.5deg)}
 }
 .maintenance-logo-glow{
   position:absolute;
-  inset:-20%;
+  inset:-30%;
   border-radius:50%;
-  background:radial-gradient(circle, rgba(102,126,234,.25) 0%, transparent 70%);
-  animation:maintenance-glow-pulse 3s ease-in-out infinite;
+  background:radial-gradient(circle, rgba(140,60,220,.2) 0%, rgba(80,20,160,.08) 50%, transparent 70%);
+  animation:maintenance-glow-pulse 4s ease-in-out infinite;
 }
 @keyframes maintenance-glow-pulse{
-  0%,100%{opacity:.5;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.1)}
+  0%,100%{opacity:.4;transform:scale(1)}
+  50%{opacity:.9;transform:scale(1.15)}
 }
-/* Badge maintenance */
+/* Badge */
 .maintenance-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:.5rem;
-  padding:.4rem 1.2rem;
-  border-radius:50px;
-  background:rgba(239,68,68,.12);
-  border:1px solid rgba(239,68,68,.25);
-  color:#f87171;
-  font-size:.75rem;
-  font-weight:700;
-  letter-spacing:.12em;
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.4rem 1.2rem;border-radius:50px;
+  background:rgba(140,60,220,.12);
+  border:1px solid rgba(140,80,220,.2);
+  color:#c084fc;
+  font-size:.75rem;font-weight:700;letter-spacing:.12em;
   margin-bottom:1.25rem;
 }
-.maintenance-badge i{
-  font-size:.7rem;
-  animation:maintenance-wrench 3s ease-in-out infinite;
-}
+.maintenance-badge i{font-size:.7rem;animation:maintenance-wrench 3s ease-in-out infinite}
 @keyframes maintenance-wrench{
   0%,100%{transform:rotate(0deg)}
   20%{transform:rotate(20deg)}
@@ -11015,68 +11089,54 @@ a.dex-panel--active{cursor:default}
   80%{transform:rotate(0deg)}
 }
 .maintenance-title{
-  font-size:1.8rem;
-  font-weight:700;
-  color:#fff;
-  margin:0 0 .75rem;
-  line-height:1.3;
+  font-size:1.8rem;font-weight:700;
+  color:#ede9fe;
+  margin:0 0 .75rem;line-height:1.3;
+  text-shadow:0 0 30px rgba(140,60,220,.2);
 }
 .maintenance-message{
   font-size:1.05rem;
-  color:rgba(255,255,255,.55);
-  margin:0 0 1.75rem;
-  line-height:1.7;
+  color:rgba(220,210,240,.5);
+  margin:0 0 1.75rem;line-height:1.7;
 }
 .maintenance-discord-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:.6rem;
+  display:inline-flex;align-items:center;gap:.6rem;
   padding:.85rem 2rem;
-  background:linear-gradient(135deg, #5865F2, #4752c4);
-  color:#fff;
-  border:none;
-  border-radius:50px;
-  font-size:1rem;
-  font-weight:600;
-  text-decoration:none;
-  cursor:pointer;
+  background:linear-gradient(135deg, #7c3aed, #5b21b6);
+  color:#fff;border:none;border-radius:50px;
+  font-size:1rem;font-weight:600;
+  text-decoration:none;cursor:pointer;
   transition:all .25s ease;
-  box-shadow:0 8px 24px rgba(88,101,242,.3);
+  box-shadow:0 8px 24px rgba(124,58,237,.3);
 }
 .maintenance-discord-btn:hover{
   transform:translateY(-2px);
-  box-shadow:0 12px 32px rgba(88,101,242,.45);
-  background:linear-gradient(135deg, #6872f5, #5865F2);
+  box-shadow:0 12px 32px rgba(124,58,237,.45);
+  background:linear-gradient(135deg, #8b5cf6, #7c3aed);
 }
 .maintenance-footer{
-  margin-top:1.75rem;
-  padding-top:1.25rem;
-  border-top:1px solid rgba(255,255,255,.06);
-  color:rgba(255,255,255,.35);
+  margin-top:1.75rem;padding-top:1.25rem;
+  border-top:1px solid rgba(140,80,220,.1);
+  color:rgba(200,180,230,.3);
   font-size:.85rem;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:.6rem;
+  display:flex;align-items:center;justify-content:center;gap:.6rem;
 }
-/* Pulse vivant */
 .maintenance-pulse{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#f87171;
-  flex-shrink:0;
+  width:8px;height:8px;border-radius:50%;
+  background:#a855f7;flex-shrink:0;
   animation:maintenance-pulse-anim 2s ease-in-out infinite;
 }
 @keyframes maintenance-pulse-anim{
-  0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,.5);opacity:1}
-  50%{box-shadow:0 0 0 6px rgba(248,113,113,0);opacity:.7}
+  0%,100%{box-shadow:0 0 0 0 rgba(168,85,247,.5);opacity:1}
+  50%{box-shadow:0 0 0 6px rgba(168,85,247,0);opacity:.7}
 }
 @media (max-width:600px){
   .maintenance-card{padding:2rem 1.5rem;border-radius:20px}
   .maintenance-logo-wrap{width:90px;height:90px}
   .maintenance-title{font-size:1.4rem}
   .maintenance-message{font-size:.95rem}
+  .distortion-portal{width:300px;height:300px}
+  .distortion-portal--2{width:450px;height:450px}
 }
 
 /* ── Toggle maintenance (admin) ──────────────────────────── */
