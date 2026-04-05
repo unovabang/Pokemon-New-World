@@ -38,15 +38,22 @@ function MaintenanceGuard({ children }) {
   const [discord, setDiscord] = useState("#");
 
   useEffect(() => {
-    fetch(`${API_BASE}/config/site?t=${Date.now()}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success && data.config) {
-          setMaintenance(data.config.maintenance || null);
-          setDiscord(data.config.discord?.invite || "#");
-        }
-      })
-      .catch(() => {});
+    const safeFetch = (url) => fetch(url).then((r) => r.json()).catch(() => null);
+    Promise.all([
+      safeFetch(`${API_BASE}/config/site?t=${Date.now()}`),
+      safeFetch(`${API_BASE}/config/external?t=${Date.now()}`),
+    ]).then(([siteData, externalData]) => {
+      if (siteData?.success && siteData?.config) {
+        setMaintenance(siteData.config.maintenance || null);
+        setDiscord(siteData.config.discord?.invite || "#");
+      }
+      // Le lien Discord peut être dans external (string) ou site (objet)
+      if (externalData?.success && externalData?.config) {
+        const ext = externalData.config;
+        const d = typeof ext.discord === "string" ? ext.discord : ext.discord?.invite;
+        if (d && d !== "#") setDiscord(d);
+      }
+    });
   }, []);
 
   // Toujours laisser passer admin et login admin
