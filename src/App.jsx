@@ -36,6 +36,7 @@ function MaintenanceGuard({ children }) {
   const { pathname } = useLocation();
   const [maintenance, setMaintenance] = useState(null);
   const [discord, setDiscord] = useState("#");
+  const [logoUrl, setLogoUrl] = useState("/logo.png");
 
   useEffect(() => {
     const safeFetch = (url) => fetch(url).then((r) => r.json()).catch(() => null);
@@ -46,6 +47,7 @@ function MaintenanceGuard({ children }) {
       if (siteData?.success && siteData?.config) {
         setMaintenance(siteData.config.maintenance || null);
         setDiscord(siteData.config.discord?.invite || "#");
+        if (siteData.config.branding?.logo) setLogoUrl(siteData.config.branding.logo);
       }
       // Le lien Discord peut être dans external (string) ou site (objet)
       if (externalData?.success && externalData?.config) {
@@ -68,7 +70,7 @@ function MaintenanceGuard({ children }) {
 
   // Maintenance active : afficher la page maintenance
   if (maintenance?.enabled) {
-    return <MaintenancePage config={maintenance} discord={discord} />;
+    return <MaintenancePage config={maintenance} discord={discord} logoUrl={logoUrl} />;
   }
 
   return children;

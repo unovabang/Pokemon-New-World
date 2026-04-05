@@ -1,6 +1,6 @@
 import { useLanguage } from "../contexts/LanguageContext";
 
-export default function MaintenancePage({ config, discord }) {
+export default function MaintenancePage({ config, discord, logoUrl }) {
   const { language } = useLanguage();
   const isEn = language === "en";
 
@@ -13,13 +13,36 @@ export default function MaintenancePage({ config, discord }) {
 
   return (
     <div className="maintenance-page">
-      <div className="maintenance-overlay" aria-hidden />
+      {/* Particules animées */}
+      <div className="maintenance-particles" aria-hidden>
+        <div className="maintenance-particle maintenance-particle--1" />
+        <div className="maintenance-particle maintenance-particle--2" />
+        <div className="maintenance-particle maintenance-particle--3" />
+        <div className="maintenance-particle maintenance-particle--4" />
+        <div className="maintenance-particle maintenance-particle--5" />
+        <div className="maintenance-particle maintenance-particle--6" />
+      </div>
+
       <div className="maintenance-card">
-        <div className="maintenance-icon" aria-hidden>
-          <i className="fa-solid fa-wrench" />
+        {/* Logo */}
+        <div className="maintenance-logo-wrap">
+          <img
+            src={logoUrl || "/logo.png"}
+            alt="Pokémon New World"
+            className="maintenance-logo"
+          />
+          <div className="maintenance-logo-glow" aria-hidden />
         </div>
+
+        {/* Icône + titre */}
+        <div className="maintenance-badge">
+          <i className="fa-solid fa-wrench" aria-hidden />
+          {isEn ? "MAINTENANCE" : "MAINTENANCE"}
+        </div>
+
         <h1 className="maintenance-title">{title}</h1>
         <p className="maintenance-message">{message}</p>
+
         {discord && discord !== "#" && (
           <a
             href={discord}
@@ -31,8 +54,9 @@ export default function MaintenancePage({ config, discord }) {
             {isEn ? "Join our Discord" : "Rejoindre le Discord"}
           </a>
         )}
+
         <div className="maintenance-footer">
-          <i className="fa-solid fa-clock" aria-hidden />
+          <div className="maintenance-pulse" aria-hidden />
           {isEn
             ? "We'll be back shortly. Thank you for your patience!"
             : "Nous revenons bientôt. Merci de votre patience !"}
