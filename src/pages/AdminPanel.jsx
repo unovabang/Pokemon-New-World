@@ -210,48 +210,49 @@ const AdminPanel = () => {
         }}
       />
       <header className="admin-panel-header">
+        <div className="admin-panel-header-glow" aria-hidden />
         <div className="admin-panel-header-inner">
-          <button
-            type="button"
-            className="admin-panel-hamburger"
-            onClick={() => setNavOpen((v) => !v)}
-            aria-label={navOpen ? "Fermer le menu" : "Ouvrir le menu"}
-            aria-expanded={navOpen}
-          >
-            <i className={navOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars"} aria-hidden />
-          </button>
-          <div className="admin-panel-brand">
-            <div className="admin-panel-logo">
-              <i className="fa-solid fa-shield-halved" aria-hidden />
-            </div>
-            <div>
-              <h1 className="admin-panel-title">Admin Panel</h1>
-              <div className="admin-panel-meta">
-                <span className="admin-panel-status">
-                  <span className="admin-panel-dot" /> En ligne
-                </span>
-                <span className="admin-panel-user">
-                  <i className="fa-solid fa-user" aria-hidden /> {admin?.name || admin?.email}
-                </span>
+          <div className="admin-panel-header-left">
+            <button
+              type="button"
+              className="admin-panel-hamburger"
+              onClick={() => setNavOpen((v) => !v)}
+              aria-label={navOpen ? "Fermer le menu" : "Ouvrir le menu"}
+              aria-expanded={navOpen}
+            >
+              <i className={navOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars"} aria-hidden />
+            </button>
+            <div className="admin-panel-brand">
+              <div className="admin-panel-logo">
+                <i className="fa-solid fa-shield-halved" aria-hidden />
+              </div>
+              <div>
+                <h1 className="admin-panel-title">Admin Panel</h1>
+                <div className="admin-panel-meta">
+                  <span className="admin-panel-status">
+                    <span className="admin-panel-dot" /> En ligne
+                  </span>
+                  <span className="admin-panel-separator" aria-hidden />
+                  <span className="admin-panel-user">
+                    <i className="fa-solid fa-user-astronaut" aria-hidden /> {admin?.name || admin?.email}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="admin-panel-actions">
             <span className="admin-panel-badge admin-panel-badge--success">
-              <i className="fa-solid fa-server" aria-hidden /> API Active
+              <i className="fa-solid fa-signal" aria-hidden /> API
             </span>
-            <button type="button" className="admin-panel-btn admin-panel-btn--primary">
-              <i className="fa-solid fa-save" aria-hidden /> Sauvegarder
-            </button>
-            <a href="/" target="_blank" rel="noreferrer" className="admin-panel-btn admin-panel-btn--secondary">
-              <i className="fa-solid fa-external-link-alt" aria-hidden /> Site Web
+            <a href="/" target="_blank" rel="noreferrer" className="admin-panel-btn admin-panel-btn--ghost">
+              <i className="fa-solid fa-arrow-up-right-from-square" aria-hidden /> Site
             </a>
             <button
               type="button"
               className="admin-panel-btn admin-panel-btn--danger"
               onClick={() => { logout(); navigate('/'); }}
-              title="Déconnexion"
+              title="Deconnexion"
             >
               <i className="fa-solid fa-right-from-bracket" aria-hidden />
             </button>

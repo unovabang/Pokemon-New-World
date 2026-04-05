@@ -8395,90 +8395,117 @@ a.dex-panel--active{cursor:default}
 .admin-panel-header {
   position: relative;
   z-index: 10;
-  padding: 1rem 1.5rem;
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,.06);
-  background: rgba(8,12,24,.88);
-  box-shadow: 0 1px 0 rgba(255,255,255,.04);
+  padding:.85rem 1.5rem;
+  background:linear-gradient(180deg, rgba(15,18,35,.95) 0%, rgba(8,10,22,.92) 100%);
+  border-bottom:1px solid rgba(139,92,246,.12);
+  box-shadow:0 4px 24px rgba(0,0,0,.3), 0 1px 0 rgba(139,92,246,.06);
+  backdrop-filter:blur(20px);
+  overflow:hidden;
+}
+.admin-panel-header-glow{
+  position:absolute;
+  top:-1px;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, transparent 0%, rgba(139,92,246,.5) 20%, rgba(168,85,247,.7) 50%, rgba(139,92,246,.5) 80%, transparent 100%);
+  animation:admin-header-glow-slide 4s ease-in-out infinite;
+}
+@keyframes admin-header-glow-slide{
+  0%,100%{opacity:.6}
+  50%{opacity:1}
 }
 .admin-panel-header-inner {
   max-width: 1400px;
   margin: 0 auto;
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
 }
+.admin-panel-header-left{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+}
 .admin-panel-brand {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: .85rem;
 }
 .admin-panel-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 1.2rem;
+  width:42px;height:42px;
+  border-radius:12px;
+  background:linear-gradient(135deg, #7c3aed, #a855f7);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:1.1rem;
+  box-shadow:0 4px 16px rgba(124,58,237,.3);
+  position:relative;
+}
+.admin-panel-logo::after{
+  content:"";
+  position:absolute;inset:-2px;
+  border-radius:14px;
+  background:linear-gradient(135deg, rgba(124,58,237,.4), rgba(168,85,247,.2));
+  z-index:-1;
+  filter:blur(6px);
 }
 .admin-panel-title {
-  margin: 0 0 .25rem;
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.02em;
+  margin:0;
+  font-size:1.15rem;
+  font-weight:700;
+  color:#fff;
+  letter-spacing:-.01em;
 }
 .admin-panel-meta {
   display: flex;
   align-items: center;
-  gap: .75rem;
-  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top:.15rem;
 }
 .admin-panel-status {
   display: inline-flex;
   align-items: center;
-  gap: .4rem;
-  font-size: .8rem;
-  color: var(--muted);
+  gap: .35rem;
+  font-size: .75rem;
+  color: rgba(255,255,255,.45);
 }
 .admin-panel-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #4ade80;
-  animation: pulse 2s infinite;
+  width:6px;height:6px;
+  border-radius:50%;
+  background:#4ade80;
+  box-shadow:0 0 6px rgba(74,222,128,.4);
+  animation:admin-dot-pulse 2s ease-in-out infinite;
 }
-@keyframes pulse {
-  50% { opacity: .6; }
+@keyframes admin-dot-pulse{
+  0%,100%{opacity:1;box-shadow:0 0 6px rgba(74,222,128,.4)}
+  50%{opacity:.6;box-shadow:0 0 3px rgba(74,222,128,.2)}
+}
+.admin-panel-separator{
+  width:1px;height:12px;
+  background:rgba(255,255,255,.12);
 }
 .admin-panel-user {
-  font-size: .85rem;
-  color: var(--primary-2);
+  font-size:.75rem;
+  color:rgba(168,85,247,.7);
+  display:inline-flex;align-items:center;gap:.3rem;
 }
+.admin-panel-user i{font-size:.65rem}
 .admin-panel-actions {
   display: flex;
   align-items: center;
-  gap: .6rem;
-  flex-wrap: wrap;
+  gap: .5rem;
 }
 .admin-panel-badge {
   display: inline-flex;
   align-items: center;
-  gap: .5rem;
-  padding: .5rem .9rem;
-  border-radius: 10px;
-  font-size: .85rem;
-  font-weight: 500;
+  gap: .4rem;
+  padding:.35rem .7rem;
+  border-radius:8px;
+  font-size:.78rem;
+  font-weight:600;
 }
 .admin-panel-badge--success {
-  background: rgba(34,197,94,.12);
-  border: 1px solid rgba(34,197,94,.25);
-  color: #86efac;
+  background:rgba(34,197,94,.1);
+  border:1px solid rgba(34,197,94,.2);
+  color:#4ade80;
 }
 .admin-panel-badge--wip {
   background: rgba(251,191,36,.12);
@@ -8488,15 +8515,15 @@ a.dex-panel--active{cursor:default}
 .admin-panel-btn {
   display: inline-flex;
   align-items: center;
-  gap: .5rem;
-  padding: .55rem 1rem;
-  border-radius: 10px;
-  font-size: .9rem;
-  font-weight: 500;
+  gap: .4rem;
+  padding:.4rem .85rem;
+  border-radius:8px;
+  font-size:.82rem;
+  font-weight:500;
   text-decoration: none;
-  border: 1px solid transparent;
+  border:1px solid transparent;
   cursor: pointer;
-  transition: background .2s, border-color .2s, transform .15s;
+  transition:all .2s ease;
 }
 .admin-panel-btn:hover {
   transform: translateY(-1px);
@@ -8509,6 +8536,16 @@ a.dex-panel--active{cursor:default}
 .admin-panel-btn--primary:hover {
   background: rgba(34,197,94,.28);
 }
+.admin-panel-btn--ghost{
+  background:rgba(255,255,255,.04);
+  border-color:rgba(255,255,255,.1);
+  color:rgba(255,255,255,.6);
+}
+.admin-panel-btn--ghost:hover{
+  background:rgba(255,255,255,.08);
+  border-color:rgba(255,255,255,.18);
+  color:#fff;
+}
 .admin-panel-btn--secondary {
   background: rgba(255,255,255,.06);
   border-color: rgba(255,255,255,.12);
@@ -8519,8 +8556,8 @@ a.dex-panel--active{cursor:default}
   border-color: rgba(255,255,255,.18);
 }
 .admin-panel-btn--danger {
-  background: rgba(239,68,68,.15);
-  border-color: rgba(239,68,68,.3);
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.2);
   color: #fca5a5;
   min-width: 44px;
   height: 44px;
