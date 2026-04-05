@@ -10867,119 +10867,133 @@ a.dex-panel--active{cursor:default}
   position:relative;
   overflow:hidden;
 }
-/* Fond distorsion : dégradés sombres violet/noir avec mouvement */
+/* Fond distorsion : nebuleuse violette intense */
 .distortion-bg{
   position:absolute;
   inset:0;
   pointer-events:none;
   background:
-    radial-gradient(ellipse 120% 80% at 50% 120%, rgba(75,0,130,.25) 0%, transparent 60%),
-    radial-gradient(ellipse 80% 100% at 20% 0%, rgba(40,0,80,.2) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 80% at 90% 30%, rgba(100,0,150,.12) 0%, transparent 50%);
+    radial-gradient(ellipse 100% 70% at 50% 110%, rgba(100,0,180,.45) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 80% at 10% 20%, rgba(60,0,120,.35) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 70% at 90% 30%, rgba(120,0,200,.25) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 40% at 70% 80%, rgba(80,0,150,.2) 0%, transparent 50%);
+  animation:distortion-bg-breathe 8s ease-in-out infinite;
 }
-/* Portail central — anneau spectral tournant */
+@keyframes distortion-bg-breathe{
+  0%,100%{filter:brightness(1) hue-rotate(0deg)}
+  50%{filter:brightness(1.15) hue-rotate(8deg)}
+}
+/* Portail central — vortex spectral visible */
 .distortion-portal{
   position:absolute;
-  width:500px;height:500px;
+  width:550px;height:550px;
   top:50%;left:50%;
   transform:translate(-50%,-50%);
   border-radius:50%;
-  border:2px solid rgba(130,80,200,.08);
+  border:2px solid rgba(168,85,247,.2);
+  background:radial-gradient(circle, rgba(120,50,200,.06) 0%, transparent 70%);
   box-shadow:
-    0 0 80px 20px rgba(100,50,180,.06),
-    inset 0 0 60px 10px rgba(80,30,150,.04);
-  animation:distortion-spin 40s linear infinite;
+    0 0 100px 40px rgba(120,50,200,.1),
+    0 0 200px 80px rgba(80,20,160,.05),
+    inset 0 0 80px 20px rgba(100,40,180,.06);
+  animation:distortion-spin 35s linear infinite;
 }
 .distortion-portal--2{
   position:absolute;
-  width:700px;height:700px;
+  width:800px;height:800px;
   top:50%;left:50%;
   transform:translate(-50%,-50%);
   border-radius:50%;
-  border:1px solid rgba(130,80,200,.04);
-  box-shadow:0 0 120px 30px rgba(80,20,140,.04);
-  animation:distortion-spin 60s linear infinite reverse;
+  border:1.5px dashed rgba(168,85,247,.1);
+  box-shadow:
+    0 0 150px 50px rgba(100,30,180,.06),
+    inset 0 0 100px 30px rgba(80,20,160,.03);
+  animation:distortion-spin 55s linear infinite reverse;
 }
 @keyframes distortion-spin{
   from{transform:translate(-50%,-50%) rotate(0deg)}
   to{transform:translate(-50%,-50%) rotate(360deg)}
 }
-/* Piliers flottants inversés — barres verticales spectrales */
+/* Piliers flottants — epais et lumineux */
 .distortion-pillar{
   position:absolute;
-  width:3px;
-  background:linear-gradient(to top, transparent, rgba(140,80,220,.15), rgba(140,80,220,.05), transparent);
+  background:linear-gradient(to top, transparent, rgba(168,85,247,.35), rgba(168,85,247,.1), transparent);
+  box-shadow:0 0 15px 3px rgba(168,85,247,.1);
   animation:distortion-pillar-float ease-in-out infinite;
 }
 .distortion-pillar--1{
-  height:35vh;left:12%;bottom:0;
-  animation-duration:8s;
-  transform-origin:bottom center;
+  width:4px;height:40vh;left:10%;bottom:0;
+  animation-duration:7s;
 }
 .distortion-pillar--2{
-  height:25vh;right:18%;top:0;
-  background:linear-gradient(to bottom, transparent, rgba(100,50,180,.12), transparent);
-  animation-duration:10s;animation-delay:2s;
-  transform-origin:top center;
+  width:3px;height:30vh;right:15%;top:0;
+  background:linear-gradient(to bottom, transparent, rgba(139,92,246,.3), rgba(139,92,246,.08), transparent);
+  box-shadow:0 0 12px 2px rgba(139,92,246,.08);
+  animation-duration:9s;animation-delay:2s;
 }
 .distortion-pillar--3{
-  height:40vh;left:75%;bottom:10%;
-  animation-duration:12s;animation-delay:4s;
+  width:5px;height:50vh;left:78%;bottom:5%;
+  animation-duration:11s;animation-delay:4s;
 }
 .distortion-pillar--4{
-  height:20vh;left:30%;top:5%;
-  background:linear-gradient(to bottom, transparent, rgba(160,80,240,.08), transparent);
-  animation-duration:9s;animation-delay:1s;
+  width:3px;height:25vh;left:28%;top:0;
+  background:linear-gradient(to bottom, transparent, rgba(192,132,252,.25), transparent);
+  box-shadow:0 0 10px 2px rgba(192,132,252,.06);
+  animation-duration:8s;animation-delay:1s;
 }
 @keyframes distortion-pillar-float{
-  0%,100%{opacity:.3;transform:scaleY(1) translateX(0)}
-  50%{opacity:.7;transform:scaleY(1.15) translateX(8px)}
+  0%,100%{opacity:.5;transform:scaleY(1) translateX(0)}
+  50%{opacity:1;transform:scaleY(1.12) translateX(6px)}
 }
-/* Plateformes flottantes — rectangles inclinés */
+/* Plateformes flottantes — bien visibles */
 .distortion-platform{
   position:absolute;
-  background:linear-gradient(135deg, rgba(80,40,140,.12), rgba(60,20,100,.06));
-  border:1px solid rgba(120,60,200,.08);
-  border-radius:4px;
+  background:linear-gradient(135deg, rgba(139,92,246,.25), rgba(88,28,135,.12));
+  border:1px solid rgba(168,85,247,.2);
+  border-radius:3px;
+  box-shadow:0 0 20px 4px rgba(139,92,246,.08), 0 4px 12px rgba(0,0,0,.3);
   animation:distortion-platform-drift ease-in-out infinite;
 }
 .distortion-platform--1{
-  width:120px;height:8px;
-  bottom:20%;left:8%;
-  transform:rotate(-8deg);
-  animation-duration:14s;
+  width:160px;height:10px;
+  bottom:18%;left:6%;
+  transform:rotate(-12deg) perspective(200px) rotateX(20deg);
+  animation-duration:12s;
 }
 .distortion-platform--2{
-  width:80px;height:6px;
-  top:25%;right:12%;
-  transform:rotate(12deg);
-  animation-duration:11s;animation-delay:3s;
+  width:120px;height:8px;
+  top:22%;right:8%;
+  transform:rotate(15deg) perspective(200px) rotateX(-15deg);
+  animation-duration:10s;animation-delay:3s;
 }
 .distortion-platform--3{
-  width:100px;height:6px;
-  bottom:35%;right:25%;
-  transform:rotate(-5deg);
-  animation-duration:16s;animation-delay:6s;
+  width:140px;height:9px;
+  bottom:38%;right:20%;
+  transform:rotate(-6deg) perspective(200px) rotateX(10deg);
+  animation-duration:14s;animation-delay:6s;
 }
 @keyframes distortion-platform-drift{
-  0%,100%{transform:rotate(var(--r,0deg)) translateY(0);opacity:.4}
-  50%{transform:rotate(var(--r,0deg)) translateY(-15px);opacity:.8}
+  0%,100%{opacity:.6;transform:rotate(var(--r,-8deg)) translateY(0)}
+  50%{opacity:1;transform:rotate(var(--r,-8deg)) translateY(-20px)}
 }
-/* Brume spectrale */
+/* Brume spectrale — plus dense */
 .distortion-mist{
   position:absolute;
-  width:100%;height:30%;
-  background:linear-gradient(to top, rgba(60,20,100,.15), transparent);
+  width:100%;height:35%;
   animation:distortion-mist-pulse ease-in-out infinite;
 }
-.distortion-mist--1{bottom:0;animation-duration:6s}
+.distortion-mist--1{
+  bottom:0;
+  background:linear-gradient(to top, rgba(80,20,140,.4), rgba(60,10,110,.15) 50%, transparent);
+  animation-duration:5s;
+}
 .distortion-mist--2{
   top:0;
-  background:linear-gradient(to bottom, rgba(40,10,80,.1), transparent);
-  animation-duration:8s;animation-delay:3s;
+  background:linear-gradient(to bottom, rgba(50,10,100,.3), rgba(40,5,80,.1) 50%, transparent);
+  animation-duration:7s;animation-delay:2s;
 }
 @keyframes distortion-mist-pulse{
-  0%,100%{opacity:.5}
+  0%,100%{opacity:.6}
   50%{opacity:1}
 }
 /* Vignette sombre */
@@ -10987,11 +11001,11 @@ a.dex-panel--active{cursor:default}
   content:"";
   position:absolute;
   inset:0;
-  background:radial-gradient(ellipse 70% 60% at 50% 50%, transparent 20%, #04030a 85%);
+  background:radial-gradient(ellipse 65% 55% at 50% 50%, transparent 15%, rgba(4,3,10,.7) 70%, #04030a 90%);
   pointer-events:none;
   z-index:0;
 }
-/* Particules spectrales (violet/rouge sombre) */
+/* Particules spectrales — plus grosses, plus lumineuses */
 .maintenance-particles{
   position:absolute;
   inset:0;
@@ -11005,19 +11019,19 @@ a.dex-panel--active{cursor:default}
   opacity:0;
   animation:maintenance-float linear infinite;
 }
-.maintenance-particle--1{width:3px;height:3px;background:#9333ea;left:10%;animation-duration:14s;animation-delay:0s}
-.maintenance-particle--2{width:4px;height:4px;background:#7c3aed;left:25%;animation-duration:11s;animation-delay:2s}
-.maintenance-particle--3{width:3px;height:3px;background:#a855f7;left:40%;animation-duration:16s;animation-delay:1s}
-.maintenance-particle--4{width:5px;height:5px;background:#6d28d9;left:55%;animation-duration:12s;animation-delay:5s}
-.maintenance-particle--5{width:3px;height:3px;background:#c084fc;left:70%;animation-duration:13s;animation-delay:3s}
-.maintenance-particle--6{width:4px;height:4px;background:#581c87;left:85%;animation-duration:15s;animation-delay:7s}
-.maintenance-particle--7{width:3px;height:3px;background:#dc2626;left:20%;animation-duration:18s;animation-delay:4s}
-.maintenance-particle--8{width:3px;height:3px;background:#a855f7;left:60%;animation-duration:10s;animation-delay:8s}
+.maintenance-particle--1{width:5px;height:5px;background:#a855f7;left:8%;animation-duration:12s;animation-delay:0s;box-shadow:0 0 8px 2px rgba(168,85,247,.4)}
+.maintenance-particle--2{width:6px;height:6px;background:#7c3aed;left:22%;animation-duration:10s;animation-delay:1.5s;box-shadow:0 0 10px 3px rgba(124,58,237,.4)}
+.maintenance-particle--3{width:4px;height:4px;background:#c084fc;left:38%;animation-duration:14s;animation-delay:0.5s;box-shadow:0 0 8px 2px rgba(192,132,252,.3)}
+.maintenance-particle--4{width:7px;height:7px;background:#8b5cf6;left:52%;animation-duration:11s;animation-delay:4s;box-shadow:0 0 12px 3px rgba(139,92,246,.4)}
+.maintenance-particle--5{width:4px;height:4px;background:#d946ef;left:68%;animation-duration:13s;animation-delay:2.5s;box-shadow:0 0 8px 2px rgba(217,70,239,.3)}
+.maintenance-particle--6{width:5px;height:5px;background:#9333ea;left:82%;animation-duration:15s;animation-delay:6s;box-shadow:0 0 10px 3px rgba(147,51,234,.4)}
+.maintenance-particle--7{width:4px;height:4px;background:#e879f9;left:15%;animation-duration:16s;animation-delay:3s;box-shadow:0 0 8px 2px rgba(232,121,249,.3)}
+.maintenance-particle--8{width:5px;height:5px;background:#a78bfa;left:58%;animation-duration:9s;animation-delay:7s;box-shadow:0 0 10px 3px rgba(167,139,250,.4)}
 @keyframes maintenance-float{
   0%{transform:translateY(100vh) scale(0);opacity:0}
-  8%{opacity:.6}
-  92%{opacity:.6}
-  100%{transform:translateY(-15vh) scale(1.2);opacity:0}
+  8%{opacity:.8}
+  92%{opacity:.8}
+  100%{transform:translateY(-15vh) scale(1.3);opacity:0}
 }
 /* Card — verre sombre distorsion */
 .maintenance-card{
