@@ -5,6 +5,7 @@ const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
   : `${window.location.origin}/api`;
 
+const AUTO_SAVE_DELAY_MS = 0;
 const PLACEHOLDER_SPRITE = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
 function normalizeName(str) {
@@ -114,12 +115,16 @@ export default function BanlistEditor() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState(null);
-  const [dirty, setDirty] = useState(false);
 
   // Formulaire d'ajout
   const [draftPokemon, setDraftPokemon] = useState(null);
   const [draftForm, setDraftForm] = useState("");
   const [draftReason, setDraftReason] = useState("");
+
+  // Refs pour l'auto-save (même pattern que PokedexEditor/ExtradexEditor)
+  const initialLoadDone = useRef(false);
+  const skipNextAutoSave = useRef(true);
+  const entriesRef = useRef([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -142,12 +147,61 @@ export default function BanlistEditor() {
           setExtradexEntries(extradexRes.extradex.entries);
         }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+          initialLoadDone.current = true;
+        }
       }
     }
     load();
     return () => { cancelled = true; };
   }, []);
+
+  entriesRef.current = entries;
+
+  // Auto-save dès qu'on modifie entries (après le chargement initial)
+  useEffect(() => {
+    if (!initialLoadDone.current || loading) return;
+    if (skipNextAutoSave.current) {
+      skipNextAutoSave.current = false;
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setSaving(true);
+      setSaveMessage(null);
+      try {
+        const payload = {
+          entries: entriesRef.current
+            .map((e) => ({
+              id: e.id,
+              speciesId: Number(e.speciesId) || 0,
+              form: e.form == null || e.form === "" ? null : Number(e.form),
+              name: (e.name || "").trim(),
+              imageUrl: (e.imageUrl || "").trim(),
+              reason: (e.reason || "").trim(),
+            }))
+            .filter((e) => e.speciesId > 0),
+        };
+        const res = await fetch(`${API_BASE}/banlist`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", ...authHeaders() },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (data?.success) {
+          setSaveMessage("Sauvegardé automatiquement.");
+          setTimeout(() => setSaveMessage(null), 2500);
+        } else {
+          setSaveMessage(data?.error || "Erreur lors de la sauvegarde.");
+        }
+      } catch {
+        setSaveMessage("Impossible de contacter le serveur.");
+      } finally {
+        setSaving(false);
+      }
+    }, AUTO_SAVE_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [entries, loading]);
 
   const addEntry = () => {
     if (!draftPokemon) return;
@@ -169,17 +223,14 @@ export default function BanlistEditor() {
     setDraftPokemon(null);
     setDraftForm("");
     setDraftReason("");
-    setDirty(true);
   };
 
   const removeEntry = (id) => {
     setEntries((prev) => prev.filter((e) => e.id !== id));
-    setDirty(true);
   };
 
   const updateReason = (id, reason) => {
     setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, reason } : e)));
-    setDirty(true);
   };
 
   const saveBanlist = async () => {
@@ -206,7 +257,6 @@ export default function BanlistEditor() {
       const data = await res.json();
       if (data?.success) {
         setSaveMessage("Banlist sauvegardée.");
-        setDirty(false);
       } else {
         setSaveMessage(data?.error || "Erreur");
       }
@@ -257,11 +307,12 @@ export default function BanlistEditor() {
           <button
             type="button"
             onClick={saveBanlist}
-            disabled={saving || !dirty}
+            disabled={saving}
             className="admin-pokedex-btn admin-pokedex-btn-primary"
-            style={{ opacity: saving || !dirty ? 0.5 : 1 }}
+            style={{ opacity: saving ? 0.5 : 1 }}
+            title="La banlist est enregistrée automatiquement — ce bouton force une sauvegarde immédiate"
           >
-            <i className="fa-solid fa-save" /> Sauvegarder
+            <i className="fa-solid fa-save" /> {saving ? "Enregistrement…" : "Sauvegarder maintenant"}
           </button>
         </div>
       </div>
