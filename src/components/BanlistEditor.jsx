@@ -127,13 +127,13 @@ export default function BanlistEditor() {
       try {
         setLoading(true);
         const [banRes, pokedexRes, extradexRes] = await Promise.all([
-          fetch(`${API_BASE}/config/banlist?t=${Date.now()}`).then((r) => r.json()).catch(() => null),
+          fetch(`${API_BASE}/banlist?t=${Date.now()}`).then((r) => r.json()).catch(() => null),
           fetch(`${API_BASE}/pokedex?t=${Date.now()}`).then((r) => r.json()).catch(() => null),
           fetch(`${API_BASE}/extradex?t=${Date.now()}`).then((r) => r.json()).catch(() => null),
         ]);
         if (cancelled) return;
-        if (banRes?.success && Array.isArray(banRes?.config?.entries)) {
-          setEntries(banRes.config.entries);
+        if (banRes?.success && Array.isArray(banRes?.banlist?.entries)) {
+          setEntries(banRes.banlist.entries);
         }
         if (pokedexRes?.success && Array.isArray(pokedexRes?.pokedex?.entries)) {
           setPokedexEntries(pokedexRes.pokedex.entries);
@@ -187,7 +187,6 @@ export default function BanlistEditor() {
     setSaveMessage(null);
     try {
       const payload = {
-        lastModified: new Date().toISOString(),
         entries: entries
           .map((e) => ({
             id: e.id,
@@ -199,10 +198,10 @@ export default function BanlistEditor() {
           }))
           .filter((e) => e.speciesId > 0),
       };
-      const res = await fetch(`${API_BASE}/config/banlist`, {
-        method: "POST",
+      const res = await fetch(`${API_BASE}/banlist`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify({ config: payload }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (data?.success) {
