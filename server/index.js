@@ -10,7 +10,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
-import { initDb } from './db.js';
+import { initDb, query, getPool } from './db.js';
 import authRoutes, { requireAuth } from './auth.js';
 import { handleChatPublicPreview } from './chatPublicPreview.js';
 import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command, ListMultipartUploadsCommand, PutObjectCommand } from '@aws-sdk/client-s3';
@@ -1072,6 +1072,98 @@ app.put('/api/config/contact-webhook', requireAuth, (req, res) => {
   }
 });
 
+// === BANLIST (Tour de Combat) ===
+// Stockage en Postgres (pas en JSON) pour persister à travers les redéploiements Railway.
+// Les handlers ci-dessous sont registrés AVANT les handlers génériques /api/config/:name
+// pour prendre le dessus sur ceux-ci.
+
+// GET /api/config/banlist - Lire la banlist depuis la DB
+app.get('/api/config/banlist', async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT id, species_id, form, name, image_url, reason
+       FROM banlist_entries
+       ORDER BY species_id ASC, COALESCE(form, -1) ASC, created_at ASC`
+    );
+    const entries = result.rows.map((r) => ({
+      id: r.id,
+      speciesId: Number(r.species_id),
+      form: r.form == null ? null : Number(r.form),
+      name: r.name || '',
+      imageUrl: r.image_url || '',
+      reason: r.reason || '',
+    }));
+    res.json({
+      success: true,
+      config: {
+        lastModified: new Date().toISOString(),
+        entries,
+      },
+    });
+  } catch (error) {
+    console.error('❌ Erreur GET /api/config/banlist:', error);
+    // Fail-open : renvoie une liste vide pour ne pas bloquer le launcher
+    res.json({ success: true, config: { lastModified: new Date().toISOString(), entries: [] } });
+  }
+});
+
+// POST /api/config/banlist - Remplacer la banlist complète (DB)
+app.post('/api/config/banlist', requireAuth, async (req, res) => {
+  try {
+    const { config } = req.body || {};
+    const rawEntries = Array.isArray(config?.entries) ? config.entries : null;
+    if (!rawEntries) {
+      return res.status(400).json({ success: false, error: 'Données de configuration manquantes' });
+    }
+    const entries = rawEntries
+      .map((e) => ({
+        id: String(e?.id || `ban_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`),
+        speciesId: Number(e?.speciesId) || 0,
+        form: e?.form == null || e?.form === '' ? null : Number(e.form),
+        name: String(e?.name || '').trim(),
+        imageUrl: String(e?.imageUrl || '').trim(),
+        reason: String(e?.reason || '').trim(),
+      }))
+      .filter((e) => e.speciesId > 0);
+
+    // Remplacement atomique : vide la table puis insère les nouvelles entrées
+    const pool = await getPool();
+    if (!pool) {
+      return res.status(500).json({ success: false, error: 'Base de données non configurée' });
+    }
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query('DELETE FROM banlist_entries');
+      for (const e of entries) {
+        await client.query(
+          `INSERT INTO banlist_entries (id, species_id, form, name, image_url, reason)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [e.id, e.speciesId, e.form, e.name, e.imageUrl, e.reason],
+        );
+      }
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+
+    res.json({
+      success: true,
+      message: 'Banlist sauvegardée avec succès',
+      config: {
+        lastModified: new Date().toISOString(),
+        entries,
+      },
+    });
+  } catch (error) {
+    console.error('❌ Erreur POST /api/config/banlist:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // GET /api/config/:name - Lire une configuration
 app.get('/api/config/:name', (req, res) => {
   try {
@@ -1117,18 +1209,6 @@ app.get('/api/config/:name', (req, res) => {
     }
     if (!configData && name === 'evs-location') {
       const seedPath = path.join(__dirname, '../src/config/evs-location.json');
-      if (fs.existsSync(seedPath)) {
-        try {
-          configData = fs.readJsonSync(seedPath);
-        } catch (e) {
-          configData = { entries: [] };
-        }
-      } else {
-        configData = { entries: [] };
-      }
-    }
-    if (!configData && name === 'banlist') {
-      const seedPath = path.join(__dirname, '../src/config/banlist.json');
       if (fs.existsSync(seedPath)) {
         try {
           configData = fs.readJsonSync(seedPath);

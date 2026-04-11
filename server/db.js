@@ -41,7 +41,19 @@ export async function initDb() {
       );
     `);
     await query(`CREATE INDEX IF NOT EXISTS idx_connection_logs_created_at ON connection_logs(created_at DESC);`);
-    console.log('✅ Tables admins et connection_logs prêtes.');
+    await query(`
+      CREATE TABLE IF NOT EXISTS banlist_entries (
+        id TEXT PRIMARY KEY,
+        species_id INTEGER NOT NULL,
+        form INTEGER,
+        name TEXT NOT NULL,
+        image_url TEXT,
+        reason TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    await query(`CREATE INDEX IF NOT EXISTS idx_banlist_species ON banlist_entries(species_id, form);`);
+    console.log('✅ Tables admins, connection_logs et banlist_entries prêtes.');
 
     const seedEmail = process.env.SEED_ADMIN_EMAIL;
     const seedPassword = process.env.SEED_ADMIN_PASSWORD;
