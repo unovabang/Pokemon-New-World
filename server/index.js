@@ -1127,6 +1127,18 @@ app.get('/api/config/:name', (req, res) => {
         configData = { entries: [] };
       }
     }
+    if (!configData && name === 'banlist') {
+      const seedPath = path.join(__dirname, '../src/config/banlist.json');
+      if (fs.existsSync(seedPath)) {
+        try {
+          configData = fs.readJsonSync(seedPath);
+        } catch (e) {
+          configData = { entries: [] };
+        }
+      } else {
+        configData = { entries: [] };
+      }
+    }
     if (!configData) {
       return res.status(404).json({ success: false, error: `Configuration ${name} non trouvée` });
     }

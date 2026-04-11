@@ -25,6 +25,7 @@ import EmbedEditor from "../components/EmbedEditor";
 import TeamEditor from "../components/TeamEditor";
 import LoreEditor from "../components/LoreEditor";
 import BossEditor from "../components/BossEditor";
+import BanlistEditor from "../components/BanlistEditor";
 import DownloadPageEditor from "../components/DownloadPageEditor";
 import UnderConstructionPage from "./UnderConstructionPage";
 import SeoAuditPanel from "../components/SeoAuditPanel";
@@ -107,6 +108,7 @@ const AdminPanel = () => {
         { id: 'bst', name: 'All BST + Abilities', icon: 'fa-chart-line', description: 'Stats & capacités' },
         { id: 'guide', name: 'Guide', icon: 'fa-route', description: 'Walkthrough' },
         { id: 'boss', name: 'Boss', icon: 'fa-crown', description: 'Boss du jeu' },
+        { id: 'banlist', name: 'Banlist Tour', icon: 'fa-ban', description: 'Pokémons interdits en combat PvP' },
         { id: 'itemlocation', name: 'Item Location', icon: 'fa-location-dot', description: 'Localisation des objets' },
         { id: 'evs', name: 'EVs Location', icon: 'fa-map-location-dot', description: 'Emplacements des EVs' },
         { id: 'nerfs', name: 'Nerfs and Buffs', icon: 'fa-balance-scale', description: 'Nerfs et buffs' },
@@ -406,6 +408,8 @@ const AdminPanel = () => {
           {activeTab === 'boss' && (
             <BossEditor onSave={() => {}} />
           )}
+
+          {activeTab === 'banlist' && <BanlistEditor />}
 
           {activeTab === 'evs' && (
             <EVsLocationEditor onSave={() => {}} />
