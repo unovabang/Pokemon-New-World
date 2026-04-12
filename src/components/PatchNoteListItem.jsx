@@ -51,40 +51,42 @@ export default function PatchNoteListItem({ item, lang = "fr", pokedexLookup }) 
 
   const bodyMd = useSplitHead ? rest.trim() : norm.text;
 
+  const rowClass = [
+    pres.rowClass,
+    "patchnotes-balance-li--stacked",
+    showSpriteColumn ? "patchnotes-balance-li--sprite-row" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <li className={`${pres.rowClass} patchnotes-balance-li--stacked`}>
-      <div className="patchnotes-balance-head">
-        <span className="patchnotes-balance-tag">
-          <i className={pres.icon} aria-hidden />
-          <span>{pres.label}</span>
-        </span>
-        {useSplitHead ? (
-          <div className="patchnotes-balance-head-title">
-            {renderInlineMarkdown(titleInner, { titleClassName: "patchnotes-inline-title" })}
-          </div>
-        ) : null}
-      </div>
-      <div
-        className={
-          showSpriteColumn
-            ? "patchnotes-balance-main patchnotes-balance-main--sprite"
-            : "patchnotes-balance-main"
-        }
-      >
-        {showSpriteColumn ? (
-          <div className="patchnotes-balance-sprite-wrap">
-            <img
-              src={spriteUrl}
-              alt=""
-              className="patchnotes-balance-sprite"
-              loading="lazy"
-              decoding="async"
-              onError={(e) => {
-                e.currentTarget.src = PLACEHOLDER_SPRITE;
-              }}
-            />
-          </div>
-        ) : null}
+    <li className={rowClass}>
+      {showSpriteColumn ? (
+        <div className="patchnotes-balance-sprite-col">
+          <img
+            src={spriteUrl}
+            alt=""
+            className="patchnotes-balance-sprite"
+            loading="lazy"
+            decoding="async"
+            onError={(e) => {
+              e.currentTarget.src = PLACEHOLDER_SPRITE;
+            }}
+          />
+        </div>
+      ) : null}
+      <div className="patchnotes-balance-text-stack">
+        <div className="patchnotes-balance-head">
+          <span className="patchnotes-balance-tag">
+            <i className={pres.icon} aria-hidden />
+            <span>{pres.label}</span>
+          </span>
+          {useSplitHead ? (
+            <div className="patchnotes-balance-head-title">
+              {renderInlineMarkdown(titleInner, { titleClassName: "patchnotes-inline-title" })}
+            </div>
+          ) : null}
+        </div>
         <div className="patchnotes-balance-copy">
           <PatchMarkdownText text={bodyMd} />
         </div>

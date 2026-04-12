@@ -6113,13 +6113,35 @@ a.dex-panel--active{cursor:default}
   background:rgba(168,85,247,.18);
   border-color:rgba(192,132,252,.4);
 }
-/* Ligne équilibrage avec titre [TITLE] en tête et/ou sprite sous le badge */
+/* Ligne équilibrage avec titre [TITLE] en tête et/ou sprite */
 .patch-section > ul > li.patchnotes-balance-li.patchnotes-balance-li--stacked,
 .patchnotes-section > ul > li.patchnotes-balance-li.patchnotes-balance-li--stacked{
   flex-direction:column;
   flex-wrap:nowrap;
   align-items:stretch;
   gap:0.32rem;
+}
+/* Sprite à gauche sur toute la hauteur (badge + nom + texte), centré verticalement */
+.patch-section > ul > li.patchnotes-balance-li.patchnotes-balance-li--stacked.patchnotes-balance-li--sprite-row,
+.patchnotes-section > ul > li.patchnotes-balance-li.patchnotes-balance-li--stacked.patchnotes-balance-li--sprite-row{
+  flex-direction:row;
+  align-items:stretch;
+  gap:0.75rem 1rem;
+}
+.patchnotes-balance-text-stack{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:0.28rem;
+}
+.patchnotes-balance-sprite-col{
+  flex:0 0 clamp(72px,24vw,104px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  align-self:stretch;
 }
 .patchnotes-balance-head{
   display:flex;
@@ -6144,23 +6166,6 @@ a.dex-panel--active{cursor:default}
   color:inherit;
   letter-spacing:inherit;
   text-transform:inherit;
-}
-.patchnotes-balance-main{
-  display:block;
-  min-width:0;
-}
-.patchnotes-balance-main--sprite{
-  display:grid;
-  grid-template-columns:minmax(72px,104px) minmax(0,1fr);
-  gap:0.65rem 1rem;
-  align-items:start;
-  margin-top:0.15rem;
-}
-.patchnotes-balance-sprite-wrap{
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  padding-top:0.08rem;
 }
 .patchnotes-balance-sprite{
   max-width:96px;
