@@ -21,6 +21,19 @@ export function toAbsoluteUrl(pathOrUrl) {
   return `${base}${path}`;
 }
 
+/** Pathname seul pour canonical / og:url (évite d’indexer des variantes ?q=, #fragment, etc.). */
+export function normalizeSeoPath(path) {
+  if (path == null || path === "") return "/";
+  let p = String(path).trim();
+  const q = p.indexOf("?");
+  const h = p.indexOf("#");
+  if (q >= 0) p = p.slice(0, q);
+  if (h >= 0) p = p.slice(0, h);
+  p = p.trim();
+  if (!p.startsWith("/")) p = `/${p}`;
+  return p || "/";
+}
+
 /** Extrait un extrait lisible pour meta description depuis du markdown léger. */
 export function plainTextFromMarkdown(s, maxLen = 160) {
   if (!s || typeof s !== "string") return "";
@@ -68,20 +81,10 @@ function setLinkCanonical(href) {
   el.setAttribute("href", href);
 }
 
-function setHreflang(href) {
-  if (!href) return;
-  const langs = ["fr", "en", "x-default"];
-  for (const lang of langs) {
-    const selector = `link[rel="alternate"][hreflang="${lang}"]`;
-    let el = document.querySelector(selector);
-    if (!el) {
-      el = document.createElement("link");
-      el.setAttribute("rel", "alternate");
-      el.setAttribute("hreflang", lang);
-      document.head.appendChild(el);
-    }
-    el.setAttribute("href", href);
-  }
+/** Retire les balises hreflang injectées (FR/EN sur la même URL = signal ambigu pour les moteurs). */
+function removeHreflangAlternates() {
+  if (typeof document === "undefined") return;
+  document.querySelectorAll('link[rel="alternate"][hreflang]').forEach((el) => el.remove());
 }
 
 function setJsonLd(id, data) {
@@ -100,7 +103,7 @@ function setJsonLd(id, data) {
  * @param {object} opts
  * @param {string} opts.title
  * @param {string} opts.description
- * @param {string} [opts.path] - pathname (ex. /patchnotes)
+ * @param {string} [opts.path] - pathname (ex. /patchnotes) ; query/hash ignorés pour canonical et og:url
  * @param {string} [opts.imagePath] - chemin ou URL absolue
  * @param {string[]|string} [opts.keywords] - si omis, la meta keywords n'est pas modifiée
  * @param {string} [opts.lang] - 'fr' | 'en'
@@ -116,7 +119,8 @@ export function applyPageSeo({
   robots,
 }) {
   const base = getSiteBaseUrl();
-  const pathNormalized = path.startsWith("/") ? path : `/${path}`;
+  removeHreflangAlternates();
+  const pathNormalized = normalizeSeoPath(path);
   const canonical = `${base}${pathNormalized}`;
 
   document.title = title;
@@ -148,7 +152,6 @@ export function applyPageSeo({
   setMetaByName("twitter:image", toAbsoluteUrl(imagePath));
 
   setLinkCanonical(canonical);
-  setHreflang(canonical);
 
   document.documentElement.lang = lang === "en" ? "en" : "fr";
 

@@ -314,7 +314,6 @@ export default function SeoAuditPanel() {
                   <CheckItem label="og:url" ok={audit.indexChecks.hasOgUrl} />
                   <CheckItem label="og:image" ok={audit.indexChecks.hasOgImage} />
                   <CheckItem label="Twitter Card" ok={audit.indexChecks.hasTwitterCard} />
-                  <CheckItem label="hreflang" ok={audit.indexChecks.hasHreflang} />
                   <CheckItem label="JSON-LD" ok={audit.indexChecks.hasJsonLd} />
                   <CheckItem label="Preload" ok={audit.indexChecks.hasPreload} />
                   <CheckItem label="Apple Touch Icon" ok={audit.indexChecks.hasAppleTouchIcon} />

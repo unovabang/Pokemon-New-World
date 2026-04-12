@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { useEasterEggs } from "../App";
 import content from "../config/index.js";
@@ -246,7 +246,8 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
 
 export default function PokedexPage() {
   const easterEggs = useEasterEggs();
-  const [search, setSearch] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get("q") ?? "";
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [viewMode, setViewMode] = useState("grid");
   const [availabilityFilter, setAvailabilityFilter] = useState(null);
@@ -261,13 +262,28 @@ export default function PokedexPage() {
   const [showEasterEgg, setShowEasterEgg] = useState(false);
 
   const handleSearchChange = useCallback(async (value) => {
-    setSearch(value);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (value.trim()) next.set("q", value);
+        else next.delete("q");
+        return next;
+      },
+      { replace: true },
+    );
     const inputHash = await hashString(value);
     if (inputHash === SECRET_HASH && easterEggs.gighaston !== false) {
       setShowEasterEgg(true);
-      setSearch("");
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.delete("q");
+          return next;
+        },
+        { replace: true },
+      );
     }
-  }, []);
+  }, [setSearchParams, easterEggs.gighaston]);
 
   const closeEasterEgg = useCallback(() => {
     setShowEasterEgg(false);

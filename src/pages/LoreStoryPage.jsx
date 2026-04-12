@@ -59,7 +59,7 @@ function RenderContent({ paragraphs, storyTitle }) {
 export default function LoreStoryPage() {
   const { slug } = useParams();
   const { state: locationState } = useLocation();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const isEn = language === "en";
 
   const [stories, setStories] = useState([]);
@@ -84,8 +84,8 @@ export default function LoreStoryPage() {
     if (!story) {
       if (!loaded) {
         return {
-          title: isEn ? "Lore • Pokémon New World" : "Lore • Pokémon New World",
-          description: isEn ? "Loading…" : "Chargement…",
+          title: t("seo.pages.lore.title"),
+          description: t("seo.pages.lore.description"),
           path,
           lang: language,
         };
@@ -112,7 +112,7 @@ export default function LoreStoryPage() {
       imagePath: bannerImage,
       lang: language,
     };
-  }, [slug, story, loaded, isEn, bannerImage, language]);
+  }, [slug, story, loaded, isEn, bannerImage, language, t]);
 
   usePageSeo(loreSeo);
 

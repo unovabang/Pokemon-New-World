@@ -2451,7 +2451,6 @@ app.get('/api/seo/audit', requireAuth, async (req, res) => {
       indexChecks.hasOgUrl = /og:url/.test(html);
       indexChecks.hasOgImage = /og:image/.test(html);
       indexChecks.hasTwitterCard = /twitter:card/.test(html);
-      indexChecks.hasHreflang = /hreflang/.test(html);
       indexChecks.hasJsonLd = /application\/ld\+json/.test(html);
       indexChecks.hasManifestLink = /manifest/.test(html);
       indexChecks.hasAppleTouchIcon = /apple-touch-icon/.test(html);
