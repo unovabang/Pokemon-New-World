@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { authHeaders } from "../utils/authHeaders";
+import { authHeaders, credentialsInit } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -7,6 +7,7 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 export default function WebhookEditor() {
   const [webhookUrl, setWebhookUrl] = useState("");
+  const [webhookUrlRedacted, setWebhookUrlRedacted] = useState(false);
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [embed, setEmbed] = useState({ title: "", description: "", color: "#5865F2", image: "", thumbnail: "", footer: "", buttonLabel: "", buttonUrl: "" });
@@ -16,11 +17,17 @@ export default function WebhookEditor() {
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_BASE}/config/webhook?t=${Date.now()}`)
+    fetch(`${API_BASE}/config/webhook?t=${Date.now()}`, credentialsInit())
       .then((r) => r.json())
       .then((d) => {
         if (d?.success) {
-          setWebhookUrl(d.webhookUrl || "");
+          if (typeof d.webhookUrl === "string" && d.webhookUrl.trim()) {
+            setWebhookUrl(d.webhookUrl);
+            setWebhookUrlRedacted(false);
+          } else {
+            setWebhookUrl("");
+            setWebhookUrlRedacted(!!d.webhookConfigured);
+          }
           setUsername(d.username || "");
           setAvatarUrl(d.avatarUrl || "");
           setEmbed(d.embed || { title: "", description: "", color: "#5865F2", image: "", thumbnail: "", footer: "", buttonLabel: "", buttonUrl: "" });
@@ -37,11 +44,14 @@ export default function WebhookEditor() {
     setSaving(true);
     setMessage(null);
     try {
-      const res = await fetch(`${API_BASE}/config/webhook`, {
+      const body = { username: username.trim(), avatarUrl: avatarUrl.trim(), embed, intervalHours };
+      if (webhookUrl.trim()) body.webhookUrl = webhookUrl.trim();
+      else if (!webhookUrlRedacted) body.webhookUrl = "";
+      const res = await fetch(`${API_BASE}/config/webhook`, credentialsInit({
         method: "PUT",
         headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify({ webhookUrl: webhookUrl.trim(), username: username.trim(), avatarUrl: avatarUrl.trim(), embed, intervalHours }),
-      });
+        body: JSON.stringify(body),
+      }));
       const data = await res.json();
       if (data?.success) {
         setMessage({ type: "success", text: "Configuration webhook sauvegardée." });
@@ -67,8 +77,26 @@ export default function WebhookEditor() {
       {/* Webhook settings */}
       <label style={labelStyle}>
         <span style={spanStyle}>URL du Webhook Discord</span>
-        <input type="text" value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://discord.com/api/webhooks/..." style={inputStyle} />
+        <input
+          type="text"
+          value={webhookUrl}
+          onChange={(e) => {
+            setWebhookUrl(e.target.value);
+            if (e.target.value.trim()) setWebhookUrlRedacted(false);
+          }}
+          placeholder="https://discord.com/api/webhooks/..."
+          style={inputStyle}
+        />
       </label>
+      {webhookUrlRedacted ? (
+        <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.5)", margin: "-0.35rem 0 0" }}>
+          Webhook déjà configuré ; l’URL n’est pas affichée. Collez une nouvelle URL pour la remplacer, ou{" "}
+          <button type="button" className="admin-panel-btn admin-panel-btn--ghost" style={{ padding: "0.15rem 0.4rem", fontSize: "0.8rem" }} onClick={() => { setWebhookUrlRedacted(false); setWebhookUrl(""); }}>
+            supprimer le webhook
+          </button>{" "}
+          puis sauvegardez.
+        </p>
+      ) : null}
       <label style={labelStyle}>
         <span style={spanStyle}>Nom du Webhook</span>
         <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Bot PNW" style={inputStyle} />

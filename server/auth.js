@@ -45,6 +45,21 @@ export function requireAuth(req, res, next) {
   }
 }
 
+/** Renseigne `req.admin` si JWT valide ; sinon `req.admin = null` (pas de 401). Pour GET publics sensibles. */
+export function optionalAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  const token = req.cookies?.token
+    || (authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null);
+  req.admin = null;
+  if (!token) return next();
+  try {
+    req.admin = jwt.verify(token, JWT_SECRET);
+  } catch {
+    req.admin = null;
+  }
+  next();
+}
+
 // POST /api/auth/login — Connexion admin + enregistrement du log
 router.post('/login', async (req, res) => {
   try {

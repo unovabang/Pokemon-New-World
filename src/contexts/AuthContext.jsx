@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { credentialsInit } from '../utils/authHeaders';
 
 const API_BASE = import.meta.env.VITE_API_URL || window.location.origin;
 
@@ -10,7 +11,7 @@ export function AuthProvider({ children }) {
 
   const fetchMe = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/auth/me`);
+      const res = await fetch(`${API_BASE}/api/auth/me`, credentialsInit());
       const data = await res.json();
       if (data.success) setAdmin(data.admin);
       else setAdmin(null);
@@ -26,11 +27,11 @@ export function AuthProvider({ children }) {
   }, [fetchMe]);
 
   const login = async (email, password) => {
-    const res = await fetch(`${API_BASE}/api/auth/login`, {
+    const res = await fetch(`${API_BASE}/api/auth/login`, credentialsInit({
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+      body: JSON.stringify({ email, password }),
+    }));
     const data = await res.json();
     if (!data.success) throw new Error(data.error || 'Connexion échouée');
     setAdmin(data.admin);
@@ -39,7 +40,7 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     try {
-      await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST' });
+      await fetch(`${API_BASE}/api/auth/logout`, credentialsInit({ method: 'POST' }));
     } catch { /* ignore */ }
     setAdmin(null);
   }, []);

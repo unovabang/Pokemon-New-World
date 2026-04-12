@@ -8,7 +8,7 @@ import {
   resolveSectionBalanceKinds,
   PATCH_BALANCE_KINDS,
 } from '../utils/patchNoteItem';
-import { authHeaders } from "../utils/authHeaders";
+import { authHeaders, credentialsInit } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -29,6 +29,7 @@ const PatchNotesEditor = ({ onSave }) => {
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [discordWebhookUrl, setDiscordWebhookUrl] = useState('');
+  const [discordWebhookUrlRedacted, setDiscordWebhookUrlRedacted] = useState(false);
   const [discordImageStyle, setDiscordImageStyle] = useState('thumbnail');
   const [discordWebhookSaving, setDiscordWebhookSaving] = useState(false);
   const [pageBackground, setPageBackground] = useState('');
@@ -67,10 +68,16 @@ const PatchNotesEditor = ({ onSave }) => {
 
   const loadDiscordWebhook = async () => {
     try {
-      const res = await fetch(`${API_BASE}/config/discord-webhook`);
+      const res = await fetch(`${API_BASE}/config/discord-webhook`, credentialsInit());
       const data = await res.json();
       if (data.success) {
-        if (typeof data.webhookUrl === 'string') setDiscordWebhookUrl(data.webhookUrl);
+        if (typeof data.webhookUrl === 'string' && data.webhookUrl.trim()) {
+          setDiscordWebhookUrl(data.webhookUrl);
+          setDiscordWebhookUrlRedacted(false);
+        } else {
+          setDiscordWebhookUrl('');
+          setDiscordWebhookUrlRedacted(!!data.webhookConfigured);
+        }
         if (data.imageStyle === 'banner' || data.imageStyle === 'thumbnail') setDiscordImageStyle(data.imageStyle);
       }
     } catch (e) {
@@ -85,14 +92,19 @@ const PatchNotesEditor = ({ onSave }) => {
   const saveDiscordWebhook = async () => {
     setDiscordWebhookSaving(true);
     try {
-      const res = await fetch(`${API_BASE}/config/discord-webhook`, {
+      const body = { imageStyle: discordImageStyle };
+      if (discordWebhookUrl.trim()) body.webhookUrl = discordWebhookUrl.trim();
+      else if (!discordWebhookUrlRedacted) body.webhookUrl = '';
+      const res = await fetch(`${API_BASE}/config/discord-webhook`, credentialsInit({
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ webhookUrl: discordWebhookUrl.trim(), imageStyle: discordImageStyle })
-      });
+        body: JSON.stringify(body),
+      }));
       const data = await res.json();
-      if (data.success) showMessage('Succès', data.webhookUrl === 'cleared' ? 'Webhook supprimé.' : 'Webhook Discord enregistré. Un message sera envoyé à chaque nouveau patch.', 'success');
-      else throw new Error(data.error);
+      if (data.success) {
+        showMessage('Succès', data.webhookUrl === 'cleared' ? 'Webhook supprimé.' : 'Webhook Discord enregistré. Un message sera envoyé à chaque nouveau patch.', 'success');
+        loadDiscordWebhook();
+      } else throw new Error(data.error);
     } catch (e) {
       showMessage('Erreur', e.message || 'Impossible d\'enregistrer le webhook.', 'error');
     } finally {
@@ -103,11 +115,11 @@ const PatchNotesEditor = ({ onSave }) => {
   const savePageBackground = async () => {
     setPageBackgroundSaving(true);
     try {
-      const res = await fetch(`${API_BASE}/patchnotes/background`, {
+      const res = await fetch(`${API_BASE}/patchnotes/background`, credentialsInit({
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ background: pageBackground.trim() || null })
-      });
+        body: JSON.stringify({ background: pageBackground.trim() || null }),
+      }));
       const data = await res.json();
       if (data.success) showMessage('Succès', 'Image de fond de la page Notes de patch (FR) enregistrée.', 'success');
       else throw new Error(data.error);
@@ -121,7 +133,7 @@ const PatchNotesEditor = ({ onSave }) => {
   const loadPatchNotes = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE}/patchnotes/${currentLang}?t=${Date.now()}`);
+      const response = await fetch(`${API_BASE}/patchnotes/${currentLang}?t=${Date.now()}`, credentialsInit());
       const data = await response.json();
       if (data.success && data.patchnotes?.versions) {
         setAllVersions(data.patchnotes.versions);
@@ -191,7 +203,7 @@ const PatchNotesEditor = ({ onSave }) => {
 
     try {
       if (selectedVersion === null) {
-        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version`, {
+        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version`, credentialsInit({
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...authHeaders() },
           body: JSON.stringify({
@@ -199,15 +211,15 @@ const PatchNotesEditor = ({ onSave }) => {
             date: currentPatch.date.trim(),
             image: currentPatch.image?.trim() || undefined,
             sections: sectionsToSave
-          })
-        });
+          }),
+        }));
         const data = await res.json();
         if (!data.success) throw new Error(data.error);
         setSelectedVersion(currentPatch.version.trim());
         setAllVersions(data.patchnotes.versions);
         showMessage('Succès', 'Nouveau patch créé.', 'success');
       } else {
-        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${encodeURIComponent(selectedVersion)}`, {
+        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${encodeURIComponent(selectedVersion)}`, credentialsInit({
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', ...authHeaders() },
           body: JSON.stringify({
@@ -215,8 +227,8 @@ const PatchNotesEditor = ({ onSave }) => {
             date: currentPatch.date.trim(),
             image: currentPatch.image?.trim() || undefined,
             sections: sectionsToSave
-          })
-        });
+          }),
+        }));
         const data = await res.json();
         if (!data.success) throw new Error(data.error);
         setAllVersions(data.patchnotes.versions);
@@ -352,7 +364,7 @@ const PatchNotesEditor = ({ onSave }) => {
   const deleteVersion = (version) => {
     showConfirm('Supprimer cette version', `Supprimer la version ${version} ?`, async () => {
       try {
-        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${version}`, { method: 'DELETE', headers: { ...authHeaders() } });
+        const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/version/${version}`, credentialsInit({ method: 'DELETE', headers: { ...authHeaders() } }));
         const data = await res.json();
         if (data.success) {
           setAllVersions(data.patchnotes.versions);
@@ -375,11 +387,11 @@ const PatchNotesEditor = ({ onSave }) => {
     if (swap < 0 || swap >= versions.length) return;
     [versions[index], versions[swap]] = [versions[swap], versions[index]];
     try {
-      const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/reorder`, {
+      const res = await fetch(`${API_BASE}/patchnotes/${currentLang}/reorder`, credentialsInit({
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...authHeaders() },
-        body: JSON.stringify({ order: versions })
-      });
+        body: JSON.stringify({ order: versions }),
+      }));
       const data = await res.json();
       if (data.success) {
         setAllVersions(data.patchnotes.versions);
@@ -459,7 +471,10 @@ const PatchNotesEditor = ({ onSave }) => {
           <input
             type="url"
             value={discordWebhookUrl}
-            onChange={(e) => setDiscordWebhookUrl(e.target.value)}
+            onChange={(e) => {
+              setDiscordWebhookUrl(e.target.value);
+              if (e.target.value.trim()) setDiscordWebhookUrlRedacted(false);
+            }}
             placeholder="https://discord.com/api/webhooks/..."
             className="patchnotes-editor-input patchnotes-editor-webhook-input"
           />
@@ -467,6 +482,21 @@ const PatchNotesEditor = ({ onSave }) => {
             {discordWebhookSaving ? <i className="fa-solid fa-spinner fa-spin" /> : <i className="fa-solid fa-save" />} Sauvegarder
           </button>
         </div>
+        {discordWebhookUrlRedacted ? (
+          <div style={{ marginTop: '0.35rem' }}>
+            <p className="patchnotes-editor-webhook-desc" style={{ margin: 0 }}>
+              Un webhook est déjà configuré ; l’URL complète n’est pas affichée. Collez une nouvelle URL pour la remplacer, ou enregistrez uniquement le style d’image pour ne pas modifier le webhook.
+            </p>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              style={{ marginTop: '0.5rem' }}
+              onClick={() => { setDiscordWebhookUrlRedacted(false); setDiscordWebhookUrl(''); }}
+            >
+              Préparer la suppression du webhook
+            </button>
+          </div>
+        ) : null}
         <div className="patchnotes-editor-webhook-image-option">
           <span className="patchnotes-editor-webhook-image-label">Image du patch (si présente) :</span>
           <select value={discordImageStyle} onChange={(e) => setDiscordImageStyle(e.target.value)} className="patchnotes-editor-select patchnotes-editor-webhook-select">

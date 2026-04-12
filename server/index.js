@@ -11,7 +11,8 @@ import path from 'path';
 import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import { initDb } from './db.js';
-import authRoutes, { requireAuth } from './auth.js';
+import authRoutes, { requireAuth, optionalAuth } from './auth.js';
+import { maskDiscordWebhookUrl } from './webhookMask.js';
 import { handleChatPublicPreview } from './chatPublicPreview.js';
 import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command, ListMultipartUploadsCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -35,6 +36,12 @@ function compareSemver(a, b) {
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+/** Derrière Railway / Cloudflare : limiteur d’IP et logs utilisent la bonne IP client. */
+const trustHops = (process.env.TRUST_PROXY_HOPS ?? '1').trim();
+if (trustHops === '0') app.set('trust proxy', false);
+else if (trustHops !== '' && !Number.isNaN(Number(trustHops))) app.set('trust proxy', Number(trustHops));
+else app.set('trust proxy', 1);
 
 // Middleware (limite large pour PUT /api/pokedex et autres configs volumineuses — évolutif)
 app.use(cors({
@@ -64,7 +71,7 @@ app.use(helmet({
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
 }));
 app.use(cookieParser());
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '25mb' }));
 
 // Rate limit global : 100 requêtes / minute par IP
 const globalLimiter = rateLimit({
@@ -243,6 +250,11 @@ function getBannerList() {
   }
 }
 
+/** Fichiers `banniere{n}.png` uniquement (admin upload — évite path traversal). */
+function isBannerAssetFilename(filename) {
+  return typeof filename === 'string' && /^banniere\d+\.png$/i.test(filename.trim());
+}
+
 // API Routes
 
 // GET /api/banners - Lister toutes les bannières
@@ -285,6 +297,9 @@ app.delete('/api/banners/:filename', requireAuth, (req, res) => {
     if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
       return res.status(400).json({ success: false, error: 'Nom de fichier invalide' });
     }
+    if (!isBannerAssetFilename(filename)) {
+      return res.status(400).json({ success: false, error: 'Nom de fichier invalide' });
+    }
     const filePath = path.join(NEWS_IMAGES_DIR, filename);
 
     if (!fs.existsSync(filePath)) {
@@ -310,7 +325,16 @@ app.put('/api/banners/reposition', requireAuth, (req, res) => {
     if (!changes || typeof changes !== 'object') {
       return res.status(400).json({ success: false, error: 'Format de données invalide' });
     }
-    
+    for (const [oldName, newPosition] of Object.entries(changes)) {
+      if (!isBannerAssetFilename(oldName)) {
+        return res.status(400).json({ success: false, error: `Nom de bannière invalide : ${oldName}` });
+      }
+      const pos = Number(newPosition);
+      if (!Number.isInteger(pos) || pos < 1 || pos > 10) {
+        return res.status(400).json({ success: false, error: 'Position invalide (1–10)' });
+      }
+    }
+
     // Créer un mapping temporaire pour éviter les conflits
     const tempDir = path.join(__dirname, '../temp-banners');
     fs.ensureDirSync(tempDir);
@@ -354,6 +378,10 @@ app.put('/api/banners/:filename/position', requireAuth, (req, res) => {
   try {
     const { filename } = req.params;
     const { position } = req.body;
+
+    if (!isBannerAssetFilename(filename)) {
+      return res.status(400).json({ success: false, error: 'Nom de fichier invalide' });
+    }
     
     if (!position || position < 1 || position > 10) {
       return res.status(400).json({ success: false, error: 'Position invalide (1-10)' });
@@ -660,11 +688,21 @@ async function sendLauncherUpdateToDiscord(newLauncherUrl) {
   }
 }
 
-// GET /api/config/discord-webhook - Lire l’URL du webhook (masquée partiellement)
-app.get('/api/config/discord-webhook', (req, res) => {
+// GET /api/config/discord-webhook — URL complète uniquement si admin authentifié (cookie JWT).
+app.get('/api/config/discord-webhook', optionalAuth, (req, res) => {
   try {
     const { webhookUrl, imageStyle } = getDiscordWebhookConfig();
-    res.json({ success: true, webhookUrl: webhookUrl || '', imageStyle: imageStyle || 'thumbnail' });
+    const style = imageStyle || 'thumbnail';
+    if (req.admin) {
+      return res.json({ success: true, webhookUrl: webhookUrl || '', imageStyle: style, webhookConfigured: !!webhookUrl });
+    }
+    return res.json({
+      success: true,
+      webhookUrl: '',
+      webhookUrlMasked: webhookUrl ? maskDiscordWebhookUrl(webhookUrl) : '',
+      webhookConfigured: !!webhookUrl,
+      imageStyle: style,
+    });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
@@ -674,11 +712,21 @@ app.get('/api/config/discord-webhook', (req, res) => {
 app.put('/api/config/discord-webhook', requireAuth, (req, res) => {
   try {
     let { webhookUrl, imageStyle } = req.body || {};
-    webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
+    const prev = getDiscordWebhookConfig();
+    if (webhookUrl === undefined) {
+      webhookUrl = (prev.webhookUrl || '').trim();
+    } else {
+      webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
+    }
     if (webhookUrl && !webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
       return res.status(400).json({ success: false, error: 'URL de webhook Discord invalide.' });
     }
-    const imageStyleVal = (imageStyle === 'banner' || imageStyle === 'thumbnail') ? imageStyle : 'thumbnail';
+    const imageStyleVal =
+      imageStyle === 'banner' || imageStyle === 'thumbnail'
+        ? imageStyle
+        : prev.imageStyle === 'banner' || prev.imageStyle === 'thumbnail'
+          ? prev.imageStyle
+          : 'thumbnail';
     fs.ensureDirSync(CONFIG_DIR);
     fs.writeJsonSync(DISCORD_WEBHOOK_PATH, { webhookUrl: webhookUrl || '', imageStyle: imageStyleVal }, { spaces: 2 });
     res.json({ success: true, webhookUrl: webhookUrl ? 'saved' : 'cleared' });
@@ -1002,16 +1050,25 @@ function startWebhookInterval() {
   console.log(`⏰ Webhook auto-message: toutes les ${hours}h`);
 }
 
-app.get('/api/config/webhook', (req, res) => {
+app.get('/api/config/webhook', optionalAuth, (req, res) => {
   try {
     const data = getWebhookData();
-    res.json({
+    const rawUrl = (data.webhookUrl || '').trim();
+    const base = {
       success: true,
-      webhookUrl: (data.webhookUrl || '').trim(),
       username: (data.username || '').trim(),
       avatarUrl: (data.avatarUrl || '').trim(),
       embed: data.embed || { title: '', description: '', color: '#5865F2', image: '', thumbnail: '', footer: '' },
       intervalHours: data.intervalHours || 2,
+      webhookConfigured: !!rawUrl,
+    };
+    if (req.admin) {
+      return res.json({ ...base, webhookUrl: rawUrl });
+    }
+    return res.json({
+      ...base,
+      webhookUrl: '',
+      webhookUrlMasked: rawUrl ? maskDiscordWebhookUrl(rawUrl) : '',
     });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
@@ -1021,7 +1078,12 @@ app.get('/api/config/webhook', (req, res) => {
 app.put('/api/config/webhook', requireAuth, (req, res) => {
   try {
     let { webhookUrl, username, avatarUrl, embed, intervalHours } = req.body || {};
-    webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
+    const prev = getWebhookData();
+    if (webhookUrl === undefined) {
+      webhookUrl = (prev.webhookUrl || '').trim();
+    } else {
+      webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
+    }
     username = typeof username === 'string' ? username.trim() : '';
     avatarUrl = typeof avatarUrl === 'string' ? avatarUrl.trim() : '';
     embed = typeof embed === 'object' && embed ? embed : {};
@@ -1042,12 +1104,21 @@ app.put('/api/config/webhook', requireAuth, (req, res) => {
   }
 });
 
-app.get('/api/config/contact-webhook', (req, res) => {
+app.get('/api/config/contact-webhook', optionalAuth, (req, res) => {
   try {
     const data = getContactWebhookData();
     const webhookUrl = (data.webhookUrl || '').trim();
     const backgroundImage = (data.backgroundImage || '').trim();
-    res.json({ success: true, webhookUrl, backgroundImage });
+    if (req.admin) {
+      return res.json({ success: true, webhookUrl, backgroundImage, webhookConfigured: !!webhookUrl });
+    }
+    return res.json({
+      success: true,
+      webhookUrl: '',
+      webhookUrlMasked: webhookUrl ? maskDiscordWebhookUrl(webhookUrl) : '',
+      webhookConfigured: !!webhookUrl,
+      backgroundImage,
+    });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
@@ -1056,8 +1127,17 @@ app.get('/api/config/contact-webhook', (req, res) => {
 app.put('/api/config/contact-webhook', requireAuth, (req, res) => {
   try {
     let { webhookUrl, backgroundImage } = req.body || {};
-    webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
-    backgroundImage = typeof backgroundImage === 'string' ? backgroundImage.trim() : '';
+    const prev = getContactWebhookData();
+    if (webhookUrl === undefined) {
+      webhookUrl = (prev.webhookUrl || '').trim();
+    } else {
+      webhookUrl = typeof webhookUrl === 'string' ? webhookUrl.trim() : '';
+    }
+    if (backgroundImage === undefined) {
+      backgroundImage = (prev.backgroundImage || '').trim();
+    } else {
+      backgroundImage = typeof backgroundImage === 'string' ? backgroundImage.trim() : '';
+    }
     if (webhookUrl && !webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
       return res.status(400).json({ success: false, error: 'URL de webhook Discord invalide.' });
     }
@@ -1078,6 +1158,10 @@ app.get('/api/config/:name', (req, res) => {
     const { name } = req.params;
     if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
       return res.status(400).json({ success: false, error: 'Nom de configuration invalide' });
+    }
+    /** Évite de servir des JSON contenant des URLs de webhook via l’URL générique. */
+    if (name === 'webhook' || name === 'contact-webhook' || name === 'discord-webhook') {
+      return res.status(404).json({ success: false, error: 'Utiliser la route API dédiée.' });
     }
     let configData = getConfig(name);
     if (!configData && name === 'news') {
@@ -1145,6 +1229,9 @@ app.post('/api/config/:name', requireAuth, (req, res) => {
 
     if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
       return res.status(400).json({ success: false, error: 'Nom de configuration invalide' });
+    }
+    if (name === 'webhook' || name === 'contact-webhook' || name === 'discord-webhook') {
+      return res.status(400).json({ success: false, error: 'Utiliser la route API dédiée pour ce fichier.' });
     }
 
     if (!config) {

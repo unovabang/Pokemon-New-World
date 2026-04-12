@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { authHeaders } from "../utils/authHeaders";
+import { authHeaders, credentialsInit } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -7,17 +7,24 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 export default function ContactWebhookEditor() {
   const [webhookUrl, setWebhookUrl] = useState("");
+  const [webhookUrlRedacted, setWebhookUrlRedacted] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_BASE}/config/contact-webhook?t=${Date.now()}`)
+    fetch(`${API_BASE}/config/contact-webhook?t=${Date.now()}`, credentialsInit())
       .then((r) => r.json())
       .then((d) => {
         if (d?.success) {
-          setWebhookUrl(d.webhookUrl || "");
+          if (typeof d.webhookUrl === "string" && d.webhookUrl.trim()) {
+            setWebhookUrl(d.webhookUrl);
+            setWebhookUrlRedacted(false);
+          } else {
+            setWebhookUrl("");
+            setWebhookUrlRedacted(!!d.webhookConfigured);
+          }
           setBackgroundImage(d.backgroundImage || "");
         }
       })
@@ -29,11 +36,14 @@ export default function ContactWebhookEditor() {
     setSaving(true);
     setMessage(null);
     try {
-      const res = await fetch(`${API_BASE}/config/contact-webhook`, {
+      const body = { backgroundImage: backgroundImage.trim() };
+      if (webhookUrl.trim()) body.webhookUrl = webhookUrl.trim();
+      else if (!webhookUrlRedacted) body.webhookUrl = "";
+      const res = await fetch(`${API_BASE}/config/contact-webhook`, credentialsInit({
         method: "PUT",
         headers: { "Content-Type": "application/json", ...authHeaders() },
-        body: JSON.stringify({ webhookUrl: webhookUrl.trim(), backgroundImage: backgroundImage.trim() }),
-      });
+        body: JSON.stringify(body),
+      }));
       const data = await res.json();
       if (data?.success) {
         setMessage({ type: "success", text: "Configuration contact sauvegardée." });
@@ -57,8 +67,26 @@ export default function ContactWebhookEditor() {
       </p>
       <label style={labelStyle}>
         <span style={spanStyle}>URL du Webhook Discord</span>
-        <input type="text" value={webhookUrl} onChange={(e) => setWebhookUrl(e.target.value)} placeholder="https://discord.com/api/webhooks/..." style={inputStyle} />
+        <input
+          type="text"
+          value={webhookUrl}
+          onChange={(e) => {
+            setWebhookUrl(e.target.value);
+            if (e.target.value.trim()) setWebhookUrlRedacted(false);
+          }}
+          placeholder="https://discord.com/api/webhooks/..."
+          style={inputStyle}
+        />
       </label>
+      {webhookUrlRedacted ? (
+        <p style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.5)", margin: "-0.35rem 0 0" }}>
+          Webhook déjà configuré ; l’URL n’est pas affichée. Collez une nouvelle URL ou{" "}
+          <button type="button" className="admin-panel-btn admin-panel-btn--ghost" style={{ padding: "0.15rem 0.4rem", fontSize: "0.8rem" }} onClick={() => { setWebhookUrlRedacted(false); setWebhookUrl(""); }}>
+            supprimer le webhook
+          </button>{" "}
+          puis sauvegardez.
+        </p>
+      ) : null}
       <label style={labelStyle}>
         <span style={spanStyle}>Image de fond de la page Contact (URL)</span>
         <input type="text" value={backgroundImage} onChange={(e) => setBackgroundImage(e.target.value)} placeholder="https://exemple.com/contact-bg.jpg" style={inputStyle} />
