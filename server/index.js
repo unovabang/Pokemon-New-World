@@ -1104,6 +1104,102 @@ app.put('/api/config/webhook', requireAuth, (req, res) => {
   }
 });
 
+// === ANTI-CHEAT : Rapport de triche (IV/EV) → Discord webhook ===
+// Le webhook URL est stocké dans l'env variable CHEAT_WEBHOOK_URL (jamais exposé au client).
+// Rate-limit basique : max 1 rapport par joueur par minute.
+const _cheatReportTimestamps = new Map();
+
+app.post('/api/report-cheat', async (req, res) => {
+  try {
+    const webhookUrl = process.env.CHEAT_WEBHOOK_URL;
+    if (!webhookUrl) {
+      return res.json({ success: false, error: 'Webhook non configuré' });
+    }
+
+    const { playerName, playerUsername, discordId, avatarUrl, violations } = req.body || {};
+    if (!playerName || !Array.isArray(violations) || violations.length === 0) {
+      return res.status(400).json({ success: false, error: 'Données invalides' });
+    }
+
+    // Rate-limit : 1 rapport par joueur par minute
+    const rateLimitKey = discordId || playerName;
+    const lastReport = _cheatReportTimestamps.get(rateLimitKey);
+    if (lastReport && Date.now() - lastReport < 60_000) {
+      return res.json({ success: true, skipped: true });
+    }
+    _cheatReportTimestamps.set(rateLimitKey, Date.now());
+
+    // Construire l'embed Discord
+    const violationLines = violations.map((v) => {
+      const pokeName = v.label || 'Pokémon inconnu';
+      const details = (v.violations || []).map((viol) => {
+        const statNames = { hp: 'PV', atk: 'Atq', dfe: 'Déf', spd: 'Vit', ats: 'Atq Spé', dfs: 'Déf Spé' };
+        if (viol.kind === 'iv_over') return `IV ${statNames[viol.stat] || viol.stat} = **${viol.value}** (max 31)`;
+        if (viol.kind === 'ev_over') return `EV ${statNames[viol.stat] || viol.stat} = **${viol.value}** (max 252)`;
+        if (viol.kind === 'ev_total_over') return `EV total = **${viol.total}** (max 510)`;
+        return JSON.stringify(viol);
+      }).join('\n');
+      return `**${pokeName}**\n${details}`;
+    }).join('\n\n');
+
+    const embed = {
+      title: '🚨 Triche détectée — Statistiques invalides',
+      description: `Un joueur a tenté de lancer un combat avec des statistiques au-delà des limites autorisées.`,
+      color: 0xED4245, // Rouge Discord
+      fields: [
+        {
+          name: '👤 Joueur',
+          value: [
+            `**Pseudo IG :** ${playerName}`,
+            playerUsername ? `**Pseudo chat :** @${playerUsername}` : null,
+            discordId ? `**Discord ID :** \`${discordId}\`` : null,
+          ].filter(Boolean).join('\n'),
+          inline: false,
+        },
+        {
+          name: '⚠️ Violations détectées',
+          value: violationLines.slice(0, 1024), // Discord limit
+          inline: false,
+        },
+        {
+          name: '📋 Limites autorisées',
+          value: '`IV ≤ 31` par stat\n`EV ≤ 252` par stat\n`EV total ≤ 510`',
+          inline: true,
+        },
+        {
+          name: '🎮 Contexte',
+          value: 'Tour de Combat PvP\nBloqué avant le lancement du combat',
+          inline: true,
+        },
+      ],
+      thumbnail: avatarUrl ? { url: avatarUrl } : undefined,
+      timestamp: new Date().toISOString(),
+      footer: {
+        text: 'PNW Battle Tower — Anti-Cheat System',
+      },
+    };
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: 'PNW Anti-Cheat',
+        avatar_url: 'https://cdn-icons-png.flaticon.com/512/6699/6699366.png',
+        embeds: [embed],
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn('⚠️ Discord webhook failed:', response.status, await response.text().catch(() => ''));
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('❌ Erreur /api/report-cheat:', error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 app.get('/api/config/contact-webhook', optionalAuth, (req, res) => {
   try {
     const data = getContactWebhookData();
