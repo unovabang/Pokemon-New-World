@@ -1184,7 +1184,6 @@ app.post('/api/report-cheat', async (req, res) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         username: 'PNW Anti-Cheat',
-        avatar_url: 'https://cdn-icons-png.flaticon.com/512/6699/6699366.png',
         embeds: [embed],
       }),
     });
