@@ -11,6 +11,7 @@ import Sidebar from "../components/Sidebar";
 import PatchSectionHeading from "../components/PatchSectionHeading";
 import PatchNoteListItem from "../components/PatchNoteListItem";
 import { useLanguage } from "../contexts/LanguageContext";
+import { usePokedexSpriteLookup } from "../hooks/usePokedexSpriteLookup";
 import { Link, useNavigate } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_URL
@@ -89,6 +90,7 @@ const HomePage = () => {
   const [openDownload, setOpenDownload] = useState(false);
   const [openPatchNotes, setOpenPatchNotes] = useState(false);
   const [patchNotesFromApi, setPatchNotesFromApi] = useState(null);
+  const pokedexLookup = usePokedexSpriteLookup(openPatchNotes);
   const [secretTransitioning, setSecretTransitioning] = useState(false);
   const [openEnigmaModal, setOpenEnigmaModal] = useState(false);
   const [enigmaAnswer, setEnigmaAnswer] = useState("");
@@ -683,7 +685,7 @@ const HomePage = () => {
                     )}
                     <ul>
                       {(section.items || []).map((item, itemIndex) => (
-                        <PatchNoteListItem key={itemIndex} item={item} lang={language} />
+                        <PatchNoteListItem key={itemIndex} item={item} lang={language} pokedexLookup={pokedexLookup} />
                       ))}
                     </ul>
                   </div>

@@ -4,6 +4,7 @@ import LanguageSelector from "../components/LanguageSelector";
 import PatchSectionHeading from "../components/PatchSectionHeading";
 import PatchNoteListItem from "../components/PatchNoteListItem";
 import { useLanguage } from "../contexts/LanguageContext";
+import { usePokedexSpriteLookup } from "../hooks/usePokedexSpriteLookup";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
@@ -14,6 +15,7 @@ export default function PatchNotesPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const pokedexLookup = usePokedexSpriteLookup(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -129,7 +131,7 @@ export default function PatchNotesPage() {
                     )}
                     <ul>
                       {(section.items || []).map((item, j) => (
-                        <PatchNoteListItem key={j} item={item} lang={language} />
+                        <PatchNoteListItem key={j} item={item} lang={language} pokedexLookup={pokedexLookup} />
                       ))}
                     </ul>
                   </div>

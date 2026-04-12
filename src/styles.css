@@ -6113,6 +6113,72 @@ a.dex-panel--active{cursor:default}
   background:rgba(168,85,247,.18);
   border-color:rgba(192,132,252,.4);
 }
+/* Ligne équilibrage avec titre [TITLE] en tête et/ou sprite sous le badge */
+.patch-section > ul > li.patchnotes-balance-li.patchnotes-balance-li--stacked,
+.patchnotes-section > ul > li.patchnotes-balance-li.patchnotes-balance-li--stacked{
+  flex-direction:column;
+  flex-wrap:nowrap;
+  align-items:stretch;
+  gap:0.32rem;
+}
+.patchnotes-balance-head{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:0.45rem 0.85rem;
+}
+.patchnotes-balance-head-title{
+  flex:1;
+  min-width:min(100%,10rem);
+  font-weight:700;
+  font-size:0.95em;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  color:var(--primary-2,#7ecdf2);
+  line-height:1.25;
+}
+.patchnotes-balance-head-title .patchnotes-inline-title{
+  display:inline;
+  margin:0;
+  font:inherit;
+  color:inherit;
+  letter-spacing:inherit;
+  text-transform:inherit;
+}
+.patchnotes-balance-main{
+  display:block;
+  min-width:0;
+}
+.patchnotes-balance-main--sprite{
+  display:grid;
+  grid-template-columns:minmax(72px,104px) minmax(0,1fr);
+  gap:0.65rem 1rem;
+  align-items:start;
+  margin-top:0.15rem;
+}
+.patchnotes-balance-sprite-wrap{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding-top:0.08rem;
+}
+.patchnotes-balance-sprite{
+  max-width:96px;
+  max-height:96px;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.45));
+}
+.patchnotes-balance-copy{
+  min-width:0;
+}
+.patchnotes-balance-li--stacked .patchnotes-balance-copy .patch-md-root{
+  flex:1;
+  min-width:0;
+}
 .patchnotes-balance-li .patch-md-root{
   flex:1;
   min-width:min(100%,12rem);
