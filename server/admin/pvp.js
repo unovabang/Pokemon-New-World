@@ -144,6 +144,45 @@ router.post('/players/:user_id/reset-rank', async (req, res) => {
   }
 });
 
+const VALID_TIERS = [
+  'unranked', 'iron', 'bronze', 'silver', 'gold', 'platinum',
+  'emerald', 'diamond', 'master', 'grandmaster', 'challenger',
+];
+
+router.post('/players/:user_id/set-rank', async (req, res) => {
+  try {
+    const userId = req.params.user_id;
+    const tier = req.body?.tier;
+    const lp = parseInt(req.body?.lp, 10);
+    const mmr = parseInt(req.body?.mmr, 10);
+    const reason = (req.body?.reason || '').trim();
+
+    if (!userId) return res.status(400).json({ success: false, error: 'invalid_user_id' });
+    if (!VALID_TIERS.includes(tier)) return res.status(400).json({ success: false, error: 'invalid_tier' });
+    if (!Number.isFinite(lp) || lp < 0) return res.status(400).json({ success: false, error: 'invalid_lp' });
+    if (!Number.isFinite(mmr) || mmr < 0) return res.status(400).json({ success: false, error: 'invalid_mmr' });
+
+    const { data, error } = await supabaseAdmin().rpc('admin_set_player_rank', {
+      p_user_id: userId,
+      p_admin_id: null,
+      p_admin_email: adminEmail(req),
+      p_tier: tier,
+      p_lp: lp,
+      p_mmr: mmr,
+      p_reason: reason,
+    });
+    if (error) return res.status(500).json({ success: false, error: error.message });
+
+    const row = Array.isArray(data) ? data[0] : data;
+    if (!row?.success) {
+      return res.status(400).json({ success: false, error: row?.message || 'set_rank_failed' });
+    }
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 router.post('/players/:user_id/ban', async (req, res) => {
   try {
     const userId = req.params.user_id;

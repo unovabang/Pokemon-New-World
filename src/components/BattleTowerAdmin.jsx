@@ -361,6 +361,7 @@ function ConfigSection() {
 
 const ACTION_LABELS = {
   reset_player_rank: "Reset rank",
+  set_player_rank: "Modification rank",
   ban_player_pvp: "Ban PvP",
   unban_player_pvp: "Unban PvP",
   cancel_match: "Annulation match",

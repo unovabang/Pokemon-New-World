@@ -136,7 +136,16 @@ export default function BattleTowerPlayers() {
                       )}
                     </td>
                     <td>
-                      <div style={{ display: "flex", gap: ".25rem" }}>
+                      <div style={{ display: "flex", gap: ".25rem", flexWrap: "wrap" }}>
+                        <button
+                          type="button"
+                          onClick={() => { setActionPlayer(p); setActionType("set"); }}
+                          className="admin-pokedex-btn admin-pokedex-btn-ghost"
+                          style={{ padding: ".25rem .5rem", fontSize: ".75rem", color: "#a78bfa" }}
+                          title="Modifier le tier / LP / MMR manuellement"
+                        >
+                          <i className="fa-solid fa-pen" /> Modifier
+                        </button>
                         <button
                           type="button"
                           onClick={() => { setActionPlayer(p); setActionType("reset"); }}
@@ -167,12 +176,124 @@ export default function BattleTowerPlayers() {
         </div>
       )}
 
+      {actionPlayer && actionType === "set" && (
+        <SetRankModal player={actionPlayer} onClose={closeAction} onSuccess={refreshAndClose} />
+      )}
       {actionPlayer && actionType === "reset" && (
         <ResetRankModal player={actionPlayer} onClose={closeAction} onSuccess={refreshAndClose} />
       )}
       {actionPlayer && actionType === "ban" && (
         <BanPlayerModal player={actionPlayer} onClose={closeAction} onSuccess={refreshAndClose} />
       )}
+    </div>
+  );
+}
+
+function SetRankModal({ player, onClose, onSuccess }) {
+  const [tier, setTier] = useState(player.battle_rank_tier || "unranked");
+  const [lp, setLp] = useState(player.battle_lp ?? 0);
+  const [mmr, setMmr] = useState(player.battle_mmr ?? 1000);
+  const [reason, setReason] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const isApex = ["master", "grandmaster", "challenger"].includes(tier);
+  const lpMax = isApex ? 99999 : 100;
+
+  const submit = async () => {
+    const lpInt = parseInt(lp, 10);
+    const mmrInt = parseInt(mmr, 10);
+    if (!Number.isFinite(lpInt) || lpInt < 0) {
+      alert("LP invalide.");
+      return;
+    }
+    if (!Number.isFinite(mmrInt) || mmrInt < 0) {
+      alert("MMR invalide.");
+      return;
+    }
+
+    if (!confirm(`Définir le rank de ${player.username} ?\n\nTier : ${TIER_LABELS[tier]}\nLP : ${lpInt}${isApex ? "" : " (capé à 100 hors apex)"}\nMMR : ${mmrInt}\n\nLes placements seront ${tier === "unranked" ? "remis à 0/5" : "marqués comme terminés (5/5)"}.`)) return;
+
+    setSubmitting(true);
+    try {
+      const res = await fetch(`${API_BASE}/admin/pvp/players/${player.user_id}/set-rank`, {
+        ...credentialsInit(),
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body: JSON.stringify({ tier, lp: lpInt, mmr: mmrInt, reason }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || `HTTP ${res.status}`);
+      onSuccess();
+    } catch (e) {
+      alert(`Erreur : ${e.message}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="bt-admin-modal-overlay" onClick={onClose}>
+      <div className="bt-admin-modal" onClick={(e) => e.stopPropagation()}>
+        <button type="button" className="bt-admin-modal-close" onClick={onClose}><i className="fa-solid fa-xmark" /></button>
+        <h3>Modifier le rank — {player.display_name || player.username}</h3>
+        <p style={{ color: "var(--muted)", fontSize: ".85rem" }}>
+          Définit manuellement tier, LP et MMR. Si tier = "Non classé", remet le joueur en placement.
+        </p>
+
+        <label className="admin-pokedex-label">Tier</label>
+        <select
+          value={tier}
+          onChange={(e) => setTier(e.target.value)}
+          className="admin-pokedex-input"
+        >
+          {Object.entries(TIER_LABELS).map(([k, v]) => (
+            <option key={k} value={k}>{v}</option>
+          ))}
+        </select>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: ".75rem", marginTop: ".75rem" }}>
+          <div>
+            <label className="admin-pokedex-label">
+              LP {isApex ? "(illimité en apex)" : "(0–100)"}
+            </label>
+            <input
+              type="number"
+              min="0"
+              max={lpMax}
+              className="admin-pokedex-input"
+              value={lp}
+              onChange={(e) => setLp(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="admin-pokedex-label">MMR (Elo caché)</label>
+            <input
+              type="number"
+              min="0"
+              className="admin-pokedex-input"
+              value={mmr}
+              onChange={(e) => setMmr(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <label className="admin-pokedex-label" style={{ marginTop: ".75rem" }}>Raison (loggée)</label>
+        <input
+          type="text"
+          className="admin-pokedex-input"
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Ex: ajustement saison, demande joueur, correction"
+          maxLength={300}
+        />
+
+        <div style={{ marginTop: "1rem", display: "flex", gap: ".5rem", justifyContent: "flex-end" }}>
+          <button type="button" onClick={onClose} className="admin-pokedex-btn admin-pokedex-btn-ghost">Annuler</button>
+          <button type="button" onClick={submit} disabled={submitting} className="admin-pokedex-btn admin-pokedex-btn-primary">
+            {submitting ? "Application..." : "Appliquer"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
