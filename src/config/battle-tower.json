@@ -1,0 +1,16 @@
+{
+  "lastModified": null,
+  "season": {
+    "number": 1,
+    "name": "Saison 1",
+    "startDate": null,
+    "endDate": null,
+    "bannerUrl": null,
+    "description": ""
+  },
+  "maintenance": {
+    "enabled": false,
+    "message": ""
+  },
+  "announcements": ""
+}

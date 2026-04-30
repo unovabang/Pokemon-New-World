@@ -12,6 +12,7 @@ import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import { initDb } from './db.js';
 import authRoutes, { requireAuth, optionalAuth } from './auth.js';
+import adminPvpRoutes from './admin/pvp.js';
 import { maskDiscordWebhookUrl } from './webhookMask.js';
 import { handleChatPublicPreview } from './chatPublicPreview.js';
 import { S3Client, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, DeleteObjectCommand, ListObjectsV2Command, ListMultipartUploadsCommand, PutObjectCommand } from '@aws-sdk/client-s3';
@@ -98,6 +99,9 @@ app.use('/api/auth/login', loginLimiter);
 
 // Auth & logs (login, /me, /logs)
 app.use('/api/auth', authRoutes);
+
+// Admin Tour de Combat (PvP) — toutes les routes ici sont protégées par requireAuth
+app.use('/api/admin/pvp', adminPvpRoutes);
 
 // Health check (pour Railway / load balancers)
 app.get('/health', (req, res) => res.status(200).json({ ok: true }));
@@ -2166,6 +2170,75 @@ app.put('/api/banlist', requireAuth, (req, res) => {
     res.json({ success: true, message: 'Banlist sauvegardée.', banlist: updated });
   } catch (error) {
     console.error('❌ Erreur API PUT /api/banlist:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// === BATTLE TOWER CONFIG API (saison + maintenance + annonces) ===
+// GET /api/battle-tower — Lire la config Tour de Combat (publique, lue par le launcher)
+app.get('/api/battle-tower', (req, res) => {
+  try {
+    let raw = getConfig('battle-tower');
+    if (!raw) {
+      const repoPath = path.join(__dirname, '../src/config/battle-tower.json');
+      if (fs.existsSync(repoPath)) {
+        try { raw = fs.readJsonSync(repoPath); } catch { raw = null; }
+      }
+    }
+    const data = raw ? unwrapConfig(raw, 'battleTower') : null;
+    res.json({
+      success: true,
+      battleTower: {
+        lastModified: data?.lastModified || null,
+        season: {
+          number: Number(data?.season?.number) || 1,
+          name: String(data?.season?.name || 'Saison 1'),
+          startDate: data?.season?.startDate || null,
+          endDate: data?.season?.endDate || null,
+          bannerUrl: data?.season?.bannerUrl || null,
+          description: String(data?.season?.description || ''),
+        },
+        maintenance: {
+          enabled: Boolean(data?.maintenance?.enabled),
+          message: String(data?.maintenance?.message || ''),
+        },
+        announcements: String(data?.announcements || ''),
+      },
+    });
+  } catch (error) {
+    console.error('❌ Erreur API /api/battle-tower:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// PUT /api/battle-tower — Sauvegarder la config (admin uniquement)
+app.put('/api/battle-tower', requireAuth, (req, res) => {
+  try {
+    const { season, maintenance, announcements } = req.body || {};
+    const updated = {
+      lastModified: new Date().toISOString(),
+      season: {
+        number: Number(season?.number) || 1,
+        name: String(season?.name || 'Saison 1').slice(0, 100),
+        startDate: season?.startDate || null,
+        endDate: season?.endDate || null,
+        bannerUrl: season?.bannerUrl ? String(season.bannerUrl).slice(0, 1000) : null,
+        description: String(season?.description || '').slice(0, 2000),
+      },
+      maintenance: {
+        enabled: Boolean(maintenance?.enabled),
+        message: String(maintenance?.message || '').slice(0, 1000),
+      },
+      announcements: String(announcements || '').slice(0, 5000),
+    };
+    const opts = { spaces: 2 };
+    fs.writeJsonSync(path.join(CONFIG_DIR, 'battle-tower.json'), updated, opts);
+    fs.ensureDirSync(SOURCE_CONFIG_DIR);
+    fs.writeJsonSync(path.join(SOURCE_CONFIG_DIR, 'battle-tower.json'), updated, opts);
+    autoCommitConfig('battle-tower.json');
+    res.json({ success: true, message: 'Configuration Tour de Combat sauvegardée.', battleTower: updated });
+  } catch (error) {
+    console.error('❌ Erreur API PUT /api/battle-tower:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
