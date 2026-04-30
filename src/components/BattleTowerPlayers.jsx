@@ -190,6 +190,7 @@ export default function BattleTowerPlayers() {
 }
 
 function SetRankModal({ player, onClose, onSuccess }) {
+  const [step, setStep] = useState("form");
   const [tier, setTier] = useState(player.battle_rank_tier || "unranked");
   const [lp, setLp] = useState(player.battle_lp ?? 0);
   const [mmr, setMmr] = useState(player.battle_mmr ?? 1000);
@@ -198,21 +199,22 @@ function SetRankModal({ player, onClose, onSuccess }) {
 
   const isApex = ["master", "grandmaster", "challenger"].includes(tier);
   const lpMax = isApex ? 99999 : 100;
+  const lpInt = parseInt(lp, 10);
+  const mmrInt = parseInt(mmr, 10);
+
+  const validate = () => {
+    if (!Number.isFinite(lpInt) || lpInt < 0) return "LP invalide.";
+    if (!Number.isFinite(mmrInt) || mmrInt < 0) return "MMR invalide.";
+    return null;
+  };
+
+  const goToReview = () => {
+    const err = validate();
+    if (err) { alert(err); return; }
+    setStep("review");
+  };
 
   const submit = async () => {
-    const lpInt = parseInt(lp, 10);
-    const mmrInt = parseInt(mmr, 10);
-    if (!Number.isFinite(lpInt) || lpInt < 0) {
-      alert("LP invalide.");
-      return;
-    }
-    if (!Number.isFinite(mmrInt) || mmrInt < 0) {
-      alert("MMR invalide.");
-      return;
-    }
-
-    if (!confirm(`Définir le rank de ${player.username} ?\n\nTier : ${TIER_LABELS[tier]}\nLP : ${lpInt}${isApex ? "" : " (capé à 100 hors apex)"}\nMMR : ${mmrInt}\n\nLes placements seront ${tier === "unranked" ? "remis à 0/5" : "marqués comme terminés (5/5)"}.`)) return;
-
     setSubmitting(true);
     try {
       const res = await fetch(`${API_BASE}/admin/pvp/players/${player.user_id}/set-rank`, {
@@ -226,6 +228,7 @@ function SetRankModal({ player, onClose, onSuccess }) {
       onSuccess();
     } catch (e) {
       alert(`Erreur : ${e.message}`);
+      setStep("form");
     } finally {
       setSubmitting(false);
     }
@@ -235,66 +238,158 @@ function SetRankModal({ player, onClose, onSuccess }) {
     <div className="bt-admin-modal-overlay" onClick={onClose}>
       <div className="bt-admin-modal" onClick={(e) => e.stopPropagation()}>
         <button type="button" className="bt-admin-modal-close" onClick={onClose}><i className="fa-solid fa-xmark" /></button>
-        <h3>Modifier le rank — {player.display_name || player.username}</h3>
-        <p style={{ color: "var(--muted)", fontSize: ".85rem" }}>
-          Définit manuellement tier, LP et MMR. Si tier = "Non classé", remet le joueur en placement.
-        </p>
-
-        <label className="admin-pokedex-label">Tier</label>
-        <select
-          value={tier}
-          onChange={(e) => setTier(e.target.value)}
-          className="admin-pokedex-input"
-        >
-          {Object.entries(TIER_LABELS).map(([k, v]) => (
-            <option key={k} value={k}>{v}</option>
-          ))}
-        </select>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: ".75rem", marginTop: ".75rem" }}>
-          <div>
-            <label className="admin-pokedex-label">
-              LP {isApex ? "(illimité en apex)" : "(0–100)"}
-            </label>
-            <input
-              type="number"
-              min="0"
-              max={lpMax}
-              className="admin-pokedex-input"
-              value={lp}
-              onChange={(e) => setLp(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="admin-pokedex-label">MMR (Elo caché)</label>
-            <input
-              type="number"
-              min="0"
-              className="admin-pokedex-input"
-              value={mmr}
-              onChange={(e) => setMmr(e.target.value)}
-            />
+        <h3>
+          <i className="fa-solid fa-pen" style={{ marginRight: ".5rem", color: "#a78bfa" }} />
+          Modifier le rank
+        </h3>
+        <div style={{ display: "flex", alignItems: "center", gap: ".6rem", marginBottom: ".75rem", padding: ".5rem .75rem", background: "rgba(255,255,255,.04)", borderRadius: "8px" }}>
+          {player.avatar_url && <img src={player.avatar_url} alt="" style={{ width: 32, height: 32, borderRadius: "50%" }} />}
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 600 }}>{player.display_name || player.username}</div>
+            <div style={{ fontSize: ".75rem", color: "var(--muted)" }}>{player.user_id?.slice(0, 8)}…</div>
           </div>
         </div>
 
-        <label className="admin-pokedex-label" style={{ marginTop: ".75rem" }}>Raison (loggée)</label>
-        <input
-          type="text"
-          className="admin-pokedex-input"
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          placeholder="Ex: ajustement saison, demande joueur, correction"
-          maxLength={300}
-        />
+        {step === "form" && (
+          <>
+            <p style={{ color: "var(--muted)", fontSize: ".85rem", marginTop: 0 }}>
+              Définit manuellement tier, LP et MMR. Si tier = "Non classé", remet le joueur en placement.
+            </p>
 
-        <div style={{ marginTop: "1rem", display: "flex", gap: ".5rem", justifyContent: "flex-end" }}>
-          <button type="button" onClick={onClose} className="admin-pokedex-btn admin-pokedex-btn-ghost">Annuler</button>
-          <button type="button" onClick={submit} disabled={submitting} className="admin-pokedex-btn admin-pokedex-btn-primary">
-            {submitting ? "Application..." : "Appliquer"}
-          </button>
-        </div>
+            <label className="admin-pokedex-label">Tier</label>
+            <select
+              value={tier}
+              onChange={(e) => setTier(e.target.value)}
+              className="admin-pokedex-input"
+            >
+              {Object.entries(TIER_LABELS).map(([k, v]) => (
+                <option key={k} value={k}>{v}</option>
+              ))}
+            </select>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: ".75rem", marginTop: ".75rem" }}>
+              <div>
+                <label className="admin-pokedex-label">
+                  LP {isApex ? "(illimité en apex)" : "(0–100)"}
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max={lpMax}
+                  className="admin-pokedex-input"
+                  value={lp}
+                  onChange={(e) => setLp(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="admin-pokedex-label">MMR (Elo caché)</label>
+                <input
+                  type="number"
+                  min="0"
+                  className="admin-pokedex-input"
+                  value={mmr}
+                  onChange={(e) => setMmr(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <label className="admin-pokedex-label" style={{ marginTop: ".75rem" }}>Raison (loggée)</label>
+            <input
+              type="text"
+              className="admin-pokedex-input"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Ex: ajustement saison, demande joueur, correction"
+              maxLength={300}
+            />
+
+            <div style={{ marginTop: "1.25rem", display: "flex", gap: ".5rem", justifyContent: "flex-end" }}>
+              <button type="button" onClick={onClose} className="admin-pokedex-btn admin-pokedex-btn-ghost">Annuler</button>
+              <button type="button" onClick={goToReview} className="admin-pokedex-btn admin-pokedex-btn-primary">
+                Continuer <i className="fa-solid fa-arrow-right" style={{ marginLeft: ".35rem" }} />
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === "review" && (
+          <ReviewPanel
+            player={player}
+            tier={tier}
+            lp={lpInt}
+            mmr={mmrInt}
+            reason={reason}
+            onBack={() => setStep("form")}
+            onConfirm={submit}
+            submitting={submitting}
+          />
+        )}
       </div>
     </div>
+  );
+}
+
+function ReviewPanel({ player, tier, lp, mmr, reason, onBack, onConfirm, submitting }) {
+  const fromTier = player.battle_rank_tier || "unranked";
+  const fromLp = player.battle_lp ?? 0;
+  const fromMmr = player.battle_mmr ?? 1000;
+  const fromColor = TIER_COLORS[fromTier] || TIER_COLORS.unranked;
+  const toColor = TIER_COLORS[tier] || TIER_COLORS.unranked;
+  const placementsAfter = tier === "unranked" ? "0 / 5 (replacé en placement)" : "5 / 5 (terminés)";
+
+  const Row = ({ label, before, after, color }) => {
+    const changed = String(before) !== String(after);
+    return (
+      <div style={{ display: "grid", gridTemplateColumns: "100px 1fr auto 1fr", alignItems: "center", gap: ".75rem", padding: ".5rem 0", borderBottom: "1px solid rgba(255,255,255,.05)" }}>
+        <span style={{ fontSize: ".8rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".04em" }}>{label}</span>
+        <span style={{ fontSize: ".95rem", color: changed ? "rgba(255,255,255,.5)" : "rgba(255,255,255,.85)", textDecoration: changed ? "line-through" : "none" }}>{before}</span>
+        <i className="fa-solid fa-arrow-right" style={{ fontSize: ".75rem", color: changed ? "#a78bfa" : "rgba(255,255,255,.2)" }} />
+        <span style={{ fontSize: ".95rem", fontWeight: 600, color: changed ? (color || "#86efac") : "rgba(255,255,255,.85)" }}>{after}</span>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <div style={{ padding: ".75rem 1rem", marginBottom: "1rem", background: "rgba(167,139,250,.08)", border: "1px solid rgba(167,139,250,.25)", borderRadius: "10px" }}>
+        <div style={{ fontSize: ".85rem", fontWeight: 600, color: "#c4b5fd", marginBottom: ".5rem", display: "flex", alignItems: "center", gap: ".4rem" }}>
+          <i className="fa-solid fa-circle-info" />
+          Aperçu des changements
+        </div>
+
+        <Row
+          label="Tier"
+          before={<span className="bt-admin-tier-badge" style={{ background: `${fromColor}33`, borderColor: fromColor, color: fromColor }}>{TIER_LABELS[fromTier]}</span>}
+          after={<span className="bt-admin-tier-badge" style={{ background: `${toColor}33`, borderColor: toColor, color: toColor }}>{TIER_LABELS[tier]}</span>}
+        />
+        <Row label="LP" before={fromLp} after={lp} />
+        <Row label="MMR" before={fromMmr} after={mmr} />
+        <div style={{ paddingTop: ".5rem", fontSize: ".8rem", color: "var(--muted)" }}>
+          <i className="fa-solid fa-arrow-right-arrow-left" style={{ marginRight: ".4rem" }} />
+          Placements : {placementsAfter}
+        </div>
+        {reason && reason.trim() && (
+          <div style={{ paddingTop: ".5rem", fontSize: ".8rem", color: "var(--muted)" }}>
+            <i className="fa-solid fa-comment" style={{ marginRight: ".4rem" }} />
+            Raison : <span style={{ color: "rgba(255,255,255,.85)" }}>{reason}</span>
+          </div>
+        )}
+      </div>
+
+      <div style={{ display: "flex", gap: ".5rem", justifyContent: "space-between" }}>
+        <button type="button" onClick={onBack} disabled={submitting} className="admin-pokedex-btn admin-pokedex-btn-ghost">
+          <i className="fa-solid fa-arrow-left" style={{ marginRight: ".35rem" }} />
+          Retour
+        </button>
+        <button type="button" onClick={onConfirm} disabled={submitting} className="admin-pokedex-btn admin-pokedex-btn-primary">
+          {submitting ? (
+            <><i className="fa-solid fa-spinner fa-spin" style={{ marginRight: ".35rem" }} /> Application...</>
+          ) : (
+            <><i className="fa-solid fa-check" style={{ marginRight: ".35rem" }} /> Confirmer</>
+          )}
+        </button>
+      </div>
+    </>
   );
 }
 
