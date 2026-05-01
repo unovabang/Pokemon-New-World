@@ -4641,7 +4641,9 @@ a.dex-panel--active{cursor:default}
   box-shadow:0 24px 64px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04) inset, 0 0 60px rgba(46,89,198,.12);
 }
 .hero-video .video{position:absolute; inset:0; pointer-events:none}
-.hero-video iframe{position:absolute; top:50%; left:50%; min-width:100%; min-height:100%; width:177.77vh; height:56.25vw; transform:translate(-50%,-50%) scale(1.06); border:0}
+.hero-video iframe,
+.hero-video .hero-video-poster{position:absolute; top:50%; left:50%; min-width:100%; min-height:100%; width:177.77vh; height:56.25vw; transform:translate(-50%,-50%) scale(1.06); border:0}
+.hero-video .hero-video-poster{ object-fit:cover; }
 .hero-video .overlay{
   position:absolute; inset:0;
   background:radial-gradient(ellipse 80% 80% at 50% 30%,rgba(0,0,0,.15),rgba(0,0,0,.5) 80%),
