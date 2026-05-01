@@ -45,8 +45,15 @@ function ScoreGauge({ label, score, icon }) {
 }
 
 function VitalCard({ label, value, score }) {
-  const status = score >= 0.9 ? "good" : score >= 0.5 ? "needs" : "poor";
-  const statusLabel = status === "good" ? "Bon" : status === "needs" ? "Moyen" : "Faible";
+  const hasScore = score != null && !Number.isNaN(score);
+  const status = !hasScore ? "unknown"
+               : score >= 0.9 ? "good"
+               : score >= 0.5 ? "needs"
+               : "poor";
+  const statusLabel = status === "good" ? "Bon"
+                    : status === "needs" ? "Moyen"
+                    : status === "poor" ? "Faible"
+                    : "—";
   return (
     <div className={`seo-vital seo-vital--${status}`}>
       <span className="seo-vital-label">{label}</span>

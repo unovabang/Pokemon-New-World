@@ -460,7 +460,7 @@ export default function PokedexPage() {
     <main className="page page-with-sidebar pokedex-page">
       {showEasterEgg && <GighastonEasterEgg onClose={closeEasterEgg} />}
       <div className="pokedex-page-bg" aria-hidden>
-        <img src={pokedexBgSrc} alt="" />
+        <img src={pokedexBgSrc} alt="" decoding="async" fetchpriority="low" />
       </div>
       <div className="pokedex-page-overlay" aria-hidden />
       <Sidebar />

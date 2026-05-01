@@ -272,6 +272,7 @@ function BSTModal({ pokemon, pokedexList = [], onClose }) {
             src={pokemon.sprite || PLACEHOLDER_SPRITE}
             alt={pokemon.name}
             className="bst-modal-sprite"
+            decoding="async"
             onError={(e) => (e.target.src = PLACEHOLDER_SPRITE)}
           />
         </div>
@@ -585,7 +586,7 @@ export default function BSTPage() {
       {pageBackground && (
         <>
           <div className="page-bg-layer" aria-hidden>
-            <img src={pageBackground} alt="" />
+            <img src={pageBackground} alt="" decoding="async" fetchpriority="low" />
           </div>
           <div className="page-overlay-layer" aria-hidden />
         </>

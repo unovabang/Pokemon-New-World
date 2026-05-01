@@ -69,7 +69,7 @@ function CharacterModal({ character, onClose }) {
         </h3>
         <div className="guide-character-modal-content">
           <div className="guide-character-modal-sprite">
-            <img src={imgSrc} alt={character.name} />
+            <img src={imgSrc} alt={character.name} decoding="async" />
           </div>
           <p className="guide-character-modal-desc">{character.description || "Aucune description."}</p>
         </div>
@@ -201,7 +201,7 @@ export default function GuidePage() {
       {hasBg && (
         <>
           <div className="guide-page-bg" aria-hidden>
-            <img src={hasBg ? background : ""} alt="" />
+            <img src={hasBg ? background : ""} alt="" decoding="async" fetchpriority="low" />
           </div>
           <div className="guide-page-overlay" aria-hidden />
         </>

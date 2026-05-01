@@ -173,6 +173,7 @@ function NerfBuffModal({ entry, pokedexList = [], onClose }) {
             src={sprite}
             alt={entry.name}
             className="bst-modal-sprite"
+            decoding="async"
             onError={(e) => (e.target.src = PLACEHOLDER_SPRITE)}
           />
         </div>
@@ -324,6 +325,7 @@ function NerfBuffGrid({ id, title, icon, entries, pokedexList, onSelect }) {
                 alt={row.name}
                 className="bst-card-sprite"
                 loading="lazy"
+                decoding="async"
                 onError={(e) => (e.target.src = PLACEHOLDER_SPRITE)}
               />
             </div>
@@ -437,7 +439,7 @@ export default function NerfsAndBuffsPage() {
       {pageBackground && (
         <>
           <div className="page-bg-layer" aria-hidden>
-            <img src={pageBackground} alt="" />
+            <img src={pageBackground} alt="" decoding="async" fetchpriority="low" />
           </div>
           <div className="page-overlay-layer" aria-hidden />
         </>

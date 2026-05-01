@@ -139,6 +139,8 @@ export default function NewsBanner({ banners = [], interval = 5000, autoLoad = t
           alt={currentBanner.title || "Bannière actualité"}
           className="news-banner-image"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          loading="lazy"
+          decoding="async"
         />
 
         {total > 1 && (

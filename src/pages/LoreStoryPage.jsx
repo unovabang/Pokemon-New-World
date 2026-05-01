@@ -44,7 +44,7 @@ function RenderContent({ paragraphs, storyTitle }) {
     if (typeof p === "string" && p.startsWith("![")) {
       const m = p.match(/!\[.*?\]\((.*?)\)/);
       const src = m ? m[1] : "";
-      if (src) return <img key={i} src={src} alt={`Illustration - ${storyTitle || "lore"}`} className="lore-story-image" />;
+      if (src) return <img key={i} src={src} alt={`Illustration - ${storyTitle || "lore"}`} className="lore-story-image" loading="lazy" decoding="async" />;
       return null;
     }
     const isTitleOnly = typeof p === "string" && /^\s*\[TITLE\].*\[\/TITLE\]\s*$/.test(p);

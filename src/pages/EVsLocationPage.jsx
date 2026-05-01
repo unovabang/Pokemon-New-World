@@ -186,7 +186,7 @@ export default function EVsLocationPage() {
       {pageBackground && (
         <>
           <div className="page-bg-layer" aria-hidden>
-            <img src={pageBackground} alt="" />
+            <img src={pageBackground} alt="" decoding="async" fetchpriority="low" />
           </div>
           <div className="page-overlay-layer" aria-hidden />
         </>
@@ -309,6 +309,7 @@ export default function EVsLocationPage() {
                                 alt={name}
                                 className="evs-location-pokemon-sprite"
                                 loading="lazy"
+                                decoding="async"
                               />
                               {points > 0 && (
                                 <span className="evs-location-pokemon-pts">

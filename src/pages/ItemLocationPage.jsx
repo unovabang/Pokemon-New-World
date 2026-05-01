@@ -117,7 +117,7 @@ export default function ItemLocationPage() {
       {pageBackground && (
         <>
           <div className="page-bg-layer" aria-hidden>
-            <img src={pageBackground} alt="" />
+            <img src={pageBackground} alt="" decoding="async" fetchpriority="low" />
           </div>
           <div className="page-overlay-layer" aria-hidden />
         </>

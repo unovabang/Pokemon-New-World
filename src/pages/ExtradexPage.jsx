@@ -289,7 +289,7 @@ export default function ExtradexPage() {
   return (
     <main className="page page-with-sidebar pokedex-page extradex-page">
       <div className="pokedex-page-bg" aria-hidden>
-        <img src={extradexBgSrc} alt="" />
+        <img src={extradexBgSrc} alt="" decoding="async" fetchpriority="low" />
       </div>
       <div className="pokedex-page-overlay" aria-hidden />
       <Sidebar />

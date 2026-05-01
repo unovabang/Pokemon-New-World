@@ -57,7 +57,7 @@ function PokemonCard({ pokemon }) {
       <div className="boss-pokemon-header">
         <div className="boss-pokemon-sprite">
           {pokemon.imageUrl ? (
-            <img src={pokemon.imageUrl} alt={pokemon.name} onError={(e) => { e.target.style.display = "none"; }} />
+            <img src={pokemon.imageUrl} alt={pokemon.name} loading="lazy" decoding="async" onError={(e) => { e.target.style.display = "none"; }} />
           ) : (
             <i className="fa-solid fa-question" />
           )}
@@ -147,7 +147,7 @@ function BossCard({ boss }) {
             )}
             <div className="boss-card-artwork">
               {boss.artworkUrl ? (
-                <img src={boss.artworkUrl} alt={boss.name} />
+                <img src={boss.artworkUrl} alt={boss.name} loading="lazy" decoding="async" />
               ) : (
                 <div className="boss-card-artwork-placeholder">
                   <i className="fa-solid fa-user-shield" />
@@ -277,7 +277,7 @@ export default function BossPage() {
     <main className={`page page-with-sidebar boss-page${hasBg ? " boss-page--has-bg" : ""}`}>
       {hasBg && (
         <>
-          <div className="boss-page-bg" aria-hidden><img src={data.background} alt="" /></div>
+          <div className="boss-page-bg" aria-hidden><img src={data.background} alt="" decoding="async" fetchpriority="low" /></div>
           <div className="boss-page-overlay" aria-hidden />
         </>
       )}

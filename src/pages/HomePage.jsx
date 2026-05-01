@@ -254,7 +254,7 @@ const HomePage = () => {
               <div>
                 <h1 className="sr-only">{game?.title || "Pokémon New World"} — {t("seo.description")}</h1>
                 {logoUrl ? (
-                  <img className="hero-logo" src={logoUrl} alt={game?.title || "Pokemon New World"} />
+                  <img className="hero-logo" src={logoUrl} alt={game?.title || "Pokemon New World"} fetchpriority="high" decoding="async" width="320" height="320" />
                 ) : (
                   <p className="hero-logo hero-logo--text">{game?.title || "Pokémon New World"}</p>
                 )}
@@ -375,7 +375,7 @@ const HomePage = () => {
           {/* DERNIÈRES NOUVEAUTÉS */}
           <section id="news" className="section card">
             <h2>
-              <img src="/newsCLEAN3.png" alt="Nouveautes" className="section-icon" />
+              <img src="/newsCLEAN3.png" alt="Nouveautes" className="section-icon" loading="lazy" decoding="async" />
               {" "}
               {t('sections.news.title')}
             </h2>
@@ -404,6 +404,7 @@ const HomePage = () => {
                     src="/TIKTOK.png"
                     alt="TikTok Pokemon New World"
                     className="dual-image"
+                    loading="lazy"
                     decoding="async"
                   />
                 </div>
@@ -444,6 +445,7 @@ const HomePage = () => {
                       src={patchNotesSectionImageSrc}
                       alt="Patch Notes"
                       className="dual-image"
+                      loading="lazy"
                       decoding="async"
                     />
                   ) : (
@@ -471,7 +473,7 @@ const HomePage = () => {
           <section id="patreon" className="section card">
             <h2>
               {patreonIconUrl ? (
-                <img src={patreonIconUrl} alt="Patreon" className="section-icon" />
+                <img src={patreonIconUrl} alt="Patreon" className="section-icon" loading="lazy" decoding="async" />
               ) : (
                 <i className="fa-brands fa-patreon section-icon" aria-hidden />
               )}{" "}
@@ -488,7 +490,7 @@ const HomePage = () => {
                 aria-label={patreonOverlayOpen ? (t("sections.patreon.close") || "Fermer") : (t("sections.patreon.open") || "Voir le contenu Patreon")}
               >
                 {patreonHeroImageUrl ? (
-                  <img src={patreonHeroImageUrl} alt="Contenu Patreon Pokemon New World" className="patreon-image" />
+                  <img src={patreonHeroImageUrl} alt="Contenu Patreon Pokemon New World" className="patreon-image" loading="lazy" decoding="async" />
                 ) : (
                   <div className="patreon-image patreon-image--placeholder" aria-hidden>
                     <i className="fa-brands fa-patreon" />
@@ -520,7 +522,7 @@ const HomePage = () => {
             <div className="footer-grid">
               <div className="footer-col footer-col--brand">
                 <div className="footer-brand">
-                  {logoUrl ? <img src={logoUrl} alt={game?.title || "Pokemon New World"} /> : null}
+                  {logoUrl ? <img src={logoUrl} alt={game?.title || "Pokemon New World"} loading="lazy" decoding="async" /> : null}
                   <strong>{game?.title || "Pokémon New World"}</strong>
                 </div>
                 <p className="footer-desc">{t('footer.description')}</p>
