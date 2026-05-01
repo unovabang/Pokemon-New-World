@@ -6234,12 +6234,15 @@ a.dex-panel--active{cursor:default}
 /* ===== Patreon Section ===== */
 .patreon-content{margin-top:16px}
 .patreon-image-container{
-  position:relative; 
-  border-radius:20px; 
-  overflow:hidden; 
-  border:1px solid rgba(255,100,130,.15); 
+  position:relative;
+  border-radius:20px;
+  overflow:hidden;
+  border:1px solid rgba(255,100,130,.15);
   box-shadow:0 16px 48px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.03) inset;
   transition:transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  /* Réserve l'espace avant chargement de l'image (évite CLS avec loading=lazy) */
+  aspect-ratio:16/10;
+  min-height:200px;
 }
 .patreon-image-container:hover{
   transform:translateY(-4px);
@@ -6247,8 +6250,9 @@ a.dex-panel--active{cursor:default}
   box-shadow:0 24px 60px rgba(0,0,0,.55), 0 0 40px rgba(255,66,77,.15);
 }
 .patreon-image{
-  width:100%; 
-  height:auto; 
+  width:100%;
+  height:100%;
+  object-fit:cover;
   display:block;
   transition:transform .5s ease;
 }
