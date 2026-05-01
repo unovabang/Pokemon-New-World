@@ -7,28 +7,35 @@ const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
   : `${window.location.origin}/api`;
 
-const TYPE_COLORS = {
-  plante: { bg: "rgba(126,200,80,.35)", border: "rgba(126,200,80,.6)", text: "#a6e88a" },
-  feu: { bg: "rgba(240,128,48,.35)", border: "rgba(240,128,48,.6)", text: "#f5a962" },
-  eau: { bg: "rgba(104,144,240,.35)", border: "rgba(104,144,240,.6)", text: "#7eb8f2" },
-  glace: { bg: "rgba(126,206,206,.35)", border: "rgba(126,206,206,.6)", text: "#98d8d8" },
-  malice: { bg: "rgba(112,88,152,.35)", border: "rgba(112,88,152,.6)", text: "#b8a8d8" },
-  poison: { bg: "rgba(160,64,160,.35)", border: "rgba(160,64,160,.6)", text: "#c183c1" },
-  vol: { bg: "rgba(168,144,240,.35)", border: "rgba(168,144,240,.6)", text: "#c6b7f5" },
-  dragon: { bg: "rgba(112,56,248,.35)", border: "rgba(112,56,248,.6)", text: "#a78bfa" },
-  sol: { bg: "rgba(224,192,104,.35)", border: "rgba(224,192,104,.6)", text: "#e8d68c" },
-  combat: { bg: "rgba(192,48,40,.35)", border: "rgba(192,48,40,.6)", text: "#f07878" },
-  spectre: { bg: "rgba(112,88,152,.35)", border: "rgba(112,88,152,.6)", text: "#a890f0" },
-  psy: { bg: "rgba(248,88,136,.35)", border: "rgba(248,88,136,.6)", text: "#f8a8c8" },
-  electr: { bg: "rgba(248,208,48,.35)", border: "rgba(248,208,48,.6)", text: "#f8d030" },
-  fee: { bg: "rgba(238,153,172,.35)", border: "rgba(238,153,172,.6)", text: "#f0b0c0" },
-  tenebres: { bg: "rgba(112,88,72,.35)", border: "rgba(112,88,72,.6)", text: "#a09080" },
-  roche: { bg: "rgba(184,160,56,.35)", border: "rgba(184,160,56,.6)", text: "#d8c878" },
-  acier: { bg: "rgba(168,168,192,.35)", border: "rgba(168,168,192,.6)", text: "#c0c0e0" },
-  normal: { bg: "rgba(168,168,120,.25)", border: "rgba(168,168,120,.5)", text: "#c6c6a7" },
-  insecte: { bg: "rgba(168,184,32,.35)", border: "rgba(168,184,32,.6)", text: "#c6d16e" },
-  aspic: { bg: "rgba(160,128,96,.35)", border: "rgba(160,128,96,.6)", text: "#d4b896" },
+/* Palette enrichie : gradient + glow + icône par type. */
+const TYPE_META = {
+  plante:   { from: "#7BC85A", to: "#3B7E2B", glow: "rgba(123,200,90,.5)",  icon: "fa-leaf",            fg: "#fff" },
+  feu:      { from: "#F59E42", to: "#C2410C", glow: "rgba(245,158,66,.55)", icon: "fa-fire",            fg: "#fff" },
+  eau:      { from: "#60A5FA", to: "#1E40AF", glow: "rgba(96,165,250,.5)",  icon: "fa-droplet",         fg: "#fff" },
+  glace:    { from: "#7DD3FC", to: "#0E7490", glow: "rgba(125,211,252,.5)", icon: "fa-snowflake",       fg: "#082F49" },
+  malice:   { from: "#A78BFA", to: "#5B21B6", glow: "rgba(167,139,250,.5)", icon: "fa-mask",            fg: "#fff" },
+  poison:   { from: "#C084FC", to: "#7E22CE", glow: "rgba(192,132,252,.5)", icon: "fa-skull-crossbones", fg: "#fff" },
+  vol:      { from: "#A5B4FC", to: "#4338CA", glow: "rgba(165,180,252,.5)", icon: "fa-feather",         fg: "#fff" },
+  dragon:   { from: "#7C3AED", to: "#312E81", glow: "rgba(124,58,237,.55)", icon: "fa-dragon",          fg: "#fff" },
+  sol:      { from: "#EAB308", to: "#854D0E", glow: "rgba(234,179,8,.5)",   icon: "fa-mountain",        fg: "#fff" },
+  combat:   { from: "#EF4444", to: "#7F1D1D", glow: "rgba(239,68,68,.55)",  icon: "fa-fist-raised",     fg: "#fff" },
+  spectre:  { from: "#8B5CF6", to: "#1E1B4B", glow: "rgba(139,92,246,.55)", icon: "fa-ghost",           fg: "#fff" },
+  psy:      { from: "#F472B6", to: "#9D174D", glow: "rgba(244,114,182,.55)", icon: "fa-eye",            fg: "#fff" },
+  electr:   { from: "#FACC15", to: "#A16207", glow: "rgba(250,204,21,.55)", icon: "fa-bolt",            fg: "#1F2937" },
+  fee:      { from: "#F9A8D4", to: "#BE185D", glow: "rgba(249,168,212,.5)", icon: "fa-wand-magic-sparkles", fg: "#831843" },
+  tenebres: { from: "#52525B", to: "#18181B", glow: "rgba(82,82,91,.55)",   icon: "fa-moon",            fg: "#fff" },
+  roche:    { from: "#D6B074", to: "#78350F", glow: "rgba(214,176,116,.5)", icon: "fa-gem",             fg: "#fff" },
+  acier:    { from: "#94A3B8", to: "#334155", glow: "rgba(148,163,184,.55)", icon: "fa-shield-halved",  fg: "#fff" },
+  normal:   { from: "#D6D3D1", to: "#78716C", glow: "rgba(214,211,209,.45)", icon: "fa-circle",         fg: "#1F2937" },
+  insecte:  { from: "#A3E635", to: "#3F6212", glow: "rgba(163,230,53,.5)",  icon: "fa-bug",             fg: "#1F2937" },
+  aspic:    { from: "#A3704F", to: "#5C2E0F", glow: "rgba(163,112,79,.55)", icon: "fa-staff-snake",     fg: "#fff" },
 };
+
+const DEFAULT_TYPE_META = { from: "#9CA3AF", to: "#4B5563", glow: "rgba(156,163,175,.45)", icon: "fa-circle", fg: "#fff" };
+function getTypeMeta(t) {
+  const k = (t || "").toLowerCase().trim();
+  return TYPE_META[k] || DEFAULT_TYPE_META;
+}
 
 const TYPE_LABELS = {
   acier: "Acier", aspic: "Aspic", combat: "Combat", dragon: "Dragon", eau: "Eau",
@@ -42,16 +49,46 @@ function getTypeLabel(key) {
   return TYPE_LABELS[k] || (k.charAt(0).toUpperCase() + k.slice(1));
 }
 
-const defaultTypeStyle = { bg: "rgba(255,255,255,.1)", border: "rgba(255,255,255,.25)", text: "var(--text)" };
-
 function getTypeStyle(type) {
-  const key = (type || "").toLowerCase().trim();
-  const s = TYPE_COLORS[key] || defaultTypeStyle;
+  const m = getTypeMeta(type);
   return {
-    background: s.bg,
-    border: `1px solid ${s.border}`,
-    color: s.text,
+    background: `linear-gradient(135deg, ${m.from} 0%, ${m.to} 100%)`,
+    border: `1px solid rgba(255,255,255,.18)`,
+    color: m.fg,
+    boxShadow: `0 2px 10px ${m.glow}, 0 0 0 1px rgba(0,0,0,.2) inset`,
+    textShadow: m.fg === "#fff" ? "0 1px 2px rgba(0,0,0,.4)" : "none",
   };
+}
+
+function TypePill({ type, withIcon = true }) {
+  const m = getTypeMeta(type);
+  return (
+    <span className="pokedex-type-pill" style={getTypeStyle(type)}>
+      {withIcon && <i className={`fa-solid ${m.icon} pokedex-type-pill-icon`} aria-hidden />}
+      <span className="pokedex-type-pill-label">{getTypeLabel(type)}</span>
+    </span>
+  );
+}
+
+function useCountUp(target, duration = 1200) {
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    if (target === null || target === undefined) { setV(0); return; }
+    let raf;
+    let start = null;
+    const t0 = target || 0;
+    const step = (now) => {
+      if (start === null) start = now;
+      const elapsed = now - start;
+      const p = Math.min(1, elapsed / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setV(Math.round(eased * t0));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => { if (raf) cancelAnimationFrame(raf); };
+  }, [target, duration]);
+  return v;
 }
 
 function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
@@ -67,8 +104,11 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
     return () => document.removeEventListener("click", close);
   }, [open]);
 
+  const meta = value ? getTypeMeta(value) : null;
   const displayLabel = value ? getTypeLabel(value) : "— Aucun —";
-  const displayStyle = value ? getTypeStyle(value) : { background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.2)", color: "var(--text)" };
+  const displayStyle = value
+    ? getTypeStyle(value)
+    : { background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.2)", color: "var(--text)" };
 
   return (
     <label className="pokedex-filter-select-label" ref={ref}>
@@ -83,6 +123,7 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
           aria-label={ariaLabel}
           style={displayStyle}
         >
+          {meta && <i className={`fa-solid ${meta.icon} pokedex-type-dropdown-icon`} aria-hidden />}
           <span className="pokedex-type-dropdown-value">{displayLabel}</span>
           <i className={`fa-solid fa-chevron-down pokedex-type-dropdown-chevron ${open ? "open" : ""}`} aria-hidden />
         </button>
@@ -94,20 +135,25 @@ function TypeDropdown({ value, options, onChange, label, ariaLabel }) {
               className="pokedex-type-dropdown-option pokedex-type-dropdown-option-none"
               onClick={() => { onChange(null); setOpen(false); }}
             >
-              — Aucun —
+              <i className="fa-solid fa-ban pokedex-type-dropdown-icon" aria-hidden />
+              <span>— Aucun —</span>
             </li>
-            {options.map((t) => (
-              <li
-                key={t}
-                role="option"
-                aria-selected={value === t}
-                className="pokedex-type-dropdown-option"
-                style={getTypeStyle(t)}
-                onClick={() => { onChange(t); setOpen(false); }}
-              >
-                {getTypeLabel(t)}
-              </li>
-            ))}
+            {options.map((t) => {
+              const m = getTypeMeta(t);
+              return (
+                <li
+                  key={t}
+                  role="option"
+                  aria-selected={value === t}
+                  className="pokedex-type-dropdown-option"
+                  style={getTypeStyle(t)}
+                  onClick={() => { onChange(t); setOpen(false); }}
+                >
+                  <i className={`fa-solid ${m.icon} pokedex-type-dropdown-icon`} aria-hidden />
+                  <span>{getTypeLabel(t)}</span>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
@@ -190,6 +236,9 @@ export default function ExtradexPage() {
     setSelectedTypes((prev) => (key ? [prev[0], key].filter(Boolean) : (prev[0] ? [prev[0]] : [])));
   };
 
+  const animatedPokedex = useCountUp(pokedexCount);
+  const animatedExtradex = useCountUp(extradexCount);
+
   const sortByNum = (a, b) => (parseInt(String(a.num), 10) || 0) - (parseInt(String(b.num), 10) || 0);
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -253,24 +302,35 @@ export default function ExtradexPage() {
             </Link>
             <div className="dex-hero-tabs">
               <Link to="/pokedex" className="dex-panel dex-panel--pokedex dex-panel--dimmed">
+                <div className="dex-panel-sparkles" aria-hidden>
+                  <span className="dex-sparkle dex-sparkle--1" />
+                  <span className="dex-sparkle dex-sparkle--2" />
+                  <span className="dex-sparkle dex-sparkle--3" />
+                </div>
                 <div className="dex-panel-icon">
                   <i className="fa-solid fa-book-open" aria-hidden />
                 </div>
                 <div className="dex-panel-text">
                   <h1 className="dex-panel-title">Pokédex</h1>
                   <p className="dex-panel-subtitle">
-                    Pokémon New World — {pokedexCount !== null ? pokedexCount : "…"} Pokémon
+                    Pokémon New World — <span className="dex-panel-count">{pokedexCount !== null ? animatedPokedex : "…"}</span> Pokémon
                   </p>
                 </div>
               </Link>
               <div className="dex-panel dex-panel--extradex dex-panel--active">
+                <div className="dex-panel-sparkles" aria-hidden>
+                  <span className="dex-sparkle dex-sparkle--1" />
+                  <span className="dex-sparkle dex-sparkle--2" />
+                  <span className="dex-sparkle dex-sparkle--3" />
+                  <span className="dex-sparkle dex-sparkle--4" />
+                </div>
                 <div className="dex-panel-icon">
                   <i className="fa-solid fa-star" aria-hidden />
                 </div>
                 <div className="dex-panel-text">
                   <h1 className="dex-panel-title">Extradex</h1>
                   <p className="dex-panel-subtitle">
-                    Pokémon New World — {extradexCount !== null ? extradexCount : "…"} Pokémon
+                    Pokémon New World — <span className="dex-panel-count">{extradexCount !== null ? animatedExtradex : "…"}</span> Pokémon
                   </p>
                 </div>
               </div>
@@ -348,33 +408,39 @@ export default function ExtradexPage() {
           </p>
           {viewMode === "grid" && (
             <div className="pokedex-grid">
-              {filtered.map((pokemon, i) => (
-                <button
-                  key={`grid-${i}-${pokemon.num}-${pokemon.name}`}
-                  type="button"
-                  className="pokedex-card"
-                  onClick={() => setSelectedPokemon(pokemon)}
-                >
-                  <div className="pokedex-card-sprite">
-                    {pokemon.imageUrl ? (
-                      <img src={pokemon.imageUrl} alt={pokemon.name} loading="lazy" onError={(e) => { e.target.style.display = "none"; }} />
-                    ) : (
-                      <i className="fa-solid fa-paw" />
-                    )}
-                  </div>
-                  <span className="pokedex-card-num">#{pokemon.num}</span>
-                  <span className="pokedex-card-name">{pokemon.name}</span>
-                  <div className="pokedex-card-types">
-                    {pokemon.types?.length
-                      ? pokemon.types.map((t) => (
-                          <span key={t} className="pokedex-type-pill" style={getTypeStyle(t)}>
-                            {getTypeLabel(t)}
-                          </span>
-                        ))
-                      : null}
-                  </div>
-                </button>
-              ))}
+              {filtered.map((pokemon, i) => {
+                const primary = pokemon.types?.[0];
+                const meta = primary ? getTypeMeta(primary) : null;
+                const cardStyle = meta ? {
+                  ["--card-glow"]: meta.glow,
+                  ["--card-tint"]: meta.from,
+                  ["--card-tint-deep"]: meta.to,
+                } : undefined;
+                return (
+                  <button
+                    key={`grid-${i}-${pokemon.num}-${pokemon.name}`}
+                    type="button"
+                    className={`pokedex-card${meta ? " pokedex-card--typed" : ""}`}
+                    onClick={() => setSelectedPokemon(pokemon)}
+                    style={cardStyle}
+                  >
+                    <div className="pokedex-card-sprite">
+                      {pokemon.imageUrl ? (
+                        <img src={pokemon.imageUrl} alt={pokemon.name} loading="lazy" onError={(e) => { e.target.style.display = "none"; }} />
+                      ) : (
+                        <i className="fa-solid fa-paw" />
+                      )}
+                    </div>
+                    <span className="pokedex-card-num">#{pokemon.num}</span>
+                    <span className="pokedex-card-name">{pokemon.name}</span>
+                    <div className="pokedex-card-types">
+                      {pokemon.types?.length
+                        ? pokemon.types.map((t) => <TypePill key={t} type={t} />)
+                        : null}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           )}
           {viewMode === "table" && (
@@ -406,9 +472,7 @@ export default function ExtradexPage() {
                     </div>
                     <div className="pokedex-table-cell pokedex-table-types" role="cell">
                       {pokemon.types?.length
-                        ? pokemon.types.map((t) => (
-                            <span key={t} className="pokedex-type-pill" style={getTypeStyle(t)}>{getTypeLabel(t)}</span>
-                          ))
+                        ? pokemon.types.map((t) => <TypePill key={t} type={t} />)
                         : "—"}
                     </div>
                     <div className="pokedex-table-cell pokedex-table-rarity" role="cell">{(() => { const arr = (pokemon.rarities || (pokemon.rarity ? [pokemon.rarity] : [])).filter(Boolean); return arr.length ? arr.map((r, i) => <div key={i}>{r}</div>) : "—"; })()}</div>
@@ -459,11 +523,7 @@ export default function ExtradexPage() {
               <p className="pokedex-modal-num"><i className="fa-solid fa-fingerprint" aria-hidden /> #{selectedPokemon.num}</p>
               <div className="pokedex-modal-types">
                 {selectedPokemon.types?.length
-                  ? selectedPokemon.types.map((t) => (
-                      <span key={t} className="pokedex-type-pill" style={getTypeStyle(t)}>
-                        {getTypeLabel(t)}
-                      </span>
-                    ))
+                  ? selectedPokemon.types.map((t) => <TypePill key={t} type={t} />)
                   : "—"}
               </div>
               {(() => {
