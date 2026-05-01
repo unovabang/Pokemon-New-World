@@ -1,8 +1,21 @@
 import { useState } from "react";
+import { credentialsInit } from "../utils/authHeaders";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, "")}/api`
   : `${window.location.origin}/api`;
+
+/** Parse une réponse `fetch` en JSON et lève une erreur descriptive si la réponse n'est pas du JSON. */
+async function parseJsonResponse(r, contextLabel) {
+  const text = await r.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    const snippet = text.trim().slice(0, 120).replace(/\s+/g, " ");
+    const detail = snippet ? ` — extrait: « ${snippet}${text.length > 120 ? "…" : ""} »` : "";
+    throw new Error(`HTTP ${r.status} ${r.statusText || ""} (${contextLabel}) — réponse non-JSON${detail}`);
+  }
+}
 
 function ScoreGauge({ label, score, icon }) {
   const radius = 40;
@@ -70,12 +83,10 @@ export default function SeoAuditPanel() {
     setLoadingPS(true);
     setErrorPS(null);
     try {
-      const r = await fetch(`${API_BASE}/seo/pagespeed?strategy=${strategy}&t=${Date.now()}`);
-      const text = await r.text();
-      let data;
-      try { data = JSON.parse(text); } catch { throw new Error("Reponse serveur invalide"); }
+      const r = await fetch(`${API_BASE}/seo/pagespeed?strategy=${strategy}&t=${Date.now()}`, credentialsInit());
+      const data = await parseJsonResponse(r, "PageSpeed");
       if (data.success) setPagespeed(data);
-      else setErrorPS(data.error || "Erreur inconnue");
+      else setErrorPS(data.error || `Erreur ${r.status}`);
     } catch (e) {
       setErrorPS(e.message);
     } finally {
@@ -87,12 +98,10 @@ export default function SeoAuditPanel() {
     setLoadingAudit(true);
     setErrorAudit(null);
     try {
-      const r = await fetch(`${API_BASE}/seo/audit?t=${Date.now()}`);
-      const text = await r.text();
-      let data;
-      try { data = JSON.parse(text); } catch { throw new Error("Reponse serveur invalide"); }
+      const r = await fetch(`${API_BASE}/seo/audit?t=${Date.now()}`, credentialsInit());
+      const data = await parseJsonResponse(r, "Audit SEO");
       if (data.success) setAudit(data);
-      else setErrorAudit(data.error || "Erreur inconnue");
+      else setErrorAudit(data.error || `Erreur ${r.status}`);
     } catch (e) {
       setErrorAudit(e.message);
     } finally {
@@ -104,12 +113,10 @@ export default function SeoAuditPanel() {
     setLoadingGSC(true);
     setErrorGSC(null);
     try {
-      const r = await fetch(`${API_BASE}/seo/search-console?days=${gscDays}&t=${Date.now()}`);
-      const text = await r.text();
-      let data;
-      try { data = JSON.parse(text); } catch { throw new Error("Reponse serveur invalide"); }
+      const r = await fetch(`${API_BASE}/seo/search-console?days=${gscDays}&t=${Date.now()}`, credentialsInit());
+      const data = await parseJsonResponse(r, "Search Console");
       if (data.success) setGsc(data);
-      else setErrorGSC(data.error || "Erreur inconnue");
+      else setErrorGSC(data.error || `Erreur ${r.status}`);
     } catch (e) {
       setErrorGSC(e.message);
     } finally {

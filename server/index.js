@@ -2493,18 +2493,39 @@ app.get('/api/seo/pagespeed', requireAuth, async (req, res) => {
     const targetUrl = req.query.url || 'https://www.pokemonnewworld.fr';
     const strategy = req.query.strategy || 'mobile';
     const psiKey = process.env.PAGESPEED_API_KEY || '';
-    let apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(targetUrl)}&category=performance&category=seo&category=accessibility&category=best-practices&strategy=${strategy}`;
-    if (psiKey) apiUrl += `&key=${psiKey}`;
+    if (!psiKey) {
+      return res.status(503).json({
+        success: false,
+        error: "PAGESPEED_API_KEY manquante côté serveur. Définissez la variable d'environnement pour activer l'analyse PageSpeed Insights.",
+      });
+    }
+    const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(targetUrl)}&category=performance&category=seo&category=accessibility&category=best-practices&strategy=${strategy}&key=${psiKey}`;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 60000);
-    const response = await fetch(apiUrl, { signal: controller.signal });
+    let response;
+    try {
+      response = await fetch(apiUrl, { signal: controller.signal });
+    } catch (e) {
+      clearTimeout(timeout);
+      const isAbort = e.name === 'AbortError';
+      return res.status(504).json({
+        success: false,
+        error: isAbort
+          ? 'Timeout PageSpeed API (60s) — réessayez ou changez de stratégie.'
+          : `Erreur réseau PageSpeed API : ${e.message}`,
+      });
+    }
     clearTimeout(timeout);
 
     const text = await response.text();
     let data;
     try { data = JSON.parse(text); } catch {
-      return res.status(502).json({ success: false, error: 'Réponse invalide de PageSpeed API' });
+      const snippet = (text || '').trim().slice(0, 200);
+      return res.status(502).json({
+        success: false,
+        error: `Réponse non-JSON de PageSpeed API (HTTP ${response.status})${snippet ? ` — extrait: ${snippet}` : ''}`,
+      });
     }
 
     if (data.error) {
